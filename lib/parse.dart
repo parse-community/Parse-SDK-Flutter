@@ -1,8 +1,8 @@
-import 'package:parse/parse_data.dart';
-import 'package:parse/parse_http_client.dart';
-import 'package:parse/parse_livequery.dart';
-import 'package:parse/parse_object.dart';
-import 'package:parse/parse_user.dart';
+import 'package:parse_server_sdk/parse_data.dart';
+import 'package:parse_server_sdk/parse_http_client.dart';
+import 'package:parse_server_sdk/parse_livequery.dart';
+import 'package:parse_server_sdk/parse_object.dart';
+import 'package:parse_server_sdk/parse_user.dart';
 
 class Parse {
   ParseData data;
@@ -24,16 +24,21 @@ class Parse {
     return parse;
   }
 
+  // ignore: unused_field
   ParseObject _parseObject;
+
+  // ignore: unused_field
   User _user;
+
+  // ignore: unused_field
   LiveQuery _liveQuery;
 
   ParseObject object(objectName) {
-    return _parseObject = new ParseObject(objectName, client);
+    return _parseObject = new ParseObject(objectName);
   }
 
   User user() {
-    return _user = new User(client);
+    return _user = new User();
   }
 
   LiveQuery liveQuery() {

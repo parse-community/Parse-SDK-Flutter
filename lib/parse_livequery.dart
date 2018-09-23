@@ -1,6 +1,6 @@
 import "dart:convert";
 import 'package:web_socket_channel/io.dart';
-import 'parse_http_client.dart';
+import 'package:parse_server_sdk/parse_http_client.dart';
 import 'dart:io';
 
 class LiveQuery {
@@ -10,8 +10,7 @@ class LiveQuery {
   Map<String, dynamic> subscribeMessage;
   Map<String, Function> eventCallbacks = {};
 
-  LiveQuery(ParseHTTPClient client)
-  : client = client {
+  LiveQuery(ParseHTTPClient client) : client = client {
     connectMessage = {
       "op": "connect",
       "applicationId": client.data.applicationId,
@@ -28,24 +27,24 @@ class LiveQuery {
   }
 
   subscribe(String className) async {
-    //channel = await WebSocket.connect(client.liveQueryURL);
+    // ignore: close_sinks
     var webSocket = await WebSocket.connect(client.data.liveQueryURL);
-    channel = await new IOWebSocketChannel(webSocket);
+    channel = new IOWebSocketChannel(webSocket);
     channel.sink.add(JsonEncoder().convert(connectMessage));
     subscribeMessage['query']['className'] = className;
     channel.sink.add(JsonEncoder().convert(subscribeMessage));
     channel.stream.listen((message) {
       Map<String, dynamic> actionData = JsonDecoder().convert(message);
       if (eventCallbacks.containsKey(actionData['op']))
-          eventCallbacks[actionData['op']](actionData);
+        eventCallbacks[actionData['op']](actionData);
     });
   }
 
-  void on(String op, Function callback){
+  void on(String op, Function callback) {
     eventCallbacks[op] = callback;
   }
 
-  void close(){
+  void close() {
     channel.close();
   }
 }

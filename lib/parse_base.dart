@@ -1,4 +1,4 @@
-import 'parse_http_client.dart';
+import 'package:parse_server_sdk/parse_http_client.dart';
 
 abstract class ParseBaseObject {
   final String className;
@@ -8,9 +8,8 @@ abstract class ParseBaseObject {
 
   String get objectId => objectData['objectId'];
 
-  void _handleResponse(Map<String, dynamic> response){}
+  // ignore: unused_element
+  void _handleResponse(Map<String, dynamic> response) {}
 
   ParseBaseObject(this.className, [this.client]);
 }
-
-

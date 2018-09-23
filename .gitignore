@@ -4,5 +4,6 @@
 .packages
 .pub/
 pubspec.lock
+.example/lib/application_constants.dart
 
 build/
