@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:parse/parse.dart';
+import 'package:flutter/material.dart';
 import 'package:parse_example/application_constants.dart';
-import 'package:parse_example/diet_plan.dart';
+import 'package:parse_server_sdk/parse.dart';
+import 'package:parse_server_sdk/parse_user.dart';
 
 void main() => runApp(new MyApp());
 
@@ -13,11 +13,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();
     initParse();
+    initUser();
   }
 
   Future<void> initParse() async {
@@ -25,9 +25,14 @@ class _MyAppState extends State<MyApp> {
         appId: ApplicationConstants.PARSE_APPLICATION_ID,
         serverUrl: ApplicationConstants.PARSE_SERVER_URL,
         masterKey: ApplicationConstants.PARSE_MASTER_KEY);
+  }
 
-    DietPlan().get('R5EonpUDWy').then((plan) {
-      print(DietPlan.fromJson(plan).name);
+  Future<void> initUser() async {
+    User()
+        .createNewUser("TestFlutter", "TestPassword123", "TestEmail@Email.com");
+
+    User().login().then((val) {
+      print(val);
     });
   }
 

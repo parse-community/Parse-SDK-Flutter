@@ -1,4 +1,4 @@
-import 'package:parse/parse_object.dart';
+import 'package:parse_server_sdk/parse_object.dart';
 
 class DietPlan extends ParseObject {
   static const String DIET_PLAN = 'Diet_Plans';
