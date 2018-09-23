@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:parse_server_sdk/parse_data.dart';
+import 'package:parse_server_sdk/data/parse_data.dart';
 
 class ParseHTTPClient extends http.BaseClient {
   final http.Client _client = new http.Client();

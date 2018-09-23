@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 
-import 'package:parse_server_sdk/parse_user_data.dart';
+import 'package:parse_server_sdk/data/parse_user_data.dart';
 
 import 'parse_base.dart';
 import 'parse_http_client.dart';

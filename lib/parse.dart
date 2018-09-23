@@ -1,4 +1,4 @@
-import 'package:parse_server_sdk/parse_data.dart';
+import 'package:parse_server_sdk/data/parse_data.dart';
 import 'package:parse_server_sdk/parse_http_client.dart';
 import 'package:parse_server_sdk/parse_livequery.dart';
 import 'package:parse_server_sdk/parse_object.dart';

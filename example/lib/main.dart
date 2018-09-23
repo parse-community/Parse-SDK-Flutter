@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:parse_example/application_constants.dart';
+import 'package:flutter_plugin_example/application_constants.dart';
 import 'package:parse_server_sdk/parse.dart';
 import 'package:parse_server_sdk/parse_user.dart';
 
