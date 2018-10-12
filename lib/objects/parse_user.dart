@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:async';
 
-import 'package:parse_server_sdk/parse_user_data.dart';
+import 'package:parse_server_sdk/data/parse_data_user.dart';
 
-import 'parse_base.dart';
-import 'parse_http_client.dart';
+import 'package:parse_server_sdk/objects/parse_base.dart';
+import 'package:parse_server_sdk/network/parse_http_client.dart';
 
 class User implements ParseBaseObject {
   final String className = '_User';
@@ -12,7 +12,7 @@ class User implements ParseBaseObject {
   String path = "/parse/classes/_User";
   Map<String, dynamic> objectData = {};
 
-  static ParseUserData userData;
+  static ParseDataUser userData;
 
   String get objectId => objectData['objectId'];
   String get sessionId => objectData['sessionToken'];
@@ -21,12 +21,12 @@ class User implements ParseBaseObject {
   User();
 
   User createNewUser(String username, String password, String emailAddress) {
-    ParseUserData.init(username, password, emailAddress);
-    userData = ParseUserData();
-    return _newInstance(ParseUserData());
+    ParseDataUser.init(username, password, emailAddress);
+    userData = ParseDataUser();
+    return _newInstance(ParseDataUser());
   }
 
-  User _newInstance(ParseUserData data) {
+  User _newInstance(ParseDataUser data) {
     return User();
   }
 

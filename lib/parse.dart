@@ -1,23 +1,23 @@
-import 'package:parse_server_sdk/parse_data.dart';
-import 'package:parse_server_sdk/parse_http_client.dart';
-import 'package:parse_server_sdk/parse_livequery.dart';
-import 'package:parse_server_sdk/parse_object.dart';
-import 'package:parse_server_sdk/parse_user.dart';
+import 'package:parse_server_sdk/data/parse_data_server.dart';
+import 'package:parse_server_sdk/network/parse_http_client.dart';
+import 'package:parse_server_sdk/network/parse_livequery.dart';
+import 'package:parse_server_sdk/objects/parse_object.dart';
+import 'package:parse_server_sdk/objects/parse_user.dart';
 
 class Parse {
-  ParseData data;
+  ParseDataServer data;
   final ParseHTTPClient client = new ParseHTTPClient();
 
   Parse();
 
   Parse initialize({appId, serverUrl, liveQueryUrl, masterKey, sessionId}) {
-    ParseData.init(appId, serverUrl,
+    ParseDataServer.init(appId, serverUrl,
         liveQueryUrl: liveQueryUrl, masterKey: masterKey, sessionId: sessionId);
 
-    return newInstance(ParseData());
+    return newInstance(ParseDataServer());
   }
 
-  Parse newInstance(ParseData data) {
+  Parse newInstance(ParseDataServer data) {
     var parse = Parse();
     parse.data = data;
     parse.client.data = data;

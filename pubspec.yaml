@@ -10,6 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+    
+  # Networking
   web_socket_channel: ^1.0.9
   http: ^0.12.0
+
+  # Utils
+  intl: ^0.15.7
