@@ -1,6 +1,6 @@
 import "dart:convert";
 import 'package:web_socket_channel/io.dart';
-import 'package:parse_server_sdk/parse_http_client.dart';
+import 'package:parse_server_sdk/network/parse_http_client.dart';
 import 'dart:io';
 
 class LiveQuery {
