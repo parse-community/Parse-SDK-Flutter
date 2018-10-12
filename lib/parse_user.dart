@@ -9,7 +9,7 @@ import 'parse_http_client.dart';
 class User implements ParseBaseObject {
   final String className = '_User';
   final ParseHTTPClient client = ParseHTTPClient();
-  String path = "/parse/classes/_User";
+  String path = "/classes/_User";
   Map<String, dynamic> objectData = {};
 
   static ParseUserData userData;
@@ -85,7 +85,7 @@ class User implements ParseBaseObject {
   Future<Map<String, dynamic>> login() async {
 
     Uri url = new Uri(
-        path: "${client.data.serverUrl}/parse/login",
+        path: "${client.data.serverUrl}/login",
         queryParameters: {
           "username": userData.username,
           "password": userData.password
@@ -102,7 +102,7 @@ class User implements ParseBaseObject {
 
   Future<Map<String, dynamic>> verificationEmailRequest() async {
     final response = this.client.post(
-        "${client.data.serverUrl}/parse/verificationEmailRequest",
+        "${client.data.serverUrl}/verificationEmailRequest",
         body: JsonEncoder().convert({"email": userData.emailAddress}));
     return response.then((value) {
       return _handleResponse(value.body);
@@ -111,7 +111,7 @@ class User implements ParseBaseObject {
 
   Future<Map<String, dynamic>> requestPasswordReset() async {
     final response = this.client.post(
-        "${client.data.serverUrl}/parse/requestPasswordReset",
+        "${client.data.serverUrl}/requestPasswordReset",
         body: JsonEncoder().convert({"email": userData.emailAddress}));
     return response.then((value) {
       return _handleResponse(value.body);
