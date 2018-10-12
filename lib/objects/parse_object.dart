@@ -19,7 +19,7 @@ class ParseObject implements ParseBaseObject {
   DateTime updatedAt;
 
   ParseObject(this.className) {
-    path = "/parse/classes/$className";
+    path = "/classes/$className";
   }
 
   Future<ParseResponse> create([Map<String, dynamic> objectInitialData]) async {

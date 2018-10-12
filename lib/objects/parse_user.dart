@@ -9,7 +9,7 @@ import 'package:parse_server_sdk/network/parse_http_client.dart';
 class User implements ParseBaseObject {
   final String className = '_User';
   final ParseHTTPClient client = ParseHTTPClient();
-  String path = "/parse/classes/_User";
+  String path = "/classes/_User";
   Map<String, dynamic> objectData = {};
 
   static ParseDataUser userData;
