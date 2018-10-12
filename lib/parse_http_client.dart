@@ -7,7 +7,7 @@ import 'package:parse_server_sdk/parse_data.dart';
 class ParseHTTPClient extends http.BaseClient {
   final http.Client _client = new http.Client();
   final String _userAgent = "Dart Parse SDK 0.1";
-  ParseData data;
+  ParseData data = ParseData();
 
   ParseHTTPClient();
 
