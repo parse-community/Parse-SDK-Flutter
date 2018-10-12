@@ -1,4 +1,4 @@
-package com.purewowstudio.parseexample;
+package com.example.flutterpluginexample;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
