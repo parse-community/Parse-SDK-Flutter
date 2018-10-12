@@ -13,7 +13,7 @@ class ParseObject implements ParseBaseObject {
   String get objectId => objectData['objectId'];
 
   ParseObject(this.className) {
-    path = "/parse/classes/$className";
+    path = "/classes/$className";
   }
 
   Future<Map> create([Map<String, dynamic> objectInitialData]) async {
