@@ -3,7 +3,8 @@ A rewrite of a library hosted on GitHub. This is not my own content but based on
 
 https://github.com/lotux/parse_server_dart
 
-Want to get involved? Join our Slack channel and help out! flutterparsesdk.slack.com
+## Join in!
+Want to get involved? Join our Slack channel and help out! FlutterParseSDK.Slack.com
 
 ## Getting Started
 
