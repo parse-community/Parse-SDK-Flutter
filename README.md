@@ -12,8 +12,8 @@ Want to get involved? Join our Slack channel and help out! FlutterParseSDK.Slack
 
 ```
 Parse().initialize(
-        appId: ApplicationConstants.PARSE_APPLICATION_ID,
-        serverUrl: ApplicationConstants.PARSE_SERVER_URL,
+        ApplicationConstants.PARSE_APPLICATION_ID,
+        ApplicationConstants.PARSE_SERVER_URL,
         masterKey: ApplicationConstants.PARSE_MASTER_KEY);
 ```
 
