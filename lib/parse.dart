@@ -10,7 +10,7 @@ class Parse {
 
   Parse();
 
-  Parse initialize({appId, serverUrl, liveQueryUrl, masterKey, sessionId}) {
+  Parse initialize(appId, serverUrl, {liveQueryUrl, masterKey, sessionId}) {
     ParseDataServer.init(appId, serverUrl,
         liveQueryUrl: liveQueryUrl, masterKey: masterKey, sessionId: sessionId);
 

@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:parse_server_sdk/objects/parse_base.dart';
 import 'package:parse_server_sdk/network/parse_http_client.dart';
-import 'package:parse_server_sdk/objects/parse_exception.dart';
+import 'package:parse_server_sdk/objects/parse_base.dart';
 import 'package:parse_server_sdk/objects/parse_response.dart';
-import 'package:parse_server_sdk/utils/parse_utils_objects.dart';
-import 'package:http/http.dart';
 
 class ParseObject implements ParseBaseObject {
   final ParseHTTPClient _client = ParseHTTPClient();
