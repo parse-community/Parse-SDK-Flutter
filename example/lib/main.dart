@@ -22,8 +22,8 @@ class _MyAppState extends State<MyApp> {
     initParse();
     getAllItems();
     getSingleItem();
-    query();
-    queryByContainedIn();
+    //query();
+    //queryByContainedIn();
     initUser();
   }
 
@@ -31,8 +31,8 @@ class _MyAppState extends State<MyApp> {
 
     // Initialize parse
     Parse().initialize(
-        appId: ApplicationConstants.PARSE_APPLICATION_ID,
-        serverUrl: ApplicationConstants.PARSE_SERVER_URL,
+        ApplicationConstants.PARSE_APPLICATION_ID,
+        ApplicationConstants.PARSE_SERVER_URL,
         masterKey: ApplicationConstants.PARSE_MASTER_KEY);
   }
 
