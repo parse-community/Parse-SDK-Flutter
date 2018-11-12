@@ -12,32 +12,32 @@ class DietPlan extends ParseObject {
   num fat;
   num status;
 
-  static const String DIET_PLAN = 'Diet_Plans';
-  static const String NAME = 'Name';
-  static const String DESCRIPTION = 'Description';
-  static const String PROTEIN = 'Protein';
-  static const String CARBS = 'Carbs';
-  static const String FAT = 'Fat';
-  static const String STATUS = 'Status';
+  static const String DIET_PLAN = 'post';
+  static const String NAME = 'title';
+  // static const String DESCRIPTION = 'text';
+  // static const String PROTEIN = 'Protein';
+  // static const String CARBS = 'Carbs';
+  // static const String FAT = 'Fat';
+  // static const String STATUS = 'Status';
 
   @override
   dynamic fromJson(Map<String, dynamic> objectData) {
     this.name = objectData[NAME];
-    this.description = objectData[DESCRIPTION];
-    this.protein = objectData[PROTEIN];
-    this.carbs = objectData[CARBS];
-    this.fat = objectData[FAT];
-    this.status = objectData[STATUS];
+    // this.description = objectData[DESCRIPTION];
+    // this.protein = objectData[PROTEIN];
+    // this.carbs = objectData[CARBS];
+    // this.fat = objectData[FAT];
+    // this.status = objectData[STATUS];
     return this;
   }
 
   Map<String, dynamic> toJson() => {
         NAME: name,
-        DESCRIPTION: description,
-        PROTEIN: protein,
-        CARBS: carbs,
-        FAT: fat,
-        STATUS: status,
+        // DESCRIPTION: description,
+        // PROTEIN: protein,
+        // CARBS: carbs,
+        // FAT: fat,
+        // STATUS: status,
       };
 
   @override

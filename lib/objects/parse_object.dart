@@ -55,8 +55,9 @@ class ParseObject implements ParseBaseObject {
     String uri = _client.data.serverUrl + "$path";
 
     if (objectId != null) uri += "/$objectId";
-
+    print("uri: $uri");
     return this._client.get(uri).then((value) {
+      print("value: $value");
       return ParseResponse.handleResponse(this, value);
     });
   }

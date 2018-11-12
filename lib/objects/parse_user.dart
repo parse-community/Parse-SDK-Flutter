@@ -9,6 +9,7 @@ import 'package:parse_server_sdk/network/parse_http_client.dart';
 class User implements ParseBaseObject {
   final String className = '_User';
   final ParseHTTPClient client = ParseHTTPClient();
+
   String path = "/classes/_User";
   Map<String, dynamic> objectData = {};
 
@@ -52,6 +53,7 @@ class User implements ParseBaseObject {
   }
 
   Map<String, dynamic> _handleResponse(String response) {
+    print("response: $response");
     Map<String, dynamic> responseData = JsonDecoder().convert(response);
     if (responseData.containsKey('objectId')) {
       objectData = responseData;
@@ -65,14 +67,15 @@ class User implements ParseBaseObject {
     if (sessionId != null) objectData.remove('sessionToken');
   }
 
-  Future<Map<String, dynamic>> signUp([Map<String, dynamic> objectInitialData]) async {
+  Future<Map<String, dynamic>> signUp(
+      [Map<String, dynamic> objectInitialData]) async {
     if (objectInitialData != null) {
       objectData = {}..addAll(objectData)..addAll(objectInitialData);
     }
     _resetObjectId();
 
     Map<String, dynamic> bodyData = {};
-    bodyData["email"] = userData.username;
+    bodyData["email"] = userData.emailAddress;
     bodyData["password"] = userData.password;
     bodyData["username"] = userData.username;
 
@@ -81,8 +84,8 @@ class User implements ParseBaseObject {
     Uri url = Uri(
         scheme: tempUri.scheme,
         host: tempUri.host,
-        path: "${tempUri.path}$path"
-    );
+        port: tempUri.port,
+        path: "${tempUri.path}$path");
 
     final response = this.client.post(url,
         headers: {
@@ -92,6 +95,7 @@ class User implements ParseBaseObject {
 
     return response.then((value) {
       _handleResponse(value.body);
+      print(value.body);
       return objectData;
     });
   }
@@ -102,18 +106,19 @@ class User implements ParseBaseObject {
     Uri url = Uri(
         scheme: tempUri.scheme,
         host: tempUri.host,
+        port: tempUri.port,
         path: "${tempUri.path}/login",
         queryParameters: {
           "username": userData.username,
           "password": userData.password
-        }
-    );
-
+        });
+    print("url: $url");
     final response = this.client.post(url, headers: {
       'X-Parse-Revocable-Session': "1",
     });
     return response.then((value) {
       _handleResponse(value.body);
+      // print(value.body);
       return objectData;
     });
   }

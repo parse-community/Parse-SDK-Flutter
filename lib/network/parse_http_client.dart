@@ -18,6 +18,7 @@ class ParseHTTPClient extends http.BaseClient {
     request.headers['Content-Type'] = 'application/json';
     if (data.masterKey != null)
       request.headers['X-Parse-Master-Key'] = data.masterKey;
+    print("request: $request");
     return _client.send(request);
   }
 }

@@ -12,7 +12,8 @@ class ParseResponse {
   dynamic result;
   ParseException exception;
 
-  static Future<ParseResponse> _handleSuccess(ParseResponse response, ParseObject object, String responseBody) async {
+  static Future<ParseResponse> _handleSuccess(
+      ParseResponse response, ParseObject object, String responseBody) async {
     response.success = true;
 
     var map = JsonDecoder().convert(responseBody) as Map;
@@ -29,16 +30,20 @@ class ParseResponse {
   }
 
   static ParseResponse _checkForEmptyResult(ParseResponse response) {
-    if (response.result == null || (response.result as List<ParseObject>).length == 0) {
-        response.exception = ParseException();
-        response.exception.message = "No result found for query";
-        response.success = false;
+    // ||
+    //     (response.result as List<ParseObject>).length == 0 ||
+    //     (response.result as ParseObject) == null
+    if (response.result == null) {
+      response.exception = ParseException();
+      response.exception.message = "No result found for query";
+      response.success = false;
     }
 
     return response;
   }
 
-  static List<ParseObject> _handleMultipleResults(ParseObject object, dynamic map) {
+  static List<ParseObject> _handleMultipleResults(
+      ParseObject object, dynamic map) {
     var resultsList = List<ParseObject>();
 
     for (var value in map) {
@@ -60,7 +65,8 @@ class ParseResponse {
     return response;
   }
 
-  static Future<ParseResponse> handleResponse(ParseObject object, Response value) async {
+  static Future<ParseResponse> handleResponse(
+      ParseObject object, Response value) async {
     var response = ParseResponse();
 
     if (value != null) {

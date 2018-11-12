@@ -20,42 +20,50 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initParse();
-    getAllItems();
-    getSingleItem();
-    //query();
-    //queryByContainedIn();
-    initUser();
+    // getAllItems();
+    // getSingleItem();
+    query();
+    // queryByContainedIn();
+    // initUser();
   }
 
   Future<void> initParse() async {
-
     // Initialize parse
-    Parse().initialize(
-        ApplicationConstants.PARSE_APPLICATION_ID,
+    Parse().initialize(ApplicationConstants.PARSE_APPLICATION_ID,
         ApplicationConstants.PARSE_SERVER_URL,
         masterKey: ApplicationConstants.PARSE_MASTER_KEY);
   }
 
   void getAllItems() {
     DietPlan().getAll().then((response) {
-      if (response.success){
-
+      if (response.success) {
         for (var plan in response.result) {
-          print(ApplicationConstants.APP_NAME + ": " + (plan as DietPlan).name);
+          if ((plan as DietPlan).name != null) {
+            print(ApplicationConstants.APP_NAME +
+                ": ${DietPlan.DIET_PLAN}------ " +
+                (plan as DietPlan).name);
+          } else {
+            print(ApplicationConstants.APP_NAME +
+                ": ${DietPlan.DIET_PLAN}---${(plan as DietPlan).objectId}--- null");
+          }
         }
-
       } else {
-        print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+        print(
+            ApplicationConstants.APP_NAME + ": " + response.exception.message);
       }
     });
   }
 
   void getSingleItem() {
-    DietPlan().get('R5EonpUDWy').then((response) {
-      if (response.success){
-        print(ApplicationConstants.APP_NAME + ": " + (response.result as DietPlan).toString());
+    DietPlan().get('2pNUgv1CKA').then((response) {
+      if (response.success) {
+        print("response.result: ${response.result}");
+        print(ApplicationConstants.APP_NAME +
+            ":: ${DietPlan.DIET_PLAN}---${(response.result as DietPlan).objectId}---  " +
+            (response.result as DietPlan).toString());
       } else {
-        print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+        print(
+            ApplicationConstants.APP_NAME + ": " + response.exception.message);
       }
     });
   }
@@ -65,13 +73,18 @@ class _MyAppState extends State<MyApp> {
     QueryBuilder()
       ..object = DietPlan()
       ..field = DietPlan.NAME
-      ..equals = ['Paleo']
-      ..query().then((response){
-
-        if (response.success){
-          print(ApplicationConstants.APP_NAME + ": " + ((response.result as List<ParseObject>)[0] as DietPlan).toString());
+      ..equals = ['fff444']
+      ..query().then((response) {
+        if (response.success) {
+          print(ApplicationConstants.APP_NAME +
+              "::: ${DietPlan.DIET_PLAN}---${((response.result as List<ParseObject>)[0] as DietPlan).name}---  " +
+              ((response.result as List<ParseObject>)[0] as DietPlan)
+                  .objectId
+                  .toString());
         } else {
-          print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+          print(ApplicationConstants.APP_NAME +
+              ": " +
+              response.exception.message);
         }
       });
   }
@@ -81,22 +94,31 @@ class _MyAppState extends State<MyApp> {
     QueryBuilder()
       ..object = DietPlan()
       ..field = DietPlan.NAME
-      ..contains = ['Diet']
-      ..query().then((response){
-
-        if (response.success){
-          print(ApplicationConstants.APP_NAME + ": " + ((response.result as List<ParseObject>)[0] as DietPlan).toString());
+      ..containedIn = ['dfg']
+      ..query().then((response) {
+        if (response.success) {
+          print("queryByContainedIn-result: ${response.result}");
+          print(ApplicationConstants.APP_NAME +
+              ": " +
+              ((response.result as List<ParseObject>).length > 0
+                  ? ((response.result as List<ParseObject>)[0] as DietPlan)
+                      .toString()
+                  : ""));
         } else {
-          print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+          print(ApplicationConstants.APP_NAME +
+              ": " +
+              response.exception.message);
         }
       });
   }
 
   Future<void> initUser() async {
-   User().createNewUser("TestFlutter", "TestPassword123", "TestEmail@Email.com");
+    User()
+        .createNewUser("TestFlutter", "TestPassword123", "TestEmail@Email.com");
+    // User().signUp();
 
     User().login().then((val) {
-      print(val);
+      print("val: $val");
     });
   }
 
