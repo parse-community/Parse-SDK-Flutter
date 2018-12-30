@@ -20,9 +20,13 @@ Parse().initialize(
 ## After, you can then get and save Parse Objects by calling:-
 
 ```
-Parse().object('Diet_Plans').get('R5EonpUDWy').then((dietPlan) {
-      print(dietPlan['name']);
-});
+var apiResponse = await ParseObject('ParseTableName').getAll();
+
+    if (apiResponse.success){
+      for (var testObject in apiResponse.result) {
+        print(ApplicationConstants.APP_NAME + ": " + testObject.toString());
+      }
+    }
 ```
 
 ## Or, extend the ParseObject class and create custom objects:-
@@ -46,7 +50,11 @@ class DietPlan extends ParseObject {
 ## then call:-
 
 ```
-DietPlan().get('R5EonpUDWy').then((plan) {
-      print(DietPlan.fromJson(plan).name);
-});
+var dietPlan = await DietPlan().get('R5EonpUDWy');
+
+    if (dietPlan.success) {
+      print(ApplicationConstants.APP_NAME + ": " + (dietPlan.result as DietPlan).toString());
+    } else {
+      print(ApplicationConstants.APP_NAME + ": " + dietPlan.exception.message);
+    }
 ```
