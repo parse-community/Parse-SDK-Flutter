@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:parse_server_sdk/objects/parse_exception.dart';
@@ -12,7 +11,8 @@ class ParseResponse {
   dynamic result;
   ParseException exception;
 
-  static Future<ParseResponse> _handleSuccess(ParseResponse response, ParseObject object, String responseBody) async {
+  static ParseResponse _handleSuccess(
+      ParseResponse response, ParseObject object, String responseBody) {
     response.success = true;
 
     var map = JsonDecoder().convert(responseBody) as Map;
@@ -29,16 +29,19 @@ class ParseResponse {
   }
 
   static ParseResponse _checkForEmptyResult(ParseResponse response) {
-    if (response.result == null || (response.result as List<ParseObject>).length == 0) {
-        response.exception = ParseException();
-        response.exception.message = "No result found for query";
-        response.success = false;
+    if (response.result == null ||
+        ((response.result == List) &&
+            (response.result as List<ParseObject>).length == 0)) {
+      response.exception = ParseException();
+      response.exception.message = "No result found for query";
+      response.success = false;
     }
 
     return response;
   }
 
-  static List<ParseObject> _handleMultipleResults(ParseObject object, dynamic map) {
+  static List<ParseObject> _handleMultipleResults(
+      ParseObject object, dynamic map) {
     var resultsList = List<ParseObject>();
 
     for (var value in map) {
@@ -53,14 +56,14 @@ class ParseResponse {
     return object.fromJson(map);
   }
 
-  static Future<ParseResponse> _handleError(
-      ParseResponse response, Response value) async {
+  static ParseResponse _handleError(
+      ParseResponse response, Response value) {
     response.exception = ParseException();
     response.exception.message = value.reasonPhrase;
     return response;
   }
 
-  static Future<ParseResponse> handleResponse(ParseObject object, Response value) async {
+  static handleResponse(ParseObject object, Response value) {
     var response = ParseResponse();
 
     if (value != null) {

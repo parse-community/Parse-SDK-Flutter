@@ -6,9 +6,8 @@ import 'package:parse_server_sdk/network/parse_http_client.dart';
 import 'package:parse_server_sdk/objects/parse_object.dart';
 import 'package:parse_server_sdk/objects/parse_response.dart';
 
-class QueryBuilder implements ParseBaseObject {
-  // BaseParams
-  String _className;
+class QueryBuilder extends ParseBaseObject {
+
   ParseObject object;
   final ParseHTTPClient client = ParseHTTPClient();
   String path;
@@ -40,7 +39,7 @@ class QueryBuilder implements ParseBaseObject {
   String get objectId => null;
   Map<String, dynamic> objectData = {};
 
-  QueryBuilder();
+  QueryBuilder() : super();
 
   void ascending(String attribute) {}
 
@@ -55,7 +54,7 @@ class QueryBuilder implements ParseBaseObject {
   }
 
   Future<ParseResponse> query() async {
-    return object.getQuery(_buildQuery());
+    return object.query(_buildQuery());
   }
 
   String _buildQuery() {

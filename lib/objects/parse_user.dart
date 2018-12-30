@@ -6,19 +6,19 @@ import 'package:parse_server_sdk/data/parse_data_user.dart';
 import 'package:parse_server_sdk/objects/parse_base.dart';
 import 'package:parse_server_sdk/network/parse_http_client.dart';
 
-class User implements ParseBaseObject {
-  final String className = '_User';
+class User extends ParseBaseObject {
+  static final String className = '_User';
   final ParseHTTPClient client = ParseHTTPClient();
   String path = "/classes/_User";
   Map<String, dynamic> objectData = {};
 
   static ParseDataUser userData;
 
+  User() : super(ParseHTTPClient());
+
   String get objectId => objectData['objectId'];
   String get sessionId => objectData['sessionToken'];
   String get userId => objectData['objectId'];
-
-  User();
 
   User createNewUser(String username, String password, String emailAddress) {
     ParseDataUser.init(username, password, emailAddress);
@@ -28,18 +28,6 @@ class User implements ParseBaseObject {
 
   User _newInstance(ParseDataUser data) {
     return User();
-  }
-
-  void set(String attribute, dynamic value) {
-    objectData[attribute] = value;
-  }
-
-  Future<dynamic> get(attribute) async {
-    final response = this.client.get(client.data.serverUrl + "$path/$objectId");
-    return response.then((value) {
-      objectData = JsonDecoder().convert(value.body);
-      return objectData[attribute];
-    });
   }
 
   Future<dynamic> me(attribute) async {
