@@ -10,9 +10,14 @@ class Parse {
 
   Parse();
 
-  Parse initialize(appId, serverUrl, {liveQueryUrl, masterKey, sessionId}) {
-    ParseDataServer.init(appId, serverUrl,
-        liveQueryUrl: liveQueryUrl, masterKey: masterKey, sessionId: sessionId);
+  Parse initialize(appId, serverUrl, {debug, appName, liveQueryUrl, masterKey, sessionId}) {
+    ParseDataServer.init(appId,
+        serverUrl,
+        debug: debug,
+        appName: appName,
+        liveQueryUrl: liveQueryUrl,
+        masterKey: masterKey,
+        sessionId: sessionId);
 
     return newInstance(ParseDataServer());
   }

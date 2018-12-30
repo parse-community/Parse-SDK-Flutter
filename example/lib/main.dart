@@ -16,88 +16,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
   @override
   void initState() {
     super.initState();
     initParse();
-    getAllItems();
-    getSingleItem();
-    //query();
-    //queryByContainedIn();
-    initUser();
-  }
-
-  Future<void> initParse() async {
-
-    // Initialize parse
-    Parse().initialize(
-        ApplicationConstants.PARSE_APPLICATION_ID,
-        ApplicationConstants.PARSE_SERVER_URL,
-        masterKey: ApplicationConstants.PARSE_MASTER_KEY);
-  }
-
-  void getAllItems() {
-    DietPlan().getAll().then((response) {
-      if (response.success){
-
-        for (var plan in response.result) {
-          print(ApplicationConstants.APP_NAME + ": " + (plan as DietPlan).name);
-        }
-
-      } else {
-        print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
-      }
-    });
-  }
-
-  void getSingleItem() {
-    DietPlan().get('R5EonpUDWy').then((response) {
-      if (response.success){
-        print(ApplicationConstants.APP_NAME + ": " + (response.result as DietPlan).toString());
-      } else {
-        print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
-      }
-    });
-  }
-
-  void query() {
-    // Query for an object by name
-    QueryBuilder()
-      ..object = DietPlan()
-      ..field = DietPlan.NAME
-      ..equals = ['Paleo']
-      ..query().then((response){
-
-        if (response.success){
-          print(ApplicationConstants.APP_NAME + ": " + ((response.result as List<ParseObject>)[0] as DietPlan).toString());
-        } else {
-          print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
-        }
-      });
-  }
-
-  void queryByContainedIn() {
-    // Query for an object by name
-    QueryBuilder()
-      ..object = DietPlan()
-      ..field = DietPlan.NAME
-      ..contains = ['Diet']
-      ..query().then((response){
-
-        if (response.success){
-          print(ApplicationConstants.APP_NAME + ": " + ((response.result as List<ParseObject>)[0] as DietPlan).toString());
-        } else {
-          print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
-        }
-      });
-  }
-
-  Future<void> initUser() async {
-   User().createNewUser("TestFlutter", "TestPassword123", "TestEmail@Email.com");
-
-    User().login().then((val) {
-      print(val);
-    });
+    runTestQueries();
   }
 
   @override
@@ -110,7 +34,76 @@ class _MyAppState extends State<MyApp> {
         body: new Center(
           child: new Text('Running Parse init'),
         ),
+        floatingActionButton: new FloatingActionButton(onPressed: runTestQueries),
       ),
     );
+  }
+
+  initParse() async {
+    // Initialize parse
+    Parse().initialize(
+        ApplicationConstants.PARSE_APPLICATION_ID,
+        ApplicationConstants.PARSE_SERVER_URL,
+        masterKey: ApplicationConstants.PARSE_MASTER_KEY,
+        appName: ApplicationConstants.APP_NAME,
+        debug: true
+    );
+  }
+
+  runTestQueries(){
+    getAllItems();
+    getSingleItem();
+    query();
+    initUser();
+  }
+
+  void getAllItems() async {
+    var dietPlans = await DietPlan().getAll();
+
+      if (dietPlans.success) {
+        for (var plan in dietPlans.result) {
+          print(ApplicationConstants.APP_NAME + ": " + (plan as DietPlan).name);
+        }
+      } else {
+        print(ApplicationConstants.APP_NAME + ": " + dietPlans.exception.message);
+      }
+  }
+
+  void getSingleItem() async {
+    var dietPlan = await DietPlan().get('R5EonpUDWy');
+
+    if (dietPlan.success) {
+      print(ApplicationConstants.APP_NAME + ": " + (dietPlan.result as DietPlan).toString());
+    } else {
+      print(ApplicationConstants.APP_NAME + ": " + dietPlan.exception.message);
+    }
+  }
+
+  void query() {
+    // Query for an object by name
+    QueryBuilder()
+      ..object = DietPlan()
+      ..field = DietPlan.NAME
+      ..equals = ['Paleo']
+      ..query().then((response) {
+        if (response.success) {
+          print(ApplicationConstants.APP_NAME +
+              ": " +
+              ((response.result as List<ParseObject>)[0] as DietPlan)
+                  .toString());
+        } else {
+          print(ApplicationConstants.APP_NAME +
+              ": " +
+              response.exception.message);
+        }
+      });
+  }
+
+  initUser() async {
+    User().createNewUser("TestFlutter", "TestPassword123", "TestEmail@Email.com");
+
+    User().login().then((val) {
+      print(val);
+    });
   }
 }
