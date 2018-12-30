@@ -1,91 +1,66 @@
-import 'dart:async';
-import 'dart:convert';
-
+import 'package:http/http.dart';
+import 'package:meta/meta.dart';
 import 'package:parse_server_sdk/network/parse_http_client.dart';
 import 'package:parse_server_sdk/objects/parse_base.dart';
 import 'package:parse_server_sdk/objects/parse_response.dart';
 
-class ParseObject implements ParseBaseObject {
-  final ParseHTTPClient _client = ParseHTTPClient();
-  Map<String, dynamic> objectData = {};
+class ParseObject extends ParseBaseObject {
   final String className;
   String path;
+  bool debug;
 
-  String objectId;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  ParseObject(this.className) {
+  ParseObject(this.className, {this.debug: false}) : super(ParseHTTPClient()) {
     path = "/classes/$className";
   }
 
-  Future<ParseResponse> create([Map<String, dynamic> objectInitialData]) async {
-    objectData = {}..addAll(objectData)..addAll(objectInitialData);
-
-    final response = this._client.post("${_client.data.serverUrl}$path",
-        body: JsonEncoder().convert(objectData));
-    return response.then((value) {
-      return ParseResponse.handleResponse(this, value);
-    });
+  get(String id) async {
+    var result = await parseGetObjectById(id, path);
+    return _handleResult(result);
   }
 
-  Future<ParseResponse> save([Map<String, dynamic> objectInitialData]) {
-    objectData = {}..addAll(objectData)..addAll(objectInitialData);
-    if (objectId == null) {
-      return create(objectData);
-    } else {
-      final response = this._client.put(
-          _client.data.serverUrl + "$path/$objectId",
-          body: JsonEncoder().convert(objectData));
-      return response.then((value) {
-        return ParseResponse.handleResponse(this, value);
-      });
+  getAll() async {
+    var result = await parseGetAll(path);
+    return _handleResult(result);
+  }
+
+  create([Map<String, dynamic> objectData]) async {
+    var result = await parseCreate(path, objectData);
+    return _handleResult(result);
+  }
+
+  save() async {
+    var result = await parseSave(path);
+    return _handleResult(result);
+  }
+
+  @protected
+  query(String query) async {
+    var result = await parseQuery(path, query);
+    return _handleResult(result);
+  }
+
+  _handleResult(Response response) {
+    ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
+
+    if (getDebugStatus() || debug) {
+
+      var responseString = " \n";
+
+      responseString +=
+          "----"
+          "\n${getAppName()} API Response:" +
+          "\nStatus Code: ${parseResponse.statusCode}";
+
+      if (parseResponse.success && parseResponse.result != null) {
+        responseString += "\nPayload: ${parseResponse.result.toString()}";
+      } else if (!parseResponse.success) {
+        responseString += "\nException: ${parseResponse.exception.message}";
+      }
+
+      responseString += "\n----";
+      print(responseString);
     }
-  }
 
-  Future<ParseResponse> getAll({String query}) async {
-    String uri = _client.data.serverUrl + "$path";
-
-    return this._client.get(uri).then((value) {
-      return ParseResponse.handleResponse(this, value);
-    });
-  }
-
-  Future<ParseResponse> get(String objectId) async {
-    String uri = _client.data.serverUrl + "$path";
-
-    if (objectId != null) uri += "/$objectId";
-
-    return this._client.get(uri).then((value) {
-      return ParseResponse.handleResponse(this, value);
-    });
-  }
-
-  Future<ParseResponse> getQuery(String bodyBytes) async {
-    String uri = _client.data.serverUrl + "$path" + "?" + bodyBytes;
-
-    return this._client.get(uri).then((value) {
-      return ParseResponse.handleResponse(this, value);
-    });
-  }
-
-  Future<String> destroy() {
-    final response =
-        this._client.delete(_client.data.serverUrl + "$path/$objectId");
-    return response.then((value) {
-      return JsonDecoder().convert(value.body);
-    });
-  }
-
-  dynamic fromJson(Map<String, dynamic> objectData) {
-    return objectData;
-  }
-
-  void set(String attribute, dynamic value) {
-    objectData[attribute] = value;
-  }
-
-  dynamic copy() {
-    return ParseObject(className);
+    return ParseResponse.handleResponse(this, response);
   }
 }
