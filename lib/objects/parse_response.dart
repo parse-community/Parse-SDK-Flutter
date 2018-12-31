@@ -40,18 +40,17 @@ class ParseResponse {
     return response;
   }
 
-  static List<ParseObject> _handleMultipleResults(
-      ParseObject object, dynamic map) {
-    var resultsList = List<ParseObject>();
+  static _handleMultipleResults(ParseObject object, dynamic map) {
+    var resultsList = List();
 
     for (var value in map) {
-      resultsList.add(_handleSingleResult(object.copy(), value));
+      resultsList.add(_handleSingleResult(object, value));
     }
 
     return resultsList;
   }
 
-  static ParseObject _handleSingleResult(ParseObject object, map) {
+  static _handleSingleResult(ParseObject object, map) {
     ParseUtilsObjects.populateObjectBaseData(object, map);
     return object.fromJson(map);
   }
