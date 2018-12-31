@@ -33,7 +33,7 @@ class Parse {
   ParseObject _parseObject;
 
   // ignore: unused_field
-  User _user;
+  ParseUser _user;
 
   // ignore: unused_field
   LiveQuery _liveQuery;
@@ -42,8 +42,8 @@ class Parse {
     return _parseObject = new ParseObject(objectName);
   }
 
-  User user() {
-    return _user = new User();
+  ParseUser user() {
+    return _user = new ParseUser();
   }
 
   LiveQuery liveQuery() {

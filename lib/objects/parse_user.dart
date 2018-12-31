@@ -1,157 +1,152 @@
 import 'dart:convert';
-import 'dart:async';
 
+import 'package:http/http.dart';
+import 'package:parse_server_sdk/base/parse_constants.dart';
 import 'package:parse_server_sdk/data/parse_data_user.dart';
-
-import 'package:parse_server_sdk/objects/parse_base.dart';
+import 'package:parse_server_sdk/enums/parse_enum_user_call.dart';
 import 'package:parse_server_sdk/network/parse_http_client.dart';
 
-class User extends ParseBaseObject {
+class ParseUser {
+  ParseHTTPClient _client;
   static final String className = '_User';
-  final ParseHTTPClient client = ParseHTTPClient();
-  String path = "/classes/_User";
-  Map<String, dynamic> objectData = {};
+  String path = "/classes/$className";
+  bool debug;
 
-  static ParseDataUser userData;
-
-  User() : super(ParseHTTPClient());
-
-  String get objectId => objectData['objectId'];
-  String get sessionId => objectData['sessionToken'];
-  String get userId => objectData['objectId'];
-
-  User createNewUser(String username, String password, String emailAddress) {
-    ParseDataUser.init(username, password, emailAddress);
-    userData = ParseDataUser();
-    return _newInstance(ParseDataUser());
+  ParseUser({this.debug: false, ParseHTTPClient client}) {
+    client != null ? _client = client : _client = ParseHTTPClient();
   }
 
-  User _newInstance(ParseDataUser data) {
+  create(String username, String password, String emailAddress) {
+    User.init(username, password, emailAddress.toLowerCase());
     return User();
   }
 
-  Future<dynamic> me(attribute) async {
-    final response = this.client.get(client.data.serverUrl + "$path/me",
-        headers: {"X-Parse-Session-Token": sessionId});
-    return response.then((value) {
-      objectData = JsonDecoder().convert(value.body);
-      return objectData[attribute];
-    });
-  }
+  _getBasePath(String path) => "${_client.data.serverUrl}$path";
 
-  Map<String, dynamic> _handleResponse(String response) {
-    Map<String, dynamic> responseData = JsonDecoder().convert(response);
-    if (responseData.containsKey('objectId')) {
-      objectData = responseData;
-      this.client.data.sessionId = sessionId;
+  currentUser({bool fromServer: false}) async {
+    if (User() == null) {
+      return null;
+    } else if (fromServer == false) {
+      return User();
+    } else {
+      var uri = "${_getBasePath(path)}/me";
+      var result = await _client.get(uri, headers: {
+        ParseConstants.HEADER_SESSION_TOKEN: _client.data.sessionId
+      });
+      return _handleResult(result, ParseApiUserCallType.currentUser);
     }
-    return responseData;
   }
 
-  void _resetObjectId() {
-    if (objectId != null) objectData.remove('objectId');
-    if (sessionId != null) objectData.remove('sessionToken');
-  }
-
-  Future<Map<String, dynamic>> signUp([Map<String, dynamic> objectInitialData]) async {
-    if (objectInitialData != null) {
-      objectData = {}..addAll(objectData)..addAll(objectInitialData);
-    }
-    _resetObjectId();
-
+  signUp() async {
     Map<String, dynamic> bodyData = {};
-    bodyData["email"] = userData.username;
-    bodyData["password"] = userData.password;
-    bodyData["username"] = userData.username;
+    bodyData["email"] = User().emailAddress;
+    bodyData["password"] = User().password;
+    bodyData["username"] = User().username;
 
-    Uri tempUri = Uri.parse(client.data.serverUrl);
+    Uri tempUri = Uri.parse(_client.data.serverUrl);
 
     Uri url = Uri(
         scheme: tempUri.scheme,
         host: tempUri.host,
-        path: "${tempUri.path}$path"
-    );
+        path: "${tempUri.path}$path");
 
-    final response = this.client.post(url,
+    final response = await _client.post(url,
         headers: {
-          'X-Parse-Revocable-Session': "1",
+          ParseConstants.HEADER_REVOCABLE_SESSION: "1",
         },
         body: JsonEncoder().convert(bodyData));
 
-    return response.then((value) {
-      _handleResponse(value.body);
-      return objectData;
-    });
+    _handleResult(response, ParseApiUserCallType.signUp);
+    return User();
   }
 
-  Future<Map<String, dynamic>> login() async {
-    Uri tempUri = Uri.parse(client.data.serverUrl);
+  login() async {
+    Uri tempUri = Uri.parse(_client.data.serverUrl);
 
     Uri url = Uri(
         scheme: tempUri.scheme,
         host: tempUri.host,
         path: "${tempUri.path}/login",
         queryParameters: {
-          "username": userData.username,
-          "password": userData.password
-        }
-    );
+          "username": User().username,
+          "password": User().password
+        });
 
-    final response = this.client.post(url, headers: {
-      'X-Parse-Revocable-Session': "1",
+    final response = await _client.post(url, headers: {
+      ParseConstants.HEADER_REVOCABLE_SESSION: "1",
     });
-    return response.then((value) {
-      _handleResponse(value.body);
-      return objectData;
-    });
+
+    _handleResult(response, ParseApiUserCallType.login);
+    return User();
   }
 
-  Future<Map<String, dynamic>> verificationEmailRequest() async {
-    final response = this.client.post(
-        "${client.data.serverUrl}/verificationEmailRequest",
-        body: JsonEncoder().convert({"email": userData.emailAddress}));
-    return response.then((value) {
-      return _handleResponse(value.body);
-    });
+  verificationEmailRequest() async {
+    final response = await _client.post(
+        "${_client.data.serverUrl}/verificationEmailRequest",
+        body: JsonEncoder().convert({"email": User().emailAddress}));
+
+    return _handleResult(
+        response, ParseApiUserCallType.verificationEmailRequest);
   }
 
-  Future<Map<String, dynamic>> requestPasswordReset() async {
-    final response = this.client.post(
-        "${client.data.serverUrl}/requestPasswordReset",
-        body: JsonEncoder().convert({"email": userData.emailAddress}));
-    return response.then((value) {
-      return _handleResponse(value.body);
-    });
+  requestPasswordReset() async {
+    final response = await _client.post(
+        "${_client.data.serverUrl}/requestPasswordReset",
+        body: JsonEncoder().convert({"email": User().emailAddress}));
+
+    return _handleResult(response, ParseApiUserCallType.requestPasswordReset);
   }
 
-  Future<Map<String, dynamic>> save([Map<String, dynamic> objectInitialData]) {
-    objectData = {}..addAll(objectData)..addAll(objectInitialData);
-    if (objectId == null) {
-      return signUp(objectData);
+  save() async {
+    if (User().objectId == null) {
+      return signUp();
     } else {
-      final response = this.client.put(
-          client.data.serverUrl + "$path/$objectId",
-          body: JsonEncoder().convert(objectData));
-      return response.then((value) {
-        return _handleResponse(value.body);
-      });
+      final response = await _client.put(
+          _client.data.serverUrl + "$path/${User().objectId}",
+          body: JsonEncoder().convert(User().getObjectData()));
+      return _handleResult(response, ParseApiUserCallType.save);
     }
   }
 
-  Future<String> destroy() {
-    final response = this.client.delete(
-        client.data.serverUrl + "$path/$objectId",
-        headers: {"X-Parse-Session-Token": sessionId});
-    return response.then((value) {
-      _handleResponse(value.body);
-      return objectId;
-    });
+  destroy() async {
+    final response = await _client.delete(
+        _client.data.serverUrl + "$path/${User().objectId}",
+        headers: {"X-Parse-Session-Token": _client.data.sessionId});
+    _handleResult(response, ParseApiUserCallType.destroy);
+    return User().objectId;
   }
 
-  Future<Map<String, dynamic>> all() {
-    final response = this.client.get(client.data.serverUrl + "$path");
-    return response.then((value) {
-      return _handleResponse(value.body);
-    });
+  all() async {
+    final response = await _client.get(_client.data.serverUrl + "$path");
+    return _handleResult(response, ParseApiUserCallType.all);
+  }
+
+  _handleResult(Response response, ParseApiUserCallType type) {
+    Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
+
+    var responseString = ' \n';
+
+    responseString += "----"
+        "\n${_client.data.appName} API Response ($className : ${getEnumValue(type)}) :";
+
+    if (response.statusCode == 200) {
+      responseString += "\nStatus Code: ${response.statusCode}";
+      responseString += "\nPayload: ${responseData.toString()}";
+
+      if (responseData.containsKey('objectId')) {
+        User().fromJson(JsonDecoder().convert(response.body) as Map);
+        _client.data.sessionId = responseData['sessionId'];
+      }
+    } else {
+      responseString += "\nStatus Code: ${responseData['code']}";
+      responseString += "\nException: ${responseData['error']}";
+    }
+
+    if (_client.data.debug || debug) {
+      responseString += "\n----\n";
+      print(responseString);
+    }
+
+    return User();
   }
 }
