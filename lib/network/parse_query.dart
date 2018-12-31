@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:parse_server_sdk/objects/parse_base.dart';
 import 'package:parse_server_sdk/network/parse_http_client.dart';
 import 'package:parse_server_sdk/objects/parse_object.dart';
 import 'package:parse_server_sdk/objects/parse_response.dart';
 
-class QueryBuilder extends ParseBaseObject {
+class QueryBuilder {
 
   ParseObject object;
   final ParseHTTPClient client = ParseHTTPClient();
@@ -53,7 +52,7 @@ class QueryBuilder extends ParseBaseObject {
     return new Future(foo);
   }
 
-  Future<ParseResponse> query() async {
+  query() async {
     return object.query(_buildQuery());
   }
 

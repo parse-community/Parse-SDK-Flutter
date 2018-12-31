@@ -5,6 +5,7 @@ import 'package:flutter_plugin_example/application_constants.dart';
 import 'package:flutter_plugin_example/diet_plan.dart';
 import 'package:parse_server_sdk/objects/parse_object.dart';
 import 'package:parse_server_sdk/network/parse_query.dart';
+import 'package:parse_server_sdk/objects/parse_response.dart';
 import 'package:parse_server_sdk/objects/parse_user.dart';
 import 'package:parse_server_sdk/parse.dart';
 
@@ -52,9 +53,20 @@ class _MyAppState extends State<MyApp> {
 
   runTestQueries(){
     getAllItems();
+    getAllItemsByName();
     getSingleItem();
     query();
     initUser();
+  }
+
+  void getAllItemsByName() async {
+    var apiResponse = await ParseObject('ParseTableName').getAll();
+
+    if (apiResponse.success){
+      for (var testObject in apiResponse.result) {
+        print(ApplicationConstants.APP_NAME + ": " + testObject.toString());
+      }
+    }
   }
 
   void getAllItems() async {
@@ -89,7 +101,7 @@ class _MyAppState extends State<MyApp> {
         if (response.success) {
           print(ApplicationConstants.APP_NAME +
               ": " +
-              ((response.result as List<ParseObject>)[0] as DietPlan)
+              ((response.result as List<dynamic>).first as DietPlan)
                   .toString());
         } else {
           print(ApplicationConstants.APP_NAME +
@@ -100,10 +112,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   initUser() async {
-    User().createNewUser("TestFlutter", "TestPassword123", "TestEmail@Email.com");
-
-    User().login().then((val) {
-      print(val);
-    });
+    ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+    ParseUser().signUp();
   }
 }
