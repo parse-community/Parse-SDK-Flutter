@@ -13,8 +13,13 @@ class ParseObject extends ParseBase {
   bool _debug;
   ParseHTTPClient _client;
 
-  ParseObject(this.className, {bool debug: false, ParseHTTPClient client}) {
-    _debug = debug;
+  ParseObject(this.className, {bool debug, ParseHTTPClient client}) {
+    if (debug == null) {
+      _debug = client.data.debug;
+    } else {
+      _debug = debug;
+    }
+
     _path = "/classes/$className";
     setObjectData(Map<String, dynamic>());
     client == null ? _client = ParseHTTPClient() : _client = client;

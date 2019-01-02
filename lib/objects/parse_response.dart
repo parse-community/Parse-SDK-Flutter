@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:http/http.dart';
 import 'package:parse_server_sdk/objects/parse_exception.dart';
 import 'package:parse_server_sdk/objects/parse_object.dart';
 import 'package:parse_server_sdk/utils/parse_utils_objects.dart';
-import 'package:http/http.dart';
 
 class ParseResponse {
   bool success = false;
@@ -51,7 +51,7 @@ class ParseResponse {
   }
 
   static _handleSingleResult(ParseObject object, map) {
-    ParseUtilsObjects.populateObjectBaseData(object, map);
+    populateObjectBaseData(object, map);
     return object.fromJson(map);
   }
 
