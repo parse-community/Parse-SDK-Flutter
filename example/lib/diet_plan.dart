@@ -21,7 +21,7 @@ class DietPlan extends ParseObject {
   static const String STATUS = 'Status';
 
   @override
-  dynamic fromJson(Map<String, dynamic> objectData) {
+  dynamic fromJson(Map objectData) {
     this.name = objectData[NAME];
     this.description = objectData[DESCRIPTION];
     this.protein = objectData[PROTEIN];

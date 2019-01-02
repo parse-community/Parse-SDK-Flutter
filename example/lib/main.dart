@@ -113,6 +113,13 @@ class _MyAppState extends State<MyApp> {
 
   initUser() async {
     ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
-    ParseUser().signUp();
+    var user = await ParseUser().signUp();
+    user = await ParseUser().login();
+    user = await ParseUser().currentUser(fromServer: true);
+    user = await ParseUser().requestPasswordReset();
+    user = await ParseUser().verificationEmailRequest();
+    user = await ParseUser().all();
+    user = await ParseUser().save();
+    user = await ParseUser().destroy();
   }
 }
