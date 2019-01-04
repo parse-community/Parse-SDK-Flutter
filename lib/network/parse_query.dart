@@ -5,16 +5,15 @@ import 'package:parse_server_sdk/network/parse_http_client.dart';
 import 'package:parse_server_sdk/objects/parse_object.dart';
 import 'package:parse_server_sdk/objects/parse_response.dart';
 
-class QueryBuilder {
+class QueryBuilder <T extends ParseObject> {
 
-  ParseObject object;
+  T object;
   final ParseHTTPClient client = ParseHTTPClient();
   String path;
   String field;
   Map results;
   Map constraint;
-  Map<String, Map<String, String>> whereMap =
-      Map<String, Map<String, String>>();
+  Map<String, Map<String, String>> whereMap = Map();
 
   // QueryParams
   List<dynamic> equals;
@@ -25,7 +24,7 @@ class QueryBuilder {
   List<dynamic> notEqualTo;
   List<dynamic> contains;
   List<dynamic> containedIn;
-  List<dynamic> notContainerIn;
+  List<dynamic> notContainedIn;
   List<dynamic> exists;
   List<dynamic> select;
   List<dynamic> dontSelect;
@@ -38,7 +37,7 @@ class QueryBuilder {
   String get objectId => null;
   Map<String, dynamic> objectData = {};
 
-  QueryBuilder() : super();
+  QueryBuilder(this.object) : super();
 
   void ascending(String attribute) {}
 
@@ -46,43 +45,61 @@ class QueryBuilder {
 
   void startsWith(String key, dynamic value) {}
 
-  Future<Map> first() {
-    Map<String, dynamic> t = {};
-    foo() => t;
-    return new Future(foo);
-  }
-
   query() async {
     return object.query(_buildQuery());
   }
 
   String _buildQuery() {
-    var existsMap = Map<String, String>();
+    var existsMap = Map();
 
+    // START QUERY
+    String query = "where=";
+
+    // ADD PARAM TO MAP
+
+    //Needs fixing
     if (equals != null) existsMap = _runThroughQueryParams(equals, field);
-    if (containedIn != null)
-      existsMap = _runThroughQueryParamsWithName(containedIn, "in", field);
-    if (regEx != null)
-      existsMap = _runThroughQueryParamsWithName(regEx, "regex", field);
-    if (greaterThan != null)
-      existsMap = _runThroughQueryParamsWithName(greaterThan, "gt", field);
-    if (contains != null)
-      existsMap =
-          _runThroughQueryParamsWithSearchTerms(contains, "term", field);
+    if (contains != null) existsMap = _runThroughQueryParamsWithName(contains, "\$term", field);
 
-    //String query = r"""where={"Name":{"$text":{"$search":{"$term":"Diet"}}}}""";
-    String query = "where=${JsonEncoder().convert(existsMap)}";
+    // Works
+    if (lessThan != null) existsMap = _runThroughQueryParamsWithName(lessThan, "\$lt", field);
+    if (lessThanOrEqualTo != null) existsMap = _runThroughQueryParamsWithName(lessThanOrEqualTo, "\$lte", field);
+    if (greaterThan != null) existsMap = _runThroughQueryParamsWithName(greaterThan, "\$gt", field);
+    if (greaterThanOrEqualTo != null) existsMap = _runThroughQueryParamsWithName(greaterThanOrEqualTo, "\$gte", field);
+    if (notEqualTo != null) existsMap = _runThroughQueryParamsWithName(notEqualTo, "\$ne", field);
 
+    // Not sure
+    if (containedIn != null) existsMap = _runThroughQueryParamsWithName(containedIn, "\$in", field);
+    if (notContainedIn != null) existsMap = _runThroughQueryParamsWithName(notContainedIn, "\$nin", field);
+    if (exists != null) existsMap = _runThroughQueryParamsWithName(exists, "\$exists", field);
+    if (select != null) existsMap = _runThroughQueryParamsWithName(select, "\$select", field);
+    if (dontSelect != null) existsMap = _runThroughQueryParamsWithName(dontSelect, "\$dontSelect", field);
+    if (all != null) existsMap = _runThroughQueryParamsWithName(all, "\$all", field);
+
+    // Works
+    if (regEx != null) existsMap = _runThroughQueryParamsWithName(regEx, "\$regex", field);
+
+    // Doesnt
+    if (text != null) existsMap = _runThroughQueryParamsWithName(text, "\$text", field);
+
+    // -- BUILD QUERY USING MAP
+    for(var item in existsMap.entries){
+      query += "{\"${item.key.toString()}\":${item.value}}";
+    }
+
+    // -- ADD LIMITER
     if (limit != 0) query += '?limit=$limit';
     if (skip != 0) query += '?skip=$skip';
+
+    // -- TEST
+    print("QUERY: $query");
 
     return query;
   }
 
-  Map<String, String> _runThroughQueryParams(
-      List<dynamic> list, String queryParam) {
-    Map<String, String> mapToReturn = Map<String, String>();
-    var params = "";
+  Map _runThroughQueryParams(List<dynamic> list, String queryParam) {
+    Map<String, dynamic> mapToReturn = Map<String, dynamic>();
+    var params;
 
     if (list.isNotEmpty) {
       if (list.length == 1) {
@@ -101,16 +118,15 @@ class QueryBuilder {
     return mapToReturn;
   }
 
-  Map<String, String> _runThroughQueryParamsWithName(
-      List<dynamic> list, String queryParam, String fieldName) {
+  Map<String, String> _runThroughQueryParamsWithName(List<dynamic> list, String queryParam, String fieldName) {
     Map<String, String> mapToReturn = Map<String, String>();
     Map<String, dynamic> mapWithParamData = Map<String, dynamic>();
 
     for (var item in list) {
-      mapWithParamData["\$$queryParam"] = item;
+      mapWithParamData.putIfAbsent(queryParam, item);
     }
 
-    var params = JsonEncoder().convert(mapWithParamData).toString();
+    var params =  JsonEncoder().convert(mapWithParamData);
 
     mapToReturn[fieldName] = params;
 

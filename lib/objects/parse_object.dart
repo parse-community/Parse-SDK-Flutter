@@ -14,15 +14,17 @@ class ParseObject extends ParseBase {
   ParseHTTPClient _client;
 
   ParseObject(this.className, {bool debug, ParseHTTPClient client}) {
+
+    client == null ? _client = ParseHTTPClient() : _client = client;
+
     if (debug == null) {
-      _debug = client.data.debug;
+      _debug = _client.data.debug;
     } else {
       _debug = debug;
     }
 
     _path = "/classes/$className";
     setObjectData(Map<String, dynamic>());
-    client == null ? _client = ParseHTTPClient() : _client = client;
   }
 
   get(String objectId) async {
@@ -84,8 +86,8 @@ class ParseObject extends ParseBase {
         responseString += "\nStatus Code: ${parseResponse.statusCode}";
         responseString += "\nPayload: ${responseData.toString()}";
       } else if (!parseResponse.success) {
-        responseString += "\nStatus Code: ${responseData['code']}";
-        responseString += "\nException: ${responseData['error']}";
+        responseString += "\nStatus Code: ${responseData['code'] == null ? parseResponse.statusCode : responseData['code']}";
+        responseString += "\nException: ${responseData['error'] == null ? responseData.toString() : responseData['error']}";
       }
 
       responseString += "\n----\n";
