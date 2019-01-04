@@ -11,8 +11,7 @@ class ParseResponse {
   dynamic result;
   ParseException exception;
 
-  static ParseResponse _handleSuccess(
-      ParseResponse response, ParseObject object, String responseBody) {
+  static ParseResponse _handleSuccess(ParseResponse response, ParseObject object, String responseBody) {
     response.success = true;
 
     var map = JsonDecoder().convert(responseBody) as Map;
@@ -21,20 +20,6 @@ class ParseResponse {
       response.result = _handleMultipleResults(object, map.entries.first.value);
     } else {
       response.result = _handleSingleResult(object, map);
-    }
-
-    response = _checkForEmptyResult(response);
-
-    return response;
-  }
-
-  static ParseResponse _checkForEmptyResult(ParseResponse response) {
-    if (response.result == null ||
-        ((response.result == List) &&
-            (response.result as List<ParseObject>).length == 0)) {
-      response.exception = ParseException();
-      response.exception.message = "No result found for query";
-      response.success = false;
     }
 
     return response;
@@ -55,10 +40,16 @@ class ParseResponse {
     return object.fromJson(map);
   }
 
-  static ParseResponse _handleError(
-      ParseResponse response, Response value) {
+  static ParseResponse _handleError(ParseResponse response, Response value) {
     response.exception = ParseException();
     response.exception.message = value.reasonPhrase;
+    return response;
+  }
+
+  static ParseResponse _handleSuccessWithNoResults(ParseResponse response, String value) {
+    response.statusCode = 200;
+    response.exception = ParseException();
+    response.exception.message = value;
     return response;
   }
 
@@ -70,13 +61,14 @@ class ParseResponse {
 
       if (value.statusCode != 200) {
         return _handleError(response, value);
+      } else if (value.body == "{\"results\":[]}"){
+        return _handleSuccessWithNoResults(response, "Successful request but no results found");
       } else {
         return _handleSuccess(response, object, value.body);
       }
     } else {
       response.exception = ParseException();
-      response.exception.message =
-          "Error reaching server, or server response was null";
+      response.exception.message = "Error reaching server, or server response was null";
       return response;
     }
   }

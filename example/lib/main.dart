@@ -35,7 +35,8 @@ class _MyAppState extends State<MyApp> {
         body: new Center(
           child: new Text('Running Parse init'),
         ),
-        floatingActionButton: new FloatingActionButton(onPressed: runTestQueries),
+        floatingActionButton: new FloatingActionButton(
+            onPressed: runTestQueries),
       ),
     );
   }
@@ -51,18 +52,18 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  runTestQueries(){
-    getAllItems();
-    getAllItemsByName();
-    getSingleItem();
+  runTestQueries() {
+    //getAllItems();
+    //getAllItemsByName();
+    //getSingleItem();
     query();
-    initUser();
+    //initUser();
   }
 
   void getAllItemsByName() async {
     var apiResponse = await ParseObject('ParseTableName').getAll();
 
-    if (apiResponse.success){
+    if (apiResponse.success) {
       for (var testObject in apiResponse.result) {
         print(ApplicationConstants.APP_NAME + ": " + testObject.toString());
       }
@@ -70,45 +71,40 @@ class _MyAppState extends State<MyApp> {
   }
 
   void getAllItems() async {
-    var dietPlans = await DietPlan().getAll();
+    var response = await DietPlan().getAll();
 
-      if (dietPlans.success) {
-        for (var plan in dietPlans.result) {
-          print(ApplicationConstants.APP_NAME + ": " + (plan as DietPlan).name);
-        }
-      } else {
-        print(ApplicationConstants.APP_NAME + ": " + dietPlans.exception.message);
+    if (response.success) {
+      for (var plan in response.result) {
+        print(ApplicationConstants.APP_NAME + ": " + (plan as DietPlan).name);
       }
-  }
-
-  void getSingleItem() async {
-    var dietPlan = await DietPlan().get('R5EonpUDWy');
-
-    if (dietPlan.success) {
-      print(ApplicationConstants.APP_NAME + ": " + (dietPlan.result as DietPlan).toString());
     } else {
-      print(ApplicationConstants.APP_NAME + ": " + dietPlan.exception.message);
+      print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
     }
   }
 
-  void query() {
+  void getSingleItem() async {
+    var response = await DietPlan().get('R5EonpUDWy');
+
+    if (response.success) {
+      print(ApplicationConstants.APP_NAME + ": " + (response.result as DietPlan).toString());
+    } else {
+      print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+    }
+  }
+
+  void query() async {
     // Query for an object by name
-    QueryBuilder()
-      ..object = DietPlan()
-      ..field = DietPlan.NAME
-      ..equals = ['Paleo']
-      ..query().then((response) {
-        if (response.success) {
-          print(ApplicationConstants.APP_NAME +
-              ": " +
-              ((response.result as List<dynamic>).first as DietPlan)
-                  .toString());
-        } else {
-          print(ApplicationConstants.APP_NAME +
-              ": " +
-              response.exception.message);
-        }
-      });
+    var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
+      ..field = DietPlan.FAT
+      ..notEqualTo = [60, 65];
+
+    var response = await queryBuilder.query();
+
+    if (response.success) {
+      print(ApplicationConstants.APP_NAME + ": " + ((response.result as List<dynamic>).first as DietPlan).toString());
+    } else {
+      print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+    }
   }
 
   initUser() async {
