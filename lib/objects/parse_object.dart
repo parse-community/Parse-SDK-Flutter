@@ -19,8 +19,16 @@ class ParseObject implements ParseBaseObject {
     path = "/classes/$className";
   }
 
+  createObjectData(Map<String, dynamic> objectData) {
+    // ParseDataUser.init(username, password, emailAddress);
+    this.objectData = objectData;
+    // return this;
+  }
+
   Future<ParseResponse> create([Map<String, dynamic> objectInitialData]) async {
-    objectData = {}..addAll(objectData)..addAll(objectInitialData);
+    if (objectInitialData != null) {
+      objectData = {}..addAll(objectData)..addAll(objectInitialData);
+    }
 
     final response = this._client.post("${_client.data.serverUrl}$path",
         body: JsonEncoder().convert(objectData));
@@ -30,14 +38,30 @@ class ParseObject implements ParseBaseObject {
   }
 
   Future<ParseResponse> save([Map<String, dynamic> objectInitialData]) {
-    objectData = {}..addAll(objectData)..addAll(objectInitialData);
+    if (objectInitialData != null) {
+      objectData = {}..addAll(objectData)..addAll(objectInitialData);
+    }
     if (objectId == null) {
       return create(objectData);
     } else {
-      final response = this._client.put(
-          _client.data.serverUrl + "$path/$objectId",
-          body: JsonEncoder().convert(objectData));
+      // Map<String, dynamic> bodyData = {};
+      // bodyData["email"] = objectData.name;
+      // bodyData["password"] = objectData.password;
+
+      Uri tempUri = Uri.parse(_client.data.serverUrl);
+
+      Uri url = Uri(
+          scheme: tempUri.scheme,
+          host: tempUri.host,
+          port: tempUri.port,
+          path: "${tempUri.path}$path/$objectId");
+
+      print("put url: $url");
+      print("objectData: $objectData");
+      final response =
+          this._client.put(url, body: JsonEncoder().convert(objectData));
       return response.then((value) {
+        print("value: ${value.body}");
         return ParseResponse.handleResponse(this, value);
       });
     }

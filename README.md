@@ -1,10 +1,10 @@
 # Parse Server Dart
+
 A rewrite of a library hosted on GitHub. This is not my own content but based on a library already created and looks to be abandoned.
 
 https://github.com/lotux/parse_server_dart
 
-## Join in!
-Want to get involved? Join our Slack channel and help out! FlutterParseSDK.Slack.com
+## example 目录有完整测试
 
 ## Getting Started
 

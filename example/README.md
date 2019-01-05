@@ -1,8 +1,9 @@
-# flutter_plugin_example
+# flutter_parse_client_example
 
-Demonstrates how to use the flutter_plugin plugin.
+Demonstrates how to use the flutter parse client.
 
-## Getting Started
+## html ok
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+## websoket ok
+
+## bloc

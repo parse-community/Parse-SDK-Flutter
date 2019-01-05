@@ -9,11 +9,6 @@
       "type": "dart",
       "request": "launch",
       "program": "example/lib/main.dart"
-    },
-    {
-      "name": "Flutter",
-      "request": "launch",
-      "type": "dart"
     }
   ]
 }
