@@ -58,3 +58,61 @@ var dietPlan = await DietPlan().get('R5EonpUDWy');
       print(ApplicationConstants.APP_NAME + ": " + dietPlan.exception.message);
     }
 ```
+
+## Complex queries:-
+
+'''
+var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
+      ..startsWith(DietPlan.NAME, "Keto")
+      ..greaterThan(DietPlan.FAT, 64)
+      ..lessThan(DietPlan.FAT, 66)
+      ..equals(DietPlan.CARBS, 5);
+
+    var response = await queryBuilder.query();
+
+    if (response.success) {
+      print(ApplicationConstants.APP_NAME + ": " + ((response.result as List<dynamic>).first as DietPlan).toString());
+    } else {
+      print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+    }
+'''
+
+## Current abilities:-
+
+Main:
+Users
+Queries
+LiveQueries
+Debug Mode - Logging API calls
+
+ParseUser:
+Create
+Login
+CurrentUser
+RequestPasswordReset
+VerificationEmailRequest
+AllUsers
+Save
+Destroy
+
+Objects:
+Create new object
+Extend Parse Object and create local objects that can be saved and retreived
+
+Queries:
+Complex queries that can search for the following:-
+
+Equals
+Contains
+LessThan
+LessThanOrEqualTo
+GreaterThan
+GreaterThanOrEqualTo
+NotEqualTo
+StartsWith
+EndsWith
+Regex
+
+Others but not tested
+
+        
