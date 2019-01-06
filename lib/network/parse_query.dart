@@ -24,10 +24,38 @@ class QueryBuilder<T extends ParseObject> {
   List<MapEntry> _allQueries = List();
   List<MapEntry> _regExQueries = List();
   List<MapEntry> _textQueries = List();
-  int limit = 0;
-  int skip = 0;
+  int _limit = 0;
+  int _skip = 0;
+  dynamic _where;
+  dynamic _order;
+  dynamic _keys;
+  dynamic _include;
 
   QueryBuilder(this.object) : super();
+
+  void limit(int limit){
+    _limit = limit;
+  }
+
+  void skip(int skip){
+    _skip = skip;
+  }
+
+  void where(int where){
+    _where = where;
+  }
+
+  void order(int order){
+    _order = order;
+  }
+
+  void keys(int keys){
+    _keys = keys;
+  }
+
+  void include(int include){
+    _include = include;
+  }
 
   void startsWith(String key, dynamic value) {
     _regExQueries.add(MapEntry(key, "^$value"));
@@ -143,16 +171,22 @@ class QueryBuilder<T extends ParseObject> {
       }
     }
 
-    // -- ADD LIMITER
-    if (limit != 0) query += '?limit=$limit';
-    if (skip != 0) query += '?skip=$skip';
-
     query += QUERY_END;
+
+    // ADD PARAMS
+    Map limiters = Map();
+    if (_where != null) limiters['where'] = where;
+    if (_order != null) limiters["order"] = order;
+    if (_limit != 0) limiters["limit"] = limit;
+    if (_skip != 0) limiters["skip"] = skip;
+    if (_keys != null) limiters["keys"] = keys;
+    if (_include != null) limiters["include"] = include;
+    query += getLimiters(limiters);
 
     // -- TEST
     print("QUERY: $query");
 
-    return query;
+    return "$query";
   }
 
   _getAllQueries(List<MapEntry> queries, String queryOperator){
@@ -227,6 +261,14 @@ class QueryBuilder<T extends ParseObject> {
     }
 
     return sanitisedQueries;
+  }
+
+  getLimiters(Map map) {
+    String result;
+    map.forEach((key, value) {
+      result = (result != null) ? result + "&$key=$value" : "&$key=$value";
+    });
+    return result;
   }
 
   convertValueToCorrectType(dynamic value) {
