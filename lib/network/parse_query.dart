@@ -4,6 +4,8 @@ import 'package:parse_server_sdk/objects/parse_object.dart';
 
 class QueryBuilder<T extends ParseObject> {
 
+  static const String _NO_OPERATOR_NEEDED = "NO_OP";
+
   T object;
 
   // QueryParams
@@ -106,10 +108,10 @@ class QueryBuilder<T extends ParseObject> {
 
     // ADD PARAM TO MAP
     //Needs fixing
-    if (_equalsQueries.length != 0) queries.addAll(_runThroughQueryParams(_equalsQueries));
     if (_containsQueries.length != 0) queries.addAll(_getAllQueries(_containsQueries, "\$term"));
 
     // Works
+    if (_equalsQueries.length != 0) queries.addAll(_getAllQueries(_equalsQueries, _NO_OPERATOR_NEEDED));
     if (_lessThanQueries.length != 0) queries.addAll(_getAllQueries(_lessThanQueries, "\$lt"));
     if (_lessThanOrEqualToQueries.length != 0) queries.addAll(_getAllQueries(_lessThanOrEqualToQueries, "\$lte"));
     if (_greaterThanQueries.length != 0) queries.addAll(_getAllQueries(_greaterThanQueries, "\$gt"));
@@ -163,57 +165,22 @@ class QueryBuilder<T extends ParseObject> {
 
   _buildQueryWithColumnValueAndOperator(MapEntry columnAndValue, String queryOperator) {
 
-    var queryString = "\"${columnAndValue.key}\":";
+    var key = columnAndValue.key;
+    var value = convertValueToCorrectType(columnAndValue.value);
 
-    var queryOperatorAndValueMap = Map();
-    queryOperatorAndValueMap[queryOperator] = columnAndValue.value;
+    if (queryOperator == _NO_OPERATOR_NEEDED){
+      return MapEntry(_NO_OPERATOR_NEEDED, "\"${columnAndValue.key}\": $value");
+    } else {
+      var queryString = "\"$key\":";
 
-    var formattedQueryOperatorAndValue = JsonEncoder().convert(queryOperatorAndValueMap);
-    queryString += "$formattedQueryOperatorAndValue";
+      var queryOperatorAndValueMap = Map();
+      queryOperatorAndValueMap[queryOperator] = columnAndValue.value;
 
-    return MapEntry(columnAndValue.key, queryString);
-  }
+      var formattedQueryOperatorAndValue = JsonEncoder().convert(queryOperatorAndValueMap);
+      queryString += "$formattedQueryOperatorAndValue";
 
-  _runThroughQueryParams(List<MapEntry> list) {
-    Map<String, dynamic> mapToReturn = Map<String, dynamic>();
-    var params;
-
-    if (list.isNotEmpty) {
-      if (list.length == 1) {
-        params = list[0];
-      } else {
-        for (var listItem in list) {
-          params += "$listItem, ";
-        }
-
-        params.substring(0, params.length - 2);
-      }
+      return MapEntry(key, queryString);
     }
-
-    mapToReturn["wasField"] = params;
-
-    return JsonEncoder().convert(mapToReturn);
-  }
-  _runThroughQueryParamsWithSearchTerms(List<dynamic> list, String queryParam, String fieldName) {
-    Map<String, String> mapToReturn = Map<String, String>();
-    Map<String, dynamic> mapWithParamData = Map<String, dynamic>();
-    Map<String, String> textEntry = Map<String, String>();
-    Map<String, String> searchEntry = Map<String, String>();
-
-    for (var item in list) {
-      mapWithParamData["\$$queryParam"] = item;
-    }
-
-    var jsonMapWithParamData = JsonEncoder().convert(mapWithParamData);
-    searchEntry['search'] = jsonMapWithParamData;
-
-    var jsonSearchEntry = JsonEncoder().convert(searchEntry);
-    textEntry['text'] = jsonSearchEntry;
-
-    var params = JsonEncoder().convert(textEntry).toString();
-    mapToReturn[fieldName] = params;
-
-    return mapToReturn;
   }
 
   _checkForMultipleColumnInstances(List<MapEntry> queries) {
@@ -223,8 +190,13 @@ class QueryBuilder<T extends ParseObject> {
     // Run through each query
     for (var query in queries){
 
+      // Add queries that don't need sanitising
+      if (query.key == _NO_OPERATOR_NEEDED) {
+        sanitisedQueries.add(MapEntry(_NO_OPERATOR_NEEDED, query.value));
+      }
+
       // Check if query with same column name has been sanitised
-      if (!keysAlreadyCompacted.contains(query.key)) {
+      if (!keysAlreadyCompacted.contains(query.key) && query.key != _NO_OPERATOR_NEEDED) {
 
         // If not, check that it now has
         keysAlreadyCompacted.add(query.key);
@@ -255,5 +227,10 @@ class QueryBuilder<T extends ParseObject> {
     }
 
     return sanitisedQueries;
+  }
+
+  convertValueToCorrectType(dynamic value) {
+    if (value is int) return (value as num);
+    if (value is String) return "\"$value\"";
   }
 }
