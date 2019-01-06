@@ -50,8 +50,8 @@ class _MyAppState extends State<MyApp> {
     //getAllItems();
     //getAllItemsByName();
     //getSingleItem();
-    //query();
-    initUser();
+    query();
+    //initUser();
   }
 
   void getAllItemsByName() async {
@@ -87,18 +87,16 @@ class _MyAppState extends State<MyApp> {
   }
 
   void query() async {
-    // Query for an object by name
     var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
       ..greaterThan(DietPlan.FAT, 20)
-      ..limit(1)
-      ..skip(1);
+      ..descending(DietPlan.FAT);
 
     var response = await queryBuilder.query();
 
     if (response.success) {
-      print(ApplicationConstants.APP_NAME + ": " + ((response.result as List<dynamic>).first as DietPlan).toString());
+      print("Result: ${((response.result as List<dynamic>).first as DietPlan).toString()}");
     } else {
-      print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+      print("Result: ${response.exception.message}");
     }
   }
 
