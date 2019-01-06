@@ -41,19 +41,23 @@ class QueryBuilder<T extends ParseObject> {
     _skip = skip;
   }
 
-  void where(int where){
+  void where(String where){
     _where = where;
   }
 
-  void order(int order){
+  void ascending(String order){
     _order = order;
   }
 
-  void keys(int keys){
+  void descending(String order){
+    _order = "-$order";
+  }
+
+  void keys(String keys){
     _keys = keys;
   }
 
-  void include(int include){
+  void include(String include){
     _include = include;
   }
 
@@ -175,12 +179,12 @@ class QueryBuilder<T extends ParseObject> {
 
     // ADD PARAMS
     Map limiters = Map();
-    if (_where != null) limiters['where'] = where;
-    if (_order != null) limiters["order"] = order;
-    if (_limit != 0) limiters["limit"] = limit;
-    if (_skip != 0) limiters["skip"] = skip;
-    if (_keys != null) limiters["keys"] = keys;
-    if (_include != null) limiters["include"] = include;
+    if (_where != null) limiters['where'] = _where;
+    if (_order != null) limiters["order"] = _order;
+    if (_limit != 0) limiters["limit"] = _limit;
+    if (_skip != 0) limiters["skip"] = _skip;
+    if (_keys != null) limiters["keys"] = _keys;
+    if (_include != null) limiters["include"] = _include;
     query += getLimiters(limiters);
 
     // -- TEST
