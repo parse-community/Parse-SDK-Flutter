@@ -1,4 +1,6 @@
+import 'package:parse_server_sdk/base/parse_constants.dart';
 import 'package:parse_server_sdk/objects/parse_base.dart';
+import 'package:parse_server_sdk/utils/parse_utils_date.dart';
 
 class User extends ParseBase {
   static User _instance;
@@ -17,13 +19,19 @@ class User extends ParseBase {
 
   factory User() => _instance;
 
-  fromJson(Map<String, dynamic> objectData) {
-    setObjectData(objectData);
+  fromJson(Map objectData) {
+    if (getObjectData() == null) setObjectData(objectData);
+    getObjectData().addAll(objectData);
+    if (getObjectData().containsKey(ParseConstants.OBJECT_ID)) objectId = getValue(ParseConstants.OBJECT_ID).toString();
+    if (getObjectData().containsKey(ParseConstants.CREATED_AT)) createdAt = convertStringToDateTime(getValue(ParseConstants.CREATED_AT).toString());
+    if (getObjectData().containsKey(ParseConstants.UPDATED_AT)) updatedAt = convertStringToDateTime(getValue(ParseConstants.UPDATED_AT).toString());
+    if (getObjectData().containsKey(ACL)) acl = getValue(ACL).toString();
+    if (getObjectData().containsKey(USERNAME)) username = getValue(USERNAME).toString();
+    if (getObjectData().containsKey(PASSWORD)) password = getValue(PASSWORD).toString();
+    if (getObjectData().containsKey(EMAIL)) emailAddress = getValue(EMAIL).toString();
 
-    acl = getObjectData()[ACL];
-    username = getObjectData()[USERNAME];
-    password = getObjectData()[PASSWORD];
-    emailAddress = getObjectData()[EMAIL];
+    if (updatedAt == null) updatedAt = createdAt;
+
     return this;
   }
 

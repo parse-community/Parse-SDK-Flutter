@@ -3,13 +3,16 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 
 abstract class ParseBase {
-  Map<String, dynamic> _objectData;
+  Map _objectData;
 
-  String get objectId => _objectData['objectId'];
+  get getObjectId => _objectData['objectId'] == null ? objectId : _objectData['objectId'];
+  String objectId;
 
-  DateTime get createdAt => _objectData['createdAt'];
+  get getCreatedAt => _objectData['createdAt'] == null ? createdAt : _objectData['createdAt'];
+  DateTime createdAt;
 
-  DateTime get updatedAt => _objectData['updatedAt'];
+  get getUpdatedAt => _objectData['updatedAt'] == null ? updatedAt : _objectData['updatedAt'];
+  DateTime updatedAt;
 
   @protected
   toJson() => JsonEncoder().convert(getObjectData());
@@ -18,13 +21,16 @@ abstract class ParseBase {
   copy() => JsonDecoder().convert(fromJson(getObjectData()));
 
   @protected
-  setObjectData(Map<String, dynamic> objectData) => _objectData = objectData;
+  setObjectData(Map objectData) => _objectData = objectData;
 
   @protected
   getObjectData() => _objectData;
 
   @protected
-  fromJson(Map<String, dynamic> objectData) => objectData;
+  fromJson(Map objectData) {
+    if (_objectData == null) _objectData = Map();
+    _objectData.addAll(objectData);
+  }
 
   setValue(String key, dynamic value, {bool forceUpdate: true}) {
     if (value != null) {
