@@ -16,7 +16,7 @@ class ParseUser {
     client != null ? _client = client : _client = ParseHTTPClient();
 
     if (_debug == null) {
-      _debug = client.data.debug;
+      _client.data.debug != null ? _debug = _client.data.debug : false;
     } else {
       _debug = _debug;
     }
@@ -39,7 +39,7 @@ class ParseUser {
       Uri uri= Uri(
           scheme: tempUri.scheme,
           host: tempUri.host,
-          path: "${tempUri.path}$path/me");
+          path: "${tempUri.path}/users/me");
 
       final response = await _client.get(uri, headers: {
         ParseConstants.HEADER_SESSION_TOKEN: _client.data.sessionId
