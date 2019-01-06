@@ -50,8 +50,8 @@ class _MyAppState extends State<MyApp> {
     //getAllItems();
     //getAllItemsByName();
     //getSingleItem();
-    query();
-    //initUser();
+    //query();
+    initUser();
   }
 
   void getAllItemsByName() async {
@@ -80,9 +80,7 @@ class _MyAppState extends State<MyApp> {
     var response = await DietPlan().get('R5EonpUDWy');
 
     if (response.success) {
-      print(ApplicationConstants.APP_NAME +
-          ": " +
-          (response.result as DietPlan).toString());
+      print(ApplicationConstants.APP_NAME + ": " + (response.result as DietPlan).toString());
     } else {
       print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
     }
@@ -91,10 +89,9 @@ class _MyAppState extends State<MyApp> {
   void query() async {
     // Query for an object by name
     var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
-      ..startsWith(DietPlan.NAME, "Keto")
-      ..greaterThan(DietPlan.FAT, 64)
-      ..lessThan(DietPlan.FAT, 66)
-      ..equals(DietPlan.CARBS, 5);
+      ..greaterThan(DietPlan.FAT, 20)
+      ..limit(1)
+      ..skip(1);
 
     var response = await queryBuilder.query();
 
@@ -106,11 +103,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   initUser() async {
-    ParseUser()
-        .create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
-    var user = await ParseUser().signUp();
+    var user = ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+    user = await ParseUser().signUp();
     user = await ParseUser().login();
+
     user = await ParseUser().currentUser(fromServer: true);
+
     user = await ParseUser().requestPasswordReset();
     user = await ParseUser().verificationEmailRequest();
     user = await ParseUser().all();
