@@ -91,9 +91,8 @@ class _MyAppState extends State<MyApp> {
   void query() async {
     // Query for an object by name
     var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
-      ..field = DietPlan.FAT
-      ..greaterThan = [59]
-      ..lessThan = [61];
+      ..lessThan(DietPlan.FAT, 61)
+      ..greaterThan(DietPlan.FAT, 59);
 
     var response = await queryBuilder.query();
 
