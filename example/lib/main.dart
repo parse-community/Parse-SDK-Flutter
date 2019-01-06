@@ -91,15 +91,15 @@ class _MyAppState extends State<MyApp> {
   void query() async {
     // Query for an object by name
     var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
-      ..lessThan(DietPlan.FAT, 61)
-      ..greaterThan(DietPlan.FAT, 59);
+      ..startsWith(DietPlan.NAME, "Keto")
+      ..greaterThan(DietPlan.FAT, 64)
+      ..lessThan(DietPlan.FAT, 66)
+      ..equals(DietPlan.CARBS, 5);
 
     var response = await queryBuilder.query();
 
     if (response.success) {
-      print(ApplicationConstants.APP_NAME +
-          ": " +
-          ((response.result as List<dynamic>).first as DietPlan).toString());
+      print(ApplicationConstants.APP_NAME + ": " + ((response.result as List<dynamic>).first as DietPlan).toString());
     } else {
       print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
     }
