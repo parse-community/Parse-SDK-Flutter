@@ -3,13 +3,13 @@ class ParseDataServer {
   static ParseDataServer get instance => _instance;
 
   static void init(appId, serverUrl, {debug, appName, liveQueryUrl, masterKey, sessionId}){
-      _instance ??= ParseDataServer._init(appId, serverUrl);
+      _instance = ParseDataServer._init(appId, serverUrl);
 
-      if (debug != null) _instance..debug = debug;
-      if (appName != null) _instance..appName = appName;
-      if (liveQueryUrl != null) _instance..liveQueryURL = liveQueryUrl;
-      if (masterKey != null) _instance..masterKey = masterKey;
-      if (sessionId != null) _instance..sessionId = sessionId;
+      if (debug != null) _instance.debug = debug;
+      if (appName != null) _instance.appName = appName;
+      if (liveQueryUrl != null) _instance.liveQueryURL = liveQueryUrl;
+      if (masterKey != null) _instance.masterKey = masterKey;
+      if (sessionId != null) _instance.sessionId = sessionId;
   }
 
   String appName;
@@ -22,12 +22,7 @@ class ParseDataServer {
 
   ParseDataServer._init(
       this.applicationId,
-      this.serverUrl,
-        {this.debug: false,
-        this.appName: "ParseApplication",
-        this.liveQueryURL,
-        this.masterKey,
-        this.sessionId});
+      this.serverUrl);
 
   factory ParseDataServer() => _instance;
 

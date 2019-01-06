@@ -10,30 +10,41 @@ class ParseUser {
   ParseHTTPClient _client;
   static final String className = '_User';
   String path = "/classes/$className";
-  bool debug;
+  bool _debug;
 
-  ParseUser({this.debug: false, ParseHTTPClient client}) {
+  ParseUser({debug, ParseHTTPClient client}) {
     client != null ? _client = client : _client = ParseHTTPClient();
+
+    if (_debug == null) {
+      _debug = client.data.debug;
+    } else {
+      _debug = _debug;
+    }
   }
 
   create(String username, String password, String emailAddress) {
-    User.init(username, password, emailAddress.toLowerCase());
-    return User();
+    User.init(username, password, emailAddress);
+    return User.instance;
   }
 
-  _getBasePath(String path) => "${_client.data.serverUrl}$path";
-
   currentUser({bool fromServer: false}) async {
-    if (User() == null) {
+    if (_client.data.sessionId == null) {
       return null;
     } else if (fromServer == false) {
-      return User();
+      return User.instance;
     } else {
-      var uri = "${_getBasePath(path)}/me";
-      var result = await _client.get(uri, headers: {
+
+      Uri tempUri = Uri.parse(_client.data.serverUrl);
+
+      Uri uri= Uri(
+          scheme: tempUri.scheme,
+          host: tempUri.host,
+          path: "${tempUri.path}$path/me");
+
+      final response = await _client.get(uri, headers: {
         ParseConstants.HEADER_SESSION_TOKEN: _client.data.sessionId
       });
-      return _handleResult(result, ParseApiUserCallType.currentUser);
+      return _handleResponse(response, ParseApiUserCallType.currentUser);
     }
   }
 
@@ -56,8 +67,8 @@ class ParseUser {
         },
         body: JsonEncoder().convert(bodyData));
 
-    _handleResult(response, ParseApiUserCallType.signUp);
-    return User();
+    _handleResponse(response, ParseApiUserCallType.signUp);
+    return User.instance;
   }
 
   login() async {
@@ -68,16 +79,16 @@ class ParseUser {
         host: tempUri.host,
         path: "${tempUri.path}/login",
         queryParameters: {
-          "username": User().username,
-          "password": User().password
+          "username": User.instance.username,
+          "password": User.instance.password
         });
 
     final response = await _client.post(url, headers: {
       ParseConstants.HEADER_REVOCABLE_SESSION: "1",
     });
 
-    _handleResult(response, ParseApiUserCallType.login);
-    return User();
+    _handleResponse(response, ParseApiUserCallType.login);
+    return User.instance;
   }
 
   verificationEmailRequest() async {
@@ -85,7 +96,7 @@ class ParseUser {
         "${_client.data.serverUrl}/verificationEmailRequest",
         body: JsonEncoder().convert({"email": User().emailAddress}));
 
-    return _handleResult(
+    return _handleResponse(
         response, ParseApiUserCallType.verificationEmailRequest);
   }
 
@@ -94,17 +105,17 @@ class ParseUser {
         "${_client.data.serverUrl}/requestPasswordReset",
         body: JsonEncoder().convert({"email": User().emailAddress}));
 
-    return _handleResult(response, ParseApiUserCallType.requestPasswordReset);
+    return _handleResponse(response, ParseApiUserCallType.requestPasswordReset);
   }
 
   save() async {
-    if (User().objectId == null) {
+    if (User.instance.objectId == null) {
       return signUp();
     } else {
       final response = await _client.put(
           _client.data.serverUrl + "$path/${User().objectId}",
           body: JsonEncoder().convert(User().getObjectData()));
-      return _handleResult(response, ParseApiUserCallType.save);
+      return _handleResponse(response, ParseApiUserCallType.save);
     }
   }
 
@@ -112,16 +123,18 @@ class ParseUser {
     final response = await _client.delete(
         _client.data.serverUrl + "$path/${User().objectId}",
         headers: {"X-Parse-Session-Token": _client.data.sessionId});
-    _handleResult(response, ParseApiUserCallType.destroy);
-    return User().objectId;
+
+    _handleResponse(response, ParseApiUserCallType.destroy);
+
+    return User.instance.objectId;
   }
 
   all() async {
     final response = await _client.get(_client.data.serverUrl + "$path");
-    return _handleResult(response, ParseApiUserCallType.all);
+    return _handleResponse(response, ParseApiUserCallType.all);
   }
 
-  _handleResult(Response response, ParseApiUserCallType type) {
+  _handleResponse(Response response, ParseApiUserCallType type) {
     Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
 
     var responseString = ' \n';
@@ -129,24 +142,24 @@ class ParseUser {
     responseString += "----"
         "\n${_client.data.appName} API Response ($className : ${getEnumValue(type)}) :";
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       responseString += "\nStatus Code: ${response.statusCode}";
       responseString += "\nPayload: ${responseData.toString()}";
 
       if (responseData.containsKey('objectId')) {
-        User().fromJson(JsonDecoder().convert(response.body) as Map);
-        _client.data.sessionId = responseData['sessionId'];
+        User.instance.fromJson(JsonDecoder().convert(response.body) as Map);
+        _client.data.sessionId = responseData['sessionToken'];
       }
     } else {
       responseString += "\nStatus Code: ${responseData['code']}";
       responseString += "\nException: ${responseData['error']}";
     }
 
-    if (_client.data.debug || debug) {
+    if (_client.data.debug || _debug) {
       responseString += "\n----\n";
       print(responseString);
     }
 
-    return User();
+    return User.instance;
   }
 }
