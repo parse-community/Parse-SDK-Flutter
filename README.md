@@ -61,8 +61,8 @@ var dietPlan = await DietPlan().get('R5EonpUDWy');
 
 ## Complex queries:-
 
-'''
-var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
+```
+    var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
       ..startsWith(DietPlan.NAME, "Keto")
       ..greaterThan(DietPlan.FAT, 64)
       ..lessThan(DietPlan.FAT, 66)
@@ -75,44 +75,43 @@ var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
     } else {
       print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
     }
-'''
+```
 
 ## Current abilities:-
 
-Main:
-Users
-Queries
-LiveQueries
-Debug Mode - Logging API calls
+* Main:
+        * Users
+        * Queries
+        * LiveQueries
+        * Debug Mode - Logging API calls
 
-ParseUser:
-Create
-Login
-CurrentUser
-RequestPasswordReset
-VerificationEmailRequest
-AllUsers
-Save
-Destroy
+* ParseUser:
+        * Create
+        * Login
+        * CurrentUser
+        * RequestPasswordReset
+        * VerificationEmailRequest
+        * AllUsers
+        * Save
+        * Destroy
 
-Objects:
-Create new object
-Extend Parse Object and create local objects that can be saved and retreived
+* Objects:
+        * Create new object
+        * Extend Parse Object and create local objects that can be saved and retreived
 
-Queries:
-Complex queries that can search for the following:-
+* Queries:
+        * Complex queries that can search for the following:-
 
-Equals
-Contains
-LessThan
-LessThanOrEqualTo
-GreaterThan
-GreaterThanOrEqualTo
-NotEqualTo
-StartsWith
-EndsWith
-Regex
-
-Others but not tested
+* Equals
+        * Contains
+        * LessThan
+        * LessThanOrEqualTo
+        * GreaterThan
+        * GreaterThanOrEqualTo
+        * NotEqualTo
+        * StartsWith
+        * EndsWith
+        * Regex
+        * Others but not tested
 
         
