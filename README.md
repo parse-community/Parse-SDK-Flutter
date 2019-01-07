@@ -133,10 +133,22 @@ class DietPlan extends ParseObject {
   Map<String, dynamic> toJson() => {'name': name};
 }
 ```
-## Other Features of this library:-
+## Users
+
+You can create and control users just as normal using this SDK.
+
+To register a user, first create one :
+```
+var user =  ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+```
+Then have the user sign up:
+
+```
+user =  await  ParseUser().signUp();
+```
 
 
-## Other Features of this library:-
+## Other Features of this library
 
 * Main:
         * Users
@@ -164,5 +176,5 @@ class DietPlan extends ParseObject {
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTczMzg0NDQ2NCwtMjM4ODM2MzM4XX0=
+eyJoaXN0b3J5IjpbMTQzNDkwODI3NywtMjM4ODM2MzM4XX0=
 -->
