@@ -156,33 +156,34 @@ user =  await  ParseUser().currentUser(fromServer:  true);
 ```
 Other user features are:-
  * Request Password Reset
- * Verification Email Request
+* Verification Email Request
  * Get all users
- * Save
+* Save
  * Destroy user
 
 ## Other Features of this library
 
-* Main:
-        * Users
-        * Users
+Main:
+* Users
+* Objects
 * Queries
-        * LiveQueries
-        * Debug Mode - Logging API calls
+* LiveQueries
+* Debug Mode - Logging API calls
+* Manage Session ID's tokens
 
-* ParseUser:
-        * Create
-        * Login
-        * Login
+User:
+        * Create       * Login
+        * 
+* Login
 * CurrentUser
         * RequestPasswordReset
         * VerificationEmailRequest
         * AllUsers
         * Save
         * Save
-* Destroy
+        * Destroy
 
-* Objects:
+* * Objects:
         * Create new object
         * Extend Parse Object and create local objects that can be saved and retreived
 
@@ -192,5 +193,6 @@ Other user features are:-
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTcxMjM4MzIxNCwtMTg3MjYxMzgxNF19
+eyJoaXN0b3J5IjpbLTE3MTk1MDkzMjMsLTE4NzI2MTM4MTRdfQ
+==
 -->
