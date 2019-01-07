@@ -13,7 +13,12 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```
 dependencies:  
-	parse_server_sdk: ^1.0.1
+
+parse_server_sdk: ^1.0.1
+	
+
+
+
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -33,7 +38,7 @@ Parse().initialize(
         ApplicationConstants.PARSE_APPLICATION_ID,
         ApplicationConstants.PARSE_SERVER_URL,
         masterKey: ApplicationConstants.PARSE_MASTER_KEY,
-        debug: true,
+       debug: true,
         liveQuery: true);
 ```
 
