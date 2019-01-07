@@ -1,5 +1,6 @@
 part of flutter_parse_sdk;
 
+/// Still under development
 class LiveQuery {
   final ParseHTTPClient client;
   var channel;

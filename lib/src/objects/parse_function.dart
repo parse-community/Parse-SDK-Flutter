@@ -6,28 +6,27 @@ class ParseCloudFunction extends ParseBase {
   bool _debug;
   ParseHTTPClient _client;
 
+  /// Creates a new cloud function object
+  ///
+  /// {https://docs.parseplatform.org/cloudcode/guide/}
   ParseCloudFunction(this.functionName, {bool debug, ParseHTTPClient client}) {
-
     client == null ? _client = ParseHTTPClient() : _client = client;
-
-    if (_debug == null) {
-      _client.data.debug != null ? _debug = _client.data.debug : _debug = false;
-    } else {
-      _debug = _debug;
-    }
-
+    _debug = isDebugEnabled(debug, _client);
     _path = "/functions/$functionName";
     setObjectData(Map<String, dynamic>());
   }
 
-  execute([Map<String, dynamic> objectData]) async {
+  /// Executes a cloud function
+  ///
+  /// To add the paramaters, create an object and call [set](value to set)
+  execute() async {
     var uri = _client.data.serverUrl + "$_path";
-    setObjectData(objectData);
     var result = await _client.post(uri, body: JsonEncoder().convert(getObjectData()));
-    return _handleResult(result, ParseApiFunctionCallType.execute);
+    return _handleResult(result, ParseApiFunction.execute);
   }
 
-  ParseResponse _handleResult(Response response, ParseApiFunctionCallType type) {
+  /// Handles an API response
+  ParseResponse _handleResult(Response response, ParseApiFunction type) {
     ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
     Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
 
@@ -35,7 +34,7 @@ class ParseCloudFunction extends ParseBase {
       var responseString = ' \n';
 
       responseString += "----"
-          "\n${_client.data.appName} API Response ($functionName : ${ParseApiFunctionCallTypeUtil.getEnumValue(type)}) :";
+          "\n${_client.data.appName} API Response ($functionName : ${type.toString()}) :";
 
       if (parseResponse.success && parseResponse.result != null) {
         responseString += "\nStatus Code: ${parseResponse.statusCode}";

@@ -4,7 +4,7 @@
 ## Parse For Flutter! 
 Hi, this is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like (http://Back4App.com).
 
-This is a work in project and we are consistently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project.
+This is a work in project and we are consistently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project (Even if it is just to improve our documentation.
 
 ## Join in!
 Want to get involved? Join our Slack channel and help out! (http://flutter-parse-sdk.slack.com)
@@ -13,7 +13,12 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```
 dependencies:  
-	parse_server_sdk: ^1.0.0
+
+parse_server_sdk: ^1.0.1
+	
+
+
+
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -33,7 +38,7 @@ Parse().initialize(
         ApplicationConstants.PARSE_APPLICATION_ID,
         ApplicationConstants.PARSE_SERVER_URL,
         masterKey: ApplicationConstants.PARSE_MASTER_KEY,
-        debug: true,
+       debug: true,
         liveQuery: true);
 ```
 
@@ -170,6 +175,7 @@ Main:
 * Objects
 * Queries
 * LiveQueries
+* GeoPoints
 * Debug Mode - Logging API calls
 * Manage Session ID's tokens
 

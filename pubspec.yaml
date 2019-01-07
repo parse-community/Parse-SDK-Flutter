@@ -1,6 +1,6 @@
 name: parse_server_sdk
-description: This is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like (http://Back4App.com). The plugin has lots of functionalitiy, please check the README for more info.
-version: 0.0.4
+description: This is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org)
+version: 1.0.1
 homepage: https://github.com/phillwiggins/flutter_parse_sdk
 author: PhillWiggins <phill.wiggins@gmail.com>
 
