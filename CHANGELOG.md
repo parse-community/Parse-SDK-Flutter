@@ -1,3 +1,7 @@
+## 1.0.1
+
+Added documentation and GeoPoints
+
 ## 1.0.0
 
 First full release!

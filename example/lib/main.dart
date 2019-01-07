@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void getSingleItem() async {
-    var response = await DietPlan().get('R5EonpUDWy');
+    var response = await DietPlan().getObject('R5EonpUDWy');
 
     if (response.success) {
       print(ApplicationConstants.APP_NAME + ": " + (response.result as DietPlan).toString());

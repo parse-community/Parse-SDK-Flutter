@@ -6,6 +6,12 @@ class ParseResponse {
   dynamic result;
   ParseException exception;
 
+  /// Handles all the ParseObject responses
+  ///
+  /// There are 3 probable outcomes from a Parse API call,
+  /// 1. Fail - [ParseResponse] will be returned with further details
+  /// 2. Success but no results. [ParseResponse] is returned.
+  /// 3. Success with results. Again [ParseResponse] is returned
   static handleResponse(ParseBase object, Response value) {
     var response = ParseResponse();
 
@@ -26,12 +32,14 @@ class ParseResponse {
     }
   }
 
+  /// Handles any errors returned in response
   static ParseResponse _handleError(ParseResponse response, Response value) {
     response.exception = ParseException();
     response.exception.message = value.reasonPhrase;
     return response;
   }
 
+  /// Handles successful responses with no results
   static ParseResponse _handleSuccessWithNoResults(ParseResponse response, String value) {
     response.statusCode = 200;
     response.exception = ParseException();
@@ -39,6 +47,7 @@ class ParseResponse {
     return response;
   }
 
+  /// Handles succsful response with results
   static ParseResponse _handleSuccess(ParseResponse response, ParseObject object, String responseBody) {
     response.success = true;
 
@@ -53,6 +62,7 @@ class ParseResponse {
     return response;
   }
 
+  /// Handles a response with a multiple result object
   static _handleMultipleResults(ParseObject object, dynamic map) {
     var resultsList = List();
 
@@ -63,6 +73,7 @@ class ParseResponse {
     return resultsList;
   }
 
+  /// Handles a response with a single result object
   static _handleSingleResult(ParseObject object, map) {
     populateObjectBaseData(object, map);
     return object.fromJson(map);
