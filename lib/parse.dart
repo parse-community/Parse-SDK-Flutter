@@ -10,7 +10,6 @@ import 'package:meta/meta.dart';
 import 'package:web_socket_channel/io.dart';
 
 part 'src/base/parse_constants.dart';
-part 'src/data/parse_data.dart';
 part 'src/data/parse_data_server.dart';
 part 'src/data/parse_data_user.dart';
 part 'src/enums/parse_enum_function_call.dart';
