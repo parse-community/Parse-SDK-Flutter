@@ -2,7 +2,9 @@
 ![enter image description here](https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png?fit=200%2C200&ssl=1&resize=350%2C200)
 
 ## Parse For Flutter! 
-Hi, this is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like Back4App.com
+Hi, this is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like Back4App.com.
+
+This is a work in project and we are consisntently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project.
 
 ## Join in!
 Want to get involved? Join our Slack channel and help out! FlutterParseSDK.Slack.com
@@ -172,27 +174,22 @@ Main:
 * Manage Session ID's tokens
 
 User:
-        * Create       * Login
-        * 
+* Create       
 * Login
 * CurrentUser
-        * RequestPasswordReset
-        * VerificationEmailRequest
-        * AllUsers
-        * Save
-        * Save
-        * Destroy
+* RequestPasswordReset
+* VerificationEmailRequest
+* AllUsers
+* Save
+* Destroy
 
-* * Objects:
-        * Create new object
-        * Extend Parse Object and create local objects that can be saved and retreived
-
+Objects:
+* Create new object
+* Extend Parse Object and create local objects that can be saved and retreived
 * Queries:
-        * Complex queries that can search for the following:-
 
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE3MTk1MDkzMjMsLTE4NzI2MTM4MTRdfQ
-==
+eyJoaXN0b3J5IjpbLTk5NDI1MDE5MiwtMTg3MjYxMzgxNF19
 -->
