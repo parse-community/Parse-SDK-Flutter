@@ -133,6 +133,8 @@ class DietPlan extends ParseObject {
   Map<String, dynamic> toJson() => {'name': name};
 }
 ```
+## Other Features of this library:-
+
 
 ## Other Features of this library:-
 
@@ -162,5 +164,5 @@ class DietPlan extends ParseObject {
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIzODgzNjMzOF19
+eyJoaXN0b3J5IjpbLTczMzg0NDQ2NCwtMjM4ODM2MzM4XX0=
 -->
