@@ -159,10 +159,7 @@ Other user features are:-
  * Verification Email Request
  * Get all users
  * Save
- * Query - By object Id
- * Delete
- * Complex queries as shown above
- * Plenty more
+ * Destroy user
 
 ## Other Features of this library
 
@@ -192,5 +189,5 @@ Other user features are:-
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMzgwNjMwODM5LC0yMzg4MzYzMzhdfQ==
+eyJoaXN0b3J5IjpbLTE4NzI2MTM4MTRdfQ==
 -->
