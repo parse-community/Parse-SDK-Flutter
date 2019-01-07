@@ -6,39 +6,43 @@ class ParseObject extends ParseBase {
   bool _debug;
   ParseHTTPClient _client;
 
+  /// Creates a new Parse Object
+  ///
+  /// [String] className refers to the Table Name in your Parse Server,
+  /// [bool] debug will overwrite the current default debug settings and
+  /// [ParseHttpClient] can be overwritten to create your own HTTP Client
   ParseObject(this.className, {bool debug: false, ParseHTTPClient client}) {
 
     client == null ? _client = ParseHTTPClient() : _client = client;
-
-    if (_debug == null) {
-      _client.data.debug != null ? _debug = _client.data.debug : _debug = false;
-    } else {
-      _debug = _debug;
-    }
+    _debug = isDebugEnabled(debug, _client);
 
     _path = "/classes/$className";
     setObjectData(Map<String, dynamic>());
   }
 
-  get(String objectId) async {
+  /// Gets an object from the server using it's [String] objectId
+  getObject(String objectId) async {
     var uri = _getBasePath(_path);
     if (objectId != null) uri += "/$objectId";
     var result = await _client.get(uri);
     return _handleResult(result, ParseApiObjectCallType.get);
   }
 
+  /// Gets all objects from this table - Limited response at the moment
   getAll() async {
     var result = await _client.get(_getBasePath(_path));
     return _handleResult(result, ParseApiObjectCallType.getAll);
   }
 
-  create([Map<String, dynamic> objectData]) async {
+  /// Creates a new object and saves it online
+  create() async {
     var uri = _client.data.serverUrl + "$_path";
     var result =
         await _client.post(uri, body: JsonEncoder().convert(getObjectData()));
     return _handleResult(result, ParseApiObjectCallType.create);
   }
 
+  /// Saves the current object online
   save() async {
     if (getObjectData() == null) {
       return create();
@@ -50,20 +54,24 @@ class ParseObject extends ParseBase {
     }
   }
 
+  /// Can be used to create custom queries
   query(String query) async {
     var uri = "${_getBasePath(_path)}?$query";
     var result = await _client.get(uri);
     return _handleResult(result, ParseApiObjectCallType.query);
   }
 
+  /// Deletes the current object locally and online
   delete(String path, String objectId) async {
     var uri = "${_getBasePath(path)}/$objectId";
     var result = await _client.delete(uri);
     return _handleResult(result, ParseApiObjectCallType.delete);
   }
 
+  /// Generates the path for the object
   _getBasePath(String path) => "${_client.data.serverUrl}$path";
 
+  /// Handles an API response and logs data if [bool] debug is enabled
   ParseResponse _handleResult(Response response, ParseApiObjectCallType type) {
     ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
     Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
@@ -72,7 +80,7 @@ class ParseObject extends ParseBase {
       var responseString = ' \n';
 
       responseString += "----"
-          "\n${_client.data.appName} API Response ($className : ${ParseApiObjectCallTypeUtil.getEnumValue(type)}) :";
+          "\n${_client.data.appName} API Response ($className : ${type.toString()}) :";
 
       if (parseResponse.success && parseResponse.result != null) {
         responseString += "\nStatus Code: ${parseResponse.statusCode}";
