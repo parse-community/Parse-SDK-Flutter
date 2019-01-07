@@ -1,19 +1,42 @@
+![enter image description here](https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png)
+![enter image description here](https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png?fit=200%2C200&ssl=1&resize=350%2C200)
+
+## Parse For Flutter! 
+Hi, this is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like Back4App.com
+
 ## Join in!
 Want to get involved? Join our Slack channel and help out! FlutterParseSDK.Slack.com
 
 ## Getting Started
+To install, either add to your pubspec.yaml
+```
+dependencies:  
+	parse_server_sdk: ^0.0.2
+```
+or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
-## To init Parse, call the method:-
+
+Once you have the library added to your project, upon first call to your app (Similar to what your application class would be) add the following...
+
+```
+Parse().initialize(
+        ApplicationConstants.PARSE_APPLICATION_ID,
+        ApplicationConstants.PARSE_SERVER_URL);
+```
+
+It's possible to add other params, such as ...
 
 ```
 Parse().initialize(
         ApplicationConstants.PARSE_APPLICATION_ID,
         ApplicationConstants.PARSE_SERVER_URL,
-        masterKey: ApplicationConstants.PARSE_MASTER_KEY);
+        masterKey: ApplicationConstants.PARSE_MASTER_KEY,
+        debug: true,
+        liveQuery: true);
 ```
 
-## After, you can then get and save Parse Objects by calling:-
-
+## Queries
+Once you have setup the project and initialised the instance, you can then retreive data from your server by calling:
 ```
 var apiResponse = await ParseObject('ParseTableName').getAll();
 
@@ -23,26 +46,7 @@ var apiResponse = await ParseObject('ParseTableName').getAll();
       }
     }
 ```
-
-## Or, extend the ParseObject class and create custom objects:-
-
-```
-class DietPlan extends ParseObject {
-  static const String DIET_PLAN = 'Diet_Plans';
-
-  DietPlan() : super(DIET_PLAN);
-
-  String name;
-
-  DietPlan.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
-        super(DIET_PLAN);
-
-  Map<String, dynamic> toJson() => {'name': name};
-}
-```
-
-## then call:-
+Or you can get an object by its objectId:
 
 ```
 var dietPlan = await DietPlan().get('R5EonpUDWy');
@@ -54,7 +58,9 @@ var dietPlan = await DietPlan().get('R5EonpUDWy');
     }
 ```
 
-## Complex queries:-
+
+## Complex queries
+You can create complex queries to really put your database to the test:
 
 ```
     var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
@@ -72,7 +78,63 @@ var dietPlan = await DietPlan().get('R5EonpUDWy');
     }
 ```
 
-## Current abilities:-
+The features available are:-
+ * Equals
+ * Contains
+ * LessThan
+ * LessThanOrEqualTo
+ * GreaterThan
+ * GreaterThanOrEqualTo
+ * NotEqualTo
+ * StartsWith
+ * EndsWith
+ * Regex
+ * Order
+ * Limit
+ * Skip
+ * Ascending
+ * Descending
+ * Plenty more!
+
+## Objects
+
+You can create custom objects by calling:
+```
+var dietPlan = ParseObject('DietPlan')
+	..setValue('Name', 'Ketogenic')
+	..setValue('Fat', 65);
+```
+You then have the ability to do the following with that object:
+The features available are:-
+ * Get
+ * GetAll
+ * Create
+ * Save
+ * Query - By object Id
+ * Delete
+ * Complex queries as shown above
+ * Plenty more
+
+## Custom Objects
+You can create your own ParseObjects or convert your existing objects into Parse Objects by doing the following:
+
+```
+class DietPlan extends ParseObject {
+  static const String DIET_PLAN = 'Diet_Plans';
+
+  DietPlan() : super(DIET_PLAN);
+
+  String name;
+
+  DietPlan.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        super(DIET_PLAN);
+
+  Map<String, dynamic> toJson() => {'name': name};
+}
+```
+
+## Other Features of this library:-
 
 * Main:
         * Users
@@ -97,16 +159,8 @@ var dietPlan = await DietPlan().get('R5EonpUDWy');
 * Queries:
         * Complex queries that can search for the following:-
 
-* Equals
-        * Contains
-        * LessThan
-        * LessThanOrEqualTo
-        * GreaterThan
-        * GreaterThanOrEqualTo
-        * NotEqualTo
-        * StartsWith
-        * EndsWith
-        * Regex
-        * Others but not tested
-
-        
+## Author:-
+This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTIzODgzNjMzOF19
+-->
