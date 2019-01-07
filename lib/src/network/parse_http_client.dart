@@ -1,11 +1,7 @@
-import 'dart:async';
+part of flutter_parse_sdk;
 
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
-import 'package:parse_server_sdk/data/parse_data_server.dart';
-
-class ParseHTTPClient extends http.BaseClient {
-  final http.Client _client = new http.Client();
+class ParseHTTPClient extends BaseClient {
+  final Client _client = new Client();
   final String _userAgent = "Dart Parse SDK 0.1";
   ParseDataServer data = ParseDataServer();
 

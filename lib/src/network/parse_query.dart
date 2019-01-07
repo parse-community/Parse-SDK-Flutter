@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import 'package:parse_server_sdk/objects/parse_object.dart';
+part of flutter_parse_sdk;
 
 class QueryBuilder<T extends ParseObject> {
 
@@ -276,7 +274,7 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   convertValueToCorrectType(dynamic value) {
-    if (value is int) return (value as num);
+    if (value is num) return value;
     if (value is String) return "\"$value\"";
   }
 }

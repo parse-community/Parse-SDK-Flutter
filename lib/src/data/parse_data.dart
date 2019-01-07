@@ -1,3 +1,5 @@
+part of flutter_parse_sdk;
+
 class ParseData {
   static ParseData _instance;
 
