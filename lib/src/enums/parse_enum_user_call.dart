@@ -1,7 +1,7 @@
 part of flutter_parse_sdk;
 
 /// Used to define the API calls made in ParseUser logs
-enum ParseApiUserCallType {
+enum ParseApiUser {
   currentUser,
   signUp,
   login,

@@ -46,7 +46,7 @@ class ParseUser {
       final response = await _client.get(uri, headers: {
         ParseConstants.HEADER_SESSION_TOKEN: _client.data.sessionId
       });
-      return _handleResponse(response, ParseApiUserCallType.currentUser);
+      return _handleResponse(response, ParseApiUser.currentUser);
     }
   }
 
@@ -76,7 +76,7 @@ class ParseUser {
         },
         body: JsonEncoder().convert(bodyData));
 
-    _handleResponse(response, ParseApiUserCallType.signUp);
+    _handleResponse(response, ParseApiUser.signUp);
     return User.instance;
   }
 
@@ -100,7 +100,7 @@ class ParseUser {
       ParseConstants.HEADER_REVOCABLE_SESSION: "1",
     });
 
-    _handleResponse(response, ParseApiUserCallType.login);
+    _handleResponse(response, ParseApiUser.login);
     return User.instance;
   }
 
@@ -117,7 +117,7 @@ class ParseUser {
         body: JsonEncoder().convert({"email": User().emailAddress}));
 
     return _handleResponse(
-        response, ParseApiUserCallType.verificationEmailRequest);
+        response, ParseApiUser.verificationEmailRequest);
   }
 
   /// Sends a password reset email to the users email address
@@ -126,7 +126,7 @@ class ParseUser {
         "${_client.data.serverUrl}/requestPasswordReset",
         body: JsonEncoder().convert({"email": User().emailAddress}));
 
-    return _handleResponse(response, ParseApiUserCallType.requestPasswordReset);
+    return _handleResponse(response, ParseApiUser.requestPasswordReset);
   }
 
   /// Saves the current user
@@ -140,7 +140,7 @@ class ParseUser {
       final response = await _client.put(
           _client.data.serverUrl + "$path/${User().objectId}",
           body: JsonEncoder().convert(User().getObjectData()));
-      return _handleResponse(response, ParseApiUserCallType.save);
+      return _handleResponse(response, ParseApiUser.save);
     }
   }
 
@@ -150,7 +150,7 @@ class ParseUser {
         _client.data.serverUrl + "$path/${User().objectId}",
         headers: {"X-Parse-Session-Token": _client.data.sessionId});
 
-    _handleResponse(response, ParseApiUserCallType.destroy);
+    _handleResponse(response, ParseApiUser.destroy);
 
     return User.instance.objectId;
   }
@@ -158,11 +158,11 @@ class ParseUser {
   /// Gets a list of all users (limited return)
   all() async {
     final response = await _client.get(_client.data.serverUrl + "$path");
-    return _handleResponse(response, ParseApiUserCallType.all);
+    return _handleResponse(response, ParseApiUser.all);
   }
 
   /// Handles all the reponse data for this class
-  _handleResponse(Response response, ParseApiUserCallType type) {
+  _handleResponse(Response response, ParseApiUser type) {
     Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
 
     var responseString = ' \n';
