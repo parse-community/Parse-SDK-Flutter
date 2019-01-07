@@ -4,7 +4,7 @@
 ## Parse For Flutter! 
 Hi, this is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like Back4App.com.
 
-This is a work in project and we are consisntently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project.
+This is a work in project and we are consistently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project.
 
 ## Join in!
 Want to get involved? Join our Slack channel and help out! FlutterParseSDK.Slack.com
@@ -191,5 +191,5 @@ Objects:
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTk5NDI1MDE5MiwtMTg3MjYxMzgxNF19
+eyJoaXN0b3J5IjpbNzE4NjUwNDIwXX0=
 -->
