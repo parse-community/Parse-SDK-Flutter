@@ -1,6 +1,6 @@
 import 'dart:core';
 
-import 'package:parse_server_sdk/objects/parse_object.dart';
+import 'package:parse_server_sdk/parse.dart';
 
 class DietPlan extends ParseObject {
   DietPlan() : super(DIET_PLAN);
