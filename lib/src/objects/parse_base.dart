@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import 'package:meta/meta.dart';
+part of flutter_parse_sdk;
 
 abstract class ParseBase {
   Map _objectData;

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/application_constants.dart';
 import 'package:flutter_plugin_example/diet_plan.dart';
-import 'package:parse_server_sdk/network/parse_query.dart';
-import 'package:parse_server_sdk/objects/parse_function.dart';
-import 'package:parse_server_sdk/objects/parse_object.dart';
-import 'package:parse_server_sdk/objects/parse_user.dart';
 import 'package:parse_server_sdk/parse.dart';
 
 void main() => runApp(new MyApp());

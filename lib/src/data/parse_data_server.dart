@@ -1,3 +1,5 @@
+part of flutter_parse_sdk;
+
 class ParseDataServer {
   static ParseDataServer _instance;
   static ParseDataServer get instance => _instance;

@@ -1,10 +1,4 @@
-import 'dart:convert';
-
-import 'package:http/http.dart';
-import 'package:parse_server_sdk/base/parse_constants.dart';
-import 'package:parse_server_sdk/data/parse_data_user.dart';
-import 'package:parse_server_sdk/enums/parse_enum_user_call.dart';
-import 'package:parse_server_sdk/network/parse_http_client.dart';
+part of flutter_parse_sdk;
 
 class ParseUser {
   ParseHTTPClient _client;
@@ -16,7 +10,7 @@ class ParseUser {
     client != null ? _client = client : _client = ParseHTTPClient();
 
     if (_debug == null) {
-      _client.data.debug != null ? _debug = _client.data.debug : false;
+      _client.data.debug != null ? _debug = _client.data.debug : _debug = false;
     } else {
       _debug = _debug;
     }
@@ -33,10 +27,9 @@ class ParseUser {
     } else if (fromServer == false) {
       return User.instance;
     } else {
-
       Uri tempUri = Uri.parse(_client.data.serverUrl);
 
-      Uri uri= Uri(
+      Uri uri = Uri(
           scheme: tempUri.scheme,
           host: tempUri.host,
           path: "${tempUri.path}/users/me");
@@ -140,7 +133,7 @@ class ParseUser {
     var responseString = ' \n';
 
     responseString += "----"
-        "\n${_client.data.appName} API Response ($className : ${getEnumValue(type)}) :";
+        "\n${_client.data.appName} API Response ($className : ${ParseApiUserCallTypeUtils.getEnumValue(type)}) :";
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       responseString += "\nStatus Code: ${response.statusCode}";

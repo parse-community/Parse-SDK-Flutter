@@ -1,10 +1,4 @@
-import 'dart:convert';
-
-import 'package:http/http.dart';
-import 'package:parse_server_sdk/enums/parse_enum_function_call.dart';
-import 'package:parse_server_sdk/network/parse_http_client.dart';
-import 'package:parse_server_sdk/objects/parse_base.dart';
-import 'package:parse_server_sdk/objects/parse_response.dart';
+part of flutter_parse_sdk;
 
 class ParseCloudFunction extends ParseBase {
   final String functionName;
@@ -17,7 +11,7 @@ class ParseCloudFunction extends ParseBase {
     client == null ? _client = ParseHTTPClient() : _client = client;
 
     if (_debug == null) {
-      _client.data.debug != null ? _debug = _client.data.debug : false;
+      _client.data.debug != null ? _debug = _client.data.debug : _debug = false;
     } else {
       _debug = _debug;
     }
@@ -41,7 +35,7 @@ class ParseCloudFunction extends ParseBase {
       var responseString = ' \n';
 
       responseString += "----"
-          "\n${_client.data.appName} API Response ($functionName : ${getEnumValue(type)}) :";
+          "\n${_client.data.appName} API Response ($functionName : ${ParseApiFunctionCallTypeUtil.getEnumValue(type)}) :";
 
       if (parseResponse.success && parseResponse.result != null) {
         responseString += "\nStatus Code: ${parseResponse.statusCode}";

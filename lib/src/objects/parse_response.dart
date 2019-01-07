@@ -1,10 +1,4 @@
-import 'dart:convert';
-
-import 'package:http/http.dart';
-import 'package:parse_server_sdk/objects/parse_base.dart';
-import 'package:parse_server_sdk/objects/parse_exception.dart';
-import 'package:parse_server_sdk/objects/parse_object.dart';
-import 'package:parse_server_sdk/utils/parse_utils_objects.dart';
+part of flutter_parse_sdk;
 
 class ParseResponse {
   bool success = false;
