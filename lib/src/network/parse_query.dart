@@ -1,5 +1,6 @@
 part of flutter_parse_sdk;
 
+/// Class to create complex queries
 class QueryBuilder<T extends ParseObject> {
 
   static const String _NO_OPERATOR_NEEDED = "NO_OP";
@@ -29,104 +30,146 @@ class QueryBuilder<T extends ParseObject> {
   dynamic _keys;
   dynamic _include;
 
+  /// Class to create complex queries
   QueryBuilder(this.object) : super();
 
+  /// Adds a limit to amount of results return from Parse
   void limit(int limit){
     _limit = limit;
   }
 
+  /// Useful for pagination, skips [int] amount of results
   void skip(int skip){
     _skip = skip;
   }
 
+  /// Creates a query based on where
   void where(String where){
     _where = where;
   }
 
+  /// Orders the results ascedingly.
+  ///
+  /// [String] order will be the column of the table that the results are
+  /// ordered by
   void ascending(String order){
     _order = order;
   }
 
+  /// Orders the results descendingly.
+  ///
+  /// [String] order will be the column of the table that the results are
+  /// ordered by
   void descending(String order){
     _order = "-$order";
   }
 
+  /// Define which keys in an object to return.
+  ///
+  /// [String] keys will only return the columns of a result you want the data for,
+  /// this is useful for large objects
   void keys(String keys){
     _keys = keys;
   }
 
+  /// Includes other ParseObjects stored as a Pointer
   void include(String include){
     _include = include;
   }
 
+  /// Returns an object where the [String] column starts with [value]
   void startsWith(String key, dynamic value) {
     _regExQueries.add(MapEntry(key, "^$value"));
   }
 
+  /// Returns an object where the [String] column ends with [value]
   void endsWith(String key, dynamic value) {
     _regExQueries.add(MapEntry(key, "$value^"));
   }
 
+  /// Returns an object where the [String] column equals [value]
   void equals(String column, dynamic value) {
     _equalsQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column contains a value less than
+  /// value
   void lessThan(String column, dynamic value) {
     _lessThanQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column contains a value less or equal
+  /// to than value
   void lessThanOrEqualTo(String column, dynamic value) {
     _lessThanOrEqualToQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column contains a value greater
+  /// than value
   void greaterThan(String column, dynamic value) {
     _greaterThanQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column contains a value greater
+  /// than equal to value
   void greaterThanOrEqualsTo(String column, dynamic value) {
     _greaterThanOrEqualToQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column is not equal to value
   void notEqualTo(String column, dynamic value) {
     _notEqualToQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column contains value
   void contains(String column, dynamic value) {
     _containsQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column is containedIn
   void containedIn(String column, dynamic value) {
     _containedInQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column is exists
   void exists(String column, dynamic value) {
     _existsQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column contains select
   void select(String column, dynamic value) {
     _selectQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column doesn't select
   void dontSelect(String column, dynamic value) {
     _dontSelectQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column contains all
   void all(String column, dynamic value) {
     _allQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column has a regEx performed on,
+  /// this can include ^StringsWith, or ^EndsWith
   void regEx(String column, dynamic value) {
     _regExQueries.add(MapEntry(column, value));
   }
 
+  /// Returns an object where the [String] column contains the text
   void text(String column, dynamic value) {
     _textQueries.add(MapEntry(column, value));
   }
 
+  /// Finishes the query and calls the server
+  ///
+  /// Make sure to call this after defining your queries
   query() async {
     return object.query(_buildQuery());
   }
 
+  /// Builds the query for Parse
   String _buildQuery() {
     var queries = List<MapEntry>();
 
@@ -191,6 +234,7 @@ class QueryBuilder<T extends ParseObject> {
     return "$query";
   }
 
+  /// Runs through all queries in each list
   _getAllQueries(List<MapEntry> queries, String queryOperator){
     List<MapEntry> queriesToReturn = List();
     for (var query in queries){
@@ -199,6 +243,8 @@ class QueryBuilder<T extends ParseObject> {
     return queriesToReturn;
   }
 
+  /// Creates a query param using the column, the value and the queryOperator
+  /// that the column and value are being queried against
   _buildQueryWithColumnValueAndOperator(MapEntry columnAndValue, String queryOperator) {
 
     var key = columnAndValue.key;
@@ -219,6 +265,8 @@ class QueryBuilder<T extends ParseObject> {
     }
   }
 
+  /// This joins queries that should be joined together... e.g. age > 10 &&
+  /// age < 20, this would be similar to age > 10 < 20
   _checkForMultipleColumnInstances(List<MapEntry> queries) {
     List<MapEntry> sanitisedQueries = List();
     List<String> keysAlreadyCompacted = List();
@@ -265,6 +313,7 @@ class QueryBuilder<T extends ParseObject> {
     return sanitisedQueries;
   }
 
+  /// Adds the limiters to the query, i.e. skip=10, limit=10
   getLimiters(Map map) {
     String result;
     map.forEach((key, value) {
@@ -273,6 +322,9 @@ class QueryBuilder<T extends ParseObject> {
     return result;
   }
 
+  /// Converts the object to the correct value for JSON,
+  ///
+  /// Strings are wrapped with "" but ints and others are not
   convertValueToCorrectType(dynamic value) {
     if (value is num) return value;
     if (value is String) return "\"$value\"";

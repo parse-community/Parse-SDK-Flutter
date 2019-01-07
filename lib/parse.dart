@@ -10,8 +10,6 @@ import 'package:meta/meta.dart';
 import 'package:web_socket_channel/io.dart';
 
 part 'src/base/parse_constants.dart';
-part 'src/data/parse_data.dart';
-part 'src/data/parse_data_objects.dart';
 part 'src/data/parse_data_server.dart';
 part 'src/data/parse_data_user.dart';
 part 'src/enums/parse_enum_function_call.dart';
@@ -23,30 +21,44 @@ part 'src/network/parse_query.dart';
 part 'src/objects/parse_base.dart';
 part 'src/objects/parse_exception.dart';
 part 'src/objects/parse_function.dart';
+part 'src/objects/parse_geo_point.dart';
 part 'src/objects/parse_object.dart';
 part 'src/objects/parse_response.dart';
 part 'src/objects/parse_user.dart';
-
 part 'src/utils/parse_utils_date.dart';
 part 'src/utils/parse_utils_objects.dart';
+part 'src/utils/parse_utils.dart';
 
 class Parse {
   ParseDataServer data;
   final ParseHTTPClient client = new ParseHTTPClient();
 
-  Parse initialize(appId, serverUrl, {debug, appName, liveQueryUrl, masterKey, sessionId}) {
-    ParseDataServer.init(appId,
-        serverUrl,
+  /// To initialise Parse Server in your application
+  ///
+  /// This should be initialised in MyApp() creation
+  ///
+  /// ```
+  /// Parse().initialize(
+  //        "PARSE_APP_ID",
+  //        "https://parse.myaddress.com/parse/,
+  //        masterKey: "asd23rjh234r234r234r",
+  //        debug: true,
+  //        liveQuery: true);
+  // ```
+  Parse initialize(appId, serverUrl,
+      {debug, appName, liveQueryUrl, masterKey, sessionId}) {
+    ParseDataServer.init(appId, serverUrl,
         debug: debug,
         appName: appName,
         liveQueryUrl: liveQueryUrl,
         masterKey: masterKey,
         sessionId: sessionId);
 
-    return newInstance(ParseDataServer());
+    return _newInstance(ParseDataServer());
   }
 
-  Parse newInstance(ParseDataServer data) {
+  /// Creates a singleton instance of [ParseDataServer] that contains all the server information
+  Parse _newInstance(ParseDataServer data) {
     var parse = Parse();
     parse.data = data;
     parse.client.data = data;
