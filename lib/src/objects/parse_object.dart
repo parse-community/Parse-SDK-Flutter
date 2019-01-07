@@ -25,13 +25,13 @@ class ParseObject extends ParseBase {
     var uri = _getBasePath(_path);
     if (objectId != null) uri += "/$objectId";
     var result = await _client.get(uri);
-    return _handleResult(result, ParseApiObjectCallType.get);
+    return _handleResult(result, ParseApiObject.get);
   }
 
   /// Gets all objects from this table - Limited response at the moment
   getAll() async {
     var result = await _client.get(_getBasePath(_path));
-    return _handleResult(result, ParseApiObjectCallType.getAll);
+    return _handleResult(result, ParseApiObject.getAll);
   }
 
   /// Creates a new object and saves it online
@@ -39,7 +39,7 @@ class ParseObject extends ParseBase {
     var uri = _client.data.serverUrl + "$_path";
     var result =
         await _client.post(uri, body: JsonEncoder().convert(getObjectData()));
-    return _handleResult(result, ParseApiObjectCallType.create);
+    return _handleResult(result, ParseApiObject.create);
   }
 
   /// Saves the current object online
@@ -50,7 +50,7 @@ class ParseObject extends ParseBase {
       var uri = "${_getBasePath(_path)}/$objectId";
       var result =
           await _client.put(uri, body: JsonEncoder().convert(getObjectData()));
-      return _handleResult(result, ParseApiObjectCallType.save);
+      return _handleResult(result, ParseApiObject.save);
     }
   }
 
@@ -58,21 +58,21 @@ class ParseObject extends ParseBase {
   query(String query) async {
     var uri = "${_getBasePath(_path)}?$query";
     var result = await _client.get(uri);
-    return _handleResult(result, ParseApiObjectCallType.query);
+    return _handleResult(result, ParseApiObject.query);
   }
 
   /// Deletes the current object locally and online
   delete(String path, String objectId) async {
     var uri = "${_getBasePath(path)}/$objectId";
     var result = await _client.delete(uri);
-    return _handleResult(result, ParseApiObjectCallType.delete);
+    return _handleResult(result, ParseApiObject.delete);
   }
 
   /// Generates the path for the object
   _getBasePath(String path) => "${_client.data.serverUrl}$path";
 
   /// Handles an API response and logs data if [bool] debug is enabled
-  ParseResponse _handleResult(Response response, ParseApiObjectCallType type) {
+  ParseResponse _handleResult(Response response, ParseApiObject type) {
     ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
     Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
 
