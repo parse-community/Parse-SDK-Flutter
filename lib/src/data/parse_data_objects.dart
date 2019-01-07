@@ -1,4 +1,4 @@
-import 'package:parse_server_sdk/objects/parse_object.dart';
+part of flutter_parse_sdk;
 
 class ParseDataObjects {
   static ParseDataObjects _instance;

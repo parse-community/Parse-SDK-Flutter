@@ -1,6 +1,4 @@
-import 'package:parse_server_sdk/base/parse_constants.dart';
-import 'package:parse_server_sdk/objects/parse_object.dart';
-import 'package:parse_server_sdk/utils/parse_utils_date.dart';
+part of flutter_parse_sdk;
 
 populateObjectBaseData(ParseObject object, Map<String, dynamic> objectData) {
   object.set(ParseConstants.OBJECT_ID, objectData[ParseConstants.OBJECT_ID]);
