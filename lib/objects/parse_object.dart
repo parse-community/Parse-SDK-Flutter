@@ -17,10 +17,10 @@ class ParseObject extends ParseBase {
 
     client == null ? _client = ParseHTTPClient() : _client = client;
 
-    if (debug == null) {
-      _debug = _client.data.debug;
+    if (_debug == null) {
+      _client.data.debug != null ? _debug = _client.data.debug : false;
     } else {
-      _debug = debug;
+      _debug = _debug;
     }
 
     _path = "/classes/$className";

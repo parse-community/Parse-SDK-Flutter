@@ -32,7 +32,7 @@ abstract class ParseBase {
     _objectData.addAll(objectData);
   }
 
-  setValue(String key, dynamic value, {bool forceUpdate: true}) {
+  set(String key, dynamic value, {bool forceUpdate: true}) {
     if (value != null) {
       if (getObjectData().containsKey(key)) {
         if (forceUpdate) getObjectData()[key] = value;

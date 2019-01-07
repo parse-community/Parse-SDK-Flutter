@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/application_constants.dart';
 import 'package:flutter_plugin_example/diet_plan.dart';
 import 'package:parse_server_sdk/network/parse_query.dart';
+import 'package:parse_server_sdk/objects/parse_function.dart';
 import 'package:parse_server_sdk/objects/parse_object.dart';
 import 'package:parse_server_sdk/objects/parse_user.dart';
 import 'package:parse_server_sdk/parse.dart';
@@ -47,11 +48,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   runTestQueries() {
-    //getAllItems();
-    //getAllItemsByName();
-    //getSingleItem();
+    getAllItems();
+    getAllItemsByName();
+    getSingleItem();
     query();
-    //initUser();
+    function();
+    initUser();
   }
 
   void getAllItemsByName() async {
@@ -104,13 +106,16 @@ class _MyAppState extends State<MyApp> {
     var user = ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
     user = await ParseUser().signUp();
     user = await ParseUser().login();
-
     user = await ParseUser().currentUser(fromServer: true);
-
     user = await ParseUser().requestPasswordReset();
     user = await ParseUser().verificationEmailRequest();
     user = await ParseUser().all();
     user = await ParseUser().save();
     user = await ParseUser().destroy();
+  }
+
+  function() {
+    var function = ParseCloudFunction('testFunction');
+    function.execute();
   }
 }
