@@ -146,7 +146,23 @@ Then have the user sign up:
 ```
 user =  await  ParseUser().signUp();
 ```
-
+You can also logout and login with the user:
+```
+user =  await  ParseUser().login();
+```
+Also, once logged in you can manage sessions tokens:
+```
+user =  await  ParseUser().currentUser(fromServer:  true);
+```
+Other user features are:-
+ * Request Password Reset
+ * Verification Email Request
+ * Get all users
+ * Save
+ * Query - By object Id
+ * Delete
+ * Complex queries as shown above
+ * Plenty more
 
 ## Other Features of this library
 
@@ -176,5 +192,5 @@ user =  await  ParseUser().signUp();
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQzNDkwODI3NywtMjM4ODM2MzM4XX0=
+eyJoaXN0b3J5IjpbMzgwNjMwODM5LC0yMzg4MzYzMzhdfQ==
 -->
