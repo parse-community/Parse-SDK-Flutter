@@ -165,19 +165,22 @@ Other user features are:-
 
 * Main:
         * Users
-        * Queries
+        * Users
+* Queries
         * LiveQueries
         * Debug Mode - Logging API calls
 
 * ParseUser:
         * Create
         * Login
-        * CurrentUser
+        * Login
+* CurrentUser
         * RequestPasswordReset
         * VerificationEmailRequest
         * AllUsers
         * Save
-        * Destroy
+        * Save
+* Destroy
 
 * Objects:
         * Create new object
@@ -189,5 +192,5 @@ Other user features are:-
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4NzI2MTM4MTRdfQ==
+eyJoaXN0b3J5IjpbMTcxMjM4MzIxNCwtMTg3MjYxMzgxNF19
 -->
