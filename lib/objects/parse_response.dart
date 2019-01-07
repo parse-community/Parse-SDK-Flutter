@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:parse_server_sdk/objects/parse_base.dart';
 import 'package:parse_server_sdk/objects/parse_exception.dart';
 import 'package:parse_server_sdk/objects/parse_object.dart';
 import 'package:parse_server_sdk/utils/parse_utils_objects.dart';
@@ -10,6 +11,39 @@ class ParseResponse {
   int statusCode = -1;
   dynamic result;
   ParseException exception;
+
+  static handleResponse(ParseBase object, Response value) {
+    var response = ParseResponse();
+
+    if (value != null) {
+      response.statusCode = value.statusCode;
+
+      if (value.statusCode != 200) {
+        return _handleError(response, value);
+      } else if (value.body == "{\"results\":[]}"){
+        return _handleSuccessWithNoResults(response, "Successful request, but no results found");
+      } else {
+        return _handleSuccess(response, object, value.body);
+      }
+    } else {
+      response.exception = ParseException();
+      response.exception.message = "Error reaching server, or server response was null";
+      return response;
+    }
+  }
+
+  static ParseResponse _handleError(ParseResponse response, Response value) {
+    response.exception = ParseException();
+    response.exception.message = value.reasonPhrase;
+    return response;
+  }
+
+  static ParseResponse _handleSuccessWithNoResults(ParseResponse response, String value) {
+    response.statusCode = 200;
+    response.exception = ParseException();
+    response.exception.message = value;
+    return response;
+  }
 
   static ParseResponse _handleSuccess(ParseResponse response, ParseObject object, String responseBody) {
     response.success = true;
@@ -38,38 +72,5 @@ class ParseResponse {
   static _handleSingleResult(ParseObject object, map) {
     populateObjectBaseData(object, map);
     return object.fromJson(map);
-  }
-
-  static ParseResponse _handleError(ParseResponse response, Response value) {
-    response.exception = ParseException();
-    response.exception.message = value.reasonPhrase;
-    return response;
-  }
-
-  static ParseResponse _handleSuccessWithNoResults(ParseResponse response, String value) {
-    response.statusCode = 200;
-    response.exception = ParseException();
-    response.exception.message = value;
-    return response;
-  }
-
-  static handleResponse(ParseObject object, Response value) {
-    var response = ParseResponse();
-
-    if (value != null) {
-      response.statusCode = value.statusCode;
-
-      if (value.statusCode != 200) {
-        return _handleError(response, value);
-      } else if (value.body == "{\"results\":[]}"){
-        return _handleSuccessWithNoResults(response, "Successful request but no results found");
-      } else {
-        return _handleSuccess(response, object, value.body);
-      }
-    } else {
-      response.exception = ParseException();
-      response.exception.message = "Error reaching server, or server response was null";
-      return response;
-    }
   }
 }

@@ -1,7 +1,7 @@
 name: parse_server_sdk
 description: A Flutter Parse Server SDK
-version: 0.0.1
-homepage: https://www.github.com/PhillWiggins
+version: 0.0.3
+homepage: https://github.com/phillwiggins/flutter_parse_sdk
 author: PhillWiggins <phill.wiggins@gmail.com>
 
 environment:
