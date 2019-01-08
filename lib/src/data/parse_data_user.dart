@@ -26,16 +26,16 @@ class User extends ParseBase {
   factory User() => _instance;
 
   /// Returns a [User] from a [Map] object
-  fromJson(Map objectData) {
+  fromJson(objectData) {
     if (getObjectData() == null) setObjectData(objectData);
     getObjectData().addAll(objectData);
-    if (getObjectData().containsKey(ParseConstants.OBJECT_ID)) objectId = get(ParseConstants.OBJECT_ID).toString();
-    if (getObjectData().containsKey(ParseConstants.CREATED_AT)) createdAt = convertStringToDateTime(get(ParseConstants.CREATED_AT).toString());
-    if (getObjectData().containsKey(ParseConstants.UPDATED_AT)) updatedAt = convertStringToDateTime(get(ParseConstants.UPDATED_AT).toString());
-    if (getObjectData().containsKey(ACL)) acl = get(ACL).toString();
-    if (getObjectData().containsKey(USERNAME)) username = get(USERNAME).toString();
-    if (getObjectData().containsKey(PASSWORD)) password = get(PASSWORD).toString();
-    if (getObjectData().containsKey(EMAIL)) emailAddress = get(EMAIL).toString();
+    if (getObjectData().containsKey(ParseConstants.OBJECT_ID)) objectId = getObjectData()[ParseConstants.OBJECT_ID];
+    if (getObjectData().containsKey(ParseConstants.CREATED_AT)) createdAt = convertStringToDateTime(getObjectData()[ParseConstants.CREATED_AT]);
+    if (getObjectData().containsKey(ParseConstants.UPDATED_AT)) updatedAt = convertStringToDateTime(getObjectData()[ParseConstants.UPDATED_AT]);
+    if (getObjectData().containsKey(ACL)) acl = getObjectData()[ACL].toString();
+    if (getObjectData().containsKey(USERNAME)) username = getObjectData()[USERNAME];
+    if (getObjectData().containsKey(PASSWORD)) password = getObjectData()[PASSWORD];
+    if (getObjectData().containsKey(EMAIL)) emailAddress = getObjectData()[EMAIL];
 
     if (updatedAt == null) updatedAt = createdAt;
 
