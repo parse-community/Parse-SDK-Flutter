@@ -167,15 +167,14 @@ class ParseUser {
 
     var responseString = ' \n';
 
-    responseString += "----"
-        "\n${_client.data.appName} API Response ($className : ${type.toString()}) :";
+    responseString += "----""\n${_client.data.appName} API Response ($className : ${type.toString()}) :";
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       responseString += "\nStatus Code: ${response.statusCode}";
       responseString += "\nPayload: ${responseData.toString()}";
 
       if (responseData.containsKey('objectId')) {
-        User.instance.fromJson(JsonDecoder().convert(response.body) as Map);
+        User.instance.fromJson(responseData);
         _client.data.sessionId = responseData['sessionToken'];
       }
     } else {
