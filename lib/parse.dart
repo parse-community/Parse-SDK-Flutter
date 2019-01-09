@@ -28,6 +28,7 @@ part 'src/utils/parse_utils_date.dart';
 part 'src/utils/parse_utils_objects.dart';
 part 'src/utils/parse_utils.dart';
 part 'src/utils/parse_encoder.dart';
+part 'src/utils/parse_decoder.dart';
 
 class Parse {
   ParseCoreData data;

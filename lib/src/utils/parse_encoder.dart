@@ -1,7 +1,7 @@
 part of flutter_parse_sdk;
 
 class ParseEncoder {
-  
+
   bool isValidType(dynamic value) {
     return value == null ||
         value is String ||

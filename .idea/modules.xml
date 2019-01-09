@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/flutter_parse_sdk.iml" filepath="$PROJECT_DIR$/flutter_parse_sdk.iml" />
-      <module fileurl="file://$PROJECT_DIR$/example/android/app/src/main/main.iml" filepath="$PROJECT_DIR$/example/android/app/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/flutter_parse_sdk.iml" filepath="$PROJECT_DIR$/.idea/flutter_parse_sdk.iml" />
     </modules>
   </component>
 </project>
