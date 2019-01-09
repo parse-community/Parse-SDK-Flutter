@@ -15,7 +15,10 @@ void logger(
     } else if (!parseResponse.success) {
       responseString += "\nStatus Code: ${parseResponse.error.code}";
       responseString += "\nType: ${parseResponse.error.type}";
-      responseString += "\nMessage: ${parseResponse.error.message}";
+
+      String errorOrException = parseResponse.error.isTypeOfException ? "Exception" : "Error";
+
+      responseString += "\n$errorOrException: ${parseResponse.error.message}";
     }
 
     responseString += "\n----\n";

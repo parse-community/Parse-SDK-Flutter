@@ -8,6 +8,7 @@ class ParseError {
 
     // SDK errors / Errors
   1: 'No Results',
+  400: 'Bad Request',
 
     // Parse specific / Exceptions
   100: 'ConnectionFailed',
@@ -55,10 +56,11 @@ class ParseError {
   252: 'UnsupportedService'};
 
   final int code;
-  String type;
   final String message;
+  final bool isTypeOfException;
+  String type;
 
-  ParseError({this.code = -1, this.message = "Unkown error", bool debug: false}){
+  ParseError({this.code = -1, this.message = "Unkown error", this.isTypeOfException = false, bool debug: false}){
     type = exceptions[code];
     if (debug) print(toString());
   }

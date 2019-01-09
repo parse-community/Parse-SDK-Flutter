@@ -1,19 +1,21 @@
 part of flutter_parse_sdk;
 
-class ParseCloudFunction extends ParseBase {
+class ParseCloudFunction extends ParseObject {
   final String functionName;
-  String _path;
   bool _debug;
   ParseHTTPClient _client;
+
+  @override
+  String _path;
 
   /// Creates a new cloud function object
   ///
   /// {https://docs.parseplatform.org/cloudcode/guide/}
-  ParseCloudFunction(this.functionName, {bool debug, ParseHTTPClient client}) {
-    client == null ? _client = ParseHTTPClient() : _client = client;
-    _debug = isDebugEnabled(debug, _client);
+  ParseCloudFunction(this.functionName, {bool debug, ParseHTTPClient client}) : super (functionName) {
     _path = "/functions/$functionName";
-    setObjectData(Map<String, dynamic>());
+
+    if (debug != null) setDebug(debug);
+    if (client != null) setClient(client);
   }
 
   /// Executes a cloud function
@@ -22,32 +24,6 @@ class ParseCloudFunction extends ParseBase {
   execute() async {
     var uri = _client.data.serverUrl + "$_path";
     var result = await _client.post(uri, body: JsonEncoder().convert(getObjectData()));
-    return _handleResult(result, ParseApiRQ.execute);
-  }
-
-  /// Handles an API response
-  ParseResponse _handleResult(Response response, ParseApiRQ type) {
-    ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
-    Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
-
-    if (_client.data.debug || _debug) {
-      var responseString = ' \n';
-
-      responseString += "----"
-          "\n${_client.data.appName} API Response ($functionName : ${type.toString()}) :";
-
-      if (parseResponse.success && parseResponse.result != null) {
-        responseString += "\nStatus Code: ${parseResponse.statusCode}";
-        responseString += "\nPayload: ${responseData.toString()}";
-      } else if (!parseResponse.success) {
-        responseString += "\nStatus Code: ${responseData['code'] == null ? parseResponse.statusCode : responseData['code']}";
-        responseString += "\nException: ${responseData['error'] == null ? responseData.toString() : responseData['error']}";
-      }
-
-      responseString += "\n----\n";
-      print(responseString);
-    }
-
-    return parseResponse;
+    return super.handleResponse(result, ParseApiRQ.execute);
   }
 }
