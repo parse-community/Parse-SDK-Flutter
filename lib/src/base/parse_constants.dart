@@ -1,13 +1,17 @@
 part of flutter_parse_sdk;
 
-/// Class containing all constants for this library
-class ParseConstants {
+// Utils
+const String PARSE_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
 
-  static const String PARSE_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
-  static const String OBJECT_ID = 'objectId';
-  static const String CREATED_AT = 'createdAt';
-  static const String UPDATED_AT = 'updatedAT';
+// ParseObject variables
+const String OBJECT_ID = 'objectId';
+const String CREATED_AT = 'createdAt';
+const String UPDATED_AT = 'updatedAT';
 
-  static const String HEADER_SESSION_TOKEN = 'X-Parse-Session-Token';
-  static const String HEADER_REVOCABLE_SESSION = 'X-Parse-Revocable-Session';
-}
+// Headers
+const String HEADER_SESSION_TOKEN = 'X-Parse-Session-Token';
+const String HEADER_REVOCABLE_SESSION = 'X-Parse-Revocable-Session';
+
+// Storage
+const String PARSE_STORE_BASE = 'flutter_parse_sdk_';
+const String PARSE_STORE_USER = "${PARSE_STORE_BASE}user";

@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
         print(ApplicationConstants.APP_NAME + ": " + (plan as DietPlan).name);
       }
     } else {
-      print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+      print(ApplicationConstants.APP_NAME + ": " + response.error.message);
     }
   }
 
@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
     if (response.success) {
       print(ApplicationConstants.APP_NAME + ": " + (response.result as DietPlan).toString());
     } else {
-      print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+      print(ApplicationConstants.APP_NAME + ": " + response.error.message);
     }
   }
 
@@ -94,20 +94,29 @@ class _MyAppState extends State<MyApp> {
     if (response.success) {
       print("Result: ${((response.result as List<dynamic>).first as DietPlan).toString()}");
     } else {
-      print("Result: ${response.exception.message}");
+      print("Result: ${response.error.message}");
     }
   }
 
   initUser() async {
-    var user = ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
-    user = await ParseUser().signUp();
-    user = await ParseUser().login();
-    user = await ParseUser().currentUser(fromServer: true);
-    user = await ParseUser().requestPasswordReset();
-    user = await ParseUser().verificationEmailRequest();
-    user = await ParseUser().all();
-    user = await ParseUser().save();
-    user = await ParseUser().destroy();
+
+   // All return type ParseUser except all
+    var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+    user = await user.signUp();
+    user = await user.login();
+    user = null;
+
+    // Best practice for starting the app. This will check for a
+    user = ParseUser.currentUser();
+    user = await user.getCurrentUserFromServer();
+    user = await user.requestPasswordReset();
+    user = await user.verificationEmailRequest();
+
+    user = await user.save();
+    await user.destroy();
+
+    // Returns type ParseResponse as its a query, not a single result
+    var response = await ParseUser.all();
   }
 
   function() {
