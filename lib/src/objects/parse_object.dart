@@ -28,22 +28,22 @@ class ParseObject extends ParseBase {
   /// Gets an object from the server using it's [String] objectId
   getObject(String objectId) async {
     try {
-      var uri = _getBasePath(_path);
+      var uri = "${ParseCoreData().serverUrl}$_path";
       if (objectId != null) uri += "/$objectId";
       var result = await _client.get(uri);
       return handleResponse(result, ParseApiRQ.get);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.delete);
+      return handleException(e, ParseApiRQ.get);
     }
   }
 
   /// Gets all objects from this table - Limited response at the moment
   getAll() async {
     try {
-      var result = await _client.get(_getBasePath(_path));
+      var result = await _client.get("${ParseCoreData().serverUrl}$_path");
       return handleResponse(result, ParseApiRQ.getAll);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.delete);
+      return handleException(e, ParseApiRQ.getAll);
     }
   }
 
@@ -54,7 +54,7 @@ class ParseObject extends ParseBase {
       var result = await _client.post(uri, body: JsonEncoder().convert(getObjectData()));
       return handleResponse(result, ParseApiRQ.create);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.delete);
+      return handleException(e, ParseApiRQ.create);
     }
   }
 
@@ -64,11 +64,11 @@ class ParseObject extends ParseBase {
       return create();
     } else {
       try {
-        var uri = "${_getBasePath(_path)}/$objectId";
+        var uri = "${ParseCoreData().serverUrl}$_path/$objectId";
         var result = await _client.put(uri, body: JsonEncoder().convert(getObjectData()));
         return handleResponse(result, ParseApiRQ.save);
       } on Exception catch (e) {
-        return handleException(e, ParseApiRQ.delete);
+        return handleException(e, ParseApiRQ.save);
       }
     }
   }
@@ -76,27 +76,24 @@ class ParseObject extends ParseBase {
   /// Can be used to create custom queries
   query(String query) async {
     try {
-      var uri = "${_getBasePath(_path)}?$query";
+      var uri = "${ParseCoreData().serverUrl}$_path?$query";
       var result = await _client.get(uri);
       return handleResponse(result, ParseApiRQ.query);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.delete);
+      return handleException(e, ParseApiRQ.query);
     }
   }
 
   /// Deletes the current object locally and online
   delete(String path, String objectId) async {
     try {
-      var uri = "${_getBasePath(path)}/$objectId";
+      var uri = "${ParseCoreData().serverUrl}$_path/$objectId";
       var result = await _client.delete(uri);
       return handleResponse(result, ParseApiRQ.delete);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.delete);
     }
   }
-
-  /// Generates the path for the object
-  _getBasePath(String path) => "${_client.data.serverUrl}$path";
 
   /// Handles an API response and logs data if [bool] debug is enabled
   @protected

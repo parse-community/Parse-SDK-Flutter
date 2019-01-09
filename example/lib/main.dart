@@ -111,7 +111,7 @@ class _MyAppState extends State<MyApp> {
     user = await user.verificationEmailRequest();
     user = await user.all();
     user = await user.save();
-    await user.destroy();
+    //await user.destroy();
   }
 
   function() {

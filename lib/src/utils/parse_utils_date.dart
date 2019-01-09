@@ -13,6 +13,8 @@ DateTime stringToDateTime(String date) {
 
 /// Serialize [DateTime] into an ISO-8601 full-precision extended format representation.
 String dateTimeToString(DateTime datetime) {
+  if (datetime == null) return null;
+
   if (!datetime.isUtc) {
     datetime = datetime.toUtc();
   }
