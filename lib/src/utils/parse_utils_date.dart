@@ -1,23 +1,49 @@
 part of flutter_parse_sdk;
 
 /// Converts a [String] into a [DateTime] from a Parse Server format
-DateTime convertStringToDateTime(String date) {
+DateTime stringToDateTime(String date) {
   if (date == null) return null;
 
   try {
-    var formatter = DateFormat(ParseConstants.PARSE_DATE_FORMAT);
-    return formatter.parse(_removeTimeZones(date));
+    return DateTime.parse(date);
   } on FormatException {
     return null;
   }
 }
 
-/// Removes timezones as our current implementation does work
-String _removeTimeZones(String date) {
-  // TODO - library doesn't support timezones. Monitor this
-  if (date.contains('zzzZ')) {
-    return date.replaceRange(date.length - 4, date.length, '');
-  } else {
-    return date;
+/// Serialize [DateTime] into an ISO-8601 full-precision extended format representation.
+String dateTimeToString(DateTime datetime) {
+  if (!datetime.isUtc) {
+    datetime = datetime.toUtc();
   }
+
+  String y = _fourDigits(datetime.year);
+  String m = _twoDigits(datetime.month);
+  String d = _twoDigits(datetime.day);
+  String h = _twoDigits(datetime.hour);
+  String min = _twoDigits(datetime.minute);
+  String sec = _twoDigits(datetime.second);
+  String ms = _threeDigits(datetime.millisecond);
+
+  return "$y-$m-${d}T$h:$min:$sec.${ms}Z";
+}
+
+String _fourDigits(int n) {
+  int absN = n.abs();
+  String sign = n < 0 ? "-" : "";
+  if (absN >= 1000) return "$n";
+  if (absN >= 100) return "${sign}0$absN";
+  if (absN >= 10) return "${sign}00$absN";
+  return "${sign}000$absN";
+}
+
+String _threeDigits(int n) {
+  if (n >= 100) return "$n";
+  if (n >= 10) return "0$n";
+  return "00$n";
+}
+
+String _twoDigits(int n) {
+  if (n >= 10) return "$n";
+return "0$n";
 }
