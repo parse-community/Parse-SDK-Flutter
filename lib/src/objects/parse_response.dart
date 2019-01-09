@@ -34,7 +34,7 @@ class ParseResponse {
   /// Handles exception instead of throwing an exception
   static handleException(ParseBase object, Exception exception) {
     var response = ParseResponse();
-    response.error = ParseError(message: exception.toString());
+    response.error = ParseError(message: exception.toString(), isTypeOfException: true);
     return response;
   }
 
@@ -51,7 +51,7 @@ class ParseResponse {
     return response;
   }
 
-  /// Handles succesful response with results
+  /// Handles successful response with results
   static ParseResponse _handleSuccess(ParseResponse response, ParseObject object, String responseBody) {
     response.success = true;
 

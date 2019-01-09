@@ -16,7 +16,7 @@ part 'src/network/parse_http_client.dart';
 part 'src/network/parse_livequery.dart';
 part 'src/network/parse_query.dart';
 part 'src/objects/parse_base.dart';
-part 'src/objects/parse_exception.dart';
+part 'src/objects/parse_error.dart';
 part 'src/objects/parse_function.dart';
 part 'src/objects/parse_geo_point.dart';
 part 'src/objects/parse_object.dart';

@@ -23,7 +23,7 @@ class ParseUser extends ParseBase {
   /// username and password is required to login
   ParseUser(this.username, this.password, this.emailAddress, {bool debug, ParseHTTPClient client}) : super() {
     client == null ? _client = ParseHTTPClient() : _client = client;
-    _debug = isDebugEnabled(debug, _client);
+    _debug = isDebugEnabled(client, objectLevelDebug: debug);
   }
 
   /// Returns a [User] from a [Map] object
@@ -58,8 +58,7 @@ class ParseUser extends ParseBase {
   /// Returns a [String] that's human readable. Ideal for printing logs
   @override
   String toString() =>
-      "Username: $username \n"
-          "Email Address:$emailAddress";
+      "Username: $username \nEmail Address:$emailAddress";
 
   static const String USERNAME = 'Username';
   static const String EMAIL = 'Email';

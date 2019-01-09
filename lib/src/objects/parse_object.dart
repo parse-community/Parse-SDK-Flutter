@@ -11,11 +11,18 @@ class ParseObject extends ParseBase {
   /// [String] className refers to the Table Name in your Parse Server,
   /// [bool] debug will overwrite the current default debug settings and
   /// [ParseHttpClient] can be overwritten to create your own HTTP Client
-  ParseObject(this.className, {bool debug: false, ParseHTTPClient client})
-      : super() {
-    client == null ? _client = ParseHTTPClient() : _client = client;
-    _debug = isDebugEnabled(debug, _client);
+  ParseObject(this.className, {bool debug: false}): super() {
     _path = "/classes/$className";
+    setClient(ParseHTTPClient());
+    setDebug(isDebugEnabled(_client, objectLevelDebug: debug));
+  }
+
+  setDebug(bool debug){
+    _debug = debug;
+  }
+
+  setClient(ParseHTTPClient client){
+    _client = client;
   }
 
   /// Gets an object from the server using it's [String] objectId
@@ -24,9 +31,9 @@ class ParseObject extends ParseBase {
       var uri = _getBasePath(_path);
       if (objectId != null) uri += "/$objectId";
       var result = await _client.get(uri);
-      return _handleResponse(result, ParseApiRQ.get);
+      return handleResponse(result, ParseApiRQ.get);
     } on Exception catch (e) {
-      return _handleException(e, ParseApiRQ.delete);
+      return handleException(e, ParseApiRQ.delete);
     }
   }
 
@@ -34,9 +41,9 @@ class ParseObject extends ParseBase {
   getAll() async {
     try {
       var result = await _client.get(_getBasePath(_path));
-      return _handleResponse(result, ParseApiRQ.getAll);
+      return handleResponse(result, ParseApiRQ.getAll);
     } on Exception catch (e) {
-      return _handleException(e, ParseApiRQ.delete);
+      return handleException(e, ParseApiRQ.delete);
     }
   }
 
@@ -45,9 +52,9 @@ class ParseObject extends ParseBase {
     try {
       var uri = _client.data.serverUrl + "$_path";
       var result = await _client.post(uri, body: JsonEncoder().convert(getObjectData()));
-      return _handleResponse(result, ParseApiRQ.create);
+      return handleResponse(result, ParseApiRQ.create);
     } on Exception catch (e) {
-      return _handleException(e, ParseApiRQ.delete);
+      return handleException(e, ParseApiRQ.delete);
     }
   }
 
@@ -59,9 +66,9 @@ class ParseObject extends ParseBase {
       try {
         var uri = "${_getBasePath(_path)}/$objectId";
         var result = await _client.put(uri, body: JsonEncoder().convert(getObjectData()));
-        return _handleResponse(result, ParseApiRQ.save);
+        return handleResponse(result, ParseApiRQ.save);
       } on Exception catch (e) {
-        return _handleException(e, ParseApiRQ.delete);
+        return handleException(e, ParseApiRQ.delete);
       }
     }
   }
@@ -71,9 +78,9 @@ class ParseObject extends ParseBase {
     try {
       var uri = "${_getBasePath(_path)}?$query";
       var result = await _client.get(uri);
-      return _handleResponse(result, ParseApiRQ.query);
+      return handleResponse(result, ParseApiRQ.query);
     } on Exception catch (e) {
-      return _handleException(e, ParseApiRQ.delete);
+      return handleException(e, ParseApiRQ.delete);
     }
   }
 
@@ -82,9 +89,9 @@ class ParseObject extends ParseBase {
     try {
       var uri = "${_getBasePath(path)}/$objectId";
       var result = await _client.delete(uri);
-      return _handleResponse(result, ParseApiRQ.delete);
+      return handleResponse(result, ParseApiRQ.delete);
     } on Exception catch (e) {
-      return _handleException(e, ParseApiRQ.delete);
+      return handleException(e, ParseApiRQ.delete);
     }
   }
 
@@ -92,7 +99,8 @@ class ParseObject extends ParseBase {
   _getBasePath(String path) => "${_client.data.serverUrl}$path";
 
   /// Handles an API response and logs data if [bool] debug is enabled
-  ParseResponse _handleResponse(Response response, ParseApiRQ type) {
+  @protected
+  ParseResponse handleResponse(Response response, ParseApiRQ type) {
     ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
 
     if (_debug) {
@@ -103,7 +111,8 @@ class ParseObject extends ParseBase {
   }
 
   /// Handles an API response and logs data if [bool] debug is enabled
-  ParseResponse _handleException(Exception exception, ParseApiRQ type) {
+  @protected
+  ParseResponse handleException(Exception exception, ParseApiRQ type) {
     ParseResponse parseResponse = ParseResponse.handleException(this, exception);
 
     if (_debug) {
