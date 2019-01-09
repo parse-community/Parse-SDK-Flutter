@@ -2,23 +2,27 @@ part of flutter_parse_sdk;
 
 abstract class ParseBase {
   /// Stores all the values of a class
-  Map _objectData;
+  Map _objectData = Map<String, dynamic>();
 
   /// Returns [String] objectId
-  get getObjectId => _objectData['objectId'] == null ? objectId : _objectData['objectId'];
-  String objectId;
+  String get objectId => _objectData['objectId'];
+  set objectId(String objectId) => _objectData[objectId];
 
   /// Returns [DateTime] createdAt
-  get getCreatedAt => _objectData['createdAt'] == null ? createdAt : _objectData['createdAt'];
-  DateTime createdAt;
+  DateTime get createdAt => stringToDateTime(_objectData['createdAt']);
+  set createdAt(DateTime createdAt) =>
+      _objectData['createdAt'] = dateTimeToString(createdAt);
 
   /// Returns [DateTime] updatedAt
-  get getUpdatedAt => _objectData['updatedAt'] == null ? updatedAt : _objectData['updatedAt'];
-  DateTime updatedAt;
+  DateTime get updatedAt => stringToDateTime(_objectData['updatedAt']);
+  set updatedAt(DateTime updatedAt) =>
+      _objectData['updatedAt'] = dateTimeToString(updatedAt);
 
+  /// Converts object to [String] in JSON format
   @protected
   toJson() => JsonEncoder().convert(getObjectData());
 
+  /// Creates a copy of this class
   @protected
   copy() => JsonDecoder().convert(fromJson(getObjectData()));
 
@@ -30,6 +34,12 @@ abstract class ParseBase {
   @protected
   getObjectData() => _objectData;
 
+  /// Saves in storage
+  @protected
+  saveInStorage(String key) async {
+    await ParseCoreData().getStore().setString(key, toJson());
+  }
+
   @protected
   fromJson(Map objectData) {
     if (_objectData == null) _objectData = Map();
@@ -37,7 +47,7 @@ abstract class ParseBase {
   }
 
   /// Create a new variable for this object, [bool] forceUpdate is always true,
-  /// if unsure as to wether an item is needed or not, set to false
+  /// if unsure as to whether an item is needed or not, set to false
   set(String key, dynamic value, {bool forceUpdate: true}) {
     if (value != null) {
       if (getObjectData().containsKey(key)) {
@@ -55,5 +65,46 @@ abstract class ParseBase {
     } else {
       return defaultValue;
     }
+  }
+
+  /// Saves item to simple key pair value storage
+  ///
+  /// Replicates Android SDK pin process and saves object to storage
+  pin() async {
+    if (objectId != null) {
+      await ParseCoreData().getStore().setString(objectId, toJson());
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// Saves item to simple key pair value storage
+  ///
+  /// Replicates Android SDK pin process and saves object to storage
+  unpin() async {
+    if (objectId != null) {
+      var itemToSave = await ParseCoreData().getStore().setString(objectId, null);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// Saves item to simple key pair value storage
+  ///
+  /// Replicates Android SDK pin process and saves object to storage
+  fromPin() async {
+    if (objectId != null) {
+      var itemFromStore = await ParseCoreData().getStore().getString(objectId);
+
+      if (itemFromStore != null) {
+        Map<String, dynamic> itemFromStoreMap = JsonDecoder().convert(
+            itemFromStore);
+        fromJson(itemFromStoreMap);
+        return this;
+      }
+    }
+    return null;
   }
 }
