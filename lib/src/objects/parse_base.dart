@@ -2,23 +2,25 @@ part of flutter_parse_sdk;
 
 abstract class ParseBase {
   /// Stores all the values of a class
-  Map _objectData;
+  Map _objectData = Map<String, dynamic>();
 
   /// Returns [String] objectId
-  get getObjectId => _objectData['objectId'] == null ? objectId : _objectData['objectId'];
-  String objectId;
+  String get objectId => _objectData['objectId'];
+  set objectId(String objectId) => _objectData[objectId];
 
   /// Returns [DateTime] createdAt
-  get getCreatedAt => _objectData['createdAt'] == null ? createdAt : _objectData['createdAt'];
-  DateTime createdAt;
+  DateTime get createdAt => stringToDateTime(_objectData['createdAt']);
+  set createdAt(DateTime createdAt) => _objectData['createdAt'] = dateTimeToString(createdAt);
 
   /// Returns [DateTime] updatedAt
-  get getUpdatedAt => _objectData['updatedAt'] == null ? updatedAt : _objectData['updatedAt'];
-  DateTime updatedAt;
+  DateTime get updatedAt => stringToDateTime(_objectData['updatedAt']);
+  set updatedAt(DateTime updatedAt) => _objectData['updatedAt'] = dateTimeToString(updatedAt);
 
+  /// Converts object to [String] in JSON format
   @protected
   toJson() => JsonEncoder().convert(getObjectData());
 
+  /// Creates a copy of this class
   @protected
   copy() => JsonDecoder().convert(fromJson(getObjectData()));
 
@@ -29,6 +31,12 @@ abstract class ParseBase {
   /// Returns the objects variables
   @protected
   getObjectData() => _objectData;
+
+  /// Saves in storage
+  @protected
+  saveInStorage(String key) async {
+    await ParseCoreData().getStore().setString(key, toJson());
+  }
 
   @protected
   fromJson(Map objectData) {

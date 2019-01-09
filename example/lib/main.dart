@@ -99,15 +99,19 @@ class _MyAppState extends State<MyApp> {
   }
 
   initUser() async {
-    var user = ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
-    user = await ParseUser().signUp();
-    user = await ParseUser().login();
-    user = await ParseUser().currentUser(fromServer: true);
-    user = await ParseUser().requestPasswordReset();
-    user = await ParseUser().verificationEmailRequest();
-    user = await ParseUser().all();
-    user = await ParseUser().save();
-    user = await ParseUser().destroy();
+    var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+    user = await user.signUp();
+    user = await user.login();
+    user = null;
+
+    // Best practice for starting the app. This will check for a
+    user = ParseUser.currentUser();
+    user = await user.getCurrentUserFromServer();
+    user = await user.requestPasswordReset();
+    user = await user.verificationEmailRequest();
+    user = await user.all();
+    user = await user.save();
+    await user.destroy();
   }
 
   function() {

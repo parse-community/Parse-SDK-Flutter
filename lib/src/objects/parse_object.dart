@@ -11,13 +11,10 @@ class ParseObject extends ParseBase {
   /// [String] className refers to the Table Name in your Parse Server,
   /// [bool] debug will overwrite the current default debug settings and
   /// [ParseHttpClient] can be overwritten to create your own HTTP Client
-  ParseObject(this.className, {bool debug: false, ParseHTTPClient client}) {
-
+  ParseObject(this.className, {bool debug: false, ParseHTTPClient client}): super() {
     client == null ? _client = ParseHTTPClient() : _client = client;
     _debug = isDebugEnabled(debug, _client);
-
     _path = "/classes/$className";
-    setObjectData(Map<String, dynamic>());
   }
 
   /// Gets an object from the server using it's [String] objectId
