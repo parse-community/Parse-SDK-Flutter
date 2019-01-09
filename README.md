@@ -115,6 +115,7 @@ The features available are:-
  * Query - By object Id
  * Delete
  * Complex queries as shown above
+ * Pin
  * Plenty more
 
 ## Custom Objects
@@ -146,21 +147,21 @@ var user =  ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK
 Then have the user sign up:
 
 ```
-user =  await  ParseUser().signUp();
+user =  await  user.signUp();
 ```
 You can also logout and login with the user:
 ```
-user =  await  ParseUser().login();
+user =  await  user.login();
 ```
-Also, once logged in you can manage sessions tokens:
+Also, once logged in you can manage sessions tokens. This feature can be called after Parse().init() on startup to check for a logged in user.
 ```
-user =  await  ParseUser().currentUser(fromServer:  true);
+user = ParseUser.currentUser();
 ```
 Other user features are:-
  * Request Password Reset
-* Verification Email Request
+ * Verification Email Request
  * Get all users
-* Save
+ * Save
  * Destroy user
 
 ## Other Features of this library
@@ -171,6 +172,7 @@ Main:
 * Queries
 * LiveQueries
 * GeoPoints
+* Persistent storage
 * Debug Mode - Logging API calls
 * Manage Session ID's tokens
 

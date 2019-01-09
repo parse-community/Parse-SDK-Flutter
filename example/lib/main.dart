@@ -99,6 +99,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   initUser() async {
+
+   // All return type ParseUser except all
     var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
     user = await user.signUp();
     user = await user.login();
@@ -109,9 +111,12 @@ class _MyAppState extends State<MyApp> {
     user = await user.getCurrentUserFromServer();
     user = await user.requestPasswordReset();
     user = await user.verificationEmailRequest();
-    user = await user.all();
+
     user = await user.save();
-    //await user.destroy();
+    await user.destroy();
+
+    // Returns type ParseResponse as its a query, not a single result
+    var response = await ParseUser.all();
   }
 
   function() {
