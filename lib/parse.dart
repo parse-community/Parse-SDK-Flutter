@@ -11,9 +11,7 @@ import 'package:web_socket_channel/io.dart';
 
 part 'src/base/parse_constants.dart';
 part 'src/data/parse_core_data.dart';
-part 'src/enums/parse_enum_function_call.dart';
-part 'src/enums/parse_enum_object_call.dart';
-part 'src/enums/parse_enum_user_call.dart';
+part 'src/enums/parse_enum_api_rq.dart';
 part 'src/network/parse_http_client.dart';
 part 'src/network/parse_livequery.dart';
 part 'src/network/parse_query.dart';
@@ -29,6 +27,7 @@ part 'src/utils/parse_utils_objects.dart';
 part 'src/utils/parse_utils.dart';
 part 'src/utils/parse_encoder.dart';
 part 'src/utils/parse_decoder.dart';
+part 'src/utils/parse_logger.dart';
 
 class Parse {
   ParseCoreData data;

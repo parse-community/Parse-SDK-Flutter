@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
         print(ApplicationConstants.APP_NAME + ": " + (plan as DietPlan).name);
       }
     } else {
-      print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+      print(ApplicationConstants.APP_NAME + ": " + response.error.message);
     }
   }
 
@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
     if (response.success) {
       print(ApplicationConstants.APP_NAME + ": " + (response.result as DietPlan).toString());
     } else {
-      print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+      print(ApplicationConstants.APP_NAME + ": " + response.error.message);
     }
   }
 
@@ -94,7 +94,7 @@ class _MyAppState extends State<MyApp> {
     if (response.success) {
       print("Result: ${((response.result as List<dynamic>).first as DietPlan).toString()}");
     } else {
-      print("Result: ${response.exception.message}");
+      print("Result: ${response.error.message}");
     }
   }
 

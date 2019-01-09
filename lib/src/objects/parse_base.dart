@@ -10,11 +10,13 @@ abstract class ParseBase {
 
   /// Returns [DateTime] createdAt
   DateTime get createdAt => stringToDateTime(_objectData['createdAt']);
-  set createdAt(DateTime createdAt) => _objectData['createdAt'] = dateTimeToString(createdAt);
+  set createdAt(DateTime createdAt) =>
+      _objectData['createdAt'] = dateTimeToString(createdAt);
 
   /// Returns [DateTime] updatedAt
   DateTime get updatedAt => stringToDateTime(_objectData['updatedAt']);
-  set updatedAt(DateTime updatedAt) => _objectData['updatedAt'] = dateTimeToString(updatedAt);
+  set updatedAt(DateTime updatedAt) =>
+      _objectData['updatedAt'] = dateTimeToString(updatedAt);
 
   /// Converts object to [String] in JSON format
   @protected
@@ -45,7 +47,7 @@ abstract class ParseBase {
   }
 
   /// Create a new variable for this object, [bool] forceUpdate is always true,
-  /// if unsure as to wether an item is needed or not, set to false
+  /// if unsure as to whether an item is needed or not, set to false
   set(String key, dynamic value, {bool forceUpdate: true}) {
     if (value != null) {
       if (getObjectData().containsKey(key)) {
@@ -63,5 +65,46 @@ abstract class ParseBase {
     } else {
       return defaultValue;
     }
+  }
+
+  /// Saves item to simple key pair value storage
+  ///
+  /// Replicates Android SDK pin process and saves object to storage
+  pin() async {
+    if (objectId != null) {
+      await ParseCoreData().getStore().setString(objectId, toJson());
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// Saves item to simple key pair value storage
+  ///
+  /// Replicates Android SDK pin process and saves object to storage
+  unpin() async {
+    if (objectId != null) {
+      var itemToSave = await ParseCoreData().getStore().setString(objectId, null);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// Saves item to simple key pair value storage
+  ///
+  /// Replicates Android SDK pin process and saves object to storage
+  fromPin() async {
+    if (objectId != null) {
+      var itemFromStore = await ParseCoreData().getStore().getString(objectId);
+
+      if (itemFromStore != null) {
+        Map<String, dynamic> itemFromStoreMap = JsonDecoder().convert(
+            itemFromStore);
+        fromJson(itemFromStoreMap);
+        return this;
+      }
+    }
+    return null;
   }
 }

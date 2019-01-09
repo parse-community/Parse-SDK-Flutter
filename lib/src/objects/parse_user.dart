@@ -91,7 +91,7 @@ class ParseUser extends ParseBase {
       final response = await _client.get(uri, headers: {
         HEADER_SESSION_TOKEN: _client.data.sessionId
       });
-      return _handleResponse(response, ParseApiUser.currentUser);
+      return _handleResponse(response, ParseApiRQ.currentUser);
   }
 
   /// Gets the current user from storage
@@ -128,7 +128,7 @@ class ParseUser extends ParseBase {
         },
         body: JsonEncoder().convert(bodyData));
 
-    _handleResponse(response, ParseApiUser.signUp);
+    _handleResponse(response, ParseApiRQ.signUp);
     return this;
   }
 
@@ -152,7 +152,7 @@ class ParseUser extends ParseBase {
       HEADER_REVOCABLE_SESSION: "1",
     });
 
-    _handleResponse(response, ParseApiUser.login);
+    _handleResponse(response, ParseApiRQ.login);
     return this;
   }
 
@@ -169,7 +169,7 @@ class ParseUser extends ParseBase {
         body: JsonEncoder().convert({"email": emailAddress}));
 
     return _handleResponse(
-        response, ParseApiUser.verificationEmailRequest);
+        response, ParseApiRQ.verificationEmailRequest);
   }
 
   /// Sends a password reset email to the users email address
@@ -178,7 +178,7 @@ class ParseUser extends ParseBase {
         "${_client.data.serverUrl}/requestPasswordReset",
         body: JsonEncoder().convert({"email": emailAddress}));
 
-    return _handleResponse(response, ParseApiUser.requestPasswordReset);
+    return _handleResponse(response, ParseApiRQ.requestPasswordReset);
   }
 
   /// Saves the current user
@@ -192,7 +192,7 @@ class ParseUser extends ParseBase {
       final response = await _client.put(
           _client.data.serverUrl + "$path/$objectId",
           body: JsonEncoder().convert(getObjectData()));
-      return _handleResponse(response, ParseApiUser.save);
+      return _handleResponse(response, ParseApiRQ.save);
     }
   }
 
@@ -202,7 +202,7 @@ class ParseUser extends ParseBase {
         _client.data.serverUrl + "$path/$objectId",
         headers: {"X-Parse-Session-Token": _client.data.sessionId});
 
-    _handleResponse(response, ParseApiUser.destroy);
+    _handleResponse(response, ParseApiRQ.destroy);
 
     return objectId;
   }
@@ -210,11 +210,11 @@ class ParseUser extends ParseBase {
   /// Gets a list of all users (limited return)
   all() async {
     final response = await _client.get(_client.data.serverUrl + "$path");
-    return _handleResponse(response, ParseApiUser.all);
+    return _handleResponse(response, ParseApiRQ.all);
   }
 
   /// Handles all the reponse data for this class
-  _handleResponse(Response response, ParseApiUser type) {
+  _handleResponse(Response response, ParseApiRQ type) {
     Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
 
     var responseString = ' \n';

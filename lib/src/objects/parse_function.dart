@@ -22,11 +22,11 @@ class ParseCloudFunction extends ParseBase {
   execute() async {
     var uri = _client.data.serverUrl + "$_path";
     var result = await _client.post(uri, body: JsonEncoder().convert(getObjectData()));
-    return _handleResult(result, ParseApiFunction.execute);
+    return _handleResult(result, ParseApiRQ.execute);
   }
 
   /// Handles an API response
-  ParseResponse _handleResult(Response response, ParseApiFunction type) {
+  ParseResponse _handleResult(Response response, ParseApiRQ type) {
     ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
     Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
 
