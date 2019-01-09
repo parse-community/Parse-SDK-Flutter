@@ -1,10 +1,10 @@
 part of flutter_parse_sdk;
 
 class ParseUser extends ParseBase {
-  ParseHTTPClient _client;
   static final String className = '_User';
-  String path = "/classes/$className";
+  static final String path = "/classes/$className";
   bool _debug;
+  ParseHTTPClient _client;
 
   String acl;
   String username;
@@ -21,9 +21,7 @@ class ParseUser extends ParseBase {
   /// Requires [String] username, [String] password. [String] email address
   /// is required as well to create a full new user object on ParseServer. Only
   /// username and password is required to login
-  ParseUser(this.username, this.password, this.emailAddress,
-      {bool debug, ParseHTTPClient client})
-      : super() {
+  ParseUser(this.username, this.password, this.emailAddress, {bool debug, ParseHTTPClient client}) : super() {
     client == null ? _client = ParseHTTPClient() : _client = client;
     _debug = isDebugEnabled(client, objectLevelDebug: debug);
   }
@@ -222,12 +220,23 @@ class ParseUser extends ParseBase {
   }
 
   /// Gets a list of all users (limited return)
-  all() async {
+  static all() async {
+
+    var emptyUser = ParseUser(null, null, null);
+
     try {
-      final response = await _client.get(_client.data.serverUrl + "$path");
-      return _handleResponse(response, ParseApiRQ.all);
+      final response = await ParseHTTPClient().get(
+          "${ParseCoreData().serverUrl}/$path");
+
+      ParseResponse parseResponse = ParseResponse.handleResponse(emptyUser, response);
+
+      if (ParseCoreData().debug) {
+        logger(ParseCoreData().appName, className, ParseApiRQ.getAll.toString(), parseResponse);
+      }
+
+      return parseResponse;
     } on Exception catch (e) {
-      return _handleException(e, ParseApiRQ.all);
+      return ParseResponse.handleException(emptyUser, e);
     }
   }
 
@@ -267,17 +276,22 @@ class ParseUser extends ParseBase {
 
   /// Handles all the response data for this class
   _handleResponse(Response response, ParseApiRQ type) {
-    Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
-    if (responseData.containsKey('sessionToken')) {
-      fromJson(responseData);
-      _client.data.sessionId = responseData['sessionToken'];
-    }
 
     ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
     if (_debug) {
       logger(ParseCoreData().appName, className, type.toString(), parseResponse);
     }
 
-    return this;
+    Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
+    if (responseData.containsKey('objectId')) {
+      fromJson(responseData);
+      _client.data.sessionId = responseData['sessionToken'];
+    }
+
+    if (type == ParseApiRQ.getAll) {
+      return parseResponse;
+    } else {
+      return this;
+    }
   }
 }
