@@ -4,7 +4,7 @@ class ParseResponse {
   bool success = false;
   int statusCode = -1;
   dynamic result;
-  ParseException exception;
+  ParseError error;
 
   /// Handles all the ParseObject responses
   ///
@@ -26,28 +26,32 @@ class ParseResponse {
         return _handleSuccess(response, object, value.body);
       }
     } else {
-      response.exception = ParseException();
-      response.exception.message = "Error reaching server, or server response was null";
+      response.error = ParseError(message: "Error reaching server, or server response was null");
       return response;
     }
   }
 
+  /// Handles exception instead of throwing an exception
+  static handleException(ParseBase object, Exception exception) {
+    var response = ParseResponse();
+    response.error = ParseError(message: exception.toString());
+    return response;
+  }
+
   /// Handles any errors returned in response
   static ParseResponse _handleError(ParseResponse response, Response value) {
-    response.exception = ParseException();
-    response.exception.message = value.reasonPhrase;
+    response.error = ParseError(code: value.statusCode, message: value.reasonPhrase);
     return response;
   }
 
   /// Handles successful responses with no results
   static ParseResponse _handleSuccessWithNoResults(ParseResponse response, String value) {
     response.statusCode = 200;
-    response.exception = ParseException();
-    response.exception.message = value;
+    response.error = ParseError(code: 1, message: value);
     return response;
   }
 
-  /// Handles succsful response with results
+  /// Handles succesful response with results
   static ParseResponse _handleSuccess(ParseResponse response, ParseObject object, String responseBody) {
     response.success = true;
 
