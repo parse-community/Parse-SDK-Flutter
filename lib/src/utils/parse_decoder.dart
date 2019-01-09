@@ -18,7 +18,6 @@ class ParseDecoder {
     return map;
   }
 
-
   /// Decode any type value
   dynamic decode(dynamic value) {
     if (value is List) {
@@ -58,22 +57,18 @@ class ParseDecoder {
         String val = map["base64"];
         return base64.decode(val);
       case "Pointer":
-        String objectId = map["objectId"];
         String className = map["className"];
-        return new ParseObject(className);
+        return new ParseObject(className)..fromJson(map);
       case "Object":
-        String objectId = map["objectId"];
         String className = map["className"];
         if (className == '_User') {
-          return new ParseUser(objectId: objectId, json: map);
+          return new ParseUser(map['username'], map['password'], map['emailaddress'])..fromJson(map);
         }
-        return new ParseObject(className, objectId: objectId, json: map);
-      case "File":
-        return new ParseFile(map);
+        return new ParseObject(className)..fromJson(map);
       case "GeoPoint":
         num latitude = map["latitude"] ?? 0.0;
         num longitude = map["longitude"] ?? 0.0;
-        return new ParseGeoPoint.set(latitude.toDouble(), longitude.toDouble());
+        return new ParseGeoPoint(latitude: latitude.toDouble(), longitude: longitude.toDouble());
     }
 
     return null;
