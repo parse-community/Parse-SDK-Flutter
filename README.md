@@ -103,8 +103,8 @@ The features available are:-
 You can create custom objects by calling:
 ```
 var dietPlan = ParseObject('DietPlan')
-	..setValue('Name', 'Ketogenic')
-	..setValue('Fat', 65);
+	..set('Name', 'Ketogenic')
+	..set('Fat', 65);
 ```
 You then have the ability to do the following with that object:
 The features available are:-
