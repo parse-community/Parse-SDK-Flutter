@@ -72,7 +72,8 @@ class ParseResponse {
     var resultsList = List();
 
     for (var value in map) {
-      resultsList.add(_handleSingleResult(object, value));
+      var newObject = _handleSingleResult(object, value);
+      resultsList.add(newObject);
     }
 
     return resultsList;
@@ -80,7 +81,6 @@ class ParseResponse {
 
   /// Handles a response with a single result object
   static _handleSingleResult(ParseBase object, map) {
-    populateObjectBaseData(object, map);
     return object.fromJson(map);
   }
 }
