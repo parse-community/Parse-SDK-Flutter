@@ -1,8 +1,11 @@
 part of flutter_parse_sdk;
 
-class ParseObject extends ParseBase {
+class ParseObject extends ParseBase implements ParseCloneable {
 
   ParseObject.clone(String className): this('className');
+
+  @override
+  clone(Map map) => ParseObject.clone(className)..fromJson(map);
 
   String _path;
   bool _debug;

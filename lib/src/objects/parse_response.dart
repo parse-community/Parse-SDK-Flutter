@@ -82,8 +82,7 @@ class ParseResponse {
 
   /// Handles a response with a single result object
   static _handleSingleResult(ParseBase object, map) {
-    if (object is ParseUser) object = ParseUser.clone(map);
-    if (object is ParseObject) object = ParseObject.clone(object.className);
-    return object.fromJson(map);
+    if (object is ParseCloneable) return (object as ParseCloneable).clone(map);
+    return null;
   }
 }

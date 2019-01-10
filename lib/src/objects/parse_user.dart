@@ -1,8 +1,11 @@
 part of flutter_parse_sdk;
 
-class ParseUser extends ParseBase {
+class ParseUser extends ParseBase implements ParseCloneable {
 
   ParseUser.clone(Map map): this(map[USERNAME],map[PASSWORD],map[EMAIL]);
+
+  @override
+  clone(Map map) => ParseUser.clone(map)..fromJson(map);
 
   final String className = '_User';
   static final String path = "/classes/_User";
