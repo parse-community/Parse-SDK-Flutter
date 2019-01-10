@@ -3,7 +3,7 @@ part of flutter_parse_sdk;
 /// Creates a custom version of HTTP Client that has Parse Data Preset
 class ParseHTTPClient extends BaseClient {
   final Client _client = Client();
-  final String _userAgent = "Flutter Parse SDK 1.0.3";
+  final String _userAgent = "Flutter Parse SDK 1.0.4";
   ParseCoreData data = ParseCoreData();
 
   ParseHTTPClient();

@@ -5,34 +5,37 @@ abstract class ParseBase {
   Map _objectData = Map<String, dynamic>();
 
   /// Returns [String] objectId
-  String get objectId => _objectData['objectId'];
-  set objectId(String objectId) => _objectData[objectId];
+  String get objectId => get<String>(OBJECT_ID);
+  set objectId(String objectId) => set<String>(OBJECT_ID, objectId);
 
   /// Returns [DateTime] createdAt
-  DateTime get createdAt => stringToDateTime(_objectData['createdAt']);
-  set createdAt(DateTime createdAt) =>
-      _objectData['createdAt'] = dateTimeToString(createdAt);
+  DateTime get createdAt => stringToDateTime(get<String>(CREATED_AT));
+  set createdAt(DateTime createdAt) => set<String>(CREATED_AT, dateTimeToString(createdAt));
 
   /// Returns [DateTime] updatedAt
-  DateTime get updatedAt => stringToDateTime(_objectData['updatedAt']);
-  set updatedAt(DateTime updatedAt) =>
-      _objectData['updatedAt'] = dateTimeToString(updatedAt);
+  DateTime get updatedAt => stringToDateTime(get<String>(UPDATED_AT));
+  set updatedAt(DateTime updatedAt) => set<String>(UPDATED_AT, dateTimeToString(updatedAt));
 
   /// Converts object to [String] in JSON format
-  @protected
-  toJson() => JsonEncoder().convert(getObjectData());
+  @protected String toJson() {
+    return JsonEncoder().convert(getObjectData());
+  }
 
   /// Creates a copy of this class
   @protected
-  copy() => JsonDecoder().convert(fromJson(getObjectData()));
+  copy() => fromJson(JsonDecoder().convert(toJson()));
 
   /// Sets all the objects variables
   @protected
-  setObjectData(Map objectData) => _objectData = objectData;
+  setObjectData(Map objectData) {
+    _objectData = objectData;
+  }
 
   /// Returns the objects variables
   @protected
-  getObjectData() => _objectData;
+  getObjectData() {
+    return _objectData;
+  }
 
   /// Saves in storage
   @protected
@@ -40,15 +43,16 @@ abstract class ParseBase {
     await ParseCoreData().getStore().setString(key, toJson());
   }
 
-  @protected
-  fromJson(Map objectData) {
-    if (_objectData == null) _objectData = Map();
-    _objectData.addAll(objectData);
-  }
+  /// Needs overriding to create deep copy affect
+  @override
+  fromJson(Map objectData) {}
 
-  /// Create a new variable for this object, [bool] forceUpdate is always true,
-  /// if unsure as to whether an item is needed or not, set to false
-  set(String key, dynamic value, {bool forceUpdate: true}) {
+  /// Sets type [T] from objectData
+  ///
+  /// To set an int, call setType<int> and an int will be saved
+  /// [bool] forceUpdate is always true, if unsure as to whether an item is
+  /// needed or not, set to false
+  set<T>(String key, T value, {bool forceUpdate: true}) {
     if (value != null) {
       if (getObjectData().containsKey(key)) {
         if (forceUpdate) getObjectData()[key] = value;
@@ -58,10 +62,18 @@ abstract class ParseBase {
     }
   }
 
-  /// Returns a variable from the objectData
-  get(String key, {dynamic defaultValue, bool fromServer}) {
+  /// Gets type [T] from objectData
+  ///
+  /// Returns null or [defaultValue] if provided. To get an int, call
+  /// getType<int> and an int will be returned, null, or a defaultValue if
+  /// provided
+  get<T>(String key, {T defaultValue}) {
     if (getObjectData().containsKey(key)) {
-      return getObjectData()[key];
+      if (T != null && getObjectData()[key] is T) {
+        return getObjectData()[key] as T;
+      } else {
+        return getObjectData()[key];
+      }
     } else {
       return defaultValue;
     }
@@ -72,7 +84,8 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   pin() async {
     if (objectId != null) {
-      await ParseCoreData().getStore().setString(objectId, toJson());
+      var itemToSave = toJson();
+      await ParseCoreData().getStore().setString(objectId, itemToSave);
       return true;
     } else {
       return false;
@@ -84,8 +97,9 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   unpin() async {
     if (objectId != null) {
-      var itemToSave = await ParseCoreData().getStore().setString(objectId, null);
-      return true;
+      var itemToSave = await ParseCoreData().getStore().setString(
+          objectId, null);
+      if (itemToSave) return true;
     } else {
       return false;
     }
@@ -94,9 +108,9 @@ abstract class ParseBase {
   /// Saves item to simple key pair value storage
   ///
   /// Replicates Android SDK pin process and saves object to storage
-  fromPin() async {
+  fromPin(String objectId) {
     if (objectId != null) {
-      var itemFromStore = await ParseCoreData().getStore().getString(objectId);
+      var itemFromStore = ParseCoreData().getStore().getString(objectId);
 
       if (itemFromStore != null) {
         Map<String, dynamic> itemFromStoreMap = JsonDecoder().convert(

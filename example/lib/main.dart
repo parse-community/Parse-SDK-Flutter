@@ -78,7 +78,22 @@ class _MyAppState extends State<MyApp> {
     var response = await DietPlan().getObject('R5EonpUDWy');
 
     if (response.success) {
-      print(ApplicationConstants.APP_NAME + ": " + (response.result as DietPlan).toString());
+      var dietPlan = (response.result as DietPlan);
+
+      // Shows example of storing values in their proper type and retrieving them
+      dietPlan.set<int>('RandomInt', 8);
+      var randomInt = dietPlan.get<int>('RandomInt');
+
+      if (randomInt is int) print('Saving generic value worked!');
+
+      // Shows example of pinning an item
+      dietPlan.pin();
+
+      // shows example of retrieving a pin
+      var newDietPlanFromPin = DietPlan().fromPin('R5EonpUDWy');
+
+      if (newDietPlanFromPin != null) print('Saving generic value worked!');
+
     } else {
       print(ApplicationConstants.APP_NAME + ": " + response.error.message);
     }

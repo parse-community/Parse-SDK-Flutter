@@ -6,10 +6,17 @@ class ParseUser extends ParseBase {
   bool _debug;
   ParseHTTPClient _client;
 
-  String acl;
-  String username;
-  String password;
-  String emailAddress;
+  Map get acl => super.get<Map>(ACL);
+  set acl(Map acl) => set<Map>(ACL, acl);
+
+  String get username => super.get<String>(USERNAME);
+  set username(String username) => set<String>(USERNAME, username);
+
+  String get password => super.get<String>(PASSWORD);
+  set password(String password) => set<String>(PASSWORD, password);
+
+  String get emailAddress => super.get<String>(EMAIL);
+  set emailAddress(String emailAddress) => set<String>(EMAIL, emailAddress);
 
   /// Creates an instance of ParseUser
   ///
@@ -21,9 +28,13 @@ class ParseUser extends ParseBase {
   /// Requires [String] username, [String] password. [String] email address
   /// is required as well to create a full new user object on ParseServer. Only
   /// username and password is required to login
-  ParseUser(this.username, this.password, this.emailAddress, {bool debug, ParseHTTPClient client}) : super() {
+  ParseUser(String username, String password, String emailAddress, {bool debug, ParseHTTPClient client}) : super() {
     client == null ? _client = ParseHTTPClient() : _client = client;
     _debug = isDebugEnabled(client, objectLevelDebug: debug);
+
+    this.username = username;
+    this.password = password;
+    this.emailAddress = emailAddress;
   }
 
   /// Returns a [User] from a [Map] object
@@ -37,10 +48,6 @@ class ParseUser extends ParseBase {
     objectId = getObjectData()[OBJECT_ID];
     createdAt = stringToDateTime(getObjectData()[CREATED_AT]);
     updatedAt = stringToDateTime(getObjectData()[UPDATED_AT]);
-    acl = getObjectData()[ACL].toString();
-    username = getObjectData()[USERNAME];
-    password = getObjectData()[PASSWORD];
-    emailAddress = getObjectData()[EMAIL];
 
     if (updatedAt == null) updatedAt = createdAt;
 
