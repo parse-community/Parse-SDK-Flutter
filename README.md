@@ -140,7 +140,7 @@ class DietPlan extends ParseObject implements ParseCloneable {
   
 ```
 
-## Save objects using pins
+## Add new values to objects
 
 To add a variable to an object call and retrieve it, call
 
