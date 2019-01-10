@@ -122,20 +122,47 @@ The features available are:-
 You can create your own ParseObjects or convert your existing objects into Parse Objects by doing the following:
 
 ```
-class DietPlan extends ParseObject {
-  static const String DIET_PLAN = 'Diet_Plans';
+class DietPlan extends ParseObject implements ParseCloneable {
 
   DietPlan() : super(DIET_PLAN);
+  DietPlan.clone(): this();
 
-  String name;
+  /// Looks strangely hacky but due to Flutter not using reflection, we have to
+  /// mimic a clone
+  @override clone(Map map) => DietPlan.clone()..fromJson(map);
 
-  DietPlan.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
-        super(DIET_PLAN);
-
-  Map<String, dynamic> toJson() => {'name': name};
+  static const String DIET_PLAN = 'Diet_Plans';
+  static const String NAME = 'Name';
+  
+  String get name => get<String>(NAME);
+  set name(String name) => set<String>(NAME, name);
 }
+  
 ```
+
+## Save objects using pins
+
+To add a variable to an object call and retrieve it, call
+
+```
+dietPlan.set<int>('RandomInt', 8);
+var randomInt = dietPlan.get<int>('RandomInt');
+```
+
+## Save objects using pins
+
+You can now save an object by calling .pin() on an instance of an object
+
+```
+dietPlan.pin();
+```
+
+and to retreive it
+
+```
+var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
+```
+
 ## Users
 
 You can create and control users just as normal using this SDK.
