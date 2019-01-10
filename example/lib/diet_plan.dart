@@ -3,8 +3,13 @@ import 'dart:core';
 
 import 'package:parse_server_sdk/parse.dart';
 
-class DietPlan extends ParseObject {
+class DietPlan extends ParseObject implements ParseCloneable {
   DietPlan() : super(DIET_PLAN);
+  DietPlan.clone(): this();
+
+  /// Looks strangely hacky but due to Flutter not using reflection, we have to
+  /// mimic a clone
+  @override clone(Map map) => DietPlan.clone()..fromJson(map);
 
   static const String DIET_PLAN = 'Diet_Plans';
   static const String NAME = 'Name';
