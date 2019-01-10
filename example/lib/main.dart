@@ -92,7 +92,7 @@ class _MyAppState extends State<MyApp> {
       // shows example of retrieving a pin
       var newDietPlanFromPin = DietPlan().fromPin('R5EonpUDWy');
 
-      if (newDietPlanFromPin != null) print('Saving generic value worked!');
+      if (newDietPlanFromPin != null) print('Retreiving from pin worked!');
 
     } else {
       print(ApplicationConstants.APP_NAME + ": " + response.error.message);
@@ -128,7 +128,8 @@ class _MyAppState extends State<MyApp> {
     user = await user.verificationEmailRequest();
 
     user = await user.save();
-    await user.destroy();
+    var destroyResponse = await user.destroy();
+    if (destroyResponse.success) print('object has been destroyed!');
 
     // Returns type ParseResponse as its a query, not a single result
     var response = await ParseUser.all();

@@ -1,8 +1,8 @@
 part of flutter_parse_sdk;
 
 class ParseObject extends ParseBase {
-  @override
-  final String className;
+
+  ParseObject.clone(String className): this('className');
 
   String _path;
   bool _debug;
@@ -13,7 +13,8 @@ class ParseObject extends ParseBase {
   /// [String] className refers to the Table Name in your Parse Server,
   /// [bool] debug will overwrite the current default debug settings and
   /// [ParseHttpClient] can be overwritten to create your own HTTP Client
-  ParseObject(this.className, {bool debug: false}): super() {
+  ParseObject(String className, {bool debug: false}): super() {
+    setClassName(className);
     _path = "/classes/$className";
     setClient(ParseHTTPClient());
     setDebug(isDebugEnabled(_client, objectLevelDebug: debug));
@@ -25,14 +26,6 @@ class ParseObject extends ParseBase {
 
   setClient(ParseHTTPClient client){
     _client = client;
-  }
-
-  @override
-  fromJson(objectData) {
-    var object = ParseObject(objectData['className']);
-    object.setObjectData(objectData);
-    if (object.updatedAt == null) object.updatedAt = object.createdAt;
-    return object;
   }
 
   /// Gets an object from the server using it's [String] objectId
@@ -120,7 +113,7 @@ class ParseObject extends ParseBase {
   /// Handles an API response and logs data if [bool] debug is enabled
   @protected
   ParseResponse handleException(Exception exception, ParseApiRQ type) {
-    ParseResponse parseResponse = ParseResponse.handleException(this, exception);
+    ParseResponse parseResponse = ParseResponse.handleException(exception);
 
     if (_debug) {
       logger(ParseCoreData().appName, className, type.toString(), parseResponse);

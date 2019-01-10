@@ -4,6 +4,9 @@ abstract class ParseBase {
 
   String className;
 
+  setClassName(String className) => this.className = className;
+  String getClassName() => className;
+
   /// Stores all the values of a class
   Map _objectData = Map<String, dynamic>();
 
@@ -42,7 +45,11 @@ abstract class ParseBase {
     await ParseCoreData().getStore().setString(key, toJson());
   }
 
-  @protected fromJson(Map objectData) {}
+  @protected fromJson(Map objectData) {
+    if (getObjectData() == null) setObjectData(Map());
+    getObjectData().addAll(objectData);
+    return this;
+  }
 
   /// Sets type [T] from objectData
   ///

@@ -9,9 +9,9 @@ class ParseResponse {
   /// Handles all the ParseObject responses
   ///
   /// There are 3 probable outcomes from a Parse API call,
-  /// 1. Fail - [ParseResponse] will be returned with further details
-  /// 2. Success but no results. [ParseResponse] is returned.
-  /// 3. Success with results. Again [ParseResponse] is returned
+  /// 1. Fail - [ParseResponse()] will be returned with further details
+  /// 2. Success but no results. [ParseResponse()] is returned.
+  /// 3. Success with results. Again [ParseResponse()] is returned
   static handleResponse(ParseBase object, Response apiResponse) {
     var parseResponse = ParseResponse();
 
@@ -32,7 +32,7 @@ class ParseResponse {
   }
 
   /// Handles exception instead of throwing an exception
-  static handleException(ParseBase object, Exception exception) {
+  static handleException(Exception exception) {
     var response = ParseResponse();
     response.error = ParseError(message: exception.toString(), isTypeOfException: true);
     return response;
@@ -42,6 +42,7 @@ class ParseResponse {
   static ParseResponse _handleError(ParseResponse response, Response apiResponse) {
     Map<String, dynamic> responseData = JsonDecoder().convert(apiResponse.body);
     response.error = ParseError(code: responseData['code'], message: responseData['error']);
+    response.statusCode = responseData['code'];
     return response;
   }
 
@@ -81,6 +82,8 @@ class ParseResponse {
 
   /// Handles a response with a single result object
   static _handleSingleResult(ParseBase object, map) {
+    if (object is ParseUser) object = ParseUser.clone(map);
+    if (object is ParseObject) object = ParseObject.clone(object.className);
     return object.fromJson(map);
   }
 }
