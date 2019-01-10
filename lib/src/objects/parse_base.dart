@@ -42,7 +42,7 @@ abstract class ParseBase {
     await ParseCoreData().getStore().setString(key, toJson());
   }
 
-  @protected static fromJson(Map objectData) {}
+  @protected fromJson(Map objectData) {}
 
   /// Sets type [T] from objectData
   ///
