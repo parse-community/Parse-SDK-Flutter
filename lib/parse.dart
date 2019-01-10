@@ -22,6 +22,7 @@ part 'src/objects/parse_geo_point.dart';
 part 'src/objects/parse_object.dart';
 part 'src/objects/parse_response.dart';
 part 'src/objects/parse_user.dart';
+part 'src/objects/parse_clonable.dart';
 part 'src/utils/parse_utils_date.dart';
 part 'src/utils/parse_utils_objects.dart';
 part 'src/utils/parse_utils.dart';

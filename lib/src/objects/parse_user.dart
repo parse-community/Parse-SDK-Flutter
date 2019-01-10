@@ -1,15 +1,28 @@
 part of flutter_parse_sdk;
 
-class ParseUser extends ParseBase {
-  static final String className = '_User';
-  static final String path = "/classes/$className";
+class ParseUser extends ParseBase implements ParseCloneable {
+
+  ParseUser.clone(Map map): this(map[USERNAME],map[PASSWORD],map[EMAIL]);
+
+  @override
+  clone(Map map) => ParseUser.clone(map)..fromJson(map);
+
+  static final String path = "/classes/_User";
+
   bool _debug;
   ParseHTTPClient _client;
 
-  String acl;
-  String username;
-  String password;
-  String emailAddress;
+  Map get acl => super.get<Map>(ACL);
+  set acl(Map acl) => set<Map>(ACL, acl);
+
+  String get username => super.get<String>(USERNAME);
+  set username(String username) => set<String>(USERNAME, username);
+
+  String get password => super.get<String>(PASSWORD);
+  set password(String password) => set<String>(PASSWORD, password);
+
+  String get emailAddress => super.get<String>(EMAIL);
+  set emailAddress(String emailAddress) => set<String>(EMAIL, emailAddress);
 
   /// Creates an instance of ParseUser
   ///
@@ -21,41 +34,24 @@ class ParseUser extends ParseBase {
   /// Requires [String] username, [String] password. [String] email address
   /// is required as well to create a full new user object on ParseServer. Only
   /// username and password is required to login
-  ParseUser(this.username, this.password, this.emailAddress, {bool debug, ParseHTTPClient client}) : super() {
+  ParseUser(String username, String password, String emailAddress, {bool debug, ParseHTTPClient client}) : super() {
     client == null ? _client = ParseHTTPClient() : _client = client;
     _debug = isDebugEnabled(client, objectLevelDebug: debug);
-  }
 
-  /// Returns a [User] from a [Map] object
-  fromJson(objectData) {
-    if (getObjectData() == null) {
-      setObjectData(objectData);
-    } else {
-      getObjectData().addAll(objectData);
-    }
+    this.username = username;
+    this.password = password;
+    this.emailAddress = emailAddress;
 
-    objectId = getObjectData()[OBJECT_ID];
-    createdAt = stringToDateTime(getObjectData()[CREATED_AT]);
-    updatedAt = stringToDateTime(getObjectData()[UPDATED_AT]);
-    acl = getObjectData()[ACL].toString();
-    username = getObjectData()[USERNAME];
-    password = getObjectData()[PASSWORD];
-    emailAddress = getObjectData()[EMAIL];
-
-    if (updatedAt == null) updatedAt = createdAt;
-
-    saveInStorage(PARSE_STORE_USER);
-
-    return getObjectData();
+    setClassName('_User');
   }
 
   /// Returns a [String] that's human readable. Ideal for printing logs
   @override
-  String toString() => "Username: $username \nEmail Address:$emailAddress";
+  String toString() => "User ($objectId): Username: $username, Email Address:$emailAddress";
 
-  static const String USERNAME = 'Username';
-  static const String EMAIL = 'Email';
-  static const String PASSWORD = 'Password';
+  static const String USERNAME = 'username';
+  static const String EMAIL = 'email';
+  static const String PASSWORD = 'password';
   static const String ACL = 'ACL';
 
   create(String username, String password, [String emailAddress]) {
@@ -205,14 +201,13 @@ class ParseUser extends ParseBase {
   }
 
   /// Removes a user from Parse Server locally and online
-  destroy() async {
+  Future<ParseResponse> destroy() async {
     if (objectId != null) {
       try {
         final response = await _client.delete(
             _client.data.serverUrl + "$path/$objectId",
             headers: {"X-Parse-Session-Token": _client.data.sessionId});
-        _handleResponse(response, ParseApiRQ.destroy);
-        return objectId;
+        return _handleResponse(response, ParseApiRQ.destroy);
       } on Exception catch (e) {
         return _handleException(e, ParseApiRQ.destroy);
       }
@@ -231,12 +226,12 @@ class ParseUser extends ParseBase {
       ParseResponse parseResponse = ParseResponse.handleResponse(emptyUser, response);
 
       if (ParseCoreData().debug) {
-        logger(ParseCoreData().appName, className, ParseApiRQ.getAll.toString(), parseResponse);
+        logger(ParseCoreData().appName, '_User', ParseApiRQ.getAll.toString(), parseResponse);
       }
 
       return parseResponse;
     } on Exception catch (e) {
-      return ParseResponse.handleException(emptyUser, e);
+      return ParseResponse.handleException(e);
     }
   }
 
@@ -248,12 +243,7 @@ class ParseUser extends ParseBase {
 
       if (userMap != null) {
         ParseCoreData().sessionId = userMap['sessionToken'];
-
-        var user = ParseUser(
-            userMap['username'],
-            userMap['password'],
-            userMap['emailAddress']);
-
+        var user = ParseUser(null,null,null);
         user.fromJson(userMap);
         return user;
       }
@@ -265,7 +255,7 @@ class ParseUser extends ParseBase {
   /// Handles an API response and logs data if [bool] debug is enabled
   @protected
   ParseResponse _handleException(Exception exception, ParseApiRQ type) {
-    ParseResponse parseResponse = ParseResponse.handleException(this, exception);
+    ParseResponse parseResponse = ParseResponse.handleException(exception);
 
     if (_debug) {
       logger(ParseCoreData().appName, className, type.toString(), parseResponse);
@@ -288,9 +278,10 @@ class ParseUser extends ParseBase {
       _client.data.sessionId = responseData['sessionToken'];
     }
 
-    if (type == ParseApiRQ.getAll) {
+    if (type == ParseApiRQ.getAll || type == ParseApiRQ.destroy) {
       return parseResponse;
     } else {
+      saveInStorage(PARSE_STORE_USER);
       return this;
     }
   }

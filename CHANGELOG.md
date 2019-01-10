@@ -1,3 +1,10 @@
+## 1.0.4
+
+Bug fix for get all items
+Can now pin/unpin/fromPin for all ParseObjects
+Now supports generics
+Cody tidy around extending
+
 ## 1.0.3
 
 Added persistent storage. When a logged in user closes the app, then reopens, the data
