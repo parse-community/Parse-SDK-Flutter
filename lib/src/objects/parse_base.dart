@@ -1,6 +1,9 @@
 part of flutter_parse_sdk;
 
 abstract class ParseBase {
+
+  String className;
+
   /// Stores all the values of a class
   Map _objectData = Map<String, dynamic>();
 
@@ -22,30 +25,24 @@ abstract class ParseBase {
   }
 
   /// Creates a copy of this class
-  @protected
-  copy() => fromJson(JsonDecoder().convert(toJson()));
+  @protected copy() => fromJson(JsonDecoder().convert(toJson()));
 
   /// Sets all the objects variables
-  @protected
-  setObjectData(Map objectData) {
+  @protected setObjectData(Map objectData) {
     _objectData = objectData;
   }
 
   /// Returns the objects variables
-  @protected
-  getObjectData() {
+  @protected getObjectData() {
     return _objectData;
   }
 
   /// Saves in storage
-  @protected
-  saveInStorage(String key) async {
+  @protected saveInStorage(String key) async {
     await ParseCoreData().getStore().setString(key, toJson());
   }
 
-  /// Needs overriding to create deep copy affect
-  @override
-  fromJson(Map objectData) {}
+  @protected static fromJson(Map objectData) {}
 
   /// Sets type [T] from objectData
   ///

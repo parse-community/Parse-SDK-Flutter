@@ -1,7 +1,9 @@
 part of flutter_parse_sdk;
 
 class ParseUser extends ParseBase {
-  static final String className = '_User';
+  @override
+  final String className = '_User';
+
   static final String path = "/classes/$className";
   bool _debug;
   ParseHTTPClient _client;
@@ -38,22 +40,13 @@ class ParseUser extends ParseBase {
   }
 
   /// Returns a [User] from a [Map] object
-  fromJson(objectData) {
-    if (getObjectData() == null) {
-      setObjectData(objectData);
-    } else {
-      getObjectData().addAll(objectData);
-    }
-
-    objectId = getObjectData()[OBJECT_ID];
-    createdAt = stringToDateTime(getObjectData()[CREATED_AT]);
-    updatedAt = stringToDateTime(getObjectData()[UPDATED_AT]);
-
-    if (updatedAt == null) updatedAt = createdAt;
-
-    saveInStorage(PARSE_STORE_USER);
-
-    return getObjectData();
+  @override
+  static fromJson(objectData) {
+    var user = ParseUser(null, null, null);
+    user.setObjectData(objectData);
+    if (user.updatedAt == null) user.updatedAt = user.createdAt;
+    user.saveInStorage(PARSE_STORE_USER);
+    return user;
   }
 
   /// Returns a [String] that's human readable. Ideal for printing logs
@@ -255,13 +248,7 @@ class ParseUser extends ParseBase {
 
       if (userMap != null) {
         ParseCoreData().sessionId = userMap['sessionToken'];
-
-        var user = ParseUser(
-            userMap['username'],
-            userMap['password'],
-            userMap['emailAddress']);
-
-        user.fromJson(userMap);
+        var user = ParseUser.fromJson(userMap);
         return user;
       }
     }
@@ -284,7 +271,7 @@ class ParseUser extends ParseBase {
   /// Handles all the response data for this class
   _handleResponse(Response response, ParseApiRQ type) {
 
-    ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
+    ParseResponse parseResponse = ParseResponse.handleResponse<ParseUser>(this, response);
     if (_debug) {
       logger(ParseCoreData().appName, className, type.toString(), parseResponse);
     }
