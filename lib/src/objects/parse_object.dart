@@ -28,7 +28,7 @@ class ParseObject extends ParseBase {
   }
 
   @override
-  static fromJson(objectData) {
+  fromJson(objectData) {
     var object = ParseObject(objectData['className']);
     object.setObjectData(objectData);
     if (object.updatedAt == null) object.updatedAt = object.createdAt;
@@ -107,7 +107,7 @@ class ParseObject extends ParseBase {
 
   /// Handles an API response and logs data if [bool] debug is enabled
   @protected
-  ParseResponse handleResponse<ParseObject>(Response response, ParseApiRQ type) {
+  ParseResponse handleResponse(Response response, ParseApiRQ type) {
     ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
 
     if (_debug) {

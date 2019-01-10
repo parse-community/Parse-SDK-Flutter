@@ -4,7 +4,8 @@ class ParseUser extends ParseBase {
   @override
   final String className = '_User';
 
-  static final String path = "/classes/$className";
+  static final String path = "/classes/_User";
+
   bool _debug;
   ParseHTTPClient _client;
 
@@ -41,7 +42,7 @@ class ParseUser extends ParseBase {
 
   /// Returns a [User] from a [Map] object
   @override
-  static fromJson(objectData) {
+  fromJson(objectData) {
     var user = ParseUser(null, null, null);
     user.setObjectData(objectData);
     if (user.updatedAt == null) user.updatedAt = user.createdAt;
@@ -231,7 +232,7 @@ class ParseUser extends ParseBase {
       ParseResponse parseResponse = ParseResponse.handleResponse(emptyUser, response);
 
       if (ParseCoreData().debug) {
-        logger(ParseCoreData().appName, className, ParseApiRQ.getAll.toString(), parseResponse);
+        logger(ParseCoreData().appName, '_User', ParseApiRQ.getAll.toString(), parseResponse);
       }
 
       return parseResponse;
@@ -248,7 +249,7 @@ class ParseUser extends ParseBase {
 
       if (userMap != null) {
         ParseCoreData().sessionId = userMap['sessionToken'];
-        var user = ParseUser.fromJson(userMap);
+        var user = ParseUser(null,null,null).fromJson(userMap);
         return user;
       }
     }
@@ -271,7 +272,7 @@ class ParseUser extends ParseBase {
   /// Handles all the response data for this class
   _handleResponse(Response response, ParseApiRQ type) {
 
-    ParseResponse parseResponse = ParseResponse.handleResponse<ParseUser>(this, response);
+    ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
     if (_debug) {
       logger(ParseCoreData().appName, className, type.toString(), parseResponse);
     }
