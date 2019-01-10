@@ -7,7 +7,6 @@ class ParseUser extends ParseBase implements ParseCloneable {
   @override
   clone(Map map) => ParseUser.clone(map)..fromJson(map);
 
-  final String className = '_User';
   static final String path = "/classes/_User";
 
   bool _debug;
@@ -42,6 +41,8 @@ class ParseUser extends ParseBase implements ParseCloneable {
     this.username = username;
     this.password = password;
     this.emailAddress = emailAddress;
+
+    setClassName('_User');
   }
 
   /// Returns a [String] that's human readable. Ideal for printing logs

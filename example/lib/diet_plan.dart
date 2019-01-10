@@ -4,6 +4,7 @@ import 'dart:core';
 import 'package:parse_server_sdk/parse.dart';
 
 class DietPlan extends ParseObject implements ParseCloneable {
+
   DietPlan() : super(DIET_PLAN);
   DietPlan.clone(): this();
 
