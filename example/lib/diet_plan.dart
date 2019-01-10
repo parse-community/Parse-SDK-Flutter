@@ -33,18 +33,7 @@ class DietPlan extends ParseObject {
   set status(int status) => set<int>(STATUS, status);
 
   @override
-  fromJson(Map objectData) {
-    super.setObjectData(objectData);
-    return this;
-  }
-
-  @override
   String toString() {
     return toJson().toString();
-  }
-
-  @override
-  dynamic copy() {
-    return DietPlan();
   }
 }

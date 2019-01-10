@@ -58,13 +58,13 @@ class ParseDecoder {
         return base64.decode(val);
       case "Pointer":
         String className = map["className"];
-        return new ParseObject(className)..fromJson(map);
+        return ParseObject.fromJson(map);
       case "Object":
         String className = map["className"];
         if (className == '_User') {
-          return new ParseUser(map['username'], map['password'], map['emailaddress'])..fromJson(map);
+          return ParseUser.fromJson(map);
         }
-        return new ParseObject(className)..fromJson(map);
+        return ParseObject.fromJson(map);
       case "GeoPoint":
         num latitude = map["latitude"] ?? 0.0;
         num longitude = map["longitude"] ?? 0.0;

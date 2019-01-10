@@ -1,7 +1,9 @@
 part of flutter_parse_sdk;
 
 class ParseObject extends ParseBase {
+  @override
   final String className;
+
   String _path;
   bool _debug;
   ParseHTTPClient _client;
@@ -23,6 +25,14 @@ class ParseObject extends ParseBase {
 
   setClient(ParseHTTPClient client){
     _client = client;
+  }
+
+  @override
+  static fromJson(objectData) {
+    var object = ParseObject(objectData['className']);
+    object.setObjectData(objectData);
+    if (object.updatedAt == null) object.updatedAt = object.createdAt;
+    return object;
   }
 
   /// Gets an object from the server using it's [String] objectId
@@ -97,7 +107,7 @@ class ParseObject extends ParseBase {
 
   /// Handles an API response and logs data if [bool] debug is enabled
   @protected
-  ParseResponse handleResponse(Response response, ParseApiRQ type) {
+  ParseResponse handleResponse<ParseObject>(Response response, ParseApiRQ type) {
     ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
 
     if (_debug) {
