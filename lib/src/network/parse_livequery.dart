@@ -1,8 +1,6 @@
-import "dart:convert";
-import 'package:web_socket_channel/io.dart';
-import 'package:parse_server_sdk/network/parse_http_client.dart';
-import 'dart:io';
+part of flutter_parse_sdk;
 
+/// Still under development
 class LiveQuery {
   final ParseHTTPClient client;
   var channel;

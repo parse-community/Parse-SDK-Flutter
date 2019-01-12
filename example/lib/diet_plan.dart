@@ -1,52 +1,39 @@
 import 'dart:core';
 
-import 'package:parse_server_sdk/objects/parse_object.dart';
+import 'package:parse_server_sdk/parse.dart';
 
-class DietPlan extends ParseObject {
-  DietPlan() : super(DIET_PLAN);
+class DietPlan extends ParseObject implements ParseCloneable {
 
-  String name;
-  String description;
-  num protein;
-  num carbs;
-  num fat;
-  num status;
+  DietPlan() : super(_keyTableName);
+  DietPlan.clone(): this();
 
-  static const String DIET_PLAN = 'Diet_Plans';
-  static const String NAME = 'Name';
-  static const String DESCRIPTION = 'Description';
-  static const String PROTEIN = 'Protein';
-  static const String CARBS = 'Carbs';
-  static const String FAT = 'Fat';
-  static const String STATUS = 'Status';
+  /// Looks strangely hacky but due to Flutter not using reflection, we have to
+  /// mimic a clone
+  @override clone(Map map) => DietPlan.clone()..fromJson(map);
 
-  @override
-  dynamic fromJson(Map objectData) {
-    this.name = objectData[NAME];
-    this.description = objectData[DESCRIPTION];
-    this.protein = objectData[PROTEIN];
-    this.carbs = objectData[CARBS];
-    this.fat = objectData[FAT];
-    this.status = objectData[STATUS];
-    return this;
-  }
+  static const String _keyTableName = 'Diet_Plans';
+  static const String keyName = 'Name';
+  static const String keyDescription = 'Description';
+  static const String keyProtein = 'Protein';
+  static const String keyCarbs = 'Carbs';
+  static const String keyFat = 'Fat';
+  static const String keyStatus = 'Status';
 
-  Map<String, dynamic> toJson() => {
-        NAME: name,
-        DESCRIPTION: description,
-        PROTEIN: protein,
-        CARBS: carbs,
-        FAT: fat,
-        STATUS: status,
-      };
+  String get name => get<String>(keyName);
+  set name(String name) => set<String>(keyName, name);
 
-  @override
-  String toString() {
-    return toJson().toString();
-  }
+  String get description => get<String>(keyDescription);
+  set description(String description) => set<String>(keyDescription, name);
 
-  @override
-  dynamic copy() {
-    return DietPlan();
-  }
+  int get protein => get<int>(keyProtein);
+  set protein(int protein) => super.set<int>(keyProtein, protein);
+
+  int get carbs => get<int>(keyCarbs);
+  set carbs(int carbs) => set<int>(keyCarbs, carbs);
+
+  int get fat => get<int>(keyFat);
+  set fat(int fat) => set<int>(keyFat, fat);
+
+  int get status => get<int>(keyStatus);
+  set status(int status) => set<int>(keyStatus, status);
 }
