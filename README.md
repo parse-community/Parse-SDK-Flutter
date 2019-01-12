@@ -1,52 +1,225 @@
-# Parse Server Dart
-A rewrite of a library hosted on GitHub. This is not my own content but based on a library already created and looks to be abandoned.
+![enter image description here](https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png)
+![enter image description here](https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png?fit=200%2C200&ssl=1&resize=350%2C200)
 
-https://github.com/lotux/parse_server_dart
+## Parse For Flutter! 
+Hi, this is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like (http://Back4App.com).
+
+This is a work in project and we are consistently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project (Even if it is just to improve our documentation.
 
 ## Join in!
-Want to get involved? Join our Slack channel and help out! FlutterParseSDK.Slack.com
+Want to get involved? Join our Slack channel and help out! (http://flutter-parse-sdk.slack.com)
 
 ## Getting Started
+To install, either add to your pubspec.yaml
+```
+dependencies:  
+    parse_server_sdk: ^1.0.5
+```
+or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
-## To init Parse, call the method:-
+
+Once you have the library added to your project, upon first call to your app (Similar to what your application class would be) add the following...
 
 ```
 Parse().initialize(
-        ApplicationConstants.PARSE_APPLICATION_ID,
-        ApplicationConstants.PARSE_SERVER_URL,
-        masterKey: ApplicationConstants.PARSE_MASTER_KEY);
+        ApplicationConstants.keyApplicationId,
+        ApplicationConstants.keyParseServerUrl);
 ```
 
-## After, you can then get and save Parse Objects by calling:-
+It's possible to add other params, such as ...
 
 ```
-Parse().object('Diet_Plans').get('R5EonpUDWy').then((dietPlan) {
-      print(dietPlan['name']);
-});
+Parse().initialize(
+        ApplicationConstants.keyApplicationId,
+        ApplicationConstants.keyParseServerUrl,
+        masterKey: ApplicationConstants.keyParseMasterKey,
+       debug: true,
+        liveQuery: true);
 ```
 
-## Or, extend the ParseObject class and create custom objects:-
+## Queries
+Once you have setup the project and initialised the instance, you can then retreive data from your server by calling:
+```
+var apiResponse = await ParseObject('ParseTableName').getAll();
+
+    if (apiResponse.success){
+      for (var testObject in apiResponse.result) {
+        print(ApplicationConstants.APP_NAME + ": " + testObject.toString());
+      }
+    }
+```
+Or you can get an object by its objectId:
 
 ```
-class DietPlan extends ParseObject {
-  static const String DIET_PLAN = 'Diet_Plans';
+var dietPlan = await DietPlan().get('R5EonpUDWy');
 
-  DietPlan() : super(DIET_PLAN);
+    if (dietPlan.success) {
+      print(ApplicationConstants.keyAppName + ": " + (dietPlan.result as DietPlan).toString());
+    } else {
+      print(ApplicationConstants.keyAppName + ": " + dietPlan.exception.message);
+    }
+```
 
-  String name;
 
-  DietPlan.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
-        super(DIET_PLAN);
+## Complex queries
+You can create complex queries to really put your database to the test:
 
-  Map<String, dynamic> toJson() => {'name': name};
+```
+    var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
+      ..startsWith(DietPlan.keyName, "Keto")
+      ..greaterThan(DietPlan.keyFat, 64)
+      ..lessThan(DietPlan.keyFat, 66)
+      ..equals(DietPlan.keyCarbs, 5);
+
+    var response = await queryBuilder.query();
+
+    if (response.success) {
+      print(ApplicationConstants.keyAppName + ": " + ((response.result as List<dynamic>).first as DietPlan).toString());
+    } else {
+      print(ApplicationConstants.keyAppName + ": " + response.exception.message);
+    }
+```
+
+The features available are:-
+ * Equals
+ * Contains
+ * LessThan
+ * LessThanOrEqualTo
+ * GreaterThan
+ * GreaterThanOrEqualTo
+ * NotEqualTo
+ * StartsWith
+ * EndsWith
+ * Regex
+ * Order
+ * Limit
+ * Skip
+ * Ascending
+ * Descending
+ * Plenty more!
+
+## Objects
+
+You can create custom objects by calling:
+```
+var dietPlan = ParseObject('DietPlan')
+	..set('Name', 'Ketogenic')
+	..set('Fat', 65);
+```
+You then have the ability to do the following with that object:
+The features available are:-
+ * Get
+ * GetAll
+ * Create
+ * Save
+ * Query - By object Id
+ * Delete
+ * Complex queries as shown above
+ * Pin
+ * Plenty more
+
+## Custom Objects
+You can create your own ParseObjects or convert your existing objects into Parse Objects by doing the following:
+
+```
+class DietPlan extends ParseObject implements ParseCloneable {
+
+  DietPlan() : super(_keyTableName);
+  DietPlan.clone(): this();
+
+  /// Looks strangely hacky but due to Flutter not using reflection, we have to
+  /// mimic a clone
+  @override clone(Map map) => DietPlan.clone()..fromJson(map);
+
+  static const String _keyTableName = 'Diet_Plans';
+  static const String keyName = 'Name';
+  
+  String get name => get<String>(keyName);
+  set name(String name) => set<String>(keyName, name);
 }
+  
 ```
 
-## then call:-
+## Add new values to objects
+
+To add a variable to an object call and retrieve it, call
 
 ```
-DietPlan().get('R5EonpUDWy').then((plan) {
-      print(DietPlan.fromJson(plan).name);
-});
+dietPlan.set<int>('RandomInt', 8);
+var randomInt = dietPlan.get<int>('RandomInt');
 ```
+
+## Save objects using pins
+
+You can now save an object by calling .pin() on an instance of an object
+
+```
+dietPlan.pin();
+```
+
+and to retreive it
+
+```
+var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
+```
+
+## Users
+
+You can create and control users just as normal using this SDK.
+
+To register a user, first create one :
+```
+var user =  ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+```
+Then have the user sign up:
+
+```
+user =  await  user.signUp();
+```
+You can also logout and login with the user:
+```
+user =  await  user.login();
+```
+Also, once logged in you can manage sessions tokens. This feature can be called after Parse().init() on startup to check for a logged in user.
+```
+user = ParseUser.currentUser();
+```
+Other user features are:-
+ * Request Password Reset
+ * Verification Email Request
+ * Get all users
+ * Save
+ * Destroy user
+
+## Other Features of this library
+
+Main:
+* Users
+* Objects
+* Queries
+* LiveQueries
+* GeoPoints
+* Persistent storage
+* Debug Mode - Logging API calls
+* Manage Session ID's tokens
+
+User:
+* Create       
+* Login
+* CurrentUser
+* RequestPasswordReset
+* VerificationEmailRequest
+* AllUsers
+* Save
+* Destroy
+
+Objects:
+* Create new object
+* Extend Parse Object and create local objects that can be saved and retreived
+* Queries:
+
+## Author:-
+This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbNzE4NjUwNDIwXX0=
+-->
