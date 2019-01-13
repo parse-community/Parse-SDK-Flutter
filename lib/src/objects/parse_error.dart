@@ -8,6 +8,7 @@ class ParseError {
 
     // SDK errors / Errors
   1: 'No Results',
+  2: 'OK',
   400: 'Bad Request',
 
     // Parse specific / Exceptions

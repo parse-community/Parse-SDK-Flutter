@@ -149,7 +149,7 @@ class QueryBuilder<T extends ParseObject> {
   /// Finishes the query and calls the server
   ///
   /// Make sure to call this after defining your queries
-  query() async {
+  Future<ParseResponse> query() async {
     return object.query(_buildQuery());
   }
 
@@ -178,7 +178,7 @@ class QueryBuilder<T extends ParseObject> {
 
   /// Creates a query param using the column, the value and the queryOperator
   /// that the column and value are being queried against
-  _buildQueryWithColumnValueAndOperator(MapEntry columnAndValue, String queryOperator) {
+  MapEntry _buildQueryWithColumnValueAndOperator(MapEntry columnAndValue, String queryOperator) {
 
     var key = columnAndValue.key;
     var value = convertValueToCorrectType(columnAndValue.value);
@@ -200,7 +200,7 @@ class QueryBuilder<T extends ParseObject> {
 
   /// This joins queries that should be joined together... e.g. age > 10 &&
   /// age < 20, this would be similar to age > 10 < 20
-  _checkForMultipleColumnInstances(List<MapEntry> queries) {
+  List _checkForMultipleColumnInstances(List<MapEntry> queries) {
     List<MapEntry> sanitisedQueries = List();
     List<String> keysAlreadyCompacted = List();
 
@@ -247,7 +247,7 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   /// Adds the limiters to the query, i.e. skip=10, limit=10
-  getLimiters(Map map) {
+  String getLimiters(Map map) {
     String result = "";
     map.forEach((key, value) {
       result = (result != null) ? result + "&$key=$value" : "&$key=$value";
