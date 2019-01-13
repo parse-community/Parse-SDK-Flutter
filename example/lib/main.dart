@@ -51,12 +51,26 @@ class _MyAppState extends State<MyApp> {
   }
 
   runTestQueries() {
+    createItem();
     getAllItems();
     getAllItemsByName();
     getSingleItem();
     query();
     function();
     initUser();
+  }
+
+  void createItem() async {
+
+    var newObject = ParseObject('TestObjectForApi');
+    newObject.set<String>('name', 'testItem');
+    newObject.set<int>('age', 26);
+
+    var apiResponse = await newObject.create();
+
+    if (apiResponse.success && apiResponse.result != null) {
+        print(ApplicationConstants.keyAppName + ": " + apiResponse.result.toString());
+    }
   }
 
   void getAllItemsByName() async {

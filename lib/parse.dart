@@ -45,10 +45,6 @@ part 'src/utils/parse_logger.dart';
 
 part 'src/utils/parse_utils.dart';
 
-part 'src/utils/parse_utils_date.dart';
-
-part 'src/utils/parse_utils_objects.dart';
-
 class Parse {
   ParseCoreData data;
   final ParseHTTPClient client = new ParseHTTPClient();

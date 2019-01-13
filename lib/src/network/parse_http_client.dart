@@ -13,7 +13,7 @@ class ParseHTTPClient extends BaseClient {
   Future<StreamedResponse> send(BaseRequest request) {
     request.headers[keyHeaderUserAgent] = _userAgent;
     request.headers[keyHeaderApplicationId] = data.applicationId;
-    request.headers[keyHeaderContentType] = keyHeaderContentTypeJson;
+    //request.headers[keyHeaderContentType] = keyHeaderContentTypeJson;
     if (data.masterKey != null) request.headers[keyHeaderMasterKey] = data.masterKey;
     return _client.send(request);
   }

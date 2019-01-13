@@ -1,5 +1,13 @@
 part of flutter_parse_sdk;
 
+/// Custom encoder for DateTime
+dynamic dateTimeEncoder(dynamic item) {
+  if(item is DateTime) {
+    return item.toIso8601String();
+  }
+  return item;
+}
+
 bool isValidType(dynamic value) {
   return value == null ||
       value is String ||
@@ -24,7 +32,7 @@ dynamic parseEncode(dynamic value) {
   }
 
   if (value is ParseObject) {
-    return value.toJson;
+    return _encodeObject(value);
   }
 
   if (value is ParseUser) {
@@ -38,6 +46,10 @@ dynamic parseEncode(dynamic value) {
   return value;
 }
 
+String _encodeObject(ParseObject object){
+  return "{'__type': 'Pointer', $keyVarClassName: ${object.className}, $keyVarObjectId: ${object.objectId}}";
+}
+
 Map<String, dynamic> _encodeDate(DateTime date) {
-  return <String, dynamic>{"__type": "Date", "iso": dateTimeToString(date)};
+  return <String, dynamic>{"__type": "Date", "iso": date.toIso8601String()};
 }
