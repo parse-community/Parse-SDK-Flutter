@@ -13,7 +13,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```
 dependencies:  
-    parse_server_sdk: ^1.0.3
+    parse_server_sdk: ^1.0.5
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -22,17 +22,17 @@ Once you have the library added to your project, upon first call to your app (Si
 
 ```
 Parse().initialize(
-        ApplicationConstants.PARSE_APPLICATION_ID,
-        ApplicationConstants.PARSE_SERVER_URL);
+        ApplicationConstants.keyApplicationId,
+        ApplicationConstants.keyParseServerUrl);
 ```
 
 It's possible to add other params, such as ...
 
 ```
 Parse().initialize(
-        ApplicationConstants.PARSE_APPLICATION_ID,
-        ApplicationConstants.PARSE_SERVER_URL,
-        masterKey: ApplicationConstants.PARSE_MASTER_KEY,
+        ApplicationConstants.keyApplicationId,
+        ApplicationConstants.keyParseServerUrl,
+        masterKey: ApplicationConstants.keyParseMasterKey,
        debug: true,
         liveQuery: true);
 ```
@@ -54,9 +54,9 @@ Or you can get an object by its objectId:
 var dietPlan = await DietPlan().get('R5EonpUDWy');
 
     if (dietPlan.success) {
-      print(ApplicationConstants.APP_NAME + ": " + (dietPlan.result as DietPlan).toString());
+      print(ApplicationConstants.keyAppName + ": " + (dietPlan.result as DietPlan).toString());
     } else {
-      print(ApplicationConstants.APP_NAME + ": " + dietPlan.exception.message);
+      print(ApplicationConstants.keyAppName + ": " + dietPlan.exception.message);
     }
 ```
 
@@ -66,17 +66,17 @@ You can create complex queries to really put your database to the test:
 
 ```
     var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
-      ..startsWith(DietPlan.NAME, "Keto")
-      ..greaterThan(DietPlan.FAT, 64)
-      ..lessThan(DietPlan.FAT, 66)
-      ..equals(DietPlan.CARBS, 5);
+      ..startsWith(DietPlan.keyName, "Keto")
+      ..greaterThan(DietPlan.keyFat, 64)
+      ..lessThan(DietPlan.keyFat, 66)
+      ..equals(DietPlan.keyCarbs, 5);
 
     var response = await queryBuilder.query();
 
     if (response.success) {
-      print(ApplicationConstants.APP_NAME + ": " + ((response.result as List<dynamic>).first as DietPlan).toString());
+      print(ApplicationConstants.keyAppName + ": " + ((response.result as List<dynamic>).first as DietPlan).toString());
     } else {
-      print(ApplicationConstants.APP_NAME + ": " + response.exception.message);
+      print(ApplicationConstants.keyAppName + ": " + response.exception.message);
     }
 ```
 
@@ -124,18 +124,18 @@ You can create your own ParseObjects or convert your existing objects into Parse
 ```
 class DietPlan extends ParseObject implements ParseCloneable {
 
-  DietPlan() : super(DIET_PLAN);
+  DietPlan() : super(_keyTableName);
   DietPlan.clone(): this();
 
   /// Looks strangely hacky but due to Flutter not using reflection, we have to
   /// mimic a clone
   @override clone(Map map) => DietPlan.clone()..fromJson(map);
 
-  static const String DIET_PLAN = 'Diet_Plans';
-  static const String NAME = 'Name';
+  static const String _keyTableName = 'Diet_Plans';
+  static const String keyName = 'Name';
   
-  String get name => get<String>(NAME);
-  set name(String name) => set<String>(NAME, name);
+  String get name => get<String>(keyName);
+  set name(String name) => set<String>(keyName, name);
 }
   
 ```

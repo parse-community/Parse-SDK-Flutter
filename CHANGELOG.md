@@ -1,3 +1,7 @@
+## 1.0.5
+
+Corrected save. Now formatted items correctly for saving on server
+
 ## 1.0.4
 
 Bug fix for get all items

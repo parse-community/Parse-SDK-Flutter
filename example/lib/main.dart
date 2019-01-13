@@ -15,7 +15,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initParse();
-    runTestQueries();
   }
 
   @override
@@ -36,14 +35,23 @@ class _MyAppState extends State<MyApp> {
 
   initParse() async {
     // Initialize parse
-    Parse().initialize(ApplicationConstants.PARSE_APPLICATION_ID,
-        ApplicationConstants.PARSE_SERVER_URL,
-        masterKey: ApplicationConstants.PARSE_MASTER_KEY,
-        appName: ApplicationConstants.APP_NAME,
+    Parse().initialize(ApplicationConstants.keyParseApplicationId,
+        ApplicationConstants.keyParseServerUrl,
+        masterKey: ApplicationConstants.keyParseMasterKey,
+        appName: ApplicationConstants.keyAppName,
         debug: true);
+
+    // Check server is healthy and live - Debug is on in this instance so check logs for result
+    var response = await Parse().healthCheck();
+    if (response.success){
+      runTestQueries();
+    } else {
+      print("Server health check failed");
+    }
   }
 
   runTestQueries() {
+    createItem();
     getAllItems();
     getAllItemsByName();
     getSingleItem();
@@ -52,33 +60,46 @@ class _MyAppState extends State<MyApp> {
     initUser();
   }
 
+  void createItem() async {
+
+    var newObject = ParseObject('TestObjectForApi');
+    newObject.set<String>('name', 'testItem');
+    newObject.set<int>('age', 26);
+
+    var apiResponse = await newObject.create();
+
+    if (apiResponse.success && apiResponse.result != null) {
+        print(ApplicationConstants.keyAppName + ": " + apiResponse.result.toString());
+    }
+  }
+
   void getAllItemsByName() async {
     var apiResponse = await ParseObject('ParseTableName').getAll();
 
-    if (apiResponse.success) {
+    if (apiResponse.success && apiResponse.result != null) {
       for (var testObject in apiResponse.result) {
-        print(ApplicationConstants.APP_NAME + ": " + testObject.toString());
+        print(ApplicationConstants.keyAppName + ": " + testObject.toString());
       }
     }
   }
 
   void getAllItems() async {
-    var response = await DietPlan().getAll();
+    var apiResponse = await DietPlan().getAll();
 
-    if (response.success) {
-      for (var plan in response.result) {
-        print(ApplicationConstants.APP_NAME + ": " + (plan as DietPlan).name);
+    if (apiResponse.success && apiResponse.result != null) {
+      for (var plan in apiResponse.result) {
+        print(ApplicationConstants.keyAppName + ": " + (plan as DietPlan).name);
       }
     } else {
-      print(ApplicationConstants.APP_NAME + ": " + response.error.message);
+      print(ApplicationConstants.keyAppName + ": " + apiResponse.error.message);
     }
   }
 
   void getSingleItem() async {
-    var response = await DietPlan().getObject('R5EonpUDWy');
+    var apiResponse = await DietPlan().getObject('R5EonpUDWy');
 
-    if (response.success) {
-      var dietPlan = (response.result as DietPlan);
+    if (apiResponse.success && apiResponse.result != null) {
+      var dietPlan = (apiResponse.result as DietPlan);
 
       // Shows example of storing values in their proper type and retrieving them
       dietPlan.set<int>('RandomInt', 8);
@@ -95,21 +116,21 @@ class _MyAppState extends State<MyApp> {
       if (newDietPlanFromPin != null) print('Retreiving from pin worked!');
 
     } else {
-      print(ApplicationConstants.APP_NAME + ": " + response.error.message);
+      print(ApplicationConstants.keyAppName + ": " + apiResponse.error.message);
     }
   }
 
   void query() async {
     var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
-      ..greaterThan(DietPlan.FAT, 20)
-      ..descending(DietPlan.FAT);
+      ..greaterThan(DietPlan.keyFat, 20)
+      ..descending(DietPlan.keyFat);
 
-    var response = await queryBuilder.query();
+    var apiResponse = await queryBuilder.query();
 
-    if (response.success) {
-      print("Result: ${((response.result as List<dynamic>).first as DietPlan).toString()}");
+    if (apiResponse.success && apiResponse.result != null) {
+      print("Result: ${((apiResponse.result as List<dynamic>).first as DietPlan).toString()}");
     } else {
-      print("Result: ${response.error.message}");
+      print("Result: ${apiResponse.error.message}");
     }
   }
 
@@ -132,7 +153,7 @@ class _MyAppState extends State<MyApp> {
     if (destroyResponse.success) print('object has been destroyed!');
 
     // Returns type ParseResponse as its a query, not a single result
-    var response = await ParseUser.all();
+    await ParseUser.all();
   }
 
   function() {

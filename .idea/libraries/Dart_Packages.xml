@@ -1,25 +1,26 @@
 <component name="libraryTable">
   <library name="Dart Packages">
     <CLASSES>
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/async-2.0.8/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/charcode-1.1.2/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/collection-1.14.11/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/convert-2.1.1/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/crypto-2.0.6/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-0.1.2/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.0+1/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/http_parser-3.1.3/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/meta-1.1.6/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/path-1.6.2/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.4.3/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/source_span-1.4.1/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/stream_channel-1.6.8/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/string_scanner-1.0.4/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/typed_data-1.1.6/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/vector_math-2.0.8/lib" />
-      <root url="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/web_socket_channel-1.0.9/lib" />
-      <root url="file://$USER_HOME$/development/flutter/bin/cache/pkg/sky_engine/lib" />
-      <root url="file://$USER_HOME$/development/flutter/packages/flutter/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/async-2.0.8/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/charcode-1.1.2/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/collection-1.14.11/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/convert-2.1.1/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/crypto-2.0.6/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-0.1.2/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.0+1/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/http_parser-3.1.3/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/meta-1.1.6/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/path-1.6.2/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.4.3/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/source_span-1.5.0/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/stream_channel-1.6.8/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/string_scanner-1.0.4/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/term_glyph-1.1.0/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/typed_data-1.1.6/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/vector_math-2.0.8/lib" />
+      <root url="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/web_socket_channel-1.0.9/lib" />
+      <root url="file://C:/Programming/Flutter/bin/cache/pkg/sky_engine/lib" />
+      <root url="file://C:/Programming/Flutter/packages/flutter/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -1,17 +1,43 @@
 part of flutter_parse_sdk;
 
-// Utils
-const String PARSE_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
+// Library
+const String keySdkVersion = '1.0.5';
+const String keyLibraryName= 'Flutter Parse SDK';
+
+// End Points
+const String keyEndPointUserName = '/users/me';
+const String keyEndPointLogin = '/login';
+const String keyEndPointVerificationEmail = '/verificationEmailRequest';
+const String keyEndPointRequestPasswordReset = '/requestPasswordReset';
+const String keyEndPointClasses = '/classes/';
+const String keyEndPointHealth = '/health';
 
 // ParseObject variables
-const String OBJECT_ID = 'objectId';
-const String CREATED_AT = 'createdAt';
-const String UPDATED_AT = 'updatedAT';
+const String keyVarClassName = 'className';
+const String keyVarObjectId = 'objectId';
+const String keyVarCreatedAt = 'createdAt';
+const String keyVarUpdatedAt = 'updatedAt';
+const String keyVarUsername = 'username';
+const String keyVarEmail = 'email';
+const String keyVarPassword = 'password';
+const String keyVarAcl = 'ACL';
+
+// Classes
+const String keyClassMain = 'ParseMain';
+const String keyClassUser = '_User';
 
 // Headers
-const String HEADER_SESSION_TOKEN = 'X-Parse-Session-Token';
-const String HEADER_REVOCABLE_SESSION = 'X-Parse-Revocable-Session';
+const String keyHeaderSessionToken = 'X-Parse-Session-Token';
+const String keyHeaderRevocableSession = 'X-Parse-Revocable-Session';
+const String keyHeaderUserAgent = 'user-agent';
+const String keyHeaderApplicationId = 'X-Parse-Application-Id';
+const String keyHeaderContentType = 'Content-Type';
+const String keyHeaderContentTypeJson = 'application/json';
+const String keyHeaderMasterKey = 'X-Parse-Master-Key';
+
+// URL params
+const String keyParamSessionToken = 'sessionToken';
 
 // Storage
-const String PARSE_STORE_BASE = 'flutter_parse_sdk_';
-const String PARSE_STORE_USER = "${PARSE_STORE_BASE}user";
+const String keyParseStoreBase = 'flutter_parse_sdk_';
+const String keyParseStoreUser = "${keyParseStoreBase}user";

@@ -8,20 +8,23 @@ class ParseResponse {
 
   /// Handles all the ParseObject responses
   ///
-  /// There are 3 probable outcomes from a Parse API call,
+  /// There are 4 probable outcomes from a Parse API call,
   /// 1. Fail - [ParseResponse()] will be returned with further details
   /// 2. Success but no results. [ParseResponse()] is returned.
-  /// 3. Success with results. Again [ParseResponse()] is returned
-  static handleResponse(ParseBase object, Response apiResponse) {
+  /// 3. Success with simple OK.
+  /// 4. Success with results. Again [ParseResponse()] is returned
+  static handleResponse(dynamic object, Response apiResponse) {
     var parseResponse = ParseResponse();
 
     if (apiResponse != null) {
       parseResponse.statusCode = apiResponse.statusCode;
 
-      if (apiResponse.statusCode != 200) {
+      if (apiResponse.statusCode != 200 && apiResponse.statusCode != 201) {
         return _handleError(parseResponse, apiResponse);
       } else if (apiResponse.body == "{\"results\":[]}"){
-        return _handleSuccessWithNoResults(parseResponse, "Successful request, but no results found");
+        return _handleSuccessWithNoResults(parseResponse, 1, "Successful request, but no results found");
+      } else if (apiResponse.body == "OK"){
+        return _handleSuccessWithNoResults(parseResponse, 2, "Successful request");
       } else {
         return _handleSuccess(parseResponse, object, apiResponse.body);
       }
@@ -32,7 +35,7 @@ class ParseResponse {
   }
 
   /// Handles exception instead of throwing an exception
-  static handleException(Exception exception) {
+  static ParseResponse handleException(Exception exception) {
     var response = ParseResponse();
     response.error = ParseError(message: exception.toString(), isTypeOfException: true);
     return response;
@@ -47,14 +50,15 @@ class ParseResponse {
   }
 
   /// Handles successful responses with no results
-  static ParseResponse _handleSuccessWithNoResults(ParseResponse response, String value) {
+  static ParseResponse _handleSuccessWithNoResults(ParseResponse response, int code, String value) {
+    response.success = true;
     response.statusCode = 200;
-    response.error = ParseError(code: 1, message: value);
+    response.error = ParseError(code: code, message: value);
     return response;
   }
 
   /// Handles successful response with results
-  static ParseResponse _handleSuccess(ParseResponse response, ParseBase object, String responseBody) {
+  static ParseResponse _handleSuccess(ParseResponse response, dynamic object, String responseBody) {
     response.success = true;
 
     var map = JsonDecoder().convert(responseBody) as Map;
@@ -69,20 +73,20 @@ class ParseResponse {
   }
 
   /// Handles a response with a multiple result object
-  static _handleMultipleResults(ParseBase object, dynamic map) {
+  static _handleMultipleResults(dynamic object, dynamic map) {
     var resultsList = List();
 
     for (var value in map) {
-      var newObject = _handleSingleResult(object, value);
-      resultsList.add(newObject);
+      resultsList.add(_handleSingleResult(object, value));
     }
 
     return resultsList;
   }
 
   /// Handles a response with a single result object
-  static _handleSingleResult(ParseBase object, map) {
-    if (object is ParseCloneable) return (object as ParseCloneable).clone(map);
+  static _handleSingleResult(dynamic object, map) {
+    if (object is Parse) return map;
+    if (object is ParseCloneable) return object.clone(map);
     return null;
   }
 }
