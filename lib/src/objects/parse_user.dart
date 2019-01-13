@@ -106,7 +106,7 @@ class ParseUser extends ParseBase implements ParseCloneable {
           headers: {
             keyHeaderRevocableSession: "1",
           },
-          body: JsonEncoder().convert(bodyData));
+          body: json.encode(bodyData));
 
       _handleResponse(response, ParseApiRQ.signUp);
       return this;
@@ -151,8 +151,7 @@ class ParseUser extends ParseBase implements ParseCloneable {
     try {
       final response = await _client.post(
           "${_client.data.serverUrl}$keyEndPointVerificationEmail",
-          body: JsonEncoder().convert({keyVarEmail: emailAddress}));
-
+          body: json.encode({keyVarEmail: emailAddress}));
       return _handleResponse(response, ParseApiRQ.verificationEmailRequest);
     } on Exception catch (e) {
       return _handleException(e, ParseApiRQ.verificationEmailRequest);
@@ -164,7 +163,7 @@ class ParseUser extends ParseBase implements ParseCloneable {
     try {
       final response = await _client.post(
           "${_client.data.serverUrl}$keyEndPointRequestPasswordReset",
-          body: JsonEncoder().convert({keyVarEmail: emailAddress}));
+          body: json.encode({keyVarEmail: emailAddress}));
       return _handleResponse(response, ParseApiRQ.requestPasswordReset);
     } on Exception catch (e) {
       return _handleException(e, ParseApiRQ.requestPasswordReset);
@@ -180,10 +179,9 @@ class ParseUser extends ParseBase implements ParseCloneable {
       return signUp();
     } else {
       try {
-        Map map = toJson(forApiRQ: true);
-        final response = await _client.put(
-            _client.data.serverUrl + "$path/$objectId",
-            body: map);
+        var uri = _client.data.serverUrl + "$path/$objectId";
+        var body = json.encode(toJson(forApiRQ: true), toEncodable: dateTimeEncoder);
+        final response = await _client.put(uri, body: body);
         return _handleResponse(response, ParseApiRQ.save);
       } on Exception catch (e) {
         return _handleException(e, ParseApiRQ.save);

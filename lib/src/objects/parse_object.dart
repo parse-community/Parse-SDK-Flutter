@@ -1,8 +1,7 @@
 part of flutter_parse_sdk;
 
 class ParseObject extends ParseBase implements ParseCloneable {
-
-  ParseObject.clone(String className): this('className');
+  ParseObject.clone(String className) : this('className');
 
   @override
   clone(Map map) => ParseObject.clone(className)..fromJson(map);
@@ -16,18 +15,18 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// [String] className refers to the Table Name in your Parse Server,
   /// [bool] debug will overwrite the current default debug settings and
   /// [ParseHttpClient] can be overwritten to create your own HTTP Client
-  ParseObject(String className, {bool debug: false}): super() {
+  ParseObject(String className, {bool debug: false}) : super() {
     setClassName(className);
     _path = "$keyEndPointClasses$className";
     setClient(ParseHTTPClient());
     setDebug(isDebugEnabled(objectLevelDebug: debug));
   }
 
-  void setDebug(bool debug){
+  void setDebug(bool debug) {
     _debug = debug;
   }
 
-  void setClient(ParseHTTPClient client){
+  void setClient(ParseHTTPClient client) {
     _client = client;
   }
 
@@ -57,7 +56,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
   Future<ParseResponse> create() async {
     try {
       var uri = _client.data.serverUrl + "$_path";
-      var result = await _client.post(uri, body: toJson(forApiRQ: true));
+      var body = json.encode(toJson(forApiRQ: true));
+      var result = await _client.post(uri, body: body);
       return handleResponse(result, ParseApiRQ.create);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.create);
@@ -71,7 +71,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
     } else {
       try {
         var uri = "${ParseCoreData().serverUrl}$_path/$objectId";
-        var result = await _client.put(uri, body: toJson(forApiRQ: true));
+        var body = json.encode(toJson(forApiRQ: true));
+        var result = await _client.put(uri, body: body);
         return handleResponse(result, ParseApiRQ.save);
       } on Exception catch (e) {
         return handleException(e, ParseApiRQ.save);
@@ -107,7 +108,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
     ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
 
     if (_debug) {
-      logger(ParseCoreData().appName, className, type.toString(), parseResponse);
+      logger(
+          ParseCoreData().appName, className, type.toString(), parseResponse);
     }
 
     return parseResponse;
@@ -119,7 +121,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
     ParseResponse parseResponse = ParseResponse.handleException(exception);
 
     if (_debug) {
-      logger(ParseCoreData().appName, className, type.toString(), parseResponse);
+      logger(
+          ParseCoreData().appName, className, type.toString(), parseResponse);
     }
 
     return parseResponse;

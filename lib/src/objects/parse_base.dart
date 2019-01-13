@@ -16,16 +16,10 @@ abstract class ParseBase {
   set objectId(String objectId) => set<String>(keyVarObjectId, objectId);
 
   /// Returns [DateTime] createdAt
-  DateTime get createdAt => stringToDateTime(get<String>(keyVarCreatedAt));
-
-  set createdAt(DateTime createdAt) =>
-      set<String>(keyVarCreatedAt, dateTimeToString(createdAt));
+  DateTime get createdAt => get<DateTime>(keyVarCreatedAt);
 
   /// Returns [DateTime] updatedAt
-  DateTime get updatedAt => stringToDateTime(get<String>(keyVarUpdatedAt));
-
-  set updatedAt(DateTime updatedAt) =>
-      set<String>(keyVarUpdatedAt, dateTimeToString(updatedAt));
+  DateTime get updatedAt => get<DateTime>(keyVarUpdatedAt);
 
   /// Converts object to [String] in JSON format
   @protected
@@ -39,11 +33,11 @@ abstract class ParseBase {
     }
 
     if (createdAt != null) {
-      map[keyVarCreatedAt] = dateTimeToString(createdAt);
+      map[keyVarCreatedAt] = createdAt.toIso8601String();
     }
 
     if (updatedAt != null) {
-      map[keyVarUpdatedAt] = dateTimeToString(updatedAt);
+      map[keyVarUpdatedAt] = updatedAt.toIso8601String();
     }
 
     getObjectData().forEach((key, value) {
@@ -51,16 +45,18 @@ abstract class ParseBase {
     });
 
     if (forApiRQ) {
-     map.remove(keyVarClassName);
-     map.remove(keyVarAcl);
-     map.remove(keyParamSessionToken);
+      map.remove(keyVarCreatedAt);
+      map.remove(keyVarUpdatedAt);
+      map.remove(keyVarClassName);
+      map.remove(keyVarAcl);
+      map.remove(keyParamSessionToken);
     }
 
     return map;
   }
 
   @override
-  String toString() => JsonEncoder().convert(toJson());
+  String toString() => json.encode(toJson());
 
   @protected
   fromJson(Map objectData) {
@@ -70,9 +66,9 @@ abstract class ParseBase {
       } else if (key == keyVarObjectId) {
         objectId = value;
       } else if (key == keyVarCreatedAt) {
-        createdAt = stringToDateTime(value);
+        set<DateTime>(keyVarCreatedAt, DateTime.parse(value));
       } else if (key == keyVarUpdatedAt) {
-        updatedAt = stringToDateTime(value);
+        set<DateTime>(keyVarUpdatedAt, DateTime.parse(value));
       } else {
         getObjectData()[key] = parseDecode(value);
       }
@@ -83,7 +79,7 @@ abstract class ParseBase {
 
   /// Creates a copy of this class
   @protected
-  copy() => fromJson(JsonDecoder().convert(toJson()));
+  copy() => fromJson(json.decode(toJson()));
 
   /// Sets all the objects variables
   @protected
@@ -135,7 +131,9 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> pin() async {
     if (objectId != null) {
-      await ParseCoreData().getStore().setString(objectId, JsonEncoder().convert(toJson()));
+      await ParseCoreData()
+          .getStore()
+          .setString(objectId, json.encode(toJson()));
       return true;
     } else {
       return false;
@@ -163,7 +161,7 @@ abstract class ParseBase {
       var itemFromStore = ParseCoreData().getStore().getString(objectId);
 
       if (itemFromStore != null) {
-        var map = JsonDecoder().convert(itemFromStore);
+        var map = json.decode(itemFromStore);
 
         if (map != null) {
           return fromJson(map);

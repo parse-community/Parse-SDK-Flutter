@@ -19,7 +19,7 @@ class ParseResponse {
     if (apiResponse != null) {
       parseResponse.statusCode = apiResponse.statusCode;
 
-      if (apiResponse.statusCode != 200) {
+      if (apiResponse.statusCode != 200 && apiResponse.statusCode != 201) {
         return _handleError(parseResponse, apiResponse);
       } else if (apiResponse.body == "{\"results\":[]}"){
         return _handleSuccessWithNoResults(parseResponse, 1, "Successful request, but no results found");
