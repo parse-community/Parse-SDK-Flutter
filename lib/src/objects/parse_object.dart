@@ -108,8 +108,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
 
     if (_debug) {
-      logger(
-          ParseCoreData().appName, className, type.toString(), parseResponse);
+      logger(ParseCoreData().appName, className, type.toString(), parseResponse);
     }
 
     return parseResponse;
