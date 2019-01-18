@@ -143,12 +143,11 @@ class _MyAppState extends State<MyApp> {
 
     response = await user.login();
     if (response.success) user = response.result;
-    user = null;
 
+    user = null;
     // Best practice for starting the app. This will check for a valid user
     user = await ParseUser.currentUser();
-    user.logout();
-
+    await user.logout();
     user = await ParseUser.currentUser();
 
     response = await user.getCurrentUserFromServer();
