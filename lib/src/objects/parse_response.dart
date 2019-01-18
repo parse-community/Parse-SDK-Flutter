@@ -13,7 +13,7 @@ class ParseResponse {
   /// 2. Success but no results. [ParseResponse()] is returned.
   /// 3. Success with simple OK.
   /// 4. Success with results. Again [ParseResponse()] is returned
-  static handleResponse(dynamic object, Response apiResponse) {
+  static handleResponse<T extends ParseBase>(dynamic object, Response apiResponse) {
     var parseResponse = ParseResponse();
 
     if (apiResponse != null) {
@@ -26,7 +26,7 @@ class ParseResponse {
       } else if (apiResponse.body == "OK"){
         return _handleSuccessWithNoResults(parseResponse, 2, "Successful request");
       } else {
-        return _handleSuccess(parseResponse, object, apiResponse.body);
+        return _handleSuccess<T>(parseResponse, object, apiResponse.body);
       }
     } else {
       parseResponse.error = ParseError(message: "Error reaching server, or server response was null");
@@ -58,33 +58,33 @@ class ParseResponse {
   }
 
   /// Handles successful response with results
-  static ParseResponse _handleSuccess(ParseResponse response, dynamic object, String responseBody) {
+  static ParseResponse _handleSuccess<T extends ParseBase>(ParseResponse response, dynamic object, String responseBody) {
     response.success = true;
 
     var map = JsonDecoder().convert(responseBody) as Map;
 
     if (map != null && map.length == 1 && map.containsKey('results')) {
-      response.result = _handleMultipleResults(object, map.entries.first.value);
+      response.result = _handleMultipleResults<T>(object, map.entries.first.value);
     } else {
-      response.result = _handleSingleResult(object, map);
+      response.result = _handleSingleResult<T>(object, map);
     }
 
     return response;
   }
 
   /// Handles a response with a multiple result object
-  static _handleMultipleResults(dynamic object, dynamic map) {
-    var resultsList = List();
+  static List<T> _handleMultipleResults<T extends ParseBase>(dynamic object, dynamic map) {
+    var resultsList = List<T>();
 
     for (var value in map) {
-      resultsList.add(_handleSingleResult(object, value));
+      resultsList.add(_handleSingleResult<T>(object, value));
     }
 
     return resultsList;
   }
 
   /// Handles a response with a single result object
-  static _handleSingleResult(dynamic object, map) {
+  static T _handleSingleResult<T extends ParseBase>(dynamic object, map) {
     if (object is Parse) return map;
     if (object is ParseCloneable) return object.clone(map);
     return null;
