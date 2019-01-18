@@ -105,7 +105,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Handles an API response and logs data if [bool] debug is enabled
   @protected
   ParseResponse handleResponse(Response response, ParseApiRQ type) {
-    ParseResponse parseResponse = ParseResponse.handleResponse(this, response);
+    ParseResponse parseResponse = ParseResponse.handleResponse<ParseObject>(this, response);
 
     if (_debug) {
       logger(

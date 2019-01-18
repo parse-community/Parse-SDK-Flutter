@@ -138,22 +138,43 @@ class _MyAppState extends State<MyApp> {
 
    // All return type ParseUser except all
     var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
-    user = await user.signUp();
-    user = await user.login();
+    var response = await user.signUp();
+    if (response.success) user = response.result;
+
+    response = await user.login();
+    if (response.success) user = response.result;
     user = null;
 
-    // Best practice for starting the app. This will check for a
-    user = ParseUser.currentUser();
-    user = await user.getCurrentUserFromServer();
-    user = await user.requestPasswordReset();
-    user = await user.verificationEmailRequest();
+    // Best practice for starting the app. This will check for a valid user
+    user = await ParseUser.currentUser();
+    user.logout();
 
-    user = await user.save();
+    user = await ParseUser.currentUser();
+
+    response = await user.getCurrentUserFromServer();
+    if (response.success) user = response.result;
+
+    response = await user.requestPasswordReset();
+    if (response.success) user = response.result;
+
+    response = await user.verificationEmailRequest();
+    if (response.success) user = response.result;
+
+    response = await user.save();
+    if (response.success) user = response.result;
+
     var destroyResponse = await user.destroy();
     if (destroyResponse.success) print('object has been destroyed!');
 
     // Returns type ParseResponse as its a query, not a single result
-    await ParseUser.all();
+    response = await ParseUser.all();
+    if (response.success) user = response.result;
+
+    var queryBuilder = QueryBuilder<ParseUser>(ParseUser.forQuery())
+      ..startsWith(ParseUser.keyUsername, 'phillw');;
+
+    var apiResponse = await queryBuilder.query();
+    if (apiResponse.success) user = response.result;
   }
 
   function() {
