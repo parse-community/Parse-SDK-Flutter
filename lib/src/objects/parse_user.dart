@@ -10,7 +10,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   static final String keyUsername = 'username';
-  static final String keyEmailAddres = 'email';
+  static final String keyEmailAddress = 'email';
   static final String path = "$keyEndPointClasses$keyClassUser";
 
   Map get acl => super.get<Map>(keyVarAcl);
