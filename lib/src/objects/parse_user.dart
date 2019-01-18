@@ -239,8 +239,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
-  static ParseUser _getUserFromLocalStore() {
-    var userJson = ParseCoreData().getStore().getString(keyParseStoreUser);
+  static Future<ParseUser> _getUserFromLocalStore() async {
+    var userJson = (await ParseCoreData().getStore()).getString(keyParseStoreUser);
 
     if (userJson != null) {
       var userMap = JsonDecoder().convert(userJson);

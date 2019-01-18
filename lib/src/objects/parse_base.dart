@@ -92,8 +92,10 @@ abstract class ParseBase {
 
   /// Saves in storage
   @protected
-  void saveInStorage(String key) async =>
-      await ParseCoreData().getStore().setString(key, toString());
+  void saveInStorage(String key) async {
+    await ParseCoreData().getStore()
+      ..setString(key, toString());
+  }
 
   /// Sets type [T] from objectData
   ///
@@ -132,11 +134,9 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> pin() async {
     if (objectId != null) {
+      await unpin();
       var objectToSave = json.encode(toJson());
-      ParseCoreData().getStore().remove(objectId);
-      await ParseCoreData()
-          .getStore()
-          .setString(objectId, objectToSave);
+      await ParseCoreData().getStore()..setString(objectId, objectToSave);
       return true;
     } else {
       return false;
@@ -148,8 +148,7 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> unpin() async {
     if (objectId != null) {
-      await ParseCoreData().getStore().setString(objectId, "");
-      await ParseCoreData().getStore().remove(objectId);
+      await SharedPreferences.getInstance()..remove(objectId);
       return true;
     }
 
@@ -159,9 +158,9 @@ abstract class ParseBase {
   /// Saves item to simple key pair value storage
   ///
   /// Replicates Android SDK pin process and saves object to storage
-  fromPin(String objectId) {
+  fromPin(String objectId) async {
     if (objectId != null) {
-      var itemFromStore = ParseCoreData().getStore().getString(objectId);
+      var itemFromStore = (await ParseCoreData().getStore()).getString(objectId);
 
       if (itemFromStore != null) {
         var map = json.decode(itemFromStore);
