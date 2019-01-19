@@ -63,6 +63,8 @@ dynamic parseDecode(dynamic value) {
         return ParseUser(null, null, null).fromJson(map);
       }
       return ParseObject(className).fromJson(map);
+    case "File":
+      return new ParseFile(null).fromJson(map);
     case "GeoPoint":
       num latitude = map["latitude"] ?? 0.0;
       num longitude = map["longitude"] ?? 0.0;

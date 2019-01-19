@@ -17,3 +17,4 @@ dependencies:
 
   # Utils
   shared_preferences: ^0.4.3
+  path_provider: ^0.4.1
