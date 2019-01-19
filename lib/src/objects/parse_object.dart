@@ -80,6 +80,93 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
+  /// Removes an element from an Arary
+  Future<ParseResponse> remove(String key, dynamic values) async {
+    if (key != null) {
+      return await _sortArrays(ParseApiRQ.remove, "Remove", key, [values]);
+    } else {
+      return null;
+    }
+  }
+
+  /// Remove multiple elements from an array of an object
+  Future<ParseResponse> removeAll(String key, List<dynamic> values) async {
+    if (key != null) {
+      return await _sortArrays(ParseApiRQ.removeAll, "Remove", key, values);
+    } else {
+      return null;
+    }
+  }
+
+  /// Add a multiple elements to an array of an object
+  Future<ParseResponse> addAll(String key, List<dynamic> values) async {
+    if (key != null) {
+      return await _sortArrays(ParseApiRQ.addAll, "Add", key, values);
+    } else {
+      return null;
+    }
+  }
+
+  /// Add a multiple elements to an array of an object, but only when they are unique
+  Future<ParseResponse> addUnique(String key, List<dynamic> values) async {
+    if (key != null) {
+      return await _sortArrays(ParseApiRQ.addUnique, "AddUnique", key, values);
+    } else {
+      return null;
+    }
+  }
+
+  /// Add a single element to an array of an object
+  Future<ParseResponse> add(String key, List<dynamic> values) async {
+    if (key != null) {
+      return await _sortArrays(ParseApiRQ.add, "Add", key, values);
+    } else {
+      return null;
+    }
+  }
+
+  /// Can be used to add arrays to a given type
+  Future<ParseResponse> _sortArrays(ParseApiRQ apiRQType, String arrayAction, String key, List<dynamic> values) async {
+      try {
+        var uri = "${ParseCoreData().serverUrl}$_path";
+        var body = "{\"$key\":{\"__op\": \"$arrayAction\", \"objects\": ${parseEncode(values)}";
+        var result = await _client.put(uri, body: body);
+        return handleResponse(result, apiRQType);
+      } on Exception catch (e) {
+        return handleException(e, apiRQType);
+      }
+  }
+
+  /// Increases a num of an object by x amount
+  Future<ParseResponse> increment(String key, num amount) async {
+    if (key != null) {
+      return await _increment(ParseApiRQ.increment, "Increment", key, amount);
+    } else {
+      return null;
+    }
+  }
+
+  /// Decreases a num of an object by x amount
+  Future<ParseResponse> decrement(String key, num amount) async {
+    if (key != null) {
+      return await _increment(ParseApiRQ.decrement, "Increment", key, -amount);
+    } else {
+      return null;
+    }
+  }
+
+  /// Can be used to add arrays to a given type
+  Future<ParseResponse> _increment(ParseApiRQ apiRQType, String arrayAction, String key, num amount) async {
+    try {
+      var uri = "${ParseCoreData().serverUrl}$_path";
+      var body = "{\"$key\":{\"__op\": \"$arrayAction\", \"amount\": $amount}";
+      var result = await _client.put(uri, body: body);
+      return handleResponse(result, apiRQType);
+    } on Exception catch (e) {
+      return handleException(e, apiRQType);
+    }
+  }
+
   /// Can be used to create custom queries
   Future<ParseResponse> query(String query) async {
     try {
@@ -104,8 +191,23 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
   /// Handles an API response and logs data if [bool] debug is enabled
   @protected
-  ParseResponse handleResponse(Response response, ParseApiRQ type) {
-    ParseResponse parseResponse = ParseResponse.handleResponse<ParseObject>(this, response);
+  ParseResponse handleResponse<T extends ParseObject>(Response response, ParseApiRQ type) {
+
+    bool returnAsBaseResult = false;
+
+    if (type == ParseApiRQ.healthCheck ||
+        type == ParseApiRQ.execute ||
+        type == ParseApiRQ.add ||
+        type == ParseApiRQ.addAll ||
+        type == ParseApiRQ.addUnique ||
+        type == ParseApiRQ.remove ||
+        type == ParseApiRQ.removeAll ||
+        type == ParseApiRQ.increment ||
+        type == ParseApiRQ.decrement){
+      returnAsBaseResult = true;
+    }
+
+    ParseResponse parseResponse = ParseResponse.handleResponse<T>(this, response, returnAsResult: returnAsBaseResult);
 
     if (_debug) {
       logger(ParseCoreData().appName, className, type.toString(), parseResponse);
@@ -120,8 +222,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     ParseResponse parseResponse = ParseResponse.handleException(exception);
 
     if (_debug) {
-      logger(
-          ParseCoreData().appName, className, type.toString(), parseResponse);
+      logger(ParseCoreData().appName, className, type.toString(), parseResponse);
     }
 
     return parseResponse;

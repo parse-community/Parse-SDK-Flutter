@@ -13,7 +13,7 @@ class ParseResponse {
   /// 2. Success but no results. [ParseResponse()] is returned.
   /// 3. Success with simple OK.
   /// 4. Success with results. Again [ParseResponse()] is returned
-  static handleResponse<T extends ParseBase>(dynamic object, Response apiResponse) {
+  static handleResponse<T extends ParseBase>(dynamic object, Response apiResponse, {bool returnAsResult: false}) {
     var parseResponse = ParseResponse();
 
     if (apiResponse != null) {
@@ -25,6 +25,8 @@ class ParseResponse {
         return _handleSuccessWithNoResults(parseResponse, 1, "Successful request, but no results found");
       } else if (apiResponse.body == "OK"){
         return _handleSuccessWithNoResults(parseResponse, 2, "Successful request");
+      } else if (returnAsResult){
+        return _handleSuccess<T>(parseResponse, object, apiResponse.body);
       } else {
         return _handleSuccess<T>(parseResponse, object, apiResponse.body);
       }
@@ -43,7 +45,7 @@ class ParseResponse {
 
   /// Handles any errors returned in response
   static ParseResponse _handleError(ParseResponse response, Response apiResponse) {
-    Map<String, dynamic> responseData = JsonDecoder().convert(apiResponse.body);
+    Map<String, dynamic> responseData = json.decode(apiResponse.body);
     response.error = ParseError(code: responseData['code'], message: responseData['error']);
     response.statusCode = responseData['code'];
     return response;
@@ -57,11 +59,18 @@ class ParseResponse {
     return response;
   }
 
+  /// Handles successful response without creating a ParseObject
+  static ParseResponse _handleSuccessWithoutParseObject(ParseResponse response, dynamic object, String responseBody) {
+    response.success = true;
+    response.result = json.decode(responseBody);
+    return response;
+  }
+
   /// Handles successful response with results
   static ParseResponse _handleSuccess<T extends ParseBase>(ParseResponse response, dynamic object, String responseBody) {
     response.success = true;
 
-    var map = JsonDecoder().convert(responseBody) as Map;
+    var map = json.decode(responseBody) as Map;
 
     if (map != null && map.length == 1 && map.containsKey('results')) {
       response.result = _handleMultipleResults<T>(object, map.entries.first.value);

@@ -226,7 +226,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
           await ParseHTTPClient().get("${ParseCoreData().serverUrl}/$path");
 
       ParseResponse parseResponse =
-          ParseResponse.handleResponse(emptyUser, response);
+          ParseResponse.handleResponse<ParseUser>(emptyUser, response);
 
       if (ParseCoreData().debug) {
         logger(ParseCoreData().appName, keyClassUser,

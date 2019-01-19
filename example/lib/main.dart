@@ -122,8 +122,7 @@ class _MyAppState extends State<MyApp> {
 
   void query() async {
     var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
-      ..greaterThan(DietPlan.keyFat, 20)
-      ..descending(DietPlan.keyFat);
+      ..whereContains(DietPlan.keyName, "eto");
 
     var apiResponse = await queryBuilder.query();
 
@@ -170,7 +169,7 @@ class _MyAppState extends State<MyApp> {
     if (response.success) user = response.result;
 
     var queryBuilder = QueryBuilder<ParseUser>(ParseUser.forQuery())
-      ..startsWith(ParseUser.keyUsername, 'phillw');;
+      ..whereStartsWith(ParseUser.keyUsername, 'phillw');;
 
     var apiResponse = await queryBuilder.query();
     if (apiResponse.success) user = response.result;
