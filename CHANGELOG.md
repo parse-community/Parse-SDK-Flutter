@@ -1,3 +1,9 @@
+## 1.0.6
+
+BREAK FIX - Fixed ParseUser return type so now returns ParseResponse
+BREAK FIX - Changed query names to make more human readable
+Fixed pinning and unpinning
+
 ## 1.0.5
 
 Corrected save. Now formatted items correctly for saving on server

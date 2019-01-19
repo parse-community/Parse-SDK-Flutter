@@ -13,7 +13,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```
 dependencies:  
-    parse_server_sdk: ^1.0.5
+    parse_server_sdk: ^1.0.6
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -174,11 +174,13 @@ var user =  ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK
 Then have the user sign up:
 
 ```
-user =  await  user.signUp();
+var response = await user.signUp();
+if (response.success) user = response.result;
 ```
 You can also logout and login with the user:
 ```
-user =  await  user.login();
+var response = await user.login();
+if (response.success) user = response.result;
 ```
 Also, once logged in you can manage sessions tokens. This feature can be called after Parse().init() on startup to check for a logged in user.
 ```
