@@ -169,7 +169,7 @@ class _MyAppState extends State<MyApp> {
     if (response.success) user = response.result;
 
     var queryBuilder = QueryBuilder<ParseUser>(ParseUser.forQuery())
-      ..whereStartsWith(ParseUser.keyUsername, 'phillw');;
+      ..whereStartsWith(ParseUser.keyUsername, 'phillw');
 
     var apiResponse = await queryBuilder.query();
     if (apiResponse.success) user = response.result;
