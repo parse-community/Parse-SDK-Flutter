@@ -26,7 +26,7 @@ class ParseResponse {
       } else if (apiResponse.body == "OK"){
         return _handleSuccessWithNoResults(parseResponse, 2, "Successful request");
       } else if (returnAsResult){
-        return _handleSuccess<T>(parseResponse, object, apiResponse.body);
+        return _handleSuccessWithoutParseObject(parseResponse, object, apiResponse.body);
       } else {
         return _handleSuccess<T>(parseResponse, object, apiResponse.body);
       }

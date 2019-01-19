@@ -13,7 +13,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```
 dependencies:  
-    parse_server_sdk: ^1.0.6
+    parse_server_sdk: ^1.0.7
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -157,7 +157,7 @@ You can now save an object by calling .pin() on an instance of an object
 dietPlan.pin();
 ```
 
-and to retreive it
+and to retrieve it
 
 ```
 var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
