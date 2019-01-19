@@ -4,6 +4,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'dart:typed_data';
+import 'package:path/path.dart' as path;
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,6 +39,8 @@ part 'src/objects/parse_response.dart';
 
 part 'src/objects/parse_user.dart';
 
+part 'src/objects/parse_file.dart';
+
 part 'src/utils/parse_decoder.dart';
 
 part 'src/utils/parse_encoder.dart';
@@ -44,6 +48,8 @@ part 'src/utils/parse_encoder.dart';
 part 'src/utils/parse_logger.dart';
 
 part 'src/utils/parse_utils.dart';
+
+part 'src/utils/parse_file_extensions.dart';
 
 class Parse {
   ParseCoreData data;

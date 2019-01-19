@@ -25,6 +25,8 @@ const String keyVarAcl = 'ACL';
 // Classes
 const String keyClassMain = 'ParseMain';
 const String keyClassUser = '_User';
+const String keyGeoPoint = 'GeoPoint';
+const String keyFile = 'File';
 
 // Headers
 const String keyHeaderSessionToken = 'X-Parse-Session-Token';

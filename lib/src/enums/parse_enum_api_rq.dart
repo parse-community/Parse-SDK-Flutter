@@ -16,5 +16,13 @@ enum ParseApiRQ {
   requestPasswordReset,
   destroy,
   all,
-  execute
+  execute,
+  upload,
+  add,
+  addAll,
+  addUnique,
+  remove,
+  removeAll,
+  increment,
+  decrement
 }

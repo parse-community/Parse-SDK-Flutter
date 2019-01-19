@@ -2,6 +2,7 @@ part of flutter_parse_sdk;
 
 abstract class ParseBase {
   String className;
+  Type type;
 
   setClassName(String className) => this.className = className;
 
@@ -87,12 +88,14 @@ abstract class ParseBase {
 
   /// Returns the objects variables
   @protected
-  Map getObjectData() => _objectData;
+  Map getObjectData() => _objectData != null ? _objectData : Map();
 
   /// Saves in storage
   @protected
-  void saveInStorage(String key) async =>
-      await ParseCoreData().getStore().setString(key, toString());
+  void saveInStorage(String key) async {
+    await ParseCoreData().getStore()
+      ..setString(key, toString());
+  }
 
   /// Sets type [T] from objectData
   ///
@@ -131,9 +134,9 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> pin() async {
     if (objectId != null) {
-      await ParseCoreData()
-          .getStore()
-          .setString(objectId, json.encode(toJson()));
+      await unpin();
+      var objectToSave = json.encode(toJson());
+      await ParseCoreData().getStore()..setString(objectId, objectToSave);
       return true;
     } else {
       return false;
@@ -145,9 +148,8 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> unpin() async {
     if (objectId != null) {
-      var itemToSave =
-          await ParseCoreData().getStore().setString(objectId, null);
-      if (itemToSave) return true;
+      await SharedPreferences.getInstance()..remove(objectId);
+      return true;
     }
 
     return false;
@@ -156,9 +158,9 @@ abstract class ParseBase {
   /// Saves item to simple key pair value storage
   ///
   /// Replicates Android SDK pin process and saves object to storage
-  fromPin(String objectId) {
+  fromPin(String objectId) async {
     if (objectId != null) {
-      var itemFromStore = ParseCoreData().getStore().getString(objectId);
+      var itemFromStore = (await ParseCoreData().getStore()).getString(objectId);
 
       if (itemFromStore != null) {
         var map = json.decode(itemFromStore);

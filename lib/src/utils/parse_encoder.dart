@@ -8,19 +8,6 @@ dynamic dateTimeEncoder(dynamic item) {
   return item;
 }
 
-bool isValidType(dynamic value) {
-  return value == null ||
-      value is String ||
-      value is num ||
-      value is bool ||
-      value is DateTime ||
-      value is List ||
-      value is Map ||
-      value is ParseObject ||
-      value is ParseGeoPoint ||
-      value is ParseUser;
-}
-
 /// Custom json encoder for types related to parse
 dynamic parseEncode(dynamic value) {
   if (value is DateTime) return _encodeDate(value);
@@ -43,7 +30,19 @@ dynamic parseEncode(dynamic value) {
     return value.toJson;
   }
 
+  if (value is ParseFile) {
+    return value.toJson;
+  }
+
+  if (value is Uint8List) {
+    return _encodeUint8List(value);
+  }
+
   return value;
+}
+
+Map<String, dynamic> _encodeUint8List(Uint8List value) {
+  return <String, dynamic>{"__type": "Bytes", "base64": base64.encode(value)};
 }
 
 String _encodeObject(ParseObject object){
