@@ -1,3 +1,7 @@
+## 1.0.7
+
+Some items now return a response rather than a ParseObject
+
 ## 1.0.6
 
 BREAK FIX - Fixed ParseUser return type so now returns ParseResponse
