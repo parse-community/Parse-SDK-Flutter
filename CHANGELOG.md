@@ -1,3 +1,6 @@
+## 1.0.8
+Fixed some queries
+
 ## 1.0.7
 
 Some items now return a response rather than a ParseObject
