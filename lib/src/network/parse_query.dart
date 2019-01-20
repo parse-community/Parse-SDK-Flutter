@@ -49,12 +49,12 @@ class QueryBuilder<T extends ParseObject> {
   /// [String] keys will only return the columns of a result you want the data for,
   /// this is useful for large objects
   void keysToReturn(List<String> keys){
-    limiters["keys"] = keys.toString();
+    limiters["keys"] = concatArray(keys);
   }
 
   /// Includes other ParseObjects stored as a Pointer
-  void includeObject(String objectType){
-    limiters["include"] = objectType;
+  void includeObject(List<String> objectTypes){
+    limiters["include"] = concatArray(objectTypes);;
   }
 
   /// Returns an object where the [String] column starts with [value]
@@ -148,15 +148,15 @@ class QueryBuilder<T extends ParseObject> {
   /// Performs a search to see if [String] contains other string
   void whereContains(String column, String value, {bool caseSensitive: false}) {
     if (caseSensitive) {
-      queries.add(MapEntry(_SINGLE_QUERY, '\"$column\":{\"\$regex\": \"$query\"}'));
+      queries.add(MapEntry(_SINGLE_QUERY, '\"$column\":{\"\$regex\": \"$value\"}'));
         } else {
-      queries.add(MapEntry(_SINGLE_QUERY, '\"$column\":{\"\$regex\": \"$query\", \"\$options\": \"i\"}'));
+      queries.add(MapEntry(_SINGLE_QUERY, '\"$column\":{\"\$regex\": \"$value\", \"\$options\": \"i\"}'));
     }
   }
 
   /// Powerful search for containing whole words. This search is much quicker than regex and can search for whole words including wether they are case sensitive or not.
   /// This search can also order by the score of the search
-  void textContainsWholeWord(String column, String query, {bool caseSensitive: false, bool orderByScore: true}){
+  void whereContainsWholeWord(String column, String query, {bool caseSensitive: false, bool orderByScore: true}){
     queries.add(MapEntry(_SINGLE_QUERY, '\"$column\":{\"\$text\":{\"\$search\":{\"\$term\": \"$query\", \"\$caseSensitive\": $caseSensitive }}}'));
     if (orderByScore) orderByDescending('score');
   }
@@ -177,7 +177,6 @@ class QueryBuilder<T extends ParseObject> {
 
   /// Runs through all queries and adds them to a query string
   String buildQueries(List<MapEntry> queries) {
-
     String queryBuilder = "";
 
     for (var item in queries) {
@@ -185,6 +184,20 @@ class QueryBuilder<T extends ParseObject> {
         queryBuilder += item.value;
       } else {
         queryBuilder += ",${item.value}";
+      }
+    }
+
+    return queryBuilder;
+  }
+
+  String concatArray(List<String> queries) {
+    String queryBuilder = "";
+
+    for (var item in queries) {
+      if (item == queries.first) {
+        queryBuilder += item;
+      } else {
+        queryBuilder += ",$item";
       }
     }
 

@@ -51,13 +51,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   runTestQueries() {
-    createItem();
-    getAllItems();
-    getAllItemsByName();
-    getSingleItem();
+    //createItem();
+    //getAllItems();
+    //getAllItemsByName();
+    //getSingleItem();
     query();
-    function();
-    initUser();
+    //function();
+    //initUser();
   }
 
   void createItem() async {
@@ -112,7 +112,6 @@ class _MyAppState extends State<MyApp> {
 
       // shows example of retrieving a pin
       var newDietPlanFromPin = DietPlan().fromPin('R5EonpUDWy');
-
       if (newDietPlanFromPin != null) print('Retreiving from pin worked!');
 
     } else {
@@ -122,7 +121,8 @@ class _MyAppState extends State<MyApp> {
 
   void query() async {
     var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
-      ..whereContains(DietPlan.keyName, "eto");
+      ..whereContains(DietPlan.keyName, "iet")
+      ..keysToReturn([DietPlan.keyName]);
 
     var apiResponse = await queryBuilder.query();
 
