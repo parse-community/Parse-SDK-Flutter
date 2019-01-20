@@ -54,7 +54,7 @@ class QueryBuilder<T extends ParseObject> {
 
   /// Includes other ParseObjects stored as a Pointer
   void includeObject(List<String> objectTypes){
-    limiters["include"] = concatArray(objectTypes);;
+    limiters["include"] = concatArray(objectTypes);
   }
 
   /// Returns an object where the [String] column starts with [value]
