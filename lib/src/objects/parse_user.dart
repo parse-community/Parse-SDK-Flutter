@@ -74,8 +74,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
           host: tempUri.host,
           path: "${tempUri.path}$keyEndPointUserName");
 
-      final response = await _client
-          .get(uri, headers: {keyHeaderSessionToken: _client.data.sessionId});
+      final response = await _client.get(uri, headers: {keyHeaderSessionToken: _client.data.sessionId});
       return _handleResponse(response, ParseApiRQ.currentUser);
     } on Exception catch (e) {
       return _handleException(e, ParseApiRQ.currentUser);
