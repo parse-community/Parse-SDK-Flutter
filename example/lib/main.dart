@@ -35,10 +35,10 @@ class _MyAppState extends State<MyApp> {
 
   initParse() async {
     // Initialize parse
-    Parse().initialize(ApplicationConstants.keyParseApplicationId,
+    Parse().initialize(
+        ApplicationConstants.keyParseApplicationId,
         ApplicationConstants.keyParseServerUrl,
         masterKey: ApplicationConstants.keyParseMasterKey,
-        appName: ApplicationConstants.keyAppName,
         debug: true);
 
     // Check server is healthy and live - Debug is on in this instance so check logs for result
@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void getAllItemsByName() async {
-    var apiResponse = await ParseObject('ParseTableName').getAll();
+    var apiResponse = await ParseObject('TestObjectForApi').getAll();
 
     if (apiResponse.success && apiResponse.result != null) {
       for (var testObject in apiResponse.result) {
@@ -120,14 +120,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   void query() async {
-    var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
-      ..whereContains(DietPlan.keyName, "iet")
-      ..keysToReturn([DietPlan.keyName]);
+    var queryBuilder = QueryBuilder<ParseObject>(ParseObject('TestObjectForApi'))
+      ..setLimit(10)
+      ..includeObject(['Day']);
 
     var apiResponse = await queryBuilder.query();
 
     if (apiResponse.success && apiResponse.result != null) {
-      print("Result: ${((apiResponse.result as List<dynamic>).first as DietPlan).toString()}");
+      print("Result: ${((apiResponse.result as List<dynamic>).first as ParseObject).toString()}");
     } else {
       print("Result: ${apiResponse.error.message}");
     }

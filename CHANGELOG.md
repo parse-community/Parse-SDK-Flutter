@@ -1,3 +1,6 @@
+## 1.0.9
+Fixed Health Check issue
+
 ## 1.0.8
 Fixed some queries
 
