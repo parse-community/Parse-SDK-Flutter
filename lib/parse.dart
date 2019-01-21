@@ -69,8 +69,8 @@ class Parse {
   //        liveQuery: true);
   // ```
   Parse initialize(String appId, String serverUrl,
-      {bool debug,
-      String appName,
+      {bool debug: false,
+      String appName: "",
       String liveQueryUrl,
       String masterKey,
       String sessionId}) {
@@ -96,7 +96,7 @@ class Parse {
 
     try {
       var response = await ParseHTTPClient().get("${ParseCoreData().serverUrl}$keyEndPointHealth");
-      parseResponse = ParseResponse.handleResponse(this, response);
+      parseResponse = ParseResponse.handleResponse(this, response, returnAsResult: true);
     } on Exception catch (e) {
       parseResponse = ParseResponse.handleException(e);
     }
