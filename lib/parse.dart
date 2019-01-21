@@ -69,8 +69,8 @@ class Parse {
   //        liveQuery: true);
   // ```
   Parse initialize(String appId, String serverUrl,
-      {bool debug,
-      String appName,
+      {bool debug: false,
+      String appName: "",
       String liveQueryUrl,
       String masterKey,
       String sessionId}) {
