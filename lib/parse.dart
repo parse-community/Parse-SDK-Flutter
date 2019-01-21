@@ -96,7 +96,7 @@ class Parse {
 
     try {
       var response = await ParseHTTPClient().get("${ParseCoreData().serverUrl}$keyEndPointHealth");
-      parseResponse = ParseResponse.handleResponse(this, response);
+      parseResponse = ParseResponse.handleResponse(this, response, returnAsResult: true);
     } on Exception catch (e) {
       parseResponse = ParseResponse.handleException(e);
     }
