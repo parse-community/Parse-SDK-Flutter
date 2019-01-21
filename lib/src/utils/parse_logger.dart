@@ -6,8 +6,10 @@ void logger(
     String type,
     ParseResponse parseResponse) {
   var responseString = ' \n';
+  var name = appName;
+  if (name.length > 0) name = "$appName ";
 
-  responseString += "----\n$appName API Response ($className : $type) :";
+  responseString += "----\n${name}API Response ($className : $type) :";
 
   if (parseResponse.success) {
     responseString += "\nStatus Code: ${parseResponse.statusCode}";

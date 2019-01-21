@@ -46,7 +46,7 @@ class ParseResponse {
   /// Handles any errors returned in response
   static ParseResponse _handleError(ParseResponse response, Response apiResponse) {
     Map<String, dynamic> responseData = json.decode(apiResponse.body);
-    response.error = ParseError(code: responseData['code'], message: responseData['error']);
+    response.error = ParseError(code: responseData['code'], message: responseData['error'].toString());
     response.statusCode = responseData['code'];
     return response;
   }
