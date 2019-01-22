@@ -57,6 +57,7 @@ class _MyAppState extends State<MyApp> {
     //getSingleItem();
     query();
     //function();
+    //functionWithParameters();
     //initUser();
   }
 
@@ -178,5 +179,11 @@ class _MyAppState extends State<MyApp> {
   function() {
     var function = ParseCloudFunction('testFunction');
     function.execute();
+  }
+
+  functionWithParameters() async {
+    var function = ParseCloudFunction('testFunction');
+    var params = {'plan': 'paid'};
+    function.execute(parameters: params);
   }
 }
