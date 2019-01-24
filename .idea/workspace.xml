@@ -11,9 +11,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="671a34b5-b647-4093-b4db-14fa3bb81bec" name="Default" comment="Version 1.0.7 - Some items now return">
+      <change afterPath="$PROJECT_DIR$/lib/src/objects/parse_config.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/lib/application_constants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/application_constants.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/parse.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/parse.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/base/parse_constants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/base/parse_constants.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/enums/parse_enum_api_rq.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/enums/parse_enum_api_rq.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/network/parse_query.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/network/parse_query.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/objects/parse_object.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/objects/parse_object.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/objects/parse_response.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/objects/parse_response.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/utils/parse_encoder.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/utils/parse_encoder.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/utils/parse_utils.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/utils/parse_utils.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/.idea/shelf/" />
@@ -84,28 +96,28 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="dart" value="4651" />
-          <entry key="txt" value="439" />
-          <entry key="yaml" value="4" />
+          <entry key="dart" value="5914" />
+          <entry key="txt" value="465" />
+          <entry key="yaml" value="6" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Dart" value="4651" />
-          <entry key="PLAIN_TEXT" value="439" />
-          <entry key="YAML" value="4" />
+          <entry key="Dart" value="5914" />
+          <entry key="PLAIN_TEXT" value="465" />
+          <entry key="YAML" value="6" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="dart" value="92" />
-          <entry key="yaml" value="10" />
+          <entry key="dart" value="102" />
+          <entry key="yaml" value="11" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Dart" value="92" />
-          <entry key="YAML" value="10" />
+          <entry key="Dart" value="102" />
+          <entry key="YAML" value="11" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
@@ -119,20 +131,32 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_object.dart">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/example/lib/main.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3014">
-              <caret line="32" column="9" selection-start-line="32" selection-start-column="9" selection-end-line="32" selection-end-column="9" />
+            <state relative-caret-position="306">
+              <caret line="51" column="6" selection-start-line="51" selection-start-column="6" selection-end-line="51" selection-end-column="6" />
+              <folding>
+                <element signature="e#0#39#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/src/utils/parse_utils.dart">
+        <entry file="file://$PROJECT_DIR$/pubspec.yaml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="9" column="15" selection-start-line="9" selection-start-column="15" selection-end-line="9" selection-end-column="15" />
+            <state relative-caret-position="34">
+              <caret line="2" column="15" selection-start-line="2" selection-start-column="15" selection-end-line="2" selection-end-column="15" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/src/base/parse_constants.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="15" column="43" selection-start-line="15" selection-start-column="43" selection-end-line="15" selection-end-column="43" />
             </state>
           </provider>
         </entry>
@@ -140,62 +164,53 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_response.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-209">
-              <caret line="58" column="4" selection-start-line="58" selection-start-column="4" selection-end-line="58" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/lib/src/network/parse_query.dart">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="454">
-              <caret line="292" column="18" selection-start-line="292" selection-start-column="18" selection-end-line="292" selection-end-column="18" />
+            <state relative-caret-position="166">
+              <caret line="15" column="9" selection-start-line="15" selection-start-column="9" selection-end-line="15" selection-end-column="9" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_user.dart">
+        <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_object.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="263">
-              <caret line="104" selection-start-line="104" selection-end-line="104" />
+            <state relative-caret-position="183">
+              <caret line="204" column="56" selection-start-line="204" selection-start-column="56" selection-end-line="204" selection-end-column="56" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_function.dart">
+        <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_config.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="20" column="74" selection-start-line="20" selection-start-column="74" selection-end-line="20" selection-end-column="74" />
+            <state relative-caret-position="476">
+              <caret line="28" column="13" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/src/utils/parse_logger.dart">
+        <entry file="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.0+1/lib/src/base_client.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="131">
-              <caret line="8" column="21" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
+            <state relative-caret-position="177">
+              <caret line="74" column="40" selection-start-line="74" selection-start-column="40" selection-end-line="74" selection-end-column="40" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/src/utils/parse_file_extensions.dart">
+        <entry file="file://$PROJECT_DIR$/lib/src/enums/parse_enum_api_rq.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-952">
-              <caret line="12" column="21" selection-start-line="12" selection-start-column="7" selection-end-line="12" selection-end-column="21" />
+            <state relative-caret-position="388">
+              <caret line="28" column="11" selection-start-line="28" selection-start-column="2" selection-end-line="28" selection-end-column="11" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/src/utils/parse_decoder.dart">
+        <entry file="file://$PROJECT_DIR$/lib/src/utils/parse_utils.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="404">
-              <caret line="66" column="31" selection-start-line="66" selection-start-column="31" selection-end-line="66" selection-end-column="31" />
+            <state relative-caret-position="170">
+              <caret line="10" column="1" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -203,8 +218,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/src/utils/parse_encoder.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="403">
-              <caret line="47" column="20" selection-start-line="47" selection-start-column="7" selection-end-line="47" selection-end-column="20" />
+            <state relative-caret-position="277">
+              <caret line="58" selection-start-line="58" selection-end-line="58" />
             </state>
           </provider>
         </entry>
@@ -288,7 +303,6 @@
         <option value="$PROJECT_DIR$/lib/src/utils/parse_utils_date.dart" />
         <option value="$PROJECT_DIR$/lib/src/objects/parse_user_response.dart" />
         <option value="$PROJECT_DIR$/lib/src/objects/parse_error.dart" />
-        <option value="$PROJECT_DIR$/lib/src/utils/parse_utils.dart" />
         <option value="$PROJECT_DIR$/example/lib/diet_plan.dart" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/CHANGELOG.md" />
@@ -302,17 +316,19 @@
         <option value="$PROJECT_DIR$/lib/src/objects/parse_function.dart" />
         <option value="$PROJECT_DIR$/lib/src/objects/parse_file.dart" />
         <option value="$PROJECT_DIR$/lib/src/utils/parse_decoder.dart" />
-        <option value="$PROJECT_DIR$/lib/src/utils/parse_encoder.dart" />
-        <option value="$PROJECT_DIR$/lib/src/enums/parse_enum_api_rq.dart" />
         <option value="$PROJECT_DIR$/lib/src/objects/parse_user.dart" />
+        <option value="$PROJECT_DIR$/lib/src/utils/parse_logger.dart" />
         <option value="$PROJECT_DIR$/lib/src/objects/parse_response.dart" />
         <option value="$PROJECT_DIR$/lib/parse.dart" />
-        <option value="$PROJECT_DIR$/lib/src/utils/parse_logger.dart" />
-        <option value="$PROJECT_DIR$/example/lib/main.dart" />
-        <option value="$PROJECT_DIR$/pubspec.yaml" />
-        <option value="$PROJECT_DIR$/lib/src/base/parse_constants.dart" />
-        <option value="$PROJECT_DIR$/lib/src/objects/parse_object.dart" />
         <option value="$PROJECT_DIR$/lib/src/network/parse_query.dart" />
+        <option value="$PROJECT_DIR$/lib/src/utils/parse_utils.dart" />
+        <option value="$PROJECT_DIR$/lib/src/utils/parse_encoder.dart" />
+        <option value="$PROJECT_DIR$/lib/src/enums/parse_enum_api_rq.dart" />
+        <option value="$PROJECT_DIR$/lib/src/objects/parse_object.dart" />
+        <option value="$PROJECT_DIR$/lib/src/base/parse_constants.dart" />
+        <option value="$PROJECT_DIR$/pubspec.yaml" />
+        <option value="$PROJECT_DIR$/lib/src/objects/parse_config.dart" />
+        <option value="$PROJECT_DIR$/example/lib/main.dart" />
       </list>
     </option>
   </component>
@@ -342,6 +358,12 @@
             <path>
               <item name="flutter_parse_sdk" type="b2602c69:ProjectViewProjectNode" />
               <item name="flutter_parse_sdk" type="462c0819:PsiDirectoryNode" />
+              <item name="example" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="flutter_parse_sdk" type="b2602c69:ProjectViewProjectNode" />
+              <item name="flutter_parse_sdk" type="462c0819:PsiDirectoryNode" />
               <item name="lib" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -356,20 +378,6 @@
               <item name="lib" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="base" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="flutter_parse_sdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="flutter_parse_sdk" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="flutter_parse_sdk" type="b2602c69:ProjectViewProjectNode" />
-              <item name="flutter_parse_sdk" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="enums" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="flutter_parse_sdk" type="b2602c69:ProjectViewProjectNode" />
@@ -793,7 +801,14 @@
       <option name="project" value="LOCAL" />
       <updated>1548348889225</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="Version 1.0.10 - Converter not needed">
+      <created>1548349115898</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1548349115898</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TodoView">
@@ -809,7 +824,7 @@
     <frame x="-6" y="0" width="1505" height="1047" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24221453" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24221453" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Favorites" order="3" side_tool="true" />
@@ -819,8 +834,8 @@
       <window_info id="Capture Tool" order="7" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49898854" weight="0.32785088" />
-      <window_info anchor="bottom" x="2183" y="278" width="914" height="304" id="Run" order="2" sideWeight="0.6547278" weight="0.40898877" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.67197233" weight="0.5988764" />
+      <window_info active="true" anchor="bottom" x="2183" y="278" width="914" height="304" id="Run" order="2" sideWeight="0.6547278" visible="true" weight="0.40898877" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.67197233" weight="0.3247191" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49757785" weight="0.3258427" />
@@ -831,7 +846,7 @@
       <window_info anchor="bottom" id="Flutter Performance" order="11" sideWeight="0.32733563" side_tool="true" weight="0.38764045" />
       <window_info anchor="bottom" id="Version Control" order="12" sideWeight="0.49212036" weight="0.32479784" />
       <window_info anchor="bottom" id="Terminal" order="13" sideWeight="0.493553" weight="0.33483145" />
-      <window_info anchor="bottom" id="Messages" order="14" sideWeight="0.489255" visible="true" weight="0.26741573" />
+      <window_info anchor="bottom" id="Messages" order="14" sideWeight="0.489255" weight="0.26741573" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -907,90 +922,30 @@
     <MESSAGE value="Version 1.0.9 - Fixed health check" />
     <MESSAGE value="Version 1.0.9 Updated pubspec" />
     <MESSAGE value="Version 1.0.10 - Added to pointer method on ParseObject" />
-    <option name="LAST_COMMIT_MESSAGE" value="Version 1.0.10 - Added to pointer method on ParseObject" />
+    <MESSAGE value="Version 1.0.10 - Converter not needed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Version 1.0.10 - Converter not needed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="Dart">
           <url>file://$PROJECT_DIR$/lib/src/network/parse_query.dart</url>
-          <line>174</line>
+          <line>173</line>
           <option name="timeStamp" value="121" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/main.dart</url>
-          <line>130</line>
-          <option name="timeStamp" value="123" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/main.dart</url>
-          <line>44</line>
-          <option name="timeStamp" value="131" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/main.dart</url>
-          <line>46</line>
-          <option name="timeStamp" value="132" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/main.dart</url>
-          <line>37</line>
-          <option name="timeStamp" value="133" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/main.dart</url>
-          <line>42</line>
-          <option name="timeStamp" value="134" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/src/objects/parse_response.dart</url>
-          <line>25</line>
-          <option name="timeStamp" value="138" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/src/objects/parse_response.dart</url>
-          <line>24</line>
-          <option name="timeStamp" value="139" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/src/objects/parse_response.dart</url>
-          <line>23</line>
-          <option name="timeStamp" value="140" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/src/objects/parse_response.dart</url>
-          <line>26</line>
-          <option name="timeStamp" value="141" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/src/objects/parse_response.dart</url>
+          <url>file://$PROJECT_DIR$/lib/src/objects/parse_config.dart</url>
           <line>27</line>
-          <option name="timeStamp" value="142" />
+          <option name="timeStamp" value="165" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/src/objects/parse_response.dart</url>
+          <url>file://$PROJECT_DIR$/lib/src/objects/parse_config.dart</url>
           <line>28</line>
-          <option name="timeStamp" value="143" />
+          <option name="timeStamp" value="166" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/src/objects/parse_response.dart</url>
-          <line>30</line>
-          <option name="timeStamp" value="144" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/src/objects/parse_response.dart</url>
-          <line>58</line>
-          <option name="timeStamp" value="145" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/main.dart</url>
-          <line>43</line>
-          <option name="timeStamp" value="146" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/example/lib/main.dart</url>
-          <line>45</line>
-          <option name="timeStamp" value="147" />
+          <url>file://$PROJECT_DIR$/lib/src/objects/parse_config.dart</url>
+          <option name="timeStamp" value="167" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -1055,7 +1010,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.0+1/lib/src/client.dart" />
     <entry file="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.0+1/lib/src/base_client.dart" />
     <entry file="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.0+1/lib/src/response.dart" />
     <entry file="file://$USER_HOME$/development/flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.0+1/lib/src/io_client.dart" />
@@ -1191,27 +1145,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_base.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="353">
-          <caret line="62" column="2" selection-start-line="62" selection-start-column="2" selection-end-line="62" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.0+1/lib/src/base_client.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="51" column="19" selection-start-line="51" selection-start-column="19" selection-end-line="51" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/src/enums/parse_enum_api_rq.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="26" column="11" selection-start-line="26" selection-start-column="2" selection-end-line="26" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_file.dart">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="148">
@@ -1243,51 +1176,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/example/lib/application_constants.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="1" selection-start-line="5" selection-start-column="1" selection-end-line="5" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pubspec.yaml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="14" selection-start-line="2" selection-start-column="14" selection-end-line="2" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/src/network/parse_http_client.dart">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="5" column="51" selection-start-line="5" selection-start-column="51" selection-end-line="5" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/src/base/parse_constants.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="35" selection-start-line="3" selection-start-column="35" selection-end-line="3" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example/lib/main.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="714">
-          <caret line="42" selection-start-line="42" selection-end-line="42" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/parse.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="92" column="24" selection-start-line="92" selection-start-column="24" selection-end-line="92" selection-end-column="24" />
-          <folding>
-            <element signature="e#28#48#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1319,45 +1211,115 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_base.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1394">
+          <caret line="62" column="2" selection-start-line="62" selection-start-column="2" selection-end-line="62" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/application_constants.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="1" selection-start-line="5" selection-start-column="1" selection-end-line="5" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/parse.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="95" column="32" selection-start-line="95" selection-start-column="32" selection-end-line="95" selection-end-column="32" />
+          <folding>
+            <element signature="e#28#48#0" expanded="true" />
+            <element signature="e#331#368#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_function.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="74" selection-start-line="20" selection-start-column="74" selection-end-line="20" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/src/utils/parse_encoder.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="47" column="20" selection-start-line="47" selection-start-column="7" selection-end-line="47" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_object.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3014">
-          <caret line="32" column="9" selection-start-line="32" selection-start-column="9" selection-end-line="32" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/src/utils/parse_utils.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="15" selection-start-line="9" selection-start-column="15" selection-end-line="9" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_response.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-209">
-          <caret line="58" column="4" selection-start-line="58" selection-start-column="4" selection-end-line="58" selection-end-column="4" />
+        <state relative-caret-position="303">
+          <caret line="22" selection-start-line="22" selection-end-line="25" selection-end-column="60" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/src/network/parse_query.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="292" column="18" selection-start-line="292" selection-start-column="18" selection-end-line="292" selection-end-column="18" />
+        <state relative-caret-position="371">
+          <caret line="305" column="3" selection-start-line="305" selection-start-column="3" selection-end-line="305" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/src/utils/parse_utils.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="1" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/src/enums/parse_enum_api_rq.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="388">
+          <caret line="28" column="11" selection-start-line="28" selection-start-column="2" selection-end-line="28" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/src/base/parse_constants.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="43" selection-start-line="15" selection-start-column="43" selection-end-line="15" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pubspec.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="15" selection-start-line="2" selection-start-column="15" selection-end-line="2" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/src/utils/parse_encoder.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="277">
+          <caret line="58" selection-start-line="58" selection-end-line="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Programming/Flutter/.pub-cache/hosted/pub.dartlang.org/http-0.12.0+1/lib/src/base_client.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="74" column="40" selection-start-line="74" selection-start-column="40" selection-end-line="74" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_object.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="183">
+          <caret line="204" column="56" selection-start-line="204" selection-start-column="56" selection-end-line="204" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_response.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="166">
+          <caret line="15" column="9" selection-start-line="15" selection-start-column="9" selection-end-line="15" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/src/objects/parse_config.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="28" column="13" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/main.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="51" column="6" selection-start-line="51" selection-start-column="6" selection-end-line="51" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

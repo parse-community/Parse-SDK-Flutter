@@ -202,25 +202,12 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Handles an API response and logs data if [bool] debug is enabled
   @protected
   ParseResponse handleResponse<T extends ParseObject>(Response response, ParseApiRQ type) {
-
-    bool returnAsBaseResult = false;
-
-    if (type == ParseApiRQ.healthCheck ||
-        type == ParseApiRQ.execute ||
-        type == ParseApiRQ.add ||
-        type == ParseApiRQ.addAll ||
-        type == ParseApiRQ.addUnique ||
-        type == ParseApiRQ.remove ||
-        type == ParseApiRQ.removeAll ||
-        type == ParseApiRQ.increment ||
-        type == ParseApiRQ.decrement){
-      returnAsBaseResult = true;
-    }
-
-    ParseResponse parseResponse = ParseResponse.handleResponse<T>(this, response, returnAsResult: returnAsBaseResult);
+    ParseResponse parseResponse = ParseResponse.handleResponse<T>(
+        this, response, returnAsResult: shouldReturnAsABaseResult(type));
 
     if (_debug) {
-      logger(ParseCoreData().appName, className, type.toString(), parseResponse);
+      logger(
+          ParseCoreData().appName, className, type.toString(), parseResponse);
     }
 
     return parseResponse;
@@ -236,5 +223,23 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
 
     return parseResponse;
+  }
+
+  bool shouldReturnAsABaseResult(ParseApiRQ type){
+    if (type == ParseApiRQ.healthCheck ||
+        type == ParseApiRQ.execute ||
+        type == ParseApiRQ.add ||
+        type == ParseApiRQ.addAll ||
+        type == ParseApiRQ.addUnique ||
+        type == ParseApiRQ.remove ||
+        type == ParseApiRQ.removeAll ||
+        type == ParseApiRQ.increment ||
+        type == ParseApiRQ.decrement ||
+        type == ParseApiRQ.getConfigs ||
+        type == ParseApiRQ.addConfig){
+      return true;
+    } else {
+      return false;
+    }
   }
 }

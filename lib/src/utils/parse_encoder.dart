@@ -52,3 +52,14 @@ String _encodeObject(ParseObject object){
 Map<String, dynamic> _encodeDate(DateTime date) {
   return <String, dynamic>{"__type": "Date", "iso": date.toIso8601String()};
 }
+
+/// Converts the object to the correct value for JSON,
+///
+/// Strings are wrapped with "" but ints and others are not
+convertValueToCorrectType(dynamic value) {
+  if (value is String) {
+    return "\"$value\"";
+  } else {
+    return parseEncode(value);
+  }
+}
