@@ -290,7 +290,7 @@ class QueryBuilder<T extends ParseObject> {
     if (value is String) {
       return "\"$value\"";
     } else {
-      return value;
+      return json.encode(value);
     }
   }
 }

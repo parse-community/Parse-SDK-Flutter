@@ -30,6 +30,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
     _client = client;
   }
 
+  String toPointer() => parseEncode(this);
+
   /// Gets an object from the server using it's [String] objectId
   Future<ParseResponse> getObject(String objectId) async {
     try {
