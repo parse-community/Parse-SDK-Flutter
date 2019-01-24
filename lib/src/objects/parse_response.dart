@@ -23,8 +23,6 @@ class ParseResponse {
         return _handleError(parseResponse, apiResponse);
       } else if (apiResponse.body == "{\"results\":[]}"){
         return _handleSuccessWithNoResults(parseResponse, 1, "Successful request, but no results found");
-      } else if (apiResponse.body == "OK"){
-        return _handleSuccessWithNoResults(parseResponse, 2, "Successful request");
       } else if (returnAsResult){
         return _handleSuccessWithoutParseObject(parseResponse, object, apiResponse.body);
       } else {
@@ -62,7 +60,15 @@ class ParseResponse {
   /// Handles successful response without creating a ParseObject
   static ParseResponse _handleSuccessWithoutParseObject(ParseResponse response, dynamic object, String responseBody) {
     response.success = true;
-    response.result = json.decode(responseBody);
+
+    if (responseBody == "OK") {
+      response.result = responseBody;
+    } else if (json.decode(responseBody).containsKey('params')){
+      response.result = json.decode(responseBody)['params'];
+    } else {
+      response.result = json.decode(responseBody);
+    }
+
     return response;
   }
 

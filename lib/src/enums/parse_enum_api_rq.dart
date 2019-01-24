@@ -24,5 +24,7 @@ enum ParseApiRQ {
   remove,
   removeAll,
   increment,
-  decrement
+  decrement,
+  getConfigs,
+  addConfig
 }

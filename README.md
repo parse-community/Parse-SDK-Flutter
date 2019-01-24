@@ -13,7 +13,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```
 dependencies:  
-    parse_server_sdk: ^1.0.9
+    parse_server_sdk: ^1.0.10
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -192,6 +192,18 @@ Other user features are:-
  * Get all users
  * Save
  * Destroy user
+
+## Config
+
+The SDK now supports Parse Config. A map of all configs can be grabbed from the server by calling :
+```
+var response = await ParseConfig().getConfigs();
+```
+
+and to add a config:
+```
+ParseConfig().addConfig('TestConfig', 'testing');
+```
 
 ## Other Features of this library
 

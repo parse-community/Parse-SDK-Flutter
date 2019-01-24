@@ -1,3 +1,7 @@
+## 1.0.10
+Add ParseConfig.
+Fixed whereEqualsTo('', PARSEOBJECT) and other queries
+
 ## 1.0.9
 Fixed Health Check issue
 

@@ -35,15 +35,13 @@ class _MyAppState extends State<MyApp> {
 
   initParse() async {
     // Initialize parse
-    Parse().initialize(
-        ApplicationConstants.keyParseApplicationId,
+    Parse().initialize(ApplicationConstants.keyParseApplicationId,
         ApplicationConstants.keyParseServerUrl,
-        masterKey: ApplicationConstants.keyParseMasterKey,
-        debug: true);
+        masterKey: ApplicationConstants.keyParseMasterKey, debug: true);
 
     // Check server is healthy and live - Debug is on in this instance so check logs for result
     var response = await Parse().healthCheck();
-    if (response.success){
+    if (response.success) {
       runTestQueries();
     } else {
       print("Server health check failed");
@@ -55,13 +53,14 @@ class _MyAppState extends State<MyApp> {
     //getAllItems();
     //getAllItemsByName();
     //getSingleItem();
-    query();
+    getConfigs();
+    //query();
     //function();
+    //functionWithParameters();
     //initUser();
   }
 
   void createItem() async {
-
     var newObject = ParseObject('TestObjectForApi');
     newObject.set<String>('name', 'testItem');
     newObject.set<int>('age', 26);
@@ -69,7 +68,9 @@ class _MyAppState extends State<MyApp> {
     var apiResponse = await newObject.create();
 
     if (apiResponse.success && apiResponse.result != null) {
-        print(ApplicationConstants.keyAppName + ": " + apiResponse.result.toString());
+      print(ApplicationConstants.keyAppName +
+          ": " +
+          apiResponse.result.toString());
     }
   }
 
@@ -113,30 +114,31 @@ class _MyAppState extends State<MyApp> {
       // shows example of retrieving a pin
       var newDietPlanFromPin = DietPlan().fromPin('R5EonpUDWy');
       if (newDietPlanFromPin != null) print('Retreiving from pin worked!');
-
     } else {
       print(ApplicationConstants.keyAppName + ": " + apiResponse.error.message);
     }
   }
 
   void query() async {
-    var queryBuilder = QueryBuilder<ParseObject>(ParseObject('TestObjectForApi'))
-      ..setLimit(10)
-      ..includeObject(['Day']);
+    var queryBuilder =
+        QueryBuilder<ParseObject>(ParseObject('TestObjectForApi'))
+          ..whereEqualTo('age', 26)
+          ..includeObject(['Day']);
 
     var apiResponse = await queryBuilder.query();
 
     if (apiResponse.success && apiResponse.result != null) {
-      print("Result: ${((apiResponse.result as List<dynamic>).first as ParseObject).toString()}");
+      print(
+          "Result: ${((apiResponse.result as List<dynamic>).first as ParseObject).toString()}");
     } else {
       print("Result: ${apiResponse.error.message}");
     }
   }
 
   initUser() async {
-
-   // All return type ParseUser except all
-    var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+    // All return type ParseUser except all
+    var user =
+        ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
     var response = await user.signUp();
     if (response.success) user = response.result;
 
@@ -178,5 +180,26 @@ class _MyAppState extends State<MyApp> {
   function() {
     var function = ParseCloudFunction('testFunction');
     function.execute();
+  }
+
+  functionWithParameters() async {
+    var function = ParseCloudFunction('testFunction');
+    var params = {'plan': 'paid'};
+    function.execute(parameters: params);
+  }
+
+  Future getConfigs() async {
+    var config = ParseConfig();
+    var addResponse = await config.addConfig('TestConfig', 'testing');
+
+    if (addResponse.success) {
+      print("Added a config");
+    }
+
+    var getResponse = await config.getConfigs();
+
+    if (getResponse.success) {
+      print("We have our configs.");
+    }
   }
 }
