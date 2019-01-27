@@ -62,9 +62,15 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Current user is stored locally, but in case of a server update [bool]
   /// fromServer can be called and an updated version of the [User] object will be
   /// returned
-  Future<ParseResponse> getCurrentUserFromServer() async {
+  Future<ParseResponse> getCurrentUserFromServer({token}) async {
     // We can't get the current user and session without a sessionId
-    if (_client.data.sessionId == null) return null;
+    if(token == null && _client.data.sessionId == null) {
+      return null;
+    }
+
+    if(token == null){
+      token = _client.data.sessionId;
+    }
 
     try {
       Uri tempUri = Uri.parse(_client.data.serverUrl);
@@ -74,7 +80,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
           host: tempUri.host,
           path: "${tempUri.path}$keyEndPointUserName");
 
-      final response = await _client.get(uri, headers: {keyHeaderSessionToken: _client.data.sessionId});
+      final response = await _client.get(uri, headers: {keyHeaderSessionToken: token});
       return _handleResponse(response, ParseApiRQ.currentUser);
     } on Exception catch (e) {
       return _handleException(e, ParseApiRQ.currentUser);
