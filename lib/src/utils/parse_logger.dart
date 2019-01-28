@@ -1,9 +1,6 @@
 part of flutter_parse_sdk;
 
-void logger(
-    String appName,
-    String className,
-    String type,
+void logger(String appName, String className, String type,
     ParseResponse parseResponse) {
   var responseString = ' \n';
   var name = appName;
@@ -22,7 +19,8 @@ void logger(
     responseString += "\nStatus Code: ${parseResponse.error.code}";
     responseString += "\nType: ${parseResponse.error.type}";
 
-    String errorOrException = parseResponse.error.isTypeOfException ? "Exception" : "Error";
+    String errorOrException =
+        parseResponse.error.isTypeOfException ? "Exception" : "Error";
 
     responseString += "\n$errorOrException: ${parseResponse.error.message}";
   }
