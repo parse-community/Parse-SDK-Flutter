@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/application_constants.dart';
 import 'package:flutter_plugin_example/diet_plan.dart';
+import 'package:flutter_plugin_example/subscription.dart';
 import 'package:parse_server_sdk/parse.dart';
 
 void main() => runApp(new MyApp());
@@ -49,15 +50,16 @@ class _MyAppState extends State<MyApp> {
   }
 
   runTestQueries() {
-    createItem();
-    getAllItems();
-    getAllItemsByName();
-    getSingleItem();
-    getConfigs();
-    query();
-    function();
-    functionWithParameters();
-    initUser();
+    //createItem();
+    //getAllItems();
+    //getAllItemsByName();
+    //getSingleItem();
+    //getConfigs();
+    //query();
+    //function();
+    //functionWithParameters();
+    //initUser();
+    test();
   }
 
   void createItem() async {
@@ -178,12 +180,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   function() {
-    var function = ParseCloudFunction('testFunction');
+    var function = ParseCloudFunction('hello');
     function.execute();
   }
 
   functionWithParameters() async {
-    var function = ParseCloudFunction('testFunction');
+    var function = ParseCloudFunction('hello');
     var params = {'plan': 'paid'};
     function.execute(parameters: params);
   }
@@ -201,5 +203,16 @@ class _MyAppState extends State<MyApp> {
     if (getResponse.success) {
       print("We have our configs.");
     }
+  }
+
+  Future test() async {
+    var operator = ParseObject('operator');
+    operator.set<String>('objectId', "npTxjstsAe");
+
+    var query = QueryBuilder<SubscriptionParse>(SubscriptionParse())
+      ..whereEqualTo('operator', operator);
+
+    var result = await query.query();
+    var response = result;
   }
 }

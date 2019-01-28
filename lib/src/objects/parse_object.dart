@@ -68,7 +68,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
   /// Saves the current object online
   Future<ParseResponse> save() async {
-    if (getObjectData() == null) {
+    if (getObjectData()[keyVarObjectId] == null) {
       return create();
     } else {
       try {
