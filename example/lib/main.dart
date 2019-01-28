@@ -49,15 +49,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   runTestQueries() {
-    //createItem();
-    //getAllItems();
-    //getAllItemsByName();
-    //getSingleItem();
+    createItem();
+    getAllItems();
+    getAllItemsByName();
+    getSingleItem();
     getConfigs();
-    //query();
-    //function();
-    //functionWithParameters();
-    //initUser();
+    query();
+    function();
+    functionWithParameters();
+    initUser();
   }
 
   void createItem() async {
