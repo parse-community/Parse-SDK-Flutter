@@ -51,7 +51,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     this.emailAddress = emailAddress;
   }
 
-  ParseUser.forQuery(): super(keyClassUser);
+  ParseUser.forQuery() : super(keyClassUser);
 
   createUser(String username, String password, [String emailAddress]) {
     return ParseUser(username, password, emailAddress);
@@ -64,11 +64,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// returned
   Future<ParseResponse> getCurrentUserFromServer({token}) async {
     // We can't get the current user and session without a sessionId
-    if(token == null && _client.data.sessionId == null) {
+    if (token == null && _client.data.sessionId == null) {
       return null;
     }
 
-    if(token == null){
+    if (token == null) {
       token = _client.data.sessionId;
     }
 
@@ -80,7 +80,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
           host: tempUri.host,
           path: "${tempUri.path}$keyEndPointUserName");
 
-      final response = await _client.get(uri, headers: {keyHeaderSessionToken: token});
+      final response =
+          await _client.get(uri, headers: {keyHeaderSessionToken: token});
       return _handleResponse(response, ParseApiRQ.currentUser);
     } on Exception catch (e) {
       return _handleException(e, ParseApiRQ.currentUser);
@@ -245,7 +246,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   static Future<ParseUser> _getUserFromLocalStore() async {
-    var userJson = (await ParseCoreData().getStore()).getString(keyParseStoreUser);
+    var userJson =
+        (await ParseCoreData().getStore()).getString(keyParseStoreUser);
 
     if (userJson != null) {
       var userMap = JsonDecoder().convert(userJson);
@@ -276,7 +278,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
     ParseResponse parseResponse =
         ParseResponse.handleResponse<ParseUser>(this, response);
     if (_debug) {
-      logger(ParseCoreData().appName, className, type.toString(), parseResponse);
+      logger(
+          ParseCoreData().appName, className, type.toString(), parseResponse);
     }
 
     Map<String, dynamic> responseData = JsonDecoder().convert(response.body);

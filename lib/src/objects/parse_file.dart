@@ -1,7 +1,6 @@
 part of flutter_parse_sdk;
 
 class ParseFile extends ParseObject {
-
   File _file;
   String _fileName;
   String _fileUrl;
@@ -16,7 +15,8 @@ class ParseFile extends ParseObject {
   bool get saved => url != null;
 
   @override
-  toJson({bool forApiRQ: false}) => <String, String>{'__type': keyFile, 'name': _fileName, 'url': _fileUrl};
+  toJson({bool forApiRQ: false}) =>
+      <String, String>{'__type': keyFile, 'name': _fileName, 'url': _fileUrl};
 
   @override
   String toString() => json.encode(toString());
@@ -24,7 +24,7 @@ class ParseFile extends ParseObject {
   /// Creates a new file
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
-  ParseFile(this._file, {bool debug, ParseHTTPClient client}) : super (keyFile){
+  ParseFile(this._file, {bool debug, ParseHTTPClient client}) : super(keyFile) {
     client == null ? _client = ParseHTTPClient() : _client = client;
     _debug = isDebugEnabled(objectLevelDebug: debug);
 
