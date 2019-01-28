@@ -24,7 +24,7 @@ class ParseConfig extends ParseObject {
   Future<ParseResponse> addConfig(String key, dynamic value) async {
     try {
       var uri = "${ParseCoreData().serverUrl}/config";
-      var body = "{\"params\":{\"$key\": ${convertValueToCorrectType(value)}}}";
+      var body = "{\"params\":{\"$key\": ${parseEncode(value)}}}";
       var result = await _client.put(uri, body: body);
       return handleResponse(result, ParseApiRQ.addConfig);
     } on Exception catch (e) {

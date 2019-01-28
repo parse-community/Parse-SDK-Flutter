@@ -18,6 +18,10 @@ dynamic parseEncode(dynamic value) {
     }).toList();
   }
 
+  if (value is String) {
+    return "\"$value\"";
+  }
+
   if (value is ParseObject) {
     return _encodeObject(value);
   }
@@ -51,15 +55,4 @@ String _encodeObject(ParseObject object) {
 
 String _encodeDate(DateTime date) {
   return "{\"__type\": \"Date\", \"iso\": \"${date.toIso8601String()}\"}";
-}
-
-/// Converts the object to the correct value for JSON,
-///
-/// Strings are wrapped with "" but ints and others are not
-convertValueToCorrectType(dynamic value) {
-  if (value is String) {
-    return "\"$value\"";
-  } else {
-    return parseEncode(value);
-  }
 }
