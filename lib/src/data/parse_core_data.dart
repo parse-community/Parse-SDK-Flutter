@@ -17,7 +17,7 @@ class ParseCoreData {
     if (debug != null) _instance.debug = debug;
     if (appName != null) _instance.appName = appName;
     if (liveQueryUrl != null) _instance.liveQueryURL = liveQueryUrl;
-    if (clientKey != null) _instance.clientKey = masterKey;
+    if (clientKey != null) _instance.clientKey = clientKey;
     if (masterKey != null) _instance.masterKey = masterKey;
     if (sessionId != null) _instance.sessionId = sessionId;
   }
