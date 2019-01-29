@@ -24,6 +24,6 @@ class ParseCloudFunction extends ParseObject {
     var uri = _client.data.serverUrl + "$_path";
     if (parameters != null) setObjectData(parameters);
     var result = await _client.post(uri, body: json.encode(getObjectData()));
-    return super.handleResponse(result, ParseApiRQ.execute);
+    return handleResponse(this, result, ParseApiRQ.execute, _debug, className);
   }
 }

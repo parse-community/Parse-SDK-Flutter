@@ -46,6 +46,6 @@ class ParseFile extends ParseObject {
     var uri = _client.data.serverUrl + "$_path";
     final body = await _file.readAsBytes();
     final response = await _client.post(uri, headers: headers, body: body);
-    return super.handleResponse<ParseFile>(response, ParseApiRQ.upload);
+    return handleResponse<ParseFile>(this, response, ParseApiRQ.upload, _debug, className);
   }
 }

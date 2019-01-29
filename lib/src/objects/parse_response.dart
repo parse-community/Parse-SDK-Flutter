@@ -118,3 +118,49 @@ class ParseResponse {
     return null;
   }
 }
+
+/// Handles an API response and logs data if [bool] debug is enabled
+@protected
+ParseResponse handleResponse<T extends ParseObject>(ParseCloneable object,
+    Response response, ParseApiRQ type, bool debug, String className) {
+  ParseResponse parseResponse = ParseResponse.handleResponse<T>(
+      object, response,
+      returnAsResult: shouldReturnAsABaseResult(type));
+
+  if (debug) {
+    logger(ParseCoreData().appName, className, type.toString(), parseResponse);
+  }
+
+  return parseResponse;
+}
+
+/// Handles an API response and logs data if [bool] debug is enabled
+@protected
+ParseResponse handleException(
+    Exception exception, ParseApiRQ type, bool debug, String className) {
+  ParseResponse parseResponse = ParseResponse.handleException(exception);
+
+  if (debug) {
+    logger(ParseCoreData().appName, className, type.toString(), parseResponse);
+  }
+
+  return parseResponse;
+}
+
+bool shouldReturnAsABaseResult(ParseApiRQ type) {
+  if (type == ParseApiRQ.healthCheck ||
+      type == ParseApiRQ.execute ||
+      type == ParseApiRQ.add ||
+      type == ParseApiRQ.addAll ||
+      type == ParseApiRQ.addUnique ||
+      type == ParseApiRQ.remove ||
+      type == ParseApiRQ.removeAll ||
+      type == ParseApiRQ.increment ||
+      type == ParseApiRQ.decrement ||
+      type == ParseApiRQ.getConfigs ||
+      type == ParseApiRQ.addConfig) {
+    return true;
+  } else {
+    return false;
+  }
+}
