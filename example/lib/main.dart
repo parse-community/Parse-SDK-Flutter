@@ -50,15 +50,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   runTestQueries() {
-    //createItem();
-    //getAllItems();
-    //getAllItemsByName();
-    //getSingleItem();
-    //getConfigs();
-    //query();
-    //function();
-    //functionWithParameters();
-    //initUser();
+    createItem();
+    getAllItems();
+    getAllItemsByName();
+    getSingleItem();
+    getConfigs();
+    query();
+    function();
+    functionWithParameters();
+    initUser();
     test();
   }
 
@@ -153,7 +153,7 @@ class _MyAppState extends State<MyApp> {
     await user.logout();
     user = await ParseUser.currentUser();
 
-    response = await user.getCurrentUserFromServer();
+    response = await ParseUser.getCurrentUserFromServer();
     if (response.success) user = response.result;
 
     response = await user.requestPasswordReset();

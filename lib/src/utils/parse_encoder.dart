@@ -18,10 +18,6 @@ dynamic parseEncode(dynamic value) {
     }).toList();
   }
 
-  if (value is String) {
-    return "\"$value\"";
-  }
-
   if (value is ParseObject) {
     return _encodeObject(value);
   }
