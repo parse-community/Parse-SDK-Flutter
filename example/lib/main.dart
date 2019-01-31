@@ -56,9 +56,9 @@ class _MyAppState extends State<MyApp> {
     getSingleItem();
     getConfigs();
     query();
+    initUser();
     function();
     functionWithParameters();
-    initUser();
     test();
   }
 
@@ -139,8 +139,7 @@ class _MyAppState extends State<MyApp> {
 
   initUser() async {
     // All return type ParseUser except all
-    var user =
-        ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+    var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
     var response = await user.signUp();
     if (response.success) user = response.result;
 
@@ -179,9 +178,19 @@ class _MyAppState extends State<MyApp> {
     if (apiResponse.success) user = response.result;
   }
 
-  function() {
-    var function = ParseCloudFunction('hello');
+  function() async {
+
+    var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+    await user.signUp();
+    var loginResponse = await user.login();
+    if (loginResponse.success) user = loginResponse.result;
+
+    var customClient = ParseHTTPClient();
+    customClient.additionalHeaders = { keyHeaderSessionToken: ParseCoreData().sessionId };
+    var function = ParseCloudFunction('hello', client: customClient);
     function.execute();
+
+    user.destroy();
   }
 
   functionWithParameters() async {

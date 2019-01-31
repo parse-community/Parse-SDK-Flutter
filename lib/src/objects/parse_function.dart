@@ -20,7 +20,7 @@ class ParseCloudFunction extends ParseObject {
   /// Executes a cloud function
   ///
   /// To add the parameters, create an object and call [set](value to set)
-  execute({Map parameters}) async {
+  execute({Map parameters, Map headers}) async {
     var uri = _client.data.serverUrl + "$_path";
     if (parameters != null) setObjectData(parameters);
     var result = await _client.post(uri, body: json.encode(getObjectData()));
