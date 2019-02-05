@@ -76,6 +76,7 @@ class Parse {
       {bool debug: false,
       String appName: "",
       String liveQueryUrl,
+      String clientKey,
       String masterKey,
       String sessionId}) {
     ParseCoreData.init(appId, serverUrl,
@@ -83,6 +84,7 @@ class Parse {
         appName: appName,
         liveQueryUrl: liveQueryUrl,
         masterKey: masterKey,
+        clientKey: clientKey,
         sessionId: sessionId);
 
     ParseCoreData().initStorage();

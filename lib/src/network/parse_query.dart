@@ -230,6 +230,7 @@ class QueryBuilder<T extends ParseObject> {
   MapEntry _buildQueryWithColumnValueAndOperator(
       MapEntry columnAndValue, String queryOperator) {
     var key = columnAndValue.key;
+
     var value = convertValueToCorrectType(columnAndValue.value);
 
     if (queryOperator == _NO_OPERATOR_NEEDED) {

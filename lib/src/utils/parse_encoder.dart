@@ -2,7 +2,7 @@ part of flutter_parse_sdk;
 
 /// Custom encoder for DateTime
 dynamic dateTimeEncoder(dynamic item) {
-  if(item is DateTime) {
+  if (item is DateTime) {
     return item.toIso8601String();
   }
   return item;
@@ -41,25 +41,14 @@ dynamic parseEncode(dynamic value) {
   return value;
 }
 
-Map<String, dynamic> _encodeUint8List(Uint8List value) {
-  return <String, dynamic>{"__type": "Bytes", "base64": base64.encode(value)};
+String _encodeUint8List(Uint8List value) {
+  return "{\"__type\": \"Bytes\", \"base64\": \"${base64.encode(value)}\"}";
 }
 
-String _encodeObject(ParseObject object){
-  return "{'__type': 'Pointer', $keyVarClassName: ${object.className}, $keyVarObjectId: ${object.objectId}}";
+String _encodeObject(ParseObject object) {
+  return "{\"__type\": \"Pointer\", \"$keyVarClassName\": \"${object.className}\", \"$keyVarObjectId\": \"${object.objectId}\"}";
 }
 
-Map<String, dynamic> _encodeDate(DateTime date) {
-  return <String, dynamic>{"__type": "Date", "iso": date.toIso8601String()};
-}
-
-/// Converts the object to the correct value for JSON,
-///
-/// Strings are wrapped with "" but ints and others are not
-convertValueToCorrectType(dynamic value) {
-  if (value is String) {
-    return "\"$value\"";
-  } else {
-    return parseEncode(value);
-  }
+String _encodeDate(DateTime date) {
+  return "{\"__type\": \"Date\", \"iso\": \"${date.toIso8601String()}\"}";
 }

@@ -14,9 +14,9 @@ class ParseConfig extends ParseObject {
     try {
       var uri = "${ParseCoreData().serverUrl}/config";
       var result = await _client.get(uri);
-      return handleResponse(result, ParseApiRQ.getConfigs);
+      return handleResponse(this, result, ParseApiRQ.getConfigs, _debug, className);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.getConfigs);
+      return handleException(e, ParseApiRQ.getConfigs, _debug, className);
     }
   }
 
@@ -24,11 +24,11 @@ class ParseConfig extends ParseObject {
   Future<ParseResponse> addConfig(String key, dynamic value) async {
     try {
       var uri = "${ParseCoreData().serverUrl}/config";
-      var body = "{\"params\":{\"$key\": ${convertValueToCorrectType(value)}}}";
+      var body = "{\"params\":{\"$key\": \"${parseEncode(value)}\"}}";
       var result = await _client.put(uri, body: body);
-      return handleResponse(result, ParseApiRQ.addConfig);
+      return handleResponse(this, result, ParseApiRQ.addConfig, _debug, className);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.addConfig);
+      return handleException(e, ParseApiRQ.addConfig, _debug, className);
     }
   }
 }
