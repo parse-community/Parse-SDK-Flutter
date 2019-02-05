@@ -138,11 +138,17 @@ class _MyAppState extends State<MyApp> {
   initUser() async {
     // All return type ParseUser except all
     var user =
-        ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+        ParseUser("TestFlutter", "TestPassword123", "phill.wiggins@gmail.com");
     var response = await user.signUp();
     if (response.success) user = response.result;
 
     response = await user.login();
+    if (response.success) user = response.result;
+
+    response = await user.requestPasswordReset();
+    if (response.success) user = response.result;
+
+    response = await user.verificationEmailRequest();
     if (response.success) user = response.result;
 
     user = null;
@@ -152,12 +158,6 @@ class _MyAppState extends State<MyApp> {
     user = await ParseUser.currentUser();
 
     response = await ParseUser.getCurrentUserFromServer();
-    if (response.success) user = response.result;
-
-    response = await user.requestPasswordReset();
-    if (response.success) user = response.result;
-
-    response = await user.verificationEmailRequest();
     if (response.success) user = response.result;
 
     response = await user.save();
