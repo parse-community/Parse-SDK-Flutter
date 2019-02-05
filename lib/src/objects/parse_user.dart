@@ -145,7 +145,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
             keyVarPassword: password
           });
 
-      final response = await _client.post(url, headers: {
+      final response = await _client.get(url, headers: {
         keyHeaderRevocableSession: "1",
       });
 
