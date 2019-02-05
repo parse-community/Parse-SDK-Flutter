@@ -10,6 +10,8 @@ import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:uuid/uuid.dart';
+import 'package:path_provider/path_provider.dart';
 
 part 'src/base/parse_constants.dart';
 
