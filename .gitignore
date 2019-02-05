@@ -7,3 +7,4 @@ pubspec.lock
 .example/lib/application_constants.dart
 
 build/
+.idea
