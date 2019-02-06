@@ -18,6 +18,7 @@ enum ParseApiRQ {
   destroy,
   all,
   execute,
+  executeObjectionFunction,
   upload,
   add,
   addAll,
