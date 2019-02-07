@@ -56,7 +56,6 @@ part 'src/utils/parse_utils.dart';
 
 class Parse {
   ParseCoreData data;
-  ParseHTTPClient _client;
   bool _hasBeenInitialised = false;
 
   /// To initialise Parse Server in your application
@@ -89,8 +88,6 @@ class Parse {
         securityContext: securityContext);
 
     ParseCoreData().initStorage();
-
-    _client = ParseHTTPClient(securityContext);
 
     _hasBeenInitialised = true;
 
