@@ -136,7 +136,8 @@ abstract class ParseBase {
     if (objectId != null) {
       await unpin();
       var objectToSave = json.encode(toJson());
-      await ParseCoreData().getStore()..setString(objectId, objectToSave);
+      await ParseCoreData().getStore()
+        ..setString(objectId, objectToSave);
       return true;
     } else {
       return false;
@@ -148,7 +149,8 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> unpin() async {
     if (objectId != null) {
-      await SharedPreferences.getInstance()..remove(objectId);
+      await SharedPreferences.getInstance()
+        ..remove(objectId);
       return true;
     }
 
@@ -160,7 +162,8 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   fromPin(String objectId) async {
     if (objectId != null) {
-      var itemFromStore = (await ParseCoreData().getStore()).getString(objectId);
+      var itemFromStore =
+          (await ParseCoreData().getStore()).getString(objectId);
 
       if (itemFromStore != null) {
         var map = json.decode(itemFromStore);

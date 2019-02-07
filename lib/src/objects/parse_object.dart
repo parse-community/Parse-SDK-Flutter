@@ -1,7 +1,8 @@
 part of flutter_parse_sdk;
 
 class ParseObject extends ParseBase implements ParseCloneable {
-  ParseObject.clone(String className) : this('className');
+
+  ParseObject.clone(String className) : this(className);
 
   @override
   clone(Map map) => ParseObject.clone(className)..fromJson(map);
@@ -38,9 +39,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
       var uri = "${ParseCoreData().serverUrl}$_path";
       if (objectId != null) uri += "/$objectId";
       var result = await _client.get(uri);
-      return handleResponse(result, ParseApiRQ.get);
+      return handleResponse(this, result, ParseApiRQ.get, _debug, className);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.get);
+      return handleException(e, ParseApiRQ.get, _debug, className);
     }
   }
 
@@ -48,9 +49,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
   Future<ParseResponse> getAll() async {
     try {
       var result = await _client.get("${ParseCoreData().serverUrl}$_path");
-      return handleResponse(result, ParseApiRQ.getAll);
+      return handleResponse(this, result, ParseApiRQ.getAll, _debug, className);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.getAll);
+      return handleException(e, ParseApiRQ.getAll, _debug, className);
     }
   }
 
@@ -60,24 +61,24 @@ class ParseObject extends ParseBase implements ParseCloneable {
       var uri = _client.data.serverUrl + "$_path";
       var body = json.encode(toJson(forApiRQ: true));
       var result = await _client.post(uri, body: body);
-      return handleResponse(result, ParseApiRQ.create);
+      return handleResponse(this, result, ParseApiRQ.create, _debug, className);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.create);
+      return handleException(e, ParseApiRQ.create, _debug, className);
     }
   }
 
   /// Saves the current object online
   Future<ParseResponse> save() async {
-    if (getObjectData() == null) {
+    if (getObjectData()[keyVarObjectId] == null) {
       return create();
     } else {
       try {
         var uri = "${ParseCoreData().serverUrl}$_path/$objectId";
         var body = json.encode(toJson(forApiRQ: true));
         var result = await _client.put(uri, body: body);
-        return handleResponse(result, ParseApiRQ.save);
+        return handleResponse(this, result, ParseApiRQ.save, _debug, className);
       } on Exception catch (e) {
-        return handleException(e, ParseApiRQ.save);
+        return handleException(e, ParseApiRQ.save, _debug, className);
       }
     }
   }
@@ -128,15 +129,17 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Can be used to add arrays to a given type
-  Future<ParseResponse> _sortArrays(ParseApiRQ apiRQType, String arrayAction, String key, List<dynamic> values) async {
-      try {
-        var uri = "${ParseCoreData().serverUrl}$_path";
-        var body = "{\"$key\":{\"__op\": \"$arrayAction\", \"objects\": ${parseEncode(values)}";
-        var result = await _client.put(uri, body: body);
-        return handleResponse(result, apiRQType);
-      } on Exception catch (e) {
-        return handleException(e, apiRQType);
-      }
+  Future<ParseResponse> _sortArrays(ParseApiRQ apiRQType, String arrayAction,
+      String key, List<dynamic> values) async {
+    try {
+      var uri = "${ParseCoreData().serverUrl}$_path";
+      var body =
+          "{\"$key\":{\"__op\": \"$arrayAction\", \"objects\": ${parseEncode(values)}";
+      var result = await _client.put(uri, body: body);
+      return handleResponse(this, result, apiRQType, _debug, className);
+    } on Exception catch (e) {
+      return handleException(e, apiRQType, _debug, className);
+    }
   }
 
   /// Increases a num of an object by x amount
@@ -158,21 +161,21 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Can be used to add arrays to a given type
-  Future<ParseResponse> _increment(ParseApiRQ apiRQType, String arrayAction, String key, num amount) async {
+  Future<ParseResponse> _increment(
+      ParseApiRQ apiRQType, String arrayAction, String key, num amount) async {
     try {
       var uri = "${ParseCoreData().serverUrl}$_path";
       var body = "{\"$key\":{\"__op\": \"$arrayAction\", \"amount\": $amount}";
       var result = await _client.put(uri, body: body);
-      return handleResponse(result, apiRQType);
+      return handleResponse(this, result, apiRQType, _debug, className);
     } on Exception catch (e) {
-      return handleException(e, apiRQType);
+      return handleException(e, apiRQType, _debug, className);
     }
   }
 
   /// Can be used to create custom queries
   Future<ParseResponse> query(String query) async {
     try {
-
       Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
 
       Uri url = Uri(
@@ -182,9 +185,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
           query: query);
 
       var result = await _client.get(url);
-      return handleResponse(result, ParseApiRQ.query);
+      return handleResponse(this, result, ParseApiRQ.query, _debug, className);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.query);
+      return handleException(e, ParseApiRQ.query, _debug, className);
     }
   }
 
@@ -193,53 +196,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
     try {
       var uri = "${ParseCoreData().serverUrl}$_path/$objectId";
       var result = await _client.delete(uri);
-      return handleResponse(result, ParseApiRQ.delete);
+      return handleResponse(this, result, ParseApiRQ.delete, _debug, className);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.delete);
-    }
-  }
-
-  /// Handles an API response and logs data if [bool] debug is enabled
-  @protected
-  ParseResponse handleResponse<T extends ParseObject>(Response response, ParseApiRQ type) {
-    ParseResponse parseResponse = ParseResponse.handleResponse<T>(
-        this, response, returnAsResult: shouldReturnAsABaseResult(type));
-
-    if (_debug) {
-      logger(
-          ParseCoreData().appName, className, type.toString(), parseResponse);
-    }
-
-    return parseResponse;
-  }
-
-  /// Handles an API response and logs data if [bool] debug is enabled
-  @protected
-  ParseResponse handleException(Exception exception, ParseApiRQ type) {
-    ParseResponse parseResponse = ParseResponse.handleException(exception);
-
-    if (_debug) {
-      logger(ParseCoreData().appName, className, type.toString(), parseResponse);
-    }
-
-    return parseResponse;
-  }
-
-  bool shouldReturnAsABaseResult(ParseApiRQ type){
-    if (type == ParseApiRQ.healthCheck ||
-        type == ParseApiRQ.execute ||
-        type == ParseApiRQ.add ||
-        type == ParseApiRQ.addAll ||
-        type == ParseApiRQ.addUnique ||
-        type == ParseApiRQ.remove ||
-        type == ParseApiRQ.removeAll ||
-        type == ParseApiRQ.increment ||
-        type == ParseApiRQ.decrement ||
-        type == ParseApiRQ.getConfigs ||
-        type == ParseApiRQ.addConfig){
-      return true;
-    } else {
-      return false;
+      return handleException(e, ParseApiRQ.delete, _debug, className);
     }
   }
 }

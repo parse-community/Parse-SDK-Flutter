@@ -49,15 +49,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   runTestQueries() {
-    //createItem();
-    //getAllItems();
-    //getAllItemsByName();
-    //getSingleItem();
+    createItem();
+    getAllItems();
+    getAllItemsByName();
+    getSingleItem();
     getConfigs();
-    //query();
-    //function();
-    //functionWithParameters();
-    //initUser();
+    query();
+    initUser();
+    function();
+    functionWithParameters();
   }
 
   void createItem() async {
@@ -138,11 +138,17 @@ class _MyAppState extends State<MyApp> {
   initUser() async {
     // All return type ParseUser except all
     var user =
-        ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+        ParseUser("TestFlutter", "TestPassword123", "phill.wiggins@gmail.com");
     var response = await user.signUp();
     if (response.success) user = response.result;
 
     response = await user.login();
+    if (response.success) user = response.result;
+
+    response = await user.requestPasswordReset();
+    if (response.success) user = response.result;
+
+    response = await user.verificationEmailRequest();
     if (response.success) user = response.result;
 
     user = null;
@@ -151,13 +157,7 @@ class _MyAppState extends State<MyApp> {
     await user.logout();
     user = await ParseUser.currentUser();
 
-    response = await user.getCurrentUserFromServer();
-    if (response.success) user = response.result;
-
-    response = await user.requestPasswordReset();
-    if (response.success) user = response.result;
-
-    response = await user.verificationEmailRequest();
+    response = await ParseUser.getCurrentUserFromServer();
     if (response.success) user = response.result;
 
     response = await user.save();
@@ -177,13 +177,25 @@ class _MyAppState extends State<MyApp> {
     if (apiResponse.success) user = response.result;
   }
 
-  function() {
-    var function = ParseCloudFunction('testFunction');
+  function() async {
+    var user =
+        ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+    await user.signUp();
+    var loginResponse = await user.login();
+    if (loginResponse.success) user = loginResponse.result;
+
+    var customClient = ParseHTTPClient();
+    customClient.additionalHeaders = {
+      keyHeaderSessionToken: ParseCoreData().sessionId
+    };
+    var function = ParseCloudFunction('hello', client: customClient);
     function.execute();
+
+    user.destroy();
   }
 
   functionWithParameters() async {
-    var function = ParseCloudFunction('testFunction');
+    var function = ParseCloudFunction('hello');
     var params = {'plan': 'paid'};
     function.execute(parameters: params);
   }

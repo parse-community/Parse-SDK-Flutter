@@ -2,11 +2,12 @@ part of flutter_parse_sdk;
 
 // Library
 const String keySdkVersion = '1.0.10';
-const String keyLibraryName= 'Flutter Parse SDK';
+const String keyLibraryName = 'Flutter Parse SDK';
 
 // End Points
 const String keyEndPointUserName = '/users/me';
 const String keyEndPointLogin = '/login';
+const String keyEndPointUsers = '/users';
 const String keyEndPointVerificationEmail = '/verificationEmailRequest';
 const String keyEndPointRequestPasswordReset = '/requestPasswordReset';
 const String keyEndPointClasses = '/classes/';
@@ -36,6 +37,7 @@ const String keyHeaderApplicationId = 'X-Parse-Application-Id';
 const String keyHeaderContentType = 'Content-Type';
 const String keyHeaderContentTypeJson = 'application/json';
 const String keyHeaderMasterKey = 'X-Parse-Master-Key';
+const String keyHeaderClientKey = 'X-Parse-Client-Key';
 
 // URL params
 const String keyParamSessionToken = 'sessionToken';
