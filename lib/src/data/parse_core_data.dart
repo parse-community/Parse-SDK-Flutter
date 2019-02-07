@@ -36,7 +36,7 @@ class ParseCoreData {
   String masterKey;
   String clientKey;
   String sessionId;
-  dynamic securityContext;
+  SecurityContext securityContext;
   bool debug;
   SharedPreferences storage;
 

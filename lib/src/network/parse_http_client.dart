@@ -7,7 +7,10 @@ class ParseHTTPClient extends BaseClient {
   ParseCoreData data = ParseCoreData();
   Map<String, String> additionalHeaders;
 
-  ParseHTTPClient([dynamic securityContext]) : _client = createClient(securityContext);
+  ParseHTTPClient([dynamic securityContext])
+      : _client = securityContext != null
+            ? IOClient(HttpClient(context: securityContext))
+            : IOClient();
 
   /// Overrides the call method for HTTP Client and adds custom headers
   @override

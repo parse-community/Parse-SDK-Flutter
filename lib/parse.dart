@@ -6,14 +6,11 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:http/http.dart';
+import 'package:http/io_client.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
-
-import 'src/network/client_stub.dart'
-    if (dart.library.html) 'src/network/browser_client.dart'
-    if (dart.library.io) 'src/network/io_client.dart';
 
 part 'src/base/parse_constants.dart';
 
@@ -81,7 +78,7 @@ class Parse {
       String clientKey,
       String masterKey,
       String sessionId,
-      dynamic securityContext}) {
+      SecurityContext securityContext}) {
     ParseCoreData.init(appId, serverUrl,
         debug: debug,
         appName: appName,
