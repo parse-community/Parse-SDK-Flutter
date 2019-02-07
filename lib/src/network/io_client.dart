@@ -8,5 +8,11 @@ import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 
 /// Used from conditional imports, matches the definition in `client_stub.dart`.
-BaseClient createClient(HttpClient httpClient) =>
-    httpClient != null ? IOClient(httpClient) : IOClient();
+BaseClient createClient(SecurityContext securityContext) {
+  if (securityContext != null) {
+    HttpClient httpClient = HttpClient(context: securityContext);
+    return IOClient(httpClient);
+  } else {
+    return IOClient();
+  }
+}

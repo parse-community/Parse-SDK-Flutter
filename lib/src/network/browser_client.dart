@@ -6,4 +6,4 @@ import 'package:http/http.dart';
 import 'package:http/browser_client.dart';
 
 /// Used from conditional imports, matches the definition in `client_stub.dart`.
-BaseClient createClient(dynamic httpClient) => BrowserClient();
+BaseClient createClient(dynamic securityContext) => BrowserClient();

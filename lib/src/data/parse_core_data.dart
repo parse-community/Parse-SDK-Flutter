@@ -17,7 +17,7 @@ class ParseCoreData {
       masterKey,
       clientKey,
       sessionId,
-      httpClient}) {
+      securityContext}) {
     _instance = ParseCoreData._init(appId, serverUrl);
 
     if (debug != null) _instance.debug = debug;
@@ -26,7 +26,7 @@ class ParseCoreData {
     if (clientKey != null) _instance.clientKey = clientKey;
     if (masterKey != null) _instance.masterKey = masterKey;
     if (sessionId != null) _instance.sessionId = sessionId;
-    if (httpClient != null) _instance.httpClient = httpClient;
+    if (securityContext != null) _instance.securityContext = securityContext;
   }
 
   String appName;
@@ -36,7 +36,7 @@ class ParseCoreData {
   String masterKey;
   String clientKey;
   String sessionId;
-  HttpClient httpClient;
+  dynamic securityContext;
   bool debug;
   SharedPreferences storage;
 

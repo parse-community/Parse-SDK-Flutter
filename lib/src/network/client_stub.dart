@@ -5,5 +5,5 @@
 import 'package:http/http.dart';
 
 /// Implemented in `browser_client.dart` and `io_client.dart`.
-BaseClient createClient(dynamic httpClient) => throw UnsupportedError(
+BaseClient createClient(dynamic securityContext) => throw UnsupportedError(
     'Cannot create a client without dart:html or dart:io.');

@@ -26,7 +26,7 @@ class ParseFile extends ParseObject {
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFile(this._file, {bool debug, ParseHTTPClient client}) : super(keyFile) {
     client == null
-        ? _client = ParseHTTPClient(ParseCoreData().httpClient)
+        ? _client = ParseHTTPClient(ParseCoreData().securityContext)
         : _client = client;
     _debug = isDebugEnabled(objectLevelDebug: debug);
 

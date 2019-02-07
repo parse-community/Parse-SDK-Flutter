@@ -81,7 +81,7 @@ class Parse {
       String clientKey,
       String masterKey,
       String sessionId,
-      HttpClient httpClient}) {
+      dynamic securityContext}) {
     ParseCoreData.init(appId, serverUrl,
         debug: debug,
         appName: appName,
@@ -89,11 +89,11 @@ class Parse {
         masterKey: masterKey,
         clientKey: clientKey,
         sessionId: sessionId,
-        httpClient: httpClient);
+        securityContext: securityContext);
 
     ParseCoreData().initStorage();
 
-    _client = ParseHTTPClient(httpClient);
+    _client = ParseHTTPClient(securityContext);
 
     _hasBeenInitialised = true;
 
@@ -106,7 +106,7 @@ class Parse {
     ParseResponse parseResponse;
 
     try {
-      var response = await ParseHTTPClient(ParseCoreData().httpClient)
+      var response = await ParseHTTPClient(ParseCoreData().securityContext)
           .get("${ParseCoreData().serverUrl}$keyEndPointHealth");
       parseResponse =
           ParseResponse.handleResponse(this, response, returnAsResult: true);
