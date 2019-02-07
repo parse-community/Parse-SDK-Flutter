@@ -1,16 +1,22 @@
 part of flutter_parse_sdk;
 
 class ParseGeoPoint extends ParseObject {
-
   double _latitude;
   double _longitude;
 
   /// Creates a Parse Object of type GeoPoint
-  ParseGeoPoint({double latitude = 0.0, double longitude = 0.0, bool debug, ParseHTTPClient client}): super (keyGeoPoint) {
+  ParseGeoPoint(
+      {double latitude = 0.0,
+      double longitude = 0.0,
+      bool debug,
+      ParseHTTPClient client})
+      : super(keyGeoPoint) {
     _latitude = latitude;
     _longitude = longitude;
 
-    client == null ? _client = ParseHTTPClient() : _client = client;
+    client == null
+        ? _client = ParseHTTPClient(ParseCoreData().securityContext)
+        : _client = client;
     _debug = isDebugEnabled(objectLevelDebug: debug);
   }
 
