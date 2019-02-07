@@ -18,7 +18,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   ParseObject(String className, {bool debug: false}) : super() {
     setClassName(className);
     _path = "$keyEndPointClasses$className";
-    setClient(ParseHTTPClient());
+    setClient(ParseHTTPClient(ParseCoreData().httpClient));
     setDebug(isDebugEnabled(objectLevelDebug: debug));
   }
 
@@ -82,7 +82,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
-  /// Removes an element from an Arary
+  /// Removes an element from an Array
   Future<ParseResponse> remove(String key, dynamic values) async {
     if (key != null) {
       return await _sortArrays(ParseApiRQ.remove, "Remove", key, [values]);

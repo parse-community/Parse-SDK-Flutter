@@ -11,6 +11,10 @@ import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
 
+import 'src/network/client_stub.dart'
+    if (dart.library.html) 'src/network/browser_client.dart'
+    if (dart.library.io) 'src/network/io_client.dart';
+
 part 'src/base/parse_constants.dart';
 
 part 'src/data/parse_core_data.dart';
@@ -55,7 +59,7 @@ part 'src/utils/parse_utils.dart';
 
 class Parse {
   ParseCoreData data;
-  final ParseHTTPClient client = new ParseHTTPClient();
+  ParseHTTPClient _client;
   bool _hasBeenInitialised = false;
 
   /// To initialise Parse Server in your application
@@ -76,16 +80,20 @@ class Parse {
       String liveQueryUrl,
       String clientKey,
       String masterKey,
-      String sessionId}) {
+      String sessionId,
+      HttpClient httpClient}) {
     ParseCoreData.init(appId, serverUrl,
         debug: debug,
         appName: appName,
         liveQueryUrl: liveQueryUrl,
         masterKey: masterKey,
         clientKey: clientKey,
-        sessionId: sessionId);
+        sessionId: sessionId,
+        httpClient: httpClient);
 
     ParseCoreData().initStorage();
+
+    _client = ParseHTTPClient(httpClient);
 
     _hasBeenInitialised = true;
 
@@ -98,7 +106,7 @@ class Parse {
     ParseResponse parseResponse;
 
     try {
-      var response = await ParseHTTPClient()
+      var response = await ParseHTTPClient(ParseCoreData().httpClient)
           .get("${ParseCoreData().serverUrl}$keyEndPointHealth");
       parseResponse =
           ParseResponse.handleResponse(this, response, returnAsResult: true);

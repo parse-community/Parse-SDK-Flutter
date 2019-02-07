@@ -43,7 +43,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
   ParseUser(String username, String password, String emailAddress,
       {bool debug, ParseHTTPClient client})
       : super(keyClassUser) {
-    client == null ? _client = ParseHTTPClient() : _client = client;
+    client == null
+        ? _client = ParseHTTPClient(ParseCoreData().httpClient)
+        : _client = client;
     _debug = isDebugEnabled(objectLevelDebug: debug);
 
     this.username = username;
@@ -83,7 +85,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
           host: tempUri.host,
           path: "${tempUri.path}$keyEndPointUserName");
 
-      final response = await ParseHTTPClient()
+      final response = await ParseHTTPClient(ParseCoreData().httpClient)
           .get(uri, headers: {keyHeaderSessionToken: token});
       return _handleResponse(_getEmptyUser(), response, ParseApiRQ.currentUser,
           _debug, _getEmptyUser().className);
@@ -242,7 +244,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
     try {
       final response =
-          await ParseHTTPClient().get("${ParseCoreData().serverUrl}/$path");
+          await ParseHTTPClient(ParseCoreData().httpClient).get("${ParseCoreData().serverUrl}/$path");
 
       ParseResponse parseResponse =
           ParseResponse.handleResponse<ParseUser>(emptyUser, response);

@@ -25,7 +25,9 @@ class ParseFile extends ParseObject {
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFile(this._file, {bool debug, ParseHTTPClient client}) : super(keyFile) {
-    client == null ? _client = ParseHTTPClient() : _client = client;
+    client == null
+        ? _client = ParseHTTPClient(ParseCoreData().httpClient)
+        : _client = client;
     _debug = isDebugEnabled(objectLevelDebug: debug);
 
     this._fileName = path.basename(_file.path);
@@ -46,6 +48,7 @@ class ParseFile extends ParseObject {
     var uri = _client.data.serverUrl + "$_path";
     final body = await _file.readAsBytes();
     final response = await _client.post(uri, headers: headers, body: body);
-    return handleResponse<ParseFile>(this, response, ParseApiRQ.upload, _debug, className);
+    return handleResponse<ParseFile>(
+        this, response, ParseApiRQ.upload, _debug, className);
   }
 }

@@ -2,12 +2,12 @@ part of flutter_parse_sdk;
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset
 class ParseHTTPClient extends BaseClient {
-  final Client _client = Client();
+  final Client _client;
   final String _userAgent = "$keyLibraryName $keySdkVersion";
   ParseCoreData data = ParseCoreData();
   Map<String, String> additionalHeaders;
 
-  ParseHTTPClient();
+  ParseHTTPClient([HttpClient httpClient]) : _client = createClient(httpClient);
 
   /// Overrides the call method for HTTP Client and adds custom headers
   @override
