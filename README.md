@@ -51,7 +51,7 @@ var apiResponse = await ParseObject('ParseTableName').getAll();
 Or you can get an object by its objectId:
 
 ```
-var dietPlan = await DietPlan().get('R5EonpUDWy');
+var dietPlan = await DietPlan().getObject('R5EonpUDWy');
 
     if (dietPlan.success) {
       print(ApplicationConstants.keyAppName + ": " + (dietPlan.result as DietPlan).toString());
