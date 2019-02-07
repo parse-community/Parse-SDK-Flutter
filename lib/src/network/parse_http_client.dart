@@ -7,7 +7,7 @@ class ParseHTTPClient extends BaseClient {
   ParseCoreData data = ParseCoreData();
   Map<String, String> additionalHeaders;
 
-  ParseHTTPClient([dynamic securityContext])
+  ParseHTTPClient([SecurityContext securityContext])
       : _client = securityContext != null
             ? IOClient(HttpClient(context: securityContext))
             : IOClient();
