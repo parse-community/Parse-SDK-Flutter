@@ -154,7 +154,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
             keyVarPassword: password
           });
 
-      final response = await _client.post(url, headers: {
+      final response = await _client.get(url, headers: {
         keyHeaderRevocableSession: "1",
       });
 
@@ -162,6 +162,36 @@ class ParseUser extends ParseObject implements ParseCloneable {
           this, response, ParseApiRQ.login, _debug, className);
     } on Exception catch (e) {
       return _handleException(e, ParseApiRQ.login, _debug, className);
+    }
+  }
+
+  // Logs in a user anonymously
+  Future<ParseResponse> loginAnonymous() async {
+    try {
+      Uri tempUri = Uri.parse(_client.data.serverUrl);
+
+      Uri url = Uri(
+        scheme: tempUri.scheme,
+        host: tempUri.host,
+        path: "${tempUri.path}$keyEndPointUsers",
+      );
+
+      var uuid = new Uuid();
+
+      final response = await _client.post(url,
+          headers: {
+            keyHeaderRevocableSession: "1",
+          },
+          body: jsonEncode({
+            "authData": {
+              "anonymous": {"id": uuid.v4()}
+            }
+          }));
+
+      return _handleResponse(
+          this, response, ParseApiRQ.loginAnonymous, _debug, className);
+    } on Exception catch (e) {
+      return _handleException(e, ParseApiRQ.loginAnonymous, _debug, className);
     }
   }
 
@@ -212,7 +242,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
         var uri = _client.data.serverUrl + "$path/$objectId";
         var body =
             json.encode(toJson(forApiRQ: true), toEncodable: dateTimeEncoder);
-        final response = await _client.put(uri, body: body);
+        final response = await _client.put(uri,
+            headers: {keyHeaderSessionToken: _client.data.sessionId},
+            body: body);
         return _handleResponse(
             this, response, ParseApiRQ.save, _debug, className);
       } on Exception catch (e) {

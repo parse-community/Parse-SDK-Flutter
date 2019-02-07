@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/application_constants.dart';
 import 'package:flutter_plugin_example/diet_plan.dart';
-import 'package:flutter_plugin_example/subscription.dart';
 import 'package:parse_server_sdk/parse.dart';
 
 void main() => runApp(new MyApp());
@@ -59,7 +58,6 @@ class _MyAppState extends State<MyApp> {
     initUser();
     function();
     functionWithParameters();
-    test();
   }
 
   void createItem() async {
@@ -139,11 +137,18 @@ class _MyAppState extends State<MyApp> {
 
   initUser() async {
     // All return type ParseUser except all
-    var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+    var user =
+        ParseUser("TestFlutter", "TestPassword123", "phill.wiggins@gmail.com");
     var response = await user.signUp();
     if (response.success) user = response.result;
 
     response = await user.login();
+    if (response.success) user = response.result;
+
+    response = await user.requestPasswordReset();
+    if (response.success) user = response.result;
+
+    response = await user.verificationEmailRequest();
     if (response.success) user = response.result;
 
     user = null;
@@ -153,12 +158,6 @@ class _MyAppState extends State<MyApp> {
     user = await ParseUser.currentUser();
 
     response = await ParseUser.getCurrentUserFromServer();
-    if (response.success) user = response.result;
-
-    response = await user.requestPasswordReset();
-    if (response.success) user = response.result;
-
-    response = await user.verificationEmailRequest();
     if (response.success) user = response.result;
 
     response = await user.save();
@@ -179,14 +178,16 @@ class _MyAppState extends State<MyApp> {
   }
 
   function() async {
-
-    var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+    var user =
+        ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
     await user.signUp();
     var loginResponse = await user.login();
     if (loginResponse.success) user = loginResponse.result;
 
     var customClient = ParseHTTPClient();
-    customClient.additionalHeaders = { keyHeaderSessionToken: ParseCoreData().sessionId };
+    customClient.additionalHeaders = {
+      keyHeaderSessionToken: ParseCoreData().sessionId
+    };
     var function = ParseCloudFunction('hello', client: customClient);
     function.execute();
 
@@ -212,16 +213,5 @@ class _MyAppState extends State<MyApp> {
     if (getResponse.success) {
       print("We have our configs.");
     }
-  }
-
-  Future test() async {
-    var operator = ParseObject('operator');
-    operator.set<String>('objectId', "npTxjstsAe");
-
-    var query = QueryBuilder<SubscriptionParse>(SubscriptionParse())
-      ..whereEqualTo('operator', operator);
-
-    var result = await query.query();
-    var response = result;
   }
 }
