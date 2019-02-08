@@ -1,7 +1,6 @@
 part of flutter_parse_sdk;
 
 class ParseObject extends ParseBase implements ParseCloneable {
-
   ParseObject.clone(String className) : this(className);
 
   @override
@@ -16,19 +15,13 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// [String] className refers to the Table Name in your Parse Server,
   /// [bool] debug will overwrite the current default debug settings and
   /// [ParseHttpClient] can be overwritten to create your own HTTP Client
-  ParseObject(String className, {bool debug: false}) : super() {
+  ParseObject(String className, {bool debug: false, ParseHTTPClient client})
+      : super() {
     setClassName(className);
     _path = "$keyEndPointClasses$className";
-    setClient(ParseHTTPClient(ParseCoreData().securityContext));
-    setDebug(isDebugEnabled(objectLevelDebug: debug));
-  }
 
-  void setDebug(bool debug) {
-    _debug = debug;
-  }
-
-  void setClient(ParseHTTPClient client) {
-    _client = client;
+    _debug = isDebugEnabled(objectLevelDebug: debug);
+    _client = client ?? ParseHTTPClient(ParseCoreData().securityContext);
   }
 
   String toPointer() => parseEncode(this);

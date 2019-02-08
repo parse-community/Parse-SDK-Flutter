@@ -13,8 +13,8 @@ class ParseCloudFunction extends ParseObject {
       : super(functionName) {
     _path = "/functions/$functionName";
 
-    if (debug != null) setDebug(debug);
-    if (client != null) setClient(client);
+    _debug = isDebugEnabled(objectLevelDebug: debug);
+    _client = client ?? ParseHTTPClient(ParseCoreData().securityContext);
   }
 
   /// Executes a cloud function
