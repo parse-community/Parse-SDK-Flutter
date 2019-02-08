@@ -98,12 +98,14 @@ class Parse {
 
   bool hasParseBeenInitialised() => _hasBeenInitialised;
 
-  Future<ParseResponse> healthCheck() async {
+  Future<ParseResponse> healthCheck({ParseHTTPClient client}) async {
     ParseResponse parseResponse;
+    ParseHTTPClient _client =
+        client ?? ParseHTTPClient(ParseCoreData().securityContext);
 
     try {
-      var response = await ParseHTTPClient(ParseCoreData().securityContext)
-          .get("${ParseCoreData().serverUrl}$keyEndPointHealth");
+      var response =
+          await _client.get("${ParseCoreData().serverUrl}$keyEndPointHealth");
       parseResponse =
           ParseResponse.handleResponse(this, response, returnAsResult: true);
     } on Exception catch (e) {

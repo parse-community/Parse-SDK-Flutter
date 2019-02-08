@@ -14,7 +14,7 @@ class ParseCloudFunction extends ParseObject {
     _path = "/functions/$functionName";
 
     if (debug != null) setDebug(debug);
-    if (client != null) setClient(client);
+    _client = client ?? ParseHTTPClient(ParseCoreData().securityContext);
   }
 
   /// Executes a cloud function
