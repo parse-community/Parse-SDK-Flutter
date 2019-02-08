@@ -33,7 +33,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Creates an instance of ParseUser
   ///
   /// Users can set whether debug should be set on this class with a [bool],
-  /// they can also create thier own custom version of [ParseHttpClient]
+  /// they can also create their own custom version of [ParseHttpClient]
   ///
   /// Creates a new user locally
   ///

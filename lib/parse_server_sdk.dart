@@ -22,13 +22,13 @@ part 'src/enums/parse_enum_api_rq.dart';
 
 part 'src/network/parse_http_client.dart';
 
-part 'src/network/parse_livequery.dart';
+part 'src/network/parse_live_query.dart';
 
 part 'src/network/parse_query.dart';
 
 part 'src/objects/parse_base.dart';
 
-part 'src/objects/parse_clonable.dart';
+part 'src/objects/parse_cloneable.dart';
 
 part 'src/objects/parse_config.dart';
 
@@ -58,11 +58,11 @@ part 'src/utils/parse_utils.dart';
 
 class Parse {
   ParseCoreData data;
-  bool _hasBeenInitialised = false;
+  bool _hasBeenInitialized = false;
 
-  /// To initialise Parse Server in your application
+  /// To initialize Parse Server in your application
   ///
-  /// This should be initialised in MyApp() creation
+  /// This should be initialized in MyApp() creation
   ///
   /// ```
   /// Parse().initialize(
@@ -91,12 +91,12 @@ class Parse {
 
     ParseCoreData().initStorage();
 
-    _hasBeenInitialised = true;
+    _hasBeenInitialized = true;
 
     return Parse();
   }
 
-  bool hasParseBeenInitialised() => _hasBeenInitialised;
+  bool hasParseBeenInitialized() => _hasBeenInitialized;
 
   Future<ParseResponse> healthCheck(
       {bool debug, ParseHTTPClient client}) async {
