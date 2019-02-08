@@ -98,8 +98,11 @@ class Parse {
 
   bool hasParseBeenInitialised() => _hasBeenInitialised;
 
-  Future<ParseResponse> healthCheck({ParseHTTPClient client}) async {
+  Future<ParseResponse> healthCheck(
+      {bool debug, ParseHTTPClient client}) async {
     ParseResponse parseResponse;
+
+    bool _debug = isDebugEnabled(objectLevelDebug: debug);
     ParseHTTPClient _client =
         client ?? ParseHTTPClient(ParseCoreData().securityContext);
 
@@ -112,7 +115,7 @@ class Parse {
       parseResponse = ParseResponse.handleException(e);
     }
 
-    if (ParseCoreData().debug) {
+    if (_debug) {
       logger(ParseCoreData().appName, keyClassMain,
           ParseApiRQ.healthCheck.toString(), parseResponse);
     }

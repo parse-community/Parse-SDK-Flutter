@@ -271,9 +271,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   /// Gets a list of all users (limited return)
-  static Future<ParseResponse> all({ParseHTTPClient client}) async {
+  static Future<ParseResponse> all({bool debug, ParseHTTPClient client}) async {
     var emptyUser = ParseUser(null, null, null);
 
+    bool _debug = isDebugEnabled(objectLevelDebug: debug);
     ParseHTTPClient _client =
         client ?? ParseHTTPClient(ParseCoreData().securityContext);
 
@@ -283,7 +284,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       ParseResponse parseResponse =
           ParseResponse.handleResponse<ParseUser>(emptyUser, response);
 
-      if (ParseCoreData().debug) {
+      if (_debug) {
         logger(ParseCoreData().appName, keyClassUser,
             ParseApiRQ.getAll.toString(), parseResponse);
       }
