@@ -89,8 +89,6 @@ class Parse {
         sessionId: sessionId,
         securityContext: securityContext);
 
-    ParseCoreData().initStorage();
-
     _hasBeenInitialized = true;
 
     return Parse();
