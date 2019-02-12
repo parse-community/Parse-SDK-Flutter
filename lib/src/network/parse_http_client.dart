@@ -17,13 +17,17 @@ class ParseHTTPClient extends BaseClient {
   Future<StreamedResponse> send(BaseRequest request) {
     request.headers[keyHeaderUserAgent] = _userAgent;
     request.headers[keyHeaderApplicationId] = data.applicationId;
+    if (data.sessionId != null)
+      request.headers[keyHeaderSessionToken] = data.sessionId;
 
-    if (data.clientKey != null) request.headers[keyHeaderClientKey] = data.clientKey;
-    if (data.masterKey != null) request.headers[keyHeaderMasterKey] = data.masterKey;
+    if (data.clientKey != null)
+      request.headers[keyHeaderClientKey] = data.clientKey;
+    if (data.masterKey != null)
+      request.headers[keyHeaderMasterKey] = data.masterKey;
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
-    if (additionalHeaders != null && additionalHeaders.length > 0){
-      additionalHeaders.forEach((k,v) => request.headers[k] = v);
+    if (additionalHeaders != null && additionalHeaders.length > 0) {
+      additionalHeaders.forEach((k, v) => request.headers[k] = v);
     }
 
     return _client.send(request);

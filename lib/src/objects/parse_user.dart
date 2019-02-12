@@ -63,18 +63,14 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// fromServer can be called and an updated version of the [User] object will be
   /// returned
   static Future<ParseResponse> getCurrentUserFromServer(
-      {String token, bool debug, ParseHTTPClient client}) async {
+      {bool debug, ParseHTTPClient client}) async {
     bool _debug = isDebugEnabled(objectLevelDebug: debug);
     ParseHTTPClient _client =
         client ?? ParseHTTPClient(ParseCoreData().securityContext);
 
     // We can't get the current user and session without a sessionId
-    if (token == null && ParseCoreData().sessionId == null) {
+    if (ParseCoreData().sessionId == null) {
       return null;
-    }
-
-    if (token == null) {
-      token = ParseCoreData().sessionId;
     }
 
     try {
@@ -85,8 +81,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
           host: tempUri.host,
           path: "${tempUri.path}$keyEndPointUserName");
 
-      final response =
-          await _client.get(uri, headers: {keyHeaderSessionToken: token});
+      final response = await _client.get(uri);
       return _handleResponse(_getEmptyUser(), response, ParseApiRQ.currentUser,
           _debug, _getEmptyUser().className);
     } on Exception catch (e) {
@@ -242,9 +237,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
         var uri = _client.data.serverUrl + "$path/$objectId";
         var body =
             json.encode(toJson(forApiRQ: true), toEncodable: dateTimeEncoder);
-        final response = await _client.put(uri,
-            headers: {keyHeaderSessionToken: _client.data.sessionId},
-            body: body);
+        final response = await _client.put(uri, body: body);
         return _handleResponse(
             this, response, ParseApiRQ.save, _debug, className);
       } on Exception catch (e) {
@@ -257,9 +250,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   Future<ParseResponse> destroy() async {
     if (objectId != null) {
       try {
-        final response = await _client.delete(
-            _client.data.serverUrl + "$path/$objectId",
-            headers: {keyHeaderSessionToken: _client.data.sessionId});
+        final response =
+            await _client.delete(_client.data.serverUrl + "$path/$objectId");
         return _handleResponse(
             this, response, ParseApiRQ.destroy, _debug, className);
       } on Exception catch (e) {
