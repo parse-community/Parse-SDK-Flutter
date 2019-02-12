@@ -57,7 +57,7 @@ class ParseCoreData {
   }
 
   Future<SharedPreferences> getStore() async {
-    return storage != null ? storage : await SharedPreferences.getInstance();
+    return storage ?? (storage = await SharedPreferences.getInstance());
   }
 
   @override
