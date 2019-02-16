@@ -52,12 +52,8 @@ class ParseCoreData {
     this.sessionId = sessionId;
   }
 
-  void initStorage() async {
-    storage = await SharedPreferences.getInstance();
-  }
-
   Future<SharedPreferences> getStore() async {
-    return storage != null ? storage : await SharedPreferences.getInstance();
+    return storage ?? (storage = await SharedPreferences.getInstance());
   }
 
   @override
