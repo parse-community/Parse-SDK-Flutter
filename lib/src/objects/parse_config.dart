@@ -2,9 +2,14 @@ part of flutter_parse_sdk;
 
 class ParseConfig extends ParseObject {
   /// Creates an instance of ParseConfig so that you can grab all configs from the server
-  ParseConfig({bool debug, ParseHTTPClient client}) : super('config') {
+  ParseConfig({bool debug, ParseHTTPClient client, bool autoSendSessionId})
+      : super('config') {
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ?? ParseHTTPClient(ParseCoreData().securityContext);
+    _client = client ??
+        ParseHTTPClient(
+            autoSendSessionId:
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            securityContext: ParseCoreData().securityContext);
   }
 
   /// Gets all configs from the server

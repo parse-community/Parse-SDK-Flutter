@@ -15,13 +15,18 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// [String] className refers to the Table Name in your Parse Server,
   /// [bool] debug will overwrite the current default debug settings and
   /// [ParseHttpClient] can be overwritten to create your own HTTP Client
-  ParseObject(String className, {bool debug: false, ParseHTTPClient client})
+  ParseObject(String className,
+      {bool debug: false, ParseHTTPClient client, bool autoSendSessionId})
       : super() {
     setClassName(className);
     _path = "$keyEndPointClasses$className";
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ?? ParseHTTPClient(ParseCoreData().securityContext);
+    _client = client ??
+        ParseHTTPClient(
+            autoSendSessionId:
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            securityContext: ParseCoreData().securityContext);
   }
 
   String toPointer() => parseEncode(this);

@@ -3,12 +3,15 @@ part of flutter_parse_sdk;
 /// Creates a custom version of HTTP Client that has Parse Data Preset
 class ParseHTTPClient extends BaseClient {
   final Client _client;
+  final bool _autoSendSessionId;
   final String _userAgent = "$keyLibraryName $keySdkVersion";
   ParseCoreData data = ParseCoreData();
   Map<String, String> additionalHeaders;
 
-  ParseHTTPClient([SecurityContext securityContext])
-      : _client = securityContext != null
+  ParseHTTPClient(
+      {bool autoSendSessionId = false, SecurityContext securityContext})
+      : _autoSendSessionId = autoSendSessionId,
+        _client = securityContext != null
             ? IOClient(HttpClient(context: securityContext))
             : IOClient();
 
@@ -17,7 +20,8 @@ class ParseHTTPClient extends BaseClient {
   Future<StreamedResponse> send(BaseRequest request) {
     request.headers[keyHeaderUserAgent] = _userAgent;
     request.headers[keyHeaderApplicationId] = data.applicationId;
-    if ((data.sessionId != null) &&
+    if ((_autoSendSessionId == true) &&
+        (data.sessionId != null) &&
         (request.headers[keyHeaderSessionToken] == null))
       request.headers[keyHeaderSessionToken] = data.sessionId;
 

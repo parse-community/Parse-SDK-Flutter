@@ -79,6 +79,7 @@ class Parse {
       String clientKey,
       String masterKey,
       String sessionId,
+      bool autoSendSessionId,
       SecurityContext securityContext}) {
     ParseCoreData.init(appId, serverUrl,
         debug: debug,
@@ -87,6 +88,7 @@ class Parse {
         masterKey: masterKey,
         clientKey: clientKey,
         sessionId: sessionId,
+        autoSendSessionId: autoSendSessionId,
         securityContext: securityContext);
 
     _hasBeenInitialized = true;
@@ -97,12 +99,15 @@ class Parse {
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
   Future<ParseResponse> healthCheck(
-      {bool debug, ParseHTTPClient client}) async {
+      {bool debug, ParseHTTPClient client, bool autoSendSessionId}) async {
     ParseResponse parseResponse;
 
     bool _debug = isDebugEnabled(objectLevelDebug: debug);
-    ParseHTTPClient _client =
-        client ?? ParseHTTPClient(ParseCoreData().securityContext);
+    ParseHTTPClient _client = client ??
+        ParseHTTPClient(
+            autoSendSessionId:
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            securityContext: ParseCoreData().securityContext);
 
     try {
       var response =
