@@ -1,10 +1,9 @@
-import 'package:test/test.dart';
 import 'package:parse_server_sdk/parse.dart';
+import 'package:test/test.dart';
 
-void main(){
-  test("testBuilder",() {
-    Parse().initialize("appId",
-        "serverUrl",
+void main() {
+  test("testBuilder", () {
+    Parse().initialize("appId", "serverUrl",
         clientKey: "clientKey",
         liveQueryUrl: "liveQueryUrl",
         appName: "appName",
@@ -20,6 +19,5 @@ void main(){
     expect(ParseCoreData().masterKey, "masterKey");
     expect(ParseCoreData().sessionId, "sessionId");
     expect(ParseCoreData().debug, true);
-
   });
 }
