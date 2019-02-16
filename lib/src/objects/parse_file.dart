@@ -1,28 +1,18 @@
 part of flutter_parse_sdk;
 
 class ParseFile extends ParseObject {
-  File _file;
-  String _fileName;
-  String _fileUrl;
+  File file;
+  String name;
+  String url;
 
   @override
   String _path;
-
-  String get name => _fileName;
-
-  String get url => _fileUrl;
-
-  File get file => _file;
-
-  set url(String url) => _fileUrl = url;
-
-  set name(String name) => _fileName = name;
 
   bool get saved => url != null;
 
   @override
   toJson({bool forApiRQ: false}) =>
-      <String, String>{'__type': keyFile, 'name': _fileName, 'url': _fileUrl};
+      <String, String>{'__type': keyFile, 'name': name, 'url': url};
 
   @override
   String toString() => json.encode(toString());
@@ -30,54 +20,52 @@ class ParseFile extends ParseObject {
   /// Creates a new file
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
-  ParseFile(this._file,
+  ParseFile(this.file,
       {String name, String url, bool debug, ParseHTTPClient client})
       : super(keyFile) {
-    client == null
-        ? _client = ParseHTTPClient(ParseCoreData().securityContext)
-        : _client = client;
-        
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    if (_file != null) {
-      this._fileName = path.basename(_file.path);
-      this._path = 'files/$_fileName';
+    _client = client ?? ParseHTTPClient(ParseCoreData().securityContext);
+
+    if (file != null) {
+      this.name = path.basename(file.path);
+      this._path = 'files/$name';
     } else {
-      this._fileName = name;
-      this._fileUrl = url;
+      this.name = name;
+      this.url = url;
     }
   }
 
   Future<ParseFile> loadStorage() async {
     Directory tempPath = await getTemporaryDirectory();
 
-    if (_fileName == null) {
-      _file = null;
+    if (name == null) {
+      file = null;
       return this;
     }
 
-    File possibleFile = new File("${tempPath.path}/$_fileName");
+    File possibleFile = new File("${tempPath.path}/$name");
     bool exists = await possibleFile.exists();
 
     if (exists) {
-      _file = possibleFile;
+      file = possibleFile;
     } else {
-      _file = null;
+      file = null;
     }
 
     return this;
   }
 
   Future<ParseFile> download() async {
-    if (_fileUrl == null) {
+    if (url == null) {
       return this;
     }
 
     Directory tempPath = await getTemporaryDirectory();
-    this._file = new File("${tempPath.path}/$_fileName");
-    await _file.create();
+    this.file = new File("${tempPath.path}/$name");
+    await file.create();
 
-    var response = await _client.get(_fileUrl);
-    _file.writeAsBytes(response.bodyBytes);
+    var response = await _client.get(url);
+    file.writeAsBytes(response.bodyBytes);
 
     return this;
   }
@@ -88,13 +76,13 @@ class ParseFile extends ParseObject {
       return this;
     }
 
-    final ext = path.extension(_file.path).replaceAll('.', '');
+    final ext = path.extension(file.path).replaceAll('.', '');
     final headers = <String, String>{
       HttpHeaders.contentTypeHeader: getContentType(ext)
     };
 
     var uri = _client.data.serverUrl + "$_path";
-    final body = await _file.readAsBytes();
+    final body = await file.readAsBytes();
     final response = await _client.post(uri, headers: headers, body: body);
     return handleResponse<ParseFile>(
         this, response, ParseApiRQ.upload, _debug, className);

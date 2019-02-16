@@ -33,7 +33,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Creates an instance of ParseUser
   ///
   /// Users can set whether debug should be set on this class with a [bool],
-  /// they can also create thier own custom version of [ParseHttpClient]
+  /// they can also create their own custom version of [ParseHttpClient]
   ///
   /// Creates a new user locally
   ///
@@ -43,10 +43,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   ParseUser(String username, String password, String emailAddress,
       {bool debug, ParseHTTPClient client})
       : super(keyClassUser) {
-    client == null
-        ? _client = ParseHTTPClient(ParseCoreData().securityContext)
-        : _client = client;
     _debug = isDebugEnabled(objectLevelDebug: debug);
+    _client = client ?? ParseHTTPClient(ParseCoreData().securityContext);
 
     this.username = username;
     this.password = password;
@@ -65,8 +63,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// fromServer can be called and an updated version of the [User] object will be
   /// returned
   static Future<ParseResponse> getCurrentUserFromServer(
-      {String token, bool debug}) async {
+      {String token, bool debug, ParseHTTPClient client}) async {
     bool _debug = isDebugEnabled(objectLevelDebug: debug);
+    ParseHTTPClient _client =
+        client ?? ParseHTTPClient(ParseCoreData().securityContext);
 
     // We can't get the current user and session without a sessionId
     if (token == null && ParseCoreData().sessionId == null) {
@@ -85,8 +85,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
           host: tempUri.host,
           path: "${tempUri.path}$keyEndPointUserName");
 
-      final response = await ParseHTTPClient(ParseCoreData().securityContext)
-          .get(uri, headers: {keyHeaderSessionToken: token});
+      final response =
+          await _client.get(uri, headers: {keyHeaderSessionToken: token});
       return _handleResponse(_getEmptyUser(), response, ParseApiRQ.currentUser,
           _debug, _getEmptyUser().className);
     } on Exception catch (e) {
@@ -271,17 +271,20 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   /// Gets a list of all users (limited return)
-  static Future<ParseResponse> all() async {
+  static Future<ParseResponse> all({bool debug, ParseHTTPClient client}) async {
     var emptyUser = ParseUser(null, null, null);
 
+    bool _debug = isDebugEnabled(objectLevelDebug: debug);
+    ParseHTTPClient _client =
+        client ?? ParseHTTPClient(ParseCoreData().securityContext);
+
     try {
-      final response = await ParseHTTPClient(ParseCoreData().securityContext)
-          .get("${ParseCoreData().serverUrl}/$path");
+      final response = await _client.get("${ParseCoreData().serverUrl}/$path");
 
       ParseResponse parseResponse =
           ParseResponse.handleResponse<ParseUser>(emptyUser, response);
 
-      if (ParseCoreData().debug) {
+      if (_debug) {
         logger(ParseCoreData().appName, keyClassUser,
             ParseApiRQ.getAll.toString(), parseResponse);
       }

@@ -14,10 +14,8 @@ class ParseGeoPoint extends ParseObject {
     _latitude = latitude;
     _longitude = longitude;
 
-    client == null
-        ? _client = ParseHTTPClient(ParseCoreData().securityContext)
-        : _client = client;
     _debug = isDebugEnabled(objectLevelDebug: debug);
+    _client = client ?? ParseHTTPClient(ParseCoreData().securityContext);
   }
 
   double get latitude => _latitude;
