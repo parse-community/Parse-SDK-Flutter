@@ -63,14 +63,19 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// fromServer can be called and an updated version of the [User] object will be
   /// returned
   static Future<ParseResponse> getCurrentUserFromServer(
-      {bool debug, ParseHTTPClient client}) async {
+      {String token, bool debug, ParseHTTPClient client}) async {
     bool _debug = isDebugEnabled(objectLevelDebug: debug);
     ParseHTTPClient _client =
         client ?? ParseHTTPClient(ParseCoreData().securityContext);
 
     // We can't get the current user and session without a sessionId
-    if (ParseCoreData().sessionId == null) {
+    if ((ParseCoreData().sessionId == null) && (token == null)) {
       return null;
+    }
+
+    final Map<String, String> headers = {};
+    if (token != null) {
+      headers[keyHeaderSessionToken] = token;
     }
 
     try {
@@ -81,7 +86,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
           host: tempUri.host,
           path: "${tempUri.path}$keyEndPointUserName");
 
-      final response = await _client.get(uri);
+      final response = await _client.get(uri, headers: headers);
       return _handleResponse(_getEmptyUser(), response, ParseApiRQ.currentUser,
           _debug, _getEmptyUser().className);
     } on Exception catch (e) {
