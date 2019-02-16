@@ -147,10 +147,10 @@ abstract class ParseBase {
   /// Saves item to simple key pair value storage
   ///
   /// Replicates Android SDK pin process and saves object to storage
-  Future<bool> unpin() async {
+  Future<bool> unpin({String key}) async {
     if (objectId != null) {
       await ParseCoreData().getStore()
-        ..remove(objectId);
+        ..remove(key ?? objectId);
       return true;
     }
 

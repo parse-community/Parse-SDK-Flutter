@@ -193,7 +193,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Removes the current user from the session data
   logout() {
     _client.data.sessionId = null;
-    unpin();
+    unpin(key: keyParseStoreUser);
     setObjectData(null);
   }
 
