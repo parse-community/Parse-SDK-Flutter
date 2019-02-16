@@ -155,9 +155,14 @@ class _MyAppState extends State<MyApp> {
     // Best practice for starting the app. This will check for a valid user
     user = await ParseUser.currentUser();
     await user.logout();
-    user = await ParseUser.currentUser();
 
-    response = await ParseUser.getCurrentUserFromServer();
+    user =
+        ParseUser("TestFlutter", "TestPassword123", "phill.wiggins@gmail.com");
+    response = await user.login();
+    if (response.success) user = response.result;
+
+    response = await ParseUser.getCurrentUserFromServer(
+        token: user.get(keyHeaderSessionToken));
     if (response.success) user = response.result;
 
     response = await user.save();

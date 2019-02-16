@@ -1,3 +1,6 @@
+## 1.0.12
+Fixed logout
+
 ## 1.0.11
 ParseFile fixed
 Anonymous login
