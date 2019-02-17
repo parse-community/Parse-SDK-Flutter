@@ -21,10 +21,18 @@ class ParseFile extends ParseObject {
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFile(this.file,
-      {String name, String url, bool debug, ParseHTTPClient client})
+      {String name,
+      String url,
+      bool debug,
+      ParseHTTPClient client,
+      bool autoSendSessionId})
       : super(keyFile) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ?? ParseHTTPClient(ParseCoreData().securityContext);
+    _client = client ??
+        ParseHTTPClient(
+            autoSendSessionId:
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            securityContext: ParseCoreData().securityContext);
 
     if (file != null) {
       this.name = path.basename(file.path);

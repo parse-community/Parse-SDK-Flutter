@@ -44,7 +44,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
       {bool debug, ParseHTTPClient client})
       : super(keyClassUser) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ?? ParseHTTPClient(ParseCoreData().securityContext);
+    _client = client ??
+        ParseHTTPClient(
+            autoSendSessionId: true,
+            securityContext: ParseCoreData().securityContext);
 
     this.username = username;
     this.password = password;
@@ -65,8 +68,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
   static Future<ParseResponse> getCurrentUserFromServer(
       {String token, bool debug, ParseHTTPClient client}) async {
     bool _debug = isDebugEnabled(objectLevelDebug: debug);
-    ParseHTTPClient _client =
-        client ?? ParseHTTPClient(ParseCoreData().securityContext);
+    ParseHTTPClient _client = client ??
+        ParseHTTPClient(
+            autoSendSessionId: true,
+            securityContext: ParseCoreData().securityContext);
 
     // We can't get the current user and session without a sessionId
     if ((ParseCoreData().sessionId == null) && (token == null)) {
@@ -272,8 +277,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
     var emptyUser = ParseUser(null, null, null);
 
     bool _debug = isDebugEnabled(objectLevelDebug: debug);
-    ParseHTTPClient _client =
-        client ?? ParseHTTPClient(ParseCoreData().securityContext);
+    ParseHTTPClient _client = client ??
+        ParseHTTPClient(
+            autoSendSessionId: true,
+            securityContext: ParseCoreData().securityContext);
 
     try {
       final response = await _client.get("${ParseCoreData().serverUrl}/$path");
