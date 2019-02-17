@@ -36,7 +36,8 @@ Parse().initialize(
         clientKey: ApplicationConstants.keyParseClientKey,
         debug: true,
         liveQuery: true,
-		securityContext: securityContext);
+        autoSendSessionId: true,
+        securityContext: securityContext);
 ```
 
 ## Queries
