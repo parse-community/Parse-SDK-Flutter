@@ -200,11 +200,35 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
-  /// Removes the current user from the session data
-  logout() {
-    _client.data.sessionId = null;
-    unpin(key: keyParseStoreUser);
-    setObjectData(null);
+  /// Sends a request to delete the sessions token from the
+  /// server. Will also delete the local user data unless
+  /// deleteLocalUserData is false.
+  logout({bool deleteLocalUserData = true}) async {
+    if (deleteLocalUserData) {
+      _client.data.sessionId = null;
+      unpin(key: keyParseStoreUser);
+      setObjectData(null);
+    }
+
+    try {
+      if (username == null) return null;
+
+      Uri tempUri = Uri.parse(_client.data.serverUrl);
+
+      Uri url = Uri(
+          scheme: tempUri.scheme,
+          host: tempUri.host,
+          path: "${tempUri.path}$keyEndPointLogout");
+
+      final response = await _client.post(
+        url,
+      );
+
+      return _handleResponse(
+          this, response, ParseApiRQ.logout, _debug, className);
+    } on Exception catch (e) {
+      return _handleException(e, ParseApiRQ.logout, _debug, className);
+    }
   }
 
   /// Sends a verification email to the users email address
