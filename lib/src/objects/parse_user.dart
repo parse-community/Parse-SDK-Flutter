@@ -206,8 +206,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
   Future<ParseResponse> logout({bool deleteLocalUserData = true}) async {
     final String sessionId = _client.data.sessionId;
 
+    _client.data.sessionId = null;
+
     if (deleteLocalUserData == true) {
-      _client.data.sessionId = null;
       unpin(key: keyParseStoreUser);
       setObjectData(null);
     }
