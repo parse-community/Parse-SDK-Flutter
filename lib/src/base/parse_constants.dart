@@ -7,6 +7,7 @@ const String keyLibraryName = 'Flutter Parse SDK';
 // End Points
 const String keyEndPointUserName = '/users/me';
 const String keyEndPointLogin = '/login';
+const String keyEndPointLogout = '/logout';
 const String keyEndPointUsers = '/users';
 const String keyEndPointVerificationEmail = '/verificationEmailRequest';
 const String keyEndPointRequestPasswordReset = '/requestPasswordReset';
