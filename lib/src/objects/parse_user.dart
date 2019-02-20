@@ -203,16 +203,17 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Sends a request to delete the sessions token from the
   /// server. Will also delete the local user data unless
   /// deleteLocalUserData is false.
-  logout({bool deleteLocalUserData = true}) async {
-    if (deleteLocalUserData) {
-      _client.data.sessionId = null;
+  Future<ParseResponse> logout({bool deleteLocalUserData = true}) async {
+    final String sessionId = _client.data.sessionId;
+
+    _client.data.sessionId = null;
+
+    if (deleteLocalUserData == true) {
       unpin(key: keyParseStoreUser);
       setObjectData(null);
     }
 
     try {
-      if (username == null) return null;
-
       Uri tempUri = Uri.parse(_client.data.serverUrl);
 
       Uri url = Uri(
@@ -220,9 +221,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
           host: tempUri.host,
           path: "${tempUri.path}$keyEndPointLogout");
 
-      final response = await _client.post(
-        url,
-      );
+      final response =
+          await _client.post(url, headers: {keyHeaderSessionToken: sessionId});
 
       return _handleResponse(
           this, response, ParseApiRQ.logout, _debug, className);
