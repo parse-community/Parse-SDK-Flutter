@@ -30,6 +30,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
   set emailAddress(String emailAddress) =>
       set<String>(keyVarEmail, emailAddress);
 
+  String get sessionToken => super.get<String>(keyVarSessionToken);
+
+  set sessionToken(String sessionToken) =>
+      set<String>(keyVarSessionToken, sessionToken);
+
   /// Creates an instance of ParseUser
   ///
   /// Users can set whether debug should be set on this class with a [bool],
@@ -41,7 +46,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// is required as well to create a full new user object on ParseServer. Only
   /// username and password is required to login
   ParseUser(String username, String password, String emailAddress,
-      {bool debug, ParseHTTPClient client})
+      {String sessionToken, bool debug, ParseHTTPClient client})
       : super(keyClassUser) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _client = client ??
@@ -52,6 +57,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     this.username = username;
     this.password = password;
     this.emailAddress = emailAddress;
+    this.sessionToken = sessionToken;
   }
 
   ParseUser.forQuery() : super(keyClassUser);
@@ -105,7 +111,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Current user is stored locally, but in case of a server update [bool]
   /// fromServer can be called and an updated version of the [User] object will be
   /// returned
-  static currentUser() {
+  static Future<ParseUser> currentUser() {
     return _getUserFromLocalStore();
   }
 
@@ -207,6 +213,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     final String sessionId = _client.data.sessionId;
 
     _client.data.sessionId = null;
+    ParseCoreData().setSessionId(null);
 
     if (deleteLocalUserData == true) {
       unpin(key: keyParseStoreUser);
@@ -366,7 +373,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
     Map<String, dynamic> responseData = JsonDecoder().convert(response.body);
     if (responseData.containsKey(keyVarObjectId)) {
       parseResponse.result.fromJson(responseData);
-      ParseCoreData().setSessionId(responseData[keyParamSessionToken]);
+      user.sessionToken = responseData[keyParamSessionToken];
+      ParseCoreData().setSessionId(user.sessionToken);
     }
 
     if (type == ParseApiRQ.getAll || type == ParseApiRQ.destroy) {
