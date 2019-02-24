@@ -22,6 +22,7 @@ const String keyVarUpdatedAt = 'updatedAt';
 const String keyVarUsername = 'username';
 const String keyVarEmail = 'email';
 const String keyVarPassword = 'password';
+const String keyVarSessionToken = 'sessionToken';
 const String keyVarAcl = 'ACL';
 
 // Classes
