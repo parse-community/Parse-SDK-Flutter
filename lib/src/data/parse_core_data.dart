@@ -17,6 +17,7 @@ class ParseCoreData {
       masterKey,
       clientKey,
       sessionId,
+      autoSendSessionId,
       securityContext}) {
     _instance = ParseCoreData._init(appId, serverUrl);
 
@@ -26,6 +27,8 @@ class ParseCoreData {
     if (clientKey != null) _instance.clientKey = clientKey;
     if (masterKey != null) _instance.masterKey = masterKey;
     if (sessionId != null) _instance.sessionId = sessionId;
+    if (autoSendSessionId != null)
+      _instance.autoSendSessionId = autoSendSessionId;
     if (securityContext != null) _instance.securityContext = securityContext;
   }
 
@@ -36,6 +39,7 @@ class ParseCoreData {
   String masterKey;
   String clientKey;
   String sessionId;
+  bool autoSendSessionId;
   SecurityContext securityContext;
   bool debug;
   SharedPreferences storage;
@@ -52,12 +56,8 @@ class ParseCoreData {
     this.sessionId = sessionId;
   }
 
-  void initStorage() async {
-    storage = await SharedPreferences.getInstance();
-  }
-
   Future<SharedPreferences> getStore() async {
-    return storage != null ? storage : await SharedPreferences.getInstance();
+    return storage ?? (storage = await SharedPreferences.getInstance());
   }
 
   @override

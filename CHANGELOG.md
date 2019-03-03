@@ -1,3 +1,12 @@
+## 1.0.12
+Fixed logout
+
+## 1.0.11
+ParseFile fixed
+Anonymous login
+SecurityContext
+CloudFunctions with objects
+
 ## 1.0.10
 Add ParseConfig.
 Fixed whereEqualsTo('', PARSEOBJECT) and other queries

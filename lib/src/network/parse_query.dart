@@ -27,7 +27,7 @@ class QueryBuilder<T extends ParseObject> {
     limiters['where'] = where;
   }
 
-  /// Orders the results ascedingly.
+  /// Sorts the results in ascending order.
   ///
   /// [String] order will be the column of the table that the results are
   /// ordered by
@@ -35,7 +35,7 @@ class QueryBuilder<T extends ParseObject> {
     limiters["order"] = order;
   }
 
-  /// Orders the results descendingly.
+  /// Sorts the results descending order.
   ///
   /// [String] order will be the column of the table that the results are
   /// ordered by
@@ -48,12 +48,12 @@ class QueryBuilder<T extends ParseObject> {
   /// [String] keys will only return the columns of a result you want the data for,
   /// this is useful for large objects
   void keysToReturn(List<String> keys) {
-    limiters["keys"] = concatArray(keys);
+    limiters["keys"] = concatenateArray(keys);
   }
 
   /// Includes other ParseObjects stored as a Pointer
   void includeObject(List<String> objectTypes) {
-    limiters["include"] = concatArray(objectTypes);
+    limiters["include"] = concatenateArray(objectTypes);
   }
 
   /// Returns an object where the [String] column starts with [value]
@@ -131,7 +131,7 @@ class QueryBuilder<T extends ParseObject> {
         MapEntry(column, value), "\$nin"));
   }
 
-  /// Returns an object where the [String] column for the object has data correctley entered/saved
+  /// Returns an object where the [String] column for the object has data correctly entered/saved
   void whereValueExists(String column, bool value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
         MapEntry(column, value), "\$exists"));
@@ -211,7 +211,7 @@ class QueryBuilder<T extends ParseObject> {
     return queryBuilder;
   }
 
-  String concatArray(List<String> queries) {
+  String concatenateArray(List<String> queries) {
     String queryBuilder = "";
 
     for (var item in queries) {
@@ -252,17 +252,17 @@ class QueryBuilder<T extends ParseObject> {
   /// This joins queries that should be joined together... e.g. age > 10 &&
   /// age < 20, this would be similar to age > 10 < 20
   List _checkForMultipleColumnInstances(List<MapEntry> queries) {
-    List<MapEntry> sanitisedQueries = List();
+    List<MapEntry> sanitizedQueries = List();
     List<String> keysAlreadyCompacted = List();
 
     // Run through each query
     for (var query in queries) {
-      // Add queries that don't need sanitising
+      // Add queries that don't need sanitizing
       if (query.key == _NO_OPERATOR_NEEDED || query.key == _SINGLE_QUERY) {
-        sanitisedQueries.add(MapEntry(_NO_OPERATOR_NEEDED, query.value));
+        sanitizedQueries.add(MapEntry(_NO_OPERATOR_NEEDED, query.value));
       }
 
-      // Check if query with same column name has been sanitised
+      // Check if query with same column name has been sanitized
       if (!keysAlreadyCompacted.contains(query.key) &&
           query.key != _NO_OPERATOR_NEEDED &&
           query.key != _SINGLE_QUERY) {
@@ -290,11 +290,11 @@ class QueryBuilder<T extends ParseObject> {
           }
         }
 
-        sanitisedQueries.add(MapEntry(query.key, queryStart += "{$queryEnd}"));
+        sanitizedQueries.add(MapEntry(query.key, queryStart += "{$queryEnd}"));
       }
     }
 
-    return sanitisedQueries;
+    return sanitizedQueries;
   }
 
   /// Adds the limiters to the query, i.e. skip=10, limit=10

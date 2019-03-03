@@ -25,7 +25,7 @@ String getContentType(String extension) {
   return contentType;
 }
 
-/// Add content types based on extesion to a map
+/// Add content types based on extension to a map
 Map _queryExtensions() {
   Map extensions = Map();
 

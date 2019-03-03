@@ -88,7 +88,7 @@ abstract class ParseBase {
 
   /// Returns the objects variables
   @protected
-  Map getObjectData() => _objectData != null ? _objectData : Map();
+  Map getObjectData() => _objectData ?? Map();
 
   /// Saves in storage
   @protected
@@ -147,10 +147,10 @@ abstract class ParseBase {
   /// Saves item to simple key pair value storage
   ///
   /// Replicates Android SDK pin process and saves object to storage
-  Future<bool> unpin() async {
+  Future<bool> unpin({String key}) async {
     if (objectId != null) {
-      await SharedPreferences.getInstance()
-        ..remove(objectId);
+      await ParseCoreData().getStore()
+        ..remove(key ?? objectId);
       return true;
     }
 
@@ -165,13 +165,7 @@ abstract class ParseBase {
       var itemFromStore =
           (await ParseCoreData().getStore()).getString(objectId);
 
-      if (itemFromStore != null) {
-        var map = json.decode(itemFromStore);
-
-        if (map != null) {
-          return fromJson(map);
-        }
-      }
+      if (itemFromStore != null) return fromJson(json.decode(itemFromStore));
     }
     return null;
   }

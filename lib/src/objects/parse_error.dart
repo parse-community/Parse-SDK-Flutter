@@ -48,7 +48,7 @@ class ParseError {
     204: 'EmailMissing',
     205: 'EmailNotFound',
     206: 'SessionMissing',
-    207: 'MustCreateUserThroughSignup',
+    207: 'MustCreateUserThroughSignUp',
     208: 'AccountAlreadyLinked',
     209: 'InvalidSessionToken',
     250: 'LinkedIdMissing',
@@ -63,7 +63,7 @@ class ParseError {
 
   ParseError(
       {this.code = -1,
-      this.message = "Unkown error",
+      this.message = "Unknown error",
       this.isTypeOfException = false,
       bool debug: false}) {
     type = exceptions[code];

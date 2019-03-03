@@ -9,15 +9,18 @@ class ParseGeoPoint extends ParseObject {
       {double latitude = 0.0,
       double longitude = 0.0,
       bool debug,
-      ParseHTTPClient client})
+      ParseHTTPClient client,
+      bool autoSendSessionId})
       : super(keyGeoPoint) {
     _latitude = latitude;
     _longitude = longitude;
 
-    client == null
-        ? _client = ParseHTTPClient(ParseCoreData().securityContext)
-        : _client = client;
     _debug = isDebugEnabled(objectLevelDebug: debug);
+    _client = client ??
+        ParseHTTPClient(
+            autoSendSessionId:
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            securityContext: ParseCoreData().securityContext);
   }
 
   double get latitude => _latitude;
