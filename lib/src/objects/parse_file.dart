@@ -11,7 +11,7 @@ class ParseFile extends ParseObject {
   bool get saved => url != null;
 
   @override
-  toJson({bool forApiRQ: false}) =>
+  toJson({bool full: false, bool forApiRQ: false}) =>
       <String, String>{'__type': keyFile, 'name': name, 'url': url};
 
   @override
