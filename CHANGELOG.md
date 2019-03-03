@@ -1,3 +1,9 @@
+## 1.0.13
+Added full bool to convert objects to JSON correctly
+
+## 1.0.12
+Fixed logout
+
 ## 1.0.11
 ParseFile fixed
 Anonymous login

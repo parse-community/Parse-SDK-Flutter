@@ -24,7 +24,7 @@ abstract class ParseBase {
 
   /// Converts object to [String] in JSON format
   @protected
-  toJson({bool forApiRQ: false}) {
+  toJson({bool full, bool forApiRQ: false}) {
     final map = <String, dynamic>{
       keyVarClassName: className,
     };
@@ -42,7 +42,7 @@ abstract class ParseBase {
     }
 
     getObjectData().forEach((key, value) {
-      if (!map.containsKey(key)) map[key] = parseEncode(value);
+      if (!map.containsKey(key)) map[key] = parseEncode(value, full: full);
     });
 
     if (forApiRQ) {
@@ -135,9 +135,10 @@ abstract class ParseBase {
   Future<bool> pin() async {
     if (objectId != null) {
       await unpin();
-      var objectToSave = json.encode(toJson());
-      await ParseCoreData().getStore()
-        ..setString(objectId, objectToSave);
+      final Map<String, dynamic> objectMap = parseEncode(this, full: true);
+      final String json = jsonEncode(objectMap);
+      var store = await ParseCoreData().getStore();
+      store.setString(objectId, json);
       return true;
     } else {
       return false;
