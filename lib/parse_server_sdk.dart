@@ -13,6 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:devicelocale/devicelocale.dart';
+import 'package:package_info/package_info.dart';
 
 part 'src/base/parse_constants.dart';
 
@@ -45,6 +47,8 @@ part 'src/objects/parse_object.dart';
 part 'src/objects/parse_response.dart';
 
 part 'src/objects/parse_user.dart';
+
+part 'src/objects/parse_installation.dart';
 
 part 'src/utils/parse_decoder.dart';
 
