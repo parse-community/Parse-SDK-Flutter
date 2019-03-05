@@ -28,6 +28,7 @@ const String keyVarAcl = 'ACL';
 // Classes
 const String keyClassMain = 'ParseMain';
 const String keyClassUser = '_User';
+const String keyClassInstallation = '_Installation';
 const String keyGeoPoint = 'GeoPoint';
 const String keyFile = 'File';
 
@@ -47,3 +48,4 @@ const String keyParamSessionToken = 'sessionToken';
 // Storage
 const String keyParseStoreBase = 'flutter_parse_sdk_';
 const String keyParseStoreUser = "${keyParseStoreBase}user";
+const String keyParseStoreInstallation = "${keyParseStoreBase}installation";
