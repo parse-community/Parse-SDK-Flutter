@@ -62,7 +62,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   ParseUser.forQuery() : super(keyClassUser);
 
-  createUser(String username, String password, [String emailAddress]) {
+  static createUser([String username, String password, String emailAddress]) {
     return ParseUser(username, password, emailAddress);
   }
 
@@ -203,6 +203,44 @@ class ParseUser extends ParseObject implements ParseCloneable {
           this, response, ParseApiRQ.loginAnonymous, _debug, className);
     } on Exception catch (e) {
       return _handleException(e, ParseApiRQ.loginAnonymous, _debug, className);
+    }
+  }
+
+  // Logs in a user using a service
+  static Future<ParseUser> loginWith(String provider, Object authData) async {
+    ParseUser user = ParseUser.createUser();
+    var response = await user._loginWith(provider, authData);
+    if (response.success) {
+      return user;
+    } else {
+      return Future.error(response);
+    }
+  }
+
+  Future<ParseResponse> _loginWith(String provider, Object authData) async {
+    try {
+      Uri tempUri = Uri.parse(_client.data.serverUrl);
+
+      Uri url = Uri(
+        scheme: tempUri.scheme,
+        host: tempUri.host,
+        path: "${tempUri.path}$keyEndPointUsers",
+      );
+
+      final response = await _client.post(url,
+          headers: {
+            keyHeaderRevocableSession: "1",
+          },
+          body: jsonEncode({
+            "authData": {
+              provider: authData
+            }
+          }));
+
+      return _handleResponse(
+          this, response, ParseApiRQ.loginWith, _debug, className);
+    } on Exception catch (e) {
+      return _handleException(e, ParseApiRQ.loginWith, _debug, className);
     }
   }
 
