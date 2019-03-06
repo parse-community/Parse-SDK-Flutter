@@ -182,6 +182,57 @@ class QueryBuilder<T extends ParseObject> {
     if (orderByScore) orderByDescending('score');
   }
 
+    /// Returns an objects with key point values near the point given
+  void whereNear(String column, ParseGeoPoint point) {
+    var latitude = point.latitude;
+    var longitude = point.longitude;
+    queries.add(MapEntry(_SINGLE_QUERY,
+        '\"$column\":{\"\$nearSphere\":{\"__type\":\"GeoPoint\",\"latitude\":$latitude,\"longitude\":$longitude}}'));
+  }
+
+  /// Returns an object with key point values near the point given and within the maximum distance given.
+  void whereWithinMiles(
+      String column, ParseGeoPoint point, double maxDistance) {
+    var latitude = point.latitude;
+    var longitude = point.longitude;
+
+    queries.add(MapEntry(_SINGLE_QUERY,
+        '\"$column\":{\"\$nearSphere\":{\"__type\":\"GeoPoint\",\"latitude\":$latitude,\"longitude\":$longitude},\"\$maxDistanceInMiles\":$maxDistance}'));
+  }
+
+  /// Returns an object with key point values near the point given and within the maximum distance given.
+  void whereWithinKilometers(
+      String column, ParseGeoPoint point, double maxDistance) {
+    var latitude = point.latitude;
+    var longitude = point.longitude;
+
+    queries.add(MapEntry(_SINGLE_QUERY,
+        '\"$column\":{\"\$nearSphere\":{\"__type\":\"GeoPoint\",\"latitude\":$latitude,\"longitude\":$longitude},\"\$maxDistanceInKilometers\":$maxDistance}'));
+  }
+
+  /// Returns an object with key point values near the point given and within the maximum distance given.
+  void whereWithinRadians(
+      String column, ParseGeoPoint point, double maxDistance) {
+    var latitude = point.latitude;
+    var longitude = point.longitude;
+
+    queries.add(MapEntry(_SINGLE_QUERY,
+        '\"$column\":{\"\$nearSphere\":{\"__type\":\"GeoPoint\",\"latitude\":$latitude,\"longitude\":$longitude},\"\$maxDistanceInRadians\":$maxDistance}'));
+  }
+
+  /// Returns an object with key point values contained within a given rectangular geographic bounding box.
+  void whereWithinGeoBox(
+      String column, ParseGeoPoint southwest, ParseGeoPoint northeast) {
+    var latitudeS = southwest.latitude;
+    var longitudeS = southwest.longitude;
+
+    var latitudeN = northeast.latitude;
+    var longitudeN = northeast.longitude;
+
+    queries.add(MapEntry(_SINGLE_QUERY,
+        '\"$column\":{\"\$within\":{\"\$box\": [{\"__type\": \"GeoPoint\",\"latitude\":$latitudeS,\"longitude\":$longitudeS},{\"__type\": \"GeoPoint\",\"latitude\":$latitudeN,\"longitude\":$longitudeN}]}}'));
+  }
+
   /// Finishes the query and calls the server
   ///
   /// Make sure to call this after defining your queries
