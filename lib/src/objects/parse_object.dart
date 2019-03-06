@@ -190,9 +190,10 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Deletes the current object locally and online
-  Future<ParseResponse> delete(String path, String objectId) async {
+  Future<ParseResponse> delete(String objectId, {String path}) async {
     try {
-      var uri = "${ParseCoreData().serverUrl}$_path/$objectId";
+      path ??= _path;
+      var uri = "${ParseCoreData().serverUrl}$path/$objectId";
       var result = await _client.delete(uri);
       return handleResponse(this, result, ParseApiRQ.delete, _debug, className);
     } on Exception catch (e) {
