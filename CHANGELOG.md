@@ -1,3 +1,8 @@
+## 1.0.14
+Corrected delete & path issue
+Added Geo queries
+Added ability to add login oAuth data
+
 ## 1.0.13
 Added full bool to convert objects to JSON correctly
 
