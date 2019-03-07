@@ -1,3 +1,6 @@
+## 1.0.15
+Fixed 'full' bool issue
+
 ## 1.0.14
 Corrected delete & path issue
 Added Geo queries
