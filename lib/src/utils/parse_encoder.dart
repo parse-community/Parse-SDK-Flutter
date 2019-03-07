@@ -9,7 +9,9 @@ dynamic dateTimeEncoder(dynamic item) {
 }
 
 /// Custom json encoder for types related to parse
-dynamic parseEncode(dynamic value, {bool full = false}) {
+dynamic parseEncode(dynamic value, {bool full}) {
+  full ??= false;
+
   if (value is DateTime) return _encodeDate(value);
 
   if (value is List) {
