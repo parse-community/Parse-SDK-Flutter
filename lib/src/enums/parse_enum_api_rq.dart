@@ -14,6 +14,7 @@ enum ParseApiRQ {
   login,
   logout,
   loginAnonymous,
+  loginWith,
   verificationEmailRequest,
   requestPasswordReset,
   destroy,
