@@ -3,7 +3,6 @@ part of flutter_parse_sdk;
 class ParseSession extends ParseObject implements ParseCloneable {
   @override
   clone(Map map) {
-    print(map);
     return this.fromJson(map);
   }
 
