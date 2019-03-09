@@ -84,7 +84,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Removes an element from an Array
   Future<ParseResponse> remove(String key, dynamic values) async {
     if (key != null) {
-      return await _sortArrays(ParseApiRQ.remove, "Remove", key, [values]);
+      return await _sortArrays(ParseApiRQ.remove, "Remove", key, values);
     } else {
       return null;
     }
@@ -130,11 +130,15 @@ class ParseObject extends ParseBase implements ParseCloneable {
   Future<ParseResponse> _sortArrays(ParseApiRQ apiRQType, String arrayAction,
       String key, List<dynamic> values) async {
     try {
-      var uri = "${ParseCoreData().serverUrl}$_path";
-      var body =
-          "{\"$key\":{\"__op\": \"$arrayAction\", \"objects\": ${parseEncode(values)}";
-      var result = await _client.put(uri, body: body);
-      return handleResponse(this, result, apiRQType, _debug, className);
+      if (objectId != null) {
+        var uri = "${ParseCoreData().serverUrl}$_path/$objectId";
+        var body =
+            "{\"$key\":{\"__op\":\"$arrayAction\",\"objects\":${json.encode(parseEncode(values))}}}";
+        var result = await _client.put(uri, body: body);
+        return handleResponse(this, result, apiRQType, _debug, className);
+      } else {
+        return null;
+      }
     } on Exception catch (e) {
       return handleException(e, apiRQType, _debug, className);
     }
@@ -160,12 +164,16 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
   /// Can be used to add arrays to a given type
   Future<ParseResponse> _increment(
-      ParseApiRQ apiRQType, String arrayAction, String key, num amount) async {
+      ParseApiRQ apiRQType, String countAction, String key, num amount) async {
     try {
-      var uri = "${ParseCoreData().serverUrl}$_path";
-      var body = "{\"$key\":{\"__op\": \"$arrayAction\", \"amount\": $amount}";
+      if (objectId != null) {
+      var uri = "${ParseCoreData().serverUrl}$_path/$objectId";
+      var body = "{\"$key\":{\"__op\":\"$countAction\",\"amount\":$amount}}";
       var result = await _client.put(uri, body: body);
       return handleResponse(this, result, apiRQType, _debug, className);
+      } else {
+        return null;
+      }
     } on Exception catch (e) {
       return handleException(e, apiRQType, _debug, className);
     }
