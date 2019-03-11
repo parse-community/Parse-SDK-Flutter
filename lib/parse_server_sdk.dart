@@ -48,6 +48,8 @@ part 'src/objects/parse_response.dart';
 
 part 'src/objects/parse_user.dart';
 
+part 'src/objects/parse_session.dart';
+
 part 'src/objects/parse_installation.dart';
 
 part 'src/utils/parse_decoder.dart';

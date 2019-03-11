@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/application_constants.dart';
 import 'package:flutter_plugin_example/diet_plan.dart';
+import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
-void main() => runApp(new MyApp());
+void main() {
+  Stetho.initialize();
+  runApp(new MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -109,10 +113,10 @@ class _MyAppState extends State<MyApp> {
       if (randomInt is int) print('Saving generic value worked!');
 
       // Shows example of pinning an item
-      dietPlan.pin();
+      await dietPlan.pin();
 
       // shows example of retrieving a pin
-      var newDietPlanFromPin = DietPlan().fromPin('R5EonpUDWy');
+      var newDietPlanFromPin = await DietPlan().fromPin('R5EonpUDWy');
       if (newDietPlanFromPin != null) print('Retreiving from pin worked!');
     } else {
       print(ApplicationConstants.keyAppName + ": " + apiResponse.error.message);
@@ -149,9 +153,6 @@ class _MyAppState extends State<MyApp> {
     if (response.success) user = response.result;
 
     response = await user.verificationEmailRequest();
-    if (response.success) user = response.result;
-
-    user = null;
     // Best practice for starting the app. This will check for a valid user
     user = await ParseUser.currentUser();
     await user.logout();
