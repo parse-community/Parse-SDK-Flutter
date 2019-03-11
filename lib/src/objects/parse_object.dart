@@ -29,6 +29,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
             securityContext: ParseCoreData().securityContext);
   }
 
+  /// Converts the object to a Pointer to be used ONLY in queries using Pointers
   dynamic toPointer() => json.encode(parseEncode(this));
 
   /// Gets an object from the server using it's [String] objectId
@@ -63,6 +64,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
             ParseApiRQ.create.toString(), uri, body);
       }
       var result = await _client.post(uri, body: body);
+
+      //Set the objectId on the object after it is created.
+      //This allows you to perform operations on the object after creation
+      if (result.statusCode == 201) {
+        final map = json.decode(result.body);
+        this.objectId = map["objectId"].toString();
+      }
+
       return handleResponse(this, result, ParseApiRQ.create, _debug, className);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.create, _debug, className);
