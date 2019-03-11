@@ -8,4 +8,3 @@ pubspec.lock
 
 build/
 .idea
-example/ios/Podfile
