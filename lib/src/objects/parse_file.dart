@@ -36,7 +36,7 @@ class ParseFile extends ParseObject {
 
     if (file != null) {
       this.name = path.basename(file.path);
-      this._path = 'files/$name';
+      this._path = '/files/$name';
     } else {
       this.name = name;
       this.url = url;

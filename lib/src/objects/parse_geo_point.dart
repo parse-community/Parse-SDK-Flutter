@@ -36,4 +36,11 @@ class ParseGeoPoint extends ParseObject {
     assert(value >= -180.0 || value <= 180.0);
     _longitude = value;
   }
+
+  @override
+  toJson({bool full: false, bool forApiRQ: false}) => <String, dynamic>{
+        "__type": "GeoPoint",
+        "latitude": _latitude,
+        "longitude": _longitude
+      };
 }
