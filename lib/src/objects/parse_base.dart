@@ -52,7 +52,7 @@ abstract class ParseBase {
       map.remove(keyVarAcl);
       map.remove(keyParamSessionToken);
     }
-
+    
     return map;
   }
 

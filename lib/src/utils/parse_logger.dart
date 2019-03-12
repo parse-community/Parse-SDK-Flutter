@@ -28,3 +28,17 @@ void logger(String appName, String className, String type,
   responseString += "\n----\n";
   print(responseString);
 }
+
+void logRequest(
+    String appName, String className, String type, String uri, String body) {
+  var requestString = ' \n';
+  var name = appName;
+  if (name.length > 0) name = "$appName ";
+
+  requestString += "----\n${name}API Request ($className : $type) :";
+  requestString += "\nUri: ${uri}";
+  requestString += "\nBody: ${body}";
+
+  requestString += "\n----\n";
+  print(requestString);
+}

@@ -232,9 +232,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
             keyHeaderRevocableSession: "1",
           },
           body: jsonEncode({
-            "authData": {
-              provider: authData
-            }
+            "authData": {provider: authData}
           }));
 
       return _handleResponse(
@@ -424,4 +422,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   static ParseUser _getEmptyUser() => ParseUser(null, null, null);
+
+  @override
+  toJson({bool full: false, bool forApiRQ: false}) => <String, String>{
+        "__type": "Pointer",
+        keyVarClassName: keyClassUser,
+        keyVarObjectId: this.objectId
+      };
 }
