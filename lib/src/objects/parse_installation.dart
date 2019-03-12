@@ -10,7 +10,8 @@ class ParseInstallation extends ParseObject {
   static final String keyAppVersion = 'appVersion';
   static final String keyAppIdentifier = 'appIdentifier';
   static final String keyParseVersion = 'parseVersion';
-  static final List<String> readOnlyKeys = [ //TODO
+  static final List<String> readOnlyKeys = [
+    //TODO
     keyDeviceToken, keyDeviceType, keyInstallationId,
     keyAppName, keyAppVersion, keyAppIdentifier, keyParseVersion
   ];
@@ -24,13 +25,15 @@ class ParseInstallation extends ParseObject {
 
   String get deviceToken => super.get<String>(keyDeviceToken);
 
-  set deviceToken(String deviceToken) => set<String>(keyDeviceToken, deviceToken);
+  set deviceToken(String deviceToken) =>
+      set<String>(keyDeviceToken, deviceToken);
 
   String get deviceType => super.get<String>(keyDeviceType);
 
   String get installationId => super.get<String>(keyInstallationId);
 
-  set _installationId(String installationId) => set<String>(keyInstallationId, installationId);
+  set _installationId(String installationId) =>
+      set<String>(keyInstallationId, installationId);
 
   String get appName => super.get<String>(keyAppName);
 
@@ -42,9 +45,7 @@ class ParseInstallation extends ParseObject {
 
   /// Creates an instance of ParseInstallation
   ParseInstallation(
-      {bool debug,
-      ParseHTTPClient client,
-      bool autoSendSessionId})
+      {bool debug, ParseHTTPClient client, bool autoSendSessionId})
       : super(keyClassInstallation) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _client = client ??
@@ -60,7 +61,8 @@ class ParseInstallation extends ParseObject {
     if (_currentInstallationId == null) {
       _currentInstallationId = (await _getFromLocalStore()).installationId;
     }
-    return _currentInstallationId != null && installation.installationId == _currentInstallationId;
+    return _currentInstallationId != null &&
+        installation.installationId == _currentInstallationId;
   }
 
   /// Gets the current installation from storage
@@ -75,9 +77,12 @@ class ParseInstallation extends ParseObject {
   /// Updates the installation with current device data
   _updateInstallation() async {
     //Device type
-    if (Platform.isAndroid) set<String>(keyDeviceType, "android");
-    else if (Platform.isIOS) set<String>(keyDeviceType, "ios");
-    else throw Exception("Unsupported platform/operating system");
+    if (Platform.isAndroid)
+      set<String>(keyDeviceType, "android");
+    else if (Platform.isIOS)
+      set<String>(keyDeviceType, "ios");
+    else
+      throw Exception("Unsupported platform/operating system");
 
     //Locale
     String locale = await Devicelocale.currentLocale;
@@ -99,7 +104,8 @@ class ParseInstallation extends ParseObject {
   Future<ParseResponse> create() async {
     var isCurrent = await ParseInstallation.isCurrent(this);
     if (isCurrent) await _updateInstallation();
-    ParseResponse parseResponse = await super.create();
+    //ParseResponse parseResponse = await super.create();
+    ParseResponse parseResponse = await _create();
     if (parseResponse.success && isCurrent) {
       saveInStorage(keyParseStoreInstallation);
     }
@@ -110,7 +116,8 @@ class ParseInstallation extends ParseObject {
   Future<ParseResponse> save() async {
     var isCurrent = await ParseInstallation.isCurrent(this);
     if (isCurrent) await _updateInstallation();
-    ParseResponse parseResponse = await super.save();
+    //ParseResponse parseResponse = await super.save();
+    ParseResponse parseResponse = await _save();
     if (parseResponse.success && isCurrent) {
       saveInStorage(keyParseStoreInstallation);
     }
@@ -144,5 +151,77 @@ class ParseInstallation extends ParseObject {
     installation._installationId = _currentInstallationId;
     await installation._updateInstallation();
     return installation;
+  }
+
+  /// Creates a new object and saves it online
+  Future<ParseResponse> _create() async {
+    try {
+      var uri = _client.data.serverUrl + "$keyEndPointInstallations";
+      var body = json.encode(toJson(forApiRQ: true));
+      if (_debug) {
+        logRequest(ParseCoreData().appName, className,
+            ParseApiRQ.create.toString(), uri, body);
+      }
+      var result = await _client.post(uri, body: body);
+
+      //Set the objectId on the object after it is created.
+      //This allows you to perform operations on the object after creation
+      if (result.statusCode == 201) {
+        final map = json.decode(result.body);
+        this.objectId = map["objectId"].toString();
+      }
+
+      return handleResponse(this, result, ParseApiRQ.create, _debug, className);
+    } on Exception catch (e) {
+      return handleException(e, ParseApiRQ.create, _debug, className);
+    }
+  }
+
+  /// Saves the current object online
+  Future<ParseResponse> _save() async {
+    if (getObjectData()[keyVarObjectId] == null) {
+      return create();
+    } else {
+      try {
+        var uri =
+            "${ParseCoreData().serverUrl}$keyEndPointInstallations/$objectId";
+        var body = json.encode(toJson(forApiRQ: true));
+        if (_debug) {
+          logRequest(ParseCoreData().appName, className,
+              ParseApiRQ.save.toString(), uri, body);
+        }
+        var result = await _client.put(uri, body: body);
+        return handleResponse(this, result, ParseApiRQ.save, _debug, className);
+      } on Exception catch (e) {
+        return handleException(e, ParseApiRQ.save, _debug, className);
+      }
+    }
+  }
+
+  ///Subscribes the device to a channel of push notifications.
+  void subscribeToChannel(String value) {
+    final List<dynamic> channel = [value];
+    this.addUnique("channels", channel);
+  }
+
+  ///Unsubscribes the device to a channel of push notifications.
+  void unsubscribeFromChannel(String value) {
+    final List<dynamic> channel = [value];
+    this.removeAll("channels", channel);
+  }
+
+  ///Returns an <List<String>> containing all the channel names this device is subscribed to.
+  Future<List<dynamic>> getSubscribedChannels() async {
+    print("getSubscribedChannels");
+    final apiResponse =
+        await ParseObject(keyClassInstallation).getObject(this.objectId);
+
+    if (apiResponse.success) {
+      var installation = apiResponse.result as ParseObject;
+      print("achou installation");
+      return Future.value(installation.get<List<dynamic>>("channels"));
+    } else {
+      return null;
+    }
   }
 }

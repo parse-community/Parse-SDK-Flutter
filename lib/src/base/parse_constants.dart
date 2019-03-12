@@ -10,6 +10,7 @@ const String keyEndPointLogin = '/login';
 const String keyEndPointLogout = '/logout';
 const String keyEndPointUsers = '/users';
 const String keyEndPointSessions = '/sessions';
+const String keyEndPointInstallations = '/installations';
 const String keyEndPointVerificationEmail = '/verificationEmailRequest';
 const String keyEndPointRequestPasswordReset = '/requestPasswordReset';
 const String keyEndPointClasses = '/classes/';
