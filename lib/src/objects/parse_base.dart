@@ -52,7 +52,7 @@ abstract class ParseBase {
       map.remove(keyVarAcl);
       map.remove(keyParamSessionToken);
     }
-    
+
     return map;
   }
 
@@ -61,6 +61,10 @@ abstract class ParseBase {
 
   @protected
   fromJson(Map objectData) {
+    if (objectData == null) {
+      return this;
+    }
+
     objectData.forEach((key, value) {
       if (key == className || key == '__type') {
         // NO OP
