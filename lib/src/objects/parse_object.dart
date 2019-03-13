@@ -84,13 +84,21 @@ class ParseObject extends ParseBase implements ParseCloneable {
       return create();
     } else {
       try {
-        var uri = "${ParseCoreData().serverUrl}$_path/$objectId";
+
+        Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
+
+        Uri url = Uri(
+            scheme: tempUri.scheme,
+            host: tempUri.host,
+            port: tempUri.port,
+            path: "${tempUri.path}$_path/$objectId");
+
         var body = json.encode(toJson(forApiRQ: true));
         if (_debug) {
           logRequest(ParseCoreData().appName, className,
-              ParseApiRQ.save.toString(), uri, body);
+              ParseApiRQ.save.toString(), url.toString(), body);
         }
-        var result = await _client.put(uri, body: body);
+        var result = await _client.put(url, body: body);
         return handleResponse(this, result, ParseApiRQ.save, _debug, className);
       } on Exception catch (e) {
         return handleException(e, ParseApiRQ.save, _debug, className);
@@ -178,10 +186,18 @@ class ParseObject extends ParseBase implements ParseCloneable {
       String key, List<dynamic> values) async {
     try {
       if (objectId != null) {
-        var uri = "${ParseCoreData().serverUrl}$_path/$objectId";
+
+        Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
+
+        Uri url = Uri(
+            scheme: tempUri.scheme,
+            host: tempUri.host,
+            port: tempUri.port,
+            path: "${tempUri.path}$_path/$objectId");
+
         var body =
             "{\"$key\":{\"__op\":\"$arrayAction\",\"objects\":${json.encode(parseEncode(values))}}}";
-        var result = await _client.put(uri, body: body);
+        var result = await _client.put(url, body: body);
         return handleResponse(this, result, apiRQType, _debug, className);
       } else {
         return null;
@@ -234,9 +250,17 @@ class ParseObject extends ParseBase implements ParseCloneable {
       ParseApiRQ apiRQType, String countAction, String key, num amount) async {
     try {
       if (objectId != null) {
-        var uri = "${ParseCoreData().serverUrl}$_path/$objectId";
+
+        Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
+
+        Uri url = Uri(
+            scheme: tempUri.scheme,
+            host: tempUri.host,
+            port: tempUri.port,
+            path: "${tempUri.path}$_path/$objectId");
+
         var body = "{\"$key\":{\"__op\":\"$countAction\",\"amount\":$amount}}";
-        var result = await _client.put(uri, body: body);
+        var result = await _client.put(url, body: body);
         return handleResponse(this, result, apiRQType, _debug, className);
       } else {
         return null;
@@ -254,6 +278,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       Uri url = Uri(
           scheme: tempUri.scheme,
           host: tempUri.host,
+          port: tempUri.port,
           path: "${tempUri.path}$_path",
           query: query);
 
@@ -265,9 +290,10 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Deletes the current object locally and online
-  Future<ParseResponse> delete(String objectId, {String path}) async {
+  Future<ParseResponse> delete({String objectId, String path}) async {
     try {
       path ??= _path;
+      objectId ??= objectId;
       var uri = "${ParseCoreData().serverUrl}$path/$objectId";
       if (_debug) {
         logRequest(ParseCoreData().appName, className,

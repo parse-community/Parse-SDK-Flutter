@@ -95,6 +95,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       Uri uri = Uri(
           scheme: tempUri.scheme,
           host: tempUri.host,
+          port: tempUri.port,
           path: "${tempUri.path}$keyEndPointUserName");
 
       final response = await _client.get(uri, headers: headers);
@@ -133,6 +134,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       Uri url = Uri(
           scheme: tempUri.scheme,
           host: tempUri.host,
+          port: tempUri.port,
           path: "${tempUri.path}$path");
 
       final response = await _client.post(url,
@@ -159,6 +161,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       Uri url = Uri(
           scheme: tempUri.scheme,
           host: tempUri.host,
+          port: tempUri.port,
           path: "${tempUri.path}$keyEndPointLogin",
           queryParameters: {
             keyVarUsername: username,
@@ -184,6 +187,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       Uri url = Uri(
         scheme: tempUri.scheme,
         host: tempUri.host,
+        port: tempUri.port,
         path: "${tempUri.path}$keyEndPointUsers",
       );
 
@@ -224,6 +228,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       Uri url = Uri(
         scheme: tempUri.scheme,
         host: tempUri.host,
+        port: tempUri.port,
         path: "${tempUri.path}$keyEndPointUsers",
       );
 
@@ -262,6 +267,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       Uri url = Uri(
           scheme: tempUri.scheme,
           host: tempUri.host,
+          port: tempUri.port,
           path: "${tempUri.path}$keyEndPointLogout");
 
       final response =
@@ -311,10 +317,17 @@ class ParseUser extends ParseObject implements ParseCloneable {
       return signUp();
     } else {
       try {
-        var uri = _client.data.serverUrl + "$path/$objectId";
+        Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
+
+        Uri url = Uri(
+            scheme: tempUri.scheme,
+            host: tempUri.host,
+            port: tempUri.port,
+            path: "${tempUri.path}$_path/$objectId");
+
         var body =
             json.encode(toJson(forApiRQ: true), toEncodable: dateTimeEncoder);
-        final response = await _client.put(uri, body: body);
+        final response = await _client.put(url, body: body);
         return _handleResponse(
             this, response, ParseApiRQ.save, _debug, className);
       } on Exception catch (e) {
@@ -327,8 +340,15 @@ class ParseUser extends ParseObject implements ParseCloneable {
   Future<ParseResponse> destroy() async {
     if (objectId != null) {
       try {
-        final response =
-            await _client.delete(_client.data.serverUrl + "$path/$objectId");
+        Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
+
+        Uri url = Uri(
+            scheme: tempUri.scheme,
+            host: tempUri.host,
+            port: tempUri.port,
+            path: "${tempUri.path}$_path/$objectId");
+
+        final response = await _client.delete(url);
         return _handleResponse(
             this, response, ParseApiRQ.destroy, _debug, className);
       } on Exception catch (e) {
