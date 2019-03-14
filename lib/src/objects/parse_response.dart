@@ -73,10 +73,15 @@ class ParseResponse {
 
     if (responseBody == "OK") {
       response.result = responseBody;
-    } else if (json.decode(responseBody).containsKey('params')) {
-      response.result = json.decode(responseBody)['params'];
     } else {
-      response.result = json.decode(responseBody);
+      var decoded = json.decode(responseBody);
+      if (decoded.containsKey('params')) {
+        response.result = decoded['params'];
+      } else if (decoded.containsKey('result')) {
+        response.result = decoded['result'];
+      } else {
+        response.result = decoded;
+      }
     }
 
     return response;
