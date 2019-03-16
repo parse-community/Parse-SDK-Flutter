@@ -44,17 +44,17 @@ dynamic parseEncode(dynamic value, {bool full}) {
 }
 
 Map<String, dynamic> _encodeUint8List(Uint8List value) {
-  return {"__type": "Bytes", "base64": base64.encode(value)};
+  return <String, dynamic>{'__type': 'Bytes', 'base64': base64.encode(value)};
 }
 
 Map<String, dynamic> _encodeObject(ParseObject object) {
-  return {
-    "__type": "Pointer",
+  return <String, dynamic>{
+    '__type': 'Pointer',
     keyVarClassName: object.className,
     keyVarObjectId: object.objectId
   };
 }
 
 Map<String, dynamic> _encodeDate(DateTime date) {
-  return {"__type": "Date", "iso": date.toIso8601String()};
+  return <String, dynamic>{'__type': 'Date', 'iso': date.toIso8601String()};
 }

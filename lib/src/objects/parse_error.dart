@@ -2,6 +2,19 @@ part of flutter_parse_sdk;
 
 /// ParseException is used in [ParseResult] to inform the user of the exception
 class ParseError {
+
+  ParseError(
+      {this.code = -1,
+        this.message = 'Unknown error',
+        this.isTypeOfException = false,
+        bool debug = false}) {
+    type = exceptions[code];
+    if (debug) {
+      print(toString());
+    }
+  }
+
+  // ignore: always_specify_types
   Map<int, String> exceptions = {
     -1: 'UnknownError',
 
@@ -61,23 +74,14 @@ class ParseError {
   final bool isTypeOfException;
   String type;
 
-  ParseError(
-      {this.code = -1,
-      this.message = "Unknown error",
-      this.isTypeOfException = false,
-      bool debug: false}) {
-    type = exceptions[code];
-    if (debug) print(toString());
-  }
-
   @override
   String toString() {
-    var exceptionString = ' \n';
-    exceptionString += "----";
-    exceptionString += "\nParseException (Type: $type) :";
-    exceptionString += "\nCode: $code";
-    exceptionString += "\nMessage: $message";
-    exceptionString += "----";
+    String exceptionString = ' \n';
+    exceptionString += '----';
+    exceptionString += '\nParseException (Type: $type) :';
+    exceptionString += '\nCode: $code';
+    exceptionString += '\nMessage: $message';
+    exceptionString += '----';
     return exceptionString;
   }
 }

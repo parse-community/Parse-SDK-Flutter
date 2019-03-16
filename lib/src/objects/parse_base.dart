@@ -4,12 +4,12 @@ abstract class ParseBase {
   String className;
   Type type;
 
-  setClassName(String className) => this.className = className;
+  String setClassName(String className) => this.className = className;
 
   String getClassName() => className;
 
   /// Stores all the values of a class
-  Map _objectData = Map<String, dynamic>();
+  Map<String, dynamic> _objectData = Map<String, dynamic>();
 
   /// Returns [String] objectId
   String get objectId => get<String>(keyVarObjectId);
@@ -24,8 +24,8 @@ abstract class ParseBase {
 
   /// Converts object to [String] in JSON format
   @protected
-  toJson({bool full, bool forApiRQ: false}) {
-    final map = <String, dynamic>{
+  Map<String, dynamic> toJson({bool full, bool forApiRQ = false}) {
+    final Map<String, dynamic> map = <String, dynamic>{
       keyVarClassName: className,
     };
 
@@ -41,8 +41,10 @@ abstract class ParseBase {
       map[keyVarUpdatedAt] = updatedAt.toIso8601String();
     }
 
-    getObjectData().forEach((key, value) {
-      if (!map.containsKey(key)) map[key] = parseEncode(value, full: full);
+    getObjectData().forEach((String key, dynamic value) {
+        if (!map.containsKey(key)) {
+           map[key] = parseEncode(value, full: full);
+        }
     });
 
     if (forApiRQ) {
@@ -60,12 +62,12 @@ abstract class ParseBase {
   String toString() => json.encode(toJson());
 
   @protected
-  fromJson(Map objectData) {
+  dynamic fromJson(Map<String, dynamic> objectData) {
     if (objectData == null) {
       return this;
     }
 
-    objectData.forEach((key, value) {
+    objectData.forEach((String key, dynamic value) {
       if (key == className || key == '__type') {
         // NO OP
       } else if (key == keyVarObjectId) {
@@ -84,19 +86,19 @@ abstract class ParseBase {
 
   /// Creates a copy of this class
   @protected
-  copy() => fromJson(json.decode(toJson()));
+  dynamic copy() => fromJson(toJson());
 
   /// Sets all the objects variables
   @protected
-  void setObjectData(Map objectData) => _objectData = objectData;
+  void setObjectData(Map<String, dynamic> objectData) => _objectData = objectData;
 
   /// Returns the objects variables
   @protected
-  Map getObjectData() => _objectData ?? Map();
+  Map<String, dynamic> getObjectData() => _objectData ?? Map<String, dynamic>();
 
   /// Saves in storage
   @protected
-  void saveInStorage(String key) async {
+  Future<void> saveInStorage(String key) async {
     await ParseCoreData().getStore()
       ..setString(key, toString());
   }
@@ -106,10 +108,12 @@ abstract class ParseBase {
   /// To set an int, call setType<int> and an int will be saved
   /// [bool] forceUpdate is always true, if unsure as to whether an item is
   /// needed or not, set to false
-  void set<T>(String key, T value, {bool forceUpdate: true}) {
+  void set<T>(String key, T value, {bool forceUpdate = true}) {
     if (value != null) {
       if (getObjectData().containsKey(key)) {
-        if (forceUpdate) getObjectData()[key] = value;
+        if (forceUpdate) {
+          getObjectData()[key] = value;
+        }
       } else {
         getObjectData()[key] = value;
       }
@@ -121,10 +125,11 @@ abstract class ParseBase {
   /// Returns null or [defaultValue] if provided. To get an int, call
   /// getType<int> and an int will be returned, null, or a defaultValue if
   /// provided
-  get<T>(String key, {T defaultValue}) {
+  dynamic get<T>(String key, {T defaultValue}) {
     if (getObjectData().containsKey(key)) {
       if (T != null && getObjectData()[key] is T) {
-        return getObjectData()[key] as T;
+        final T data = getObjectData()[key];
+        return data;
       } else {
         return getObjectData()[key];
       }
@@ -141,7 +146,7 @@ abstract class ParseBase {
       await unpin();
       final Map<String, dynamic> objectMap = parseEncode(this, full: true);
       final String json = jsonEncode(objectMap);
-      var store = await ParseCoreData().getStore();
+      final SharedPreferences store = await ParseCoreData().getStore();
       store.setString(objectId, json);
       return true;
     } else {
@@ -165,12 +170,14 @@ abstract class ParseBase {
   /// Saves item to simple key pair value storage
   ///
   /// Replicates Android SDK pin process and saves object to storage
-  fromPin(String objectId) async {
+  dynamic fromPin(String objectId) async {
     if (objectId != null) {
-      var itemFromStore =
+      final String itemFromStore =
           (await ParseCoreData().getStore()).getString(objectId);
 
-      if (itemFromStore != null) return fromJson(json.decode(itemFromStore));
+      if (itemFromStore != null) {
+        return fromJson(json.decode(itemFromStore));
+      }
     }
     return null;
   }

@@ -50,5 +50,27 @@ const String keyParamSessionToken = 'sessionToken';
 
 // Storage
 const String keyParseStoreBase = 'flutter_parse_sdk_';
-const String keyParseStoreUser = "${keyParseStoreBase}user";
-const String keyParseStoreInstallation = "${keyParseStoreBase}installation";
+const String keyParseStoreUser = '${keyParseStoreBase}user';
+const String keyParseStoreInstallation = '${keyParseStoreBase}installation';
+
+// Installation
+const String keyTimeZone = 'timeZone';
+const String keyLocaleIdentifier = 'localeIdentifier';
+const String keyDeviceToken = 'deviceToken';
+const String keyDeviceType = 'deviceType';
+const String keyInstallationId = 'installationId';
+const String keyAppName = 'appName';
+const String keyAppVersion = 'appVersion';
+const String keyAppIdentifier = 'appIdentifier';
+const String keyParseVersion = 'parseVersion';
+
+// Parse Session
+const String keyVarUser = 'user';
+const String keyVarCreatedWith = 'createdWith';
+const String keyVarRestricted = 'restricted';
+const String keyVarExpiresAt = 'expiresAt';
+const String keyVarInstallationId = 'installationId';
+
+// Error
+const String keyError = 'error';
+const String keyCode = 'code';

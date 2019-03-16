@@ -9,7 +9,7 @@ class DietPlan extends ParseObject implements ParseCloneable {
   /// Looks strangely hacky but due to Flutter not using reflection, we have to
   /// mimic a clone
   @override
-  clone(Map map) => DietPlan.clone()..fromJson(map);
+  DietPlan clone(Map map) => DietPlan.clone()..fromJson(map);
 
   static const String _keyTableName = 'Diet_Plans';
   static const String keyName = 'Name';

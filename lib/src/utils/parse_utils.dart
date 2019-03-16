@@ -11,9 +11,9 @@ bool isDebugEnabled({bool objectLevelDebug}) {
 /// Converts the object to the correct value for JSON,
 ///
 /// Strings are wrapped with "" but integers and others are not
-convertValueToCorrectType(dynamic value) {
+dynamic convertValueToCorrectType(dynamic value) {
   if (value is String && !value.contains('__type')) {
-    return "\"$value\"";
+    return '\"$value\"';
   } else {
     return value;
   }

@@ -2,37 +2,41 @@ part of flutter_parse_sdk;
 
 /// Still under development
 class LiveQuery {
-  final ParseHTTPClient client;
-  var channel;
-  Map<String, dynamic> connectMessage;
-  Map<String, dynamic> subscribeMessage;
-  Map<String, Function> eventCallbacks = {};
 
   LiveQuery(ParseHTTPClient client) : client = client {
     connectMessage = {
-      "op": "connect",
-      "applicationId": client.data.applicationId,
+      'op': 'connect',
+      'applicationId': client.data.applicationId,
     };
 
+    final Map<String, dynamic> whereMap = Map<String, dynamic>();
+
     subscribeMessage = {
-      "op": "subscribe",
-      "requestId": 1,
-      "query": {
-        "className": null,
-        "where": {},
+      'op': 'subscribe',
+      'requestId': 1,
+      'query': {
+        'className': null,
+        'where': whereMap,
       }
     };
   }
 
-  subscribe(String className) async {
-    // ignore: close_sinks
-    var webSocket = await WebSocket.connect(client.data.liveQueryURL);
-    channel = new IOWebSocketChannel(webSocket);
-    channel.sink.add(JsonEncoder().convert(connectMessage));
-    subscribeMessage['query']['className'] = className;
-    channel.sink.add(JsonEncoder().convert(subscribeMessage));
-    channel.stream.listen((message) {
-      Map<String, dynamic> actionData = JsonDecoder().convert(message);
+  final ParseHTTPClient client;
+  IOWebSocketChannel channel;
+  Map<String, Object> connectMessage;
+  Map<String, Object> subscribeMessage;
+  Map<String, Function> eventCallbacks = {};
+
+  Future<void> subscribe(String className) async {
+    final WebSocket webSocket = await WebSocket.connect(client.data.liveQueryURL);
+    channel = IOWebSocketChannel(webSocket);
+    channel.sink.add(jsonEncode(connectMessage));
+    Map<String, dynamic> classNameMap = subscribeMessage['query'];
+    classNameMap['className'] = className;
+    channel.sink.add(jsonEncode(subscribeMessage));
+
+    channel.stream.listen((dynamic message) {
+      final Map<String, dynamic> actionData = jsonDecode(message);
       if (eventCallbacks.containsKey(actionData['op']))
         eventCallbacks[actionData['op']](actionData);
     });
@@ -42,7 +46,7 @@ class LiveQuery {
     eventCallbacks[op] = callback;
   }
 
-  void close() {
-    channel.close();
+  Future<void> close() async {
+    await channel.sink.close();
   }
 }
