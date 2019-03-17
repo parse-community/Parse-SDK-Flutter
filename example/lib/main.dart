@@ -131,8 +131,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> query() async {
     final QueryBuilder<ParseObject> queryBuilder =
         QueryBuilder<ParseObject>(ParseObject('TestObjectForApi'))
-          ..whereGreaterThan(
-              keyVarCreatedAt, DateTime.now().subtract(Duration(hours: 1)));
+          ..whereLessThan(keyVarCreatedAt, DateTime.now());
 
     final ParseResponse apiResponse = await queryBuilder.query();
 

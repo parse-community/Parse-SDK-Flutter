@@ -3,7 +3,7 @@ import 'dart:core';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class DietPlan extends ParseObject implements ParseCloneable {
-  DietPlan() : super(_keyTableName);
+  DietPlan() : super(_keyTableName, debug: true);
   DietPlan.clone() : this();
 
   /// Looks strangely hacky but due to Flutter not using reflection, we have to

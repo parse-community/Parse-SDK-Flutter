@@ -16,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
 
-part 'package:parse_server_sdk/src/objects/response/response_utils.dart';
+part 'package:parse_server_sdk/src/objects/response/parse_response_utils.dart';
 
 part 'package:parse_server_sdk/src/objects/response/parse_error_response.dart';
 
@@ -71,6 +71,8 @@ part 'src/utils/parse_file_extensions.dart';
 part 'src/utils/parse_logger.dart';
 
 part 'src/utils/parse_utils.dart';
+
+part 'src/utils/parse_date_format.dart';
 
 class Parse {
   ParseCoreData data;

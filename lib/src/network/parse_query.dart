@@ -371,12 +371,4 @@ class QueryBuilder<T extends ParseObject> {
     });
     return result;
   }
-
-  String convertToQueryableFormats(dynamic value) {
-    if (value is DateTime) {
-      return value.toIso8601String();
-    }
-
-    return value;
-  }
 }

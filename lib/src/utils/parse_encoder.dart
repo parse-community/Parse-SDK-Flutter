@@ -3,7 +3,7 @@ part of flutter_parse_sdk;
 /// Custom encoder for DateTime
 dynamic dateTimeEncoder(dynamic item) {
   if (item is DateTime) {
-    return item.toIso8601String();
+    return _parseDateFormat.format(item);
   }
   return item;
 }
@@ -44,5 +44,5 @@ Map<String, dynamic> _encodeUint8List(Uint8List value) {
 }
 
 Map<String, dynamic> _encodeDate(DateTime date) {
-  return <String, dynamic>{'__type': 'Date', 'iso': date.toIso8601String()};
+  return <String, dynamic>{'__type': 'Date', 'iso': _parseDateFormat.format(date)};
 }

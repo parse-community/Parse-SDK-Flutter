@@ -20,7 +20,7 @@ abstract class ParseBase {
   DateTime get createdAt {
     if (get<dynamic>(keyVarCreatedAt) is String) {
       final String dateAsString = get<String>(keyVarCreatedAt);
-      return DateTime.parse(dateAsString);
+      return _parseDateFormat.parse(dateAsString);
     } else {
       return get<DateTime>(keyVarCreatedAt);
     }
@@ -30,7 +30,7 @@ abstract class ParseBase {
   DateTime get updatedAt {
     if (get<dynamic>(keyVarUpdatedAt) is String) {
       final String dateAsString = get<String>(keyVarUpdatedAt);
-      return DateTime.parse(dateAsString);
+      return _parseDateFormat.parse(dateAsString);
     } else {
       return get<DateTime>(keyVarUpdatedAt);
     }
@@ -48,11 +48,11 @@ abstract class ParseBase {
     }
 
     if (createdAt != null) {
-      map[keyVarCreatedAt] = createdAt.toIso8601String();
+      map[keyVarCreatedAt] = _parseDateFormat.format(createdAt);
     }
 
     if (updatedAt != null) {
-      map[keyVarUpdatedAt] = updatedAt.toIso8601String();
+      map[keyVarUpdatedAt] = _parseDateFormat.format(updatedAt);
     }
 
     getObjectData().forEach((String key, dynamic value) {
@@ -88,13 +88,13 @@ abstract class ParseBase {
         objectId = value;
       } else if (key == keyVarCreatedAt) {
         if (keyVarCreatedAt is String) {
-          set<DateTime>(keyVarCreatedAt, DateTime.parse(value));
+          set<DateTime>(keyVarCreatedAt, _parseDateFormat.parse(value));
         } else {
           set<DateTime>(keyVarCreatedAt, value);
         }
       } else if (key == keyVarUpdatedAt) {
         if (keyVarUpdatedAt is String) {
-          set<DateTime>(keyVarUpdatedAt, DateTime.parse(value));
+          set<DateTime>(keyVarUpdatedAt, _parseDateFormat.parse(value));
         } else {
           set<DateTime>(keyVarUpdatedAt, value);
         }

@@ -7,7 +7,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// [bool] debug will overwrite the current default debug settings and
   /// [ParseHttpClient] can be overwritten to create your own HTTP Client
   ParseObject(String className,
-      {bool debug = false, ParseHTTPClient client, bool autoSendSessionId})
+      {bool debug, ParseHTTPClient client, bool autoSendSessionId})
       : super() {
     setClassName(className);
     _path = '$keyEndPointClasses$className';
@@ -33,11 +33,15 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Gets an object from the server using it's [String] objectId
   Future<ParseResponse> getObject(String objectId) async {
     try {
-      String uri = '${ParseCoreData().serverUrl}$_path';
+      String uri =_path;
+
       if (objectId != null) {
         uri += '/$objectId';
       }
-      final Response result = await _client.get(uri);
+
+      final Uri url = getSanitisedUri(_client, '$uri');
+
+      final Response result = await _client.get(url);
       return handleResponse<ParseObject>(this, result, ParseApiRQ.get, _debug, className);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.get, _debug, className);
