@@ -285,8 +285,8 @@ class QueryBuilder<T extends ParseObject> {
   MapEntry<String, dynamic> _buildQueryWithColumnValueAndOperator(
       MapEntry<String, dynamic> columnAndValue, String queryOperator) {
     final String key = columnAndValue.key;
-
-    final dynamic value = convertValueToCorrectType(columnAndValue.value);
+    final dynamic value =
+        convertValueToCorrectType(parseEncode(columnAndValue.value));
 
     if (queryOperator == _NO_OPERATOR_NEEDED) {
       return MapEntry<String, dynamic>(
@@ -296,8 +296,8 @@ class QueryBuilder<T extends ParseObject> {
 
       final Map<String, dynamic> queryOperatorAndValueMap =
           Map<String, dynamic>();
-      queryOperatorAndValueMap[queryOperator] = columnAndValue.value;
-
+      queryOperatorAndValueMap[queryOperator] =
+          parseEncode(columnAndValue.value);
       final String formattedQueryOperatorAndValue =
           jsonEncode(queryOperatorAndValueMap);
       queryString += '$formattedQueryOperatorAndValue';
@@ -370,5 +370,13 @@ class QueryBuilder<T extends ParseObject> {
       }
     });
     return result;
+  }
+
+  String convertToQueryableFormats(dynamic value) {
+    if (value is DateTime) {
+      return value.toIso8601String();
+    }
+
+    return value;
   }
 }

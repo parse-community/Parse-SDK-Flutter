@@ -193,7 +193,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   // Logs in a user using a service
-  static Future<ParseResponse> loginWith(String provider, Object authData) async {
+  static Future<ParseResponse> loginWith(
+      String provider, Object authData) async {
     final ParseUser user = ParseUser.createUser();
     final ParseResponse response = await user._loginWith(provider, authData);
     return response;
@@ -201,7 +202,6 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   Future<ParseResponse> _loginWith(String provider, Object authData) async {
     try {
-
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
       final Response response = await _client.post(url,
           headers: <String, String>{
@@ -283,9 +283,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
     } else {
       try {
         final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-        final String body = json.encode(toJson(forApiRQ: true), toEncodable: dateTimeEncoder);
+        final String body =
+            json.encode(toJson(forApiRQ: true), toEncodable: dateTimeEncoder);
         final Response response = await _client.put(url, body: body);
-        return _handleResponse(this, response, ParseApiRQ.save, _debug, className);
+        return _handleResponse(
+            this, response, ParseApiRQ.save, _debug, className);
       } on Exception catch (e) {
         return handleException(e, ParseApiRQ.save, _debug, className);
       }
@@ -310,7 +312,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   /// Gets a list of all users (limited return)
   static Future<ParseResponse> all({bool debug, ParseHTTPClient client}) async {
-    final ParseUser emptyUser = ParseUser(null, null, null);
+    final ParseUser emptyUser = _getEmptyUser();
 
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
     final ParseHTTPClient _client = client ??
@@ -319,10 +321,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
             securityContext: ParseCoreData().securityContext);
 
     try {
-      final Response response =
-          await _client.get('${ParseCoreData().serverUrl}/$path');
+      final Uri url = getSanitisedUri(_client, '$path');
+      final Response response = await _client.get(url);
       final ParseResponse parseResponse = handleResponse<ParseUser>(
-          emptyUser, response, ParseApiRQ.getAll, debug, keyClassUser);
+          emptyUser, response, ParseApiRQ.getAll, _debug, keyClassUser);
       return parseResponse;
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.getAll, _debug, keyClassUser);
@@ -358,8 +360,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       ParseCoreData().setSessionId(user.sessionToken);
     }
 
-    if ((parseResponse.statusCode != 200 &&
-        parseResponse.statusCode != 201) ||
+    if ((parseResponse.statusCode != 200 && parseResponse.statusCode != 201) ||
         type == ParseApiRQ.getAll ||
         type == ParseApiRQ.destroy ||
         type == ParseApiRQ.requestPasswordReset ||

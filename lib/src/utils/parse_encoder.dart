@@ -12,12 +12,12 @@ dynamic dateTimeEncoder(dynamic item) {
 dynamic parseEncode(dynamic value, {bool full}) {
   full ??= false;
 
-  if (value is DateTime) {
-    return _encodeDate(value);
-  }
-
   if (value is Uint8List) {
     return _encodeUint8List(value);
+  }
+
+  if (value is DateTime) {
+    return _encodeDate(value);
   }
 
   if (value is ParseGeoPoint) {

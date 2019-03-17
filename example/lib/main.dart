@@ -131,8 +131,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> query() async {
     final QueryBuilder<ParseObject> queryBuilder =
         QueryBuilder<ParseObject>(ParseObject('TestObjectForApi'))
-          ..whereEqualTo('age', 26)
-          ..includeObject(<String>['Day']);
+          ..whereGreaterThan(
+              keyVarCreatedAt, DateTime.now().subtract(Duration(hours: 1)));
 
     final ParseResponse apiResponse = await queryBuilder.query();
 
@@ -220,7 +220,10 @@ class _MyAppState extends State<MyApp> {
 
     final ParseResponse apiResponse = await queryBuilder.query();
     if (apiResponse.success) {
-      user = response.result;
+      final List<ParseUser> users = response.result;
+      for (final ParseUser user in users) {
+        print(ApplicationConstants.keyAppName + ': ' + user.toString());
+      }
     }
   }
 
