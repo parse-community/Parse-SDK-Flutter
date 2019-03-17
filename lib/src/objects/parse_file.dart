@@ -90,8 +90,7 @@ class ParseFile extends ParseObject {
   Future<ParseResponse> upload() async {
     if (saved) {
       //Creates a Fake Response to return the correct result
-      // ignore: always_specify_types
-      final Map<String, String> response = {'url': url, 'name': name};
+      final Map<String, String> response = <String, String>{'url': url, 'name': name};
       return handleResponse<ParseFile>(this, Response(json.encode(response), 201),
           ParseApiRQ.upload, _debug, className);
     }

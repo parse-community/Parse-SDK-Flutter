@@ -17,10 +17,24 @@ abstract class ParseBase {
   set objectId(String objectId) => set<String>(keyVarObjectId, objectId);
 
   /// Returns [DateTime] createdAt
-  DateTime get createdAt => get<DateTime>(keyVarCreatedAt);
+  DateTime get createdAt {
+    if (get<dynamic>(keyVarCreatedAt) is String) {
+      final String dateAsString = get<String>(keyVarCreatedAt);
+      return DateTime.parse(dateAsString);
+    } else {
+      return get<DateTime>(keyVarCreatedAt);
+    }
+  }
 
   /// Returns [DateTime] updatedAt
-  DateTime get updatedAt => get<DateTime>(keyVarUpdatedAt);
+  DateTime get updatedAt {
+    if (get<dynamic>(keyVarUpdatedAt) is String) {
+      final String dateAsString = get<String>(keyVarUpdatedAt);
+      return DateTime.parse(dateAsString);
+    } else {
+      return get<DateTime>(keyVarUpdatedAt);
+    }
+  }
 
   /// Converts object to [String] in JSON format
   @protected
@@ -42,9 +56,9 @@ abstract class ParseBase {
     }
 
     getObjectData().forEach((String key, dynamic value) {
-        if (!map.containsKey(key)) {
-           map[key] = parseEncode(value, full: full);
-        }
+      if (!map.containsKey(key)) {
+        map[key] = parseEncode(value, full: full);
+      }
     });
 
     if (forApiRQ) {
@@ -73,9 +87,17 @@ abstract class ParseBase {
       } else if (key == keyVarObjectId) {
         objectId = value;
       } else if (key == keyVarCreatedAt) {
-        set<DateTime>(keyVarCreatedAt, DateTime.parse(value));
+        if (keyVarCreatedAt is String) {
+          set<DateTime>(keyVarCreatedAt, DateTime.parse(value));
+        } else {
+          set<DateTime>(keyVarCreatedAt, value);
+        }
       } else if (key == keyVarUpdatedAt) {
-        set<DateTime>(keyVarUpdatedAt, DateTime.parse(value));
+        if (keyVarUpdatedAt is String) {
+          set<DateTime>(keyVarUpdatedAt, DateTime.parse(value));
+        } else {
+          set<DateTime>(keyVarUpdatedAt, value);
+        }
       } else {
         getObjectData()[key] = parseDecode(value);
       }
@@ -90,7 +112,8 @@ abstract class ParseBase {
 
   /// Sets all the objects variables
   @protected
-  void setObjectData(Map<String, dynamic> objectData) => _objectData = objectData;
+  void setObjectData(Map<String, dynamic> objectData) =>
+      _objectData = objectData;
 
   /// Returns the objects variables
   @protected
@@ -99,8 +122,9 @@ abstract class ParseBase {
   /// Saves in storage
   @protected
   Future<void> saveInStorage(String key) async {
+    final String objectJson = json.encode(toJson(full: true));
     await ParseCoreData().getStore()
-      ..setString(key, toString());
+      ..setString(key, objectJson);
   }
 
   /// Sets type [T] from objectData
@@ -181,4 +205,10 @@ abstract class ParseBase {
     }
     return null;
   }
+
+  Map<String, String> toPointer() => <String, String>{
+        '__type': 'Pointer',
+        keyVarClassName: className,
+        keyVarObjectId: objectId
+      };
 }

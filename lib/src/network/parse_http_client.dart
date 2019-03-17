@@ -33,7 +33,7 @@ class ParseHTTPClient extends BaseClient {
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
     if (additionalHeaders != null && additionalHeaders.isNotEmpty) {
-      additionalHeaders.forEach((k, v) => request.headers[k] = v);
+      additionalHeaders.forEach((String key, String value) => request.headers[key] = value);
     }
 
     return _client.send(request);

@@ -18,3 +18,16 @@ dynamic convertValueToCorrectType(dynamic value) {
     return value;
   }
 }
+
+/// Sanitises a url
+Uri getSanitisedUri(ParseHTTPClient client, String pathToAppend) {
+  final Uri tempUri = Uri.parse(client.data.serverUrl);
+
+  final Uri url = Uri(
+      scheme: tempUri.scheme,
+      host: tempUri.host,
+      port: tempUri.port,
+      path: '${tempUri.path}$pathToAppend');
+
+  return url;
+}

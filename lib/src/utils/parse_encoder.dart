@@ -28,15 +28,11 @@ dynamic parseEncode(dynamic value, {bool full}) {
     return value;
   }
 
-  if (value is ParseUser) {
-    return value;
-  }
-
-  if (value is ParseObject) {
+  if (value is ParseObject || value is ParseUser) {
     if (full) {
       return value.toJson(full: full);
     } else {
-      return _encodeObject(value);
+      return value.toPointer();
     }
   }
 
@@ -45,14 +41,6 @@ dynamic parseEncode(dynamic value, {bool full}) {
 
 Map<String, dynamic> _encodeUint8List(Uint8List value) {
   return <String, dynamic>{'__type': 'Bytes', 'base64': base64.encode(value)};
-}
-
-Map<String, dynamic> _encodeObject(ParseObject object) {
-  return <String, dynamic>{
-    '__type': 'Pointer',
-    keyVarClassName: object.className,
-    keyVarObjectId: object.objectId
-  };
 }
 
 Map<String, dynamic> _encodeDate(DateTime date) {

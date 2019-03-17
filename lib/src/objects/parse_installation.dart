@@ -105,10 +105,12 @@ class ParseInstallation extends ParseObject {
   /// Saves the current installation
   @override
   Future<ParseResponse> save() async {
-    var isCurrent = await ParseInstallation.isCurrent(this);
-    if (isCurrent) await _updateInstallation();
+    final bool isCurrent = await ParseInstallation.isCurrent(this);
+    if (isCurrent) {
+      await _updateInstallation();
+    }
     //ParseResponse parseResponse = await super.save();
-    ParseResponse parseResponse = await _save();
+    final ParseResponse parseResponse = await _save();
     if (parseResponse.success && isCurrent) {
       saveInStorage(keyParseStoreInstallation);
     }

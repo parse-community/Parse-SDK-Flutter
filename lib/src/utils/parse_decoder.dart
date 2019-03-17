@@ -2,7 +2,7 @@ part of flutter_parse_sdk;
 
 List<dynamic> _convertJSONArrayToList(List<dynamic> array) {
   final List<dynamic> list = <dynamic>[];
-  for (final dynamic item in array){
+  for (final dynamic item in array) {
     list.add(parseDecode(item));
   }
   return list;
@@ -44,33 +44,55 @@ dynamic parseDecode(dynamic value) {
 
   final Map<String, dynamic> map = value;
 
-  if (!map.containsKey('__type')) {
+  if (!map.containsKey('__type') && !map.containsKey('className')) {
     return _convertJSONObjectToMap(map);
   }
 
-  switch (map['__type']) {
-    case 'Date':
-      final String iso = map['iso'];
-      return DateTime.parse(iso);
-    case 'Bytes':
-      final String val = map['base64'];
-      return base64.decode(val);
-    case 'Pointer':
-      final String className = map['className'];
-      return ParseObject(className).fromJson(map);
-    case 'Object':
-      final String className = map['className'];
-      if (className == '_User') {
-        return ParseUser(null, null, null).fromJson(map);
-      }
-      return ParseObject(className).fromJson(map);
-    case 'File':
-      return ParseFile(null, url: map['url'], name: map['name']).fromJson(map);
-    case 'GeoPoint':
-      final num latitude = map['latitude'] ?? 0.0;
-      final num longitude = map['longitude'] ?? 0.0;
-      return ParseGeoPoint(
-          latitude: latitude.toDouble(), longitude: longitude.toDouble());
+  /// Decoding from Api Response
+  if (map.containsKey('__type')) {
+    switch (map['__type']) {
+      case 'Date':
+        final String iso = map['iso'];
+        return DateTime.parse(iso);
+      case 'Bytes':
+        final String val = map['base64'];
+        return base64.decode(val);
+      case 'Pointer':
+        final String className = map['className'];
+        if (className == '_User') {
+          return ParseUser._getEmptyUser().fromJson(map);
+        }
+        return ParseObject(className).fromJson(map);
+      case 'Object':
+        final String className = map['className'];
+        if (className == '_User') {
+          return ParseUser._getEmptyUser().fromJson(map);
+        }
+        return ParseObject(className).fromJson(map);
+      case 'File':
+        return ParseFile(null, url: map['url'], name: map['name'])
+            .fromJson(map);
+      case 'GeoPoint':
+        final num latitude = map['latitude'] ?? 0.0;
+        final num longitude = map['longitude'] ?? 0.0;
+        return ParseGeoPoint(
+            latitude: latitude.toDouble(), longitude: longitude.toDouble());
+    }
+  }
+
+  /// Decoding from locally cached JSON
+  if (map.containsKey('className')) {
+    switch (map['className']) {
+      case '_User':
+        return ParseUser._getEmptyUser().fromJson(map);
+      case 'GeoPoint':
+        final num latitude = map['latitude'] ?? 0.0;
+        final num longitude = map['longitude'] ?? 0.0;
+        return ParseGeoPoint(
+            latitude: latitude.toDouble(), longitude: longitude.toDouble());
+      default:
+        return ParseObject(map['className']).fromJson(map);
+    }
   }
 
   return null;

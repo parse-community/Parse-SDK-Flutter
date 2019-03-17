@@ -4,7 +4,7 @@ part of flutter_parse_sdk;
 class LiveQuery {
 
   LiveQuery(ParseHTTPClient client) : client = client {
-    connectMessage = {
+    connectMessage = <String, String>{
       'op': 'connect',
       'applicationId': client.data.applicationId,
     };
@@ -31,7 +31,7 @@ class LiveQuery {
     final WebSocket webSocket = await WebSocket.connect(client.data.liveQueryURL);
     channel = IOWebSocketChannel(webSocket);
     channel.sink.add(jsonEncode(connectMessage));
-    Map<String, dynamic> classNameMap = subscribeMessage['query'];
+    final Map<String, dynamic> classNameMap = subscribeMessage['query'];
     classNameMap['className'] = className;
     channel.sink.add(jsonEncode(subscribeMessage));
 

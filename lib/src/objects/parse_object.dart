@@ -30,9 +30,6 @@ class ParseObject extends ParseBase implements ParseCloneable {
   bool _debug;
   ParseHTTPClient _client;
 
-  /// Converts the object to a Pointer to be used ONLY in queries using Pointers
-  dynamic toPointer() => json.encode(parseEncode(this));
-
   /// Gets an object from the server using it's [String] objectId
   Future<ParseResponse> getObject(String objectId) async {
     try {
@@ -50,8 +47,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Gets all objects from this table - Limited response at the moment
   Future<ParseResponse> getAll() async {
     try {
-      final Response result =
-          await _client.get('${ParseCoreData().serverUrl}$_path');
+      final Uri url = getSanitisedUri(_client, '$_path');
+      final Response result = await _client.get(url);
       return handleResponse<ParseObject>(this, result, ParseApiRQ.getAll, _debug, className);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.getAll, _debug, className);
@@ -61,9 +58,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Creates a new object and saves it online
   Future<ParseResponse> create() async {
     try {
-      final String uri = '${_client.data.serverUrl}$_path';
+      final Uri url = getSanitisedUri(_client, '$_path');
       final String body = json.encode(toJson(forApiRQ: true));
-      final Response result = await _client.post(uri, body: body);
+      final Response result = await _client.post(url, body: body);
 
       //Set the objectId on the object after it is created.
       //This allows you to perform operations on the object after creation
@@ -84,14 +81,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       return create();
     } else {
       try {
-        final Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
-
-        final Uri url = Uri(
-            scheme: tempUri.scheme,
-            host: tempUri.host,
-            port: tempUri.port,
-            path: '${tempUri.path}$_path/$objectId');
-
+        final Uri url = getSanitisedUri(_client, '$_path/$objectId');
         final String body = json.encode(toJson(forApiRQ: true));
         final Response result = await _client.put(url, body: body);
         return handleResponse<ParseObject>(this, result, ParseApiRQ.save, _debug, className);
@@ -181,14 +171,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       String key, List<dynamic> values) async {
     try {
       if (objectId != null) {
-        final Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
-
-        final Uri url = Uri(
-            scheme: tempUri.scheme,
-            host: tempUri.host,
-            port: tempUri.port,
-            path: '${tempUri.path}$_path/$objectId');
-
+        final Uri url = getSanitisedUri(_client, '$_path/$objectId');
         final String body =
             '{\"$key\":{\"__op\":\"$arrayAction\",\"objects\":${json.encode(parseEncode(values))}}}';
         final Response result = await _client.put(url, body: body);
@@ -243,14 +226,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       ParseApiRQ apiRQType, String countAction, String key, num amount) async {
     try {
       if (objectId != null) {
-        final Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
-
-        final Uri url = Uri(
-            scheme: tempUri.scheme,
-            host: tempUri.host,
-            port: tempUri.port,
-            path: '${tempUri.path}$_path/$objectId');
-
+        final Uri url = getSanitisedUri(_client, '$_path/$objectId');
         final String body = '{\"$key\":{\"__op\":\"$countAction\",\"amount\":$amount}}';
         final Response result = await _client.put(url, body: body);
         return handleResponse<ParseObject>(this, result, apiRQType, _debug, className);
@@ -286,12 +262,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
     try {
       path ??= _path;
       objectId ??= objectId;
-      final String uri = '${ParseCoreData().serverUrl}$path/$objectId';
-      if (_debug) {
-        logRequest(ParseCoreData().appName, className,
-            ParseApiRQ.delete.toString(), uri, '');
-      }
-      final Response result = await _client.delete(uri);
+      final Uri url = getSanitisedUri(_client, '$_path/$objectId');
+      final Response result = await _client.delete(url);
       return handleResponse<ParseObject>(this, result, ParseApiRQ.delete, _debug, className);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.delete, _debug, className);

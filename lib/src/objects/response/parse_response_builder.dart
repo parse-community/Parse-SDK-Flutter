@@ -8,16 +8,18 @@ part of flutter_parse_sdk;
 /// 3. Success with simple OK.
 /// 4. Success with results. Again [ParseResponse()] is returned
 class _ParseResponseBuilder {
-  ParseResponse handleResponse<T>(dynamic object, Response apiResponse,
+  ParseResponse handleResponse<T>(
+      dynamic object,
+      Response apiResponse,
       {bool returnAsResult = false}) {
     final ParseResponse parseResponse = ParseResponse();
 
     if (apiResponse != null) {
       parseResponse.statusCode = apiResponse.statusCode;
 
-      if (apiResponse.statusCode != 200 && apiResponse.statusCode != 201) {
+      if (isUnsuccessfulResponse(apiResponse)) {
         return buildErrorResponse(parseResponse, apiResponse);
-      } else if (apiResponse.body == '{\"results\":[]}') {
+      } else if (isSuccessButNoResults(apiResponse)) {
         return buildSuccessResponseWithNoResults(
             parseResponse, 1, 'Successful request, but no results found');
       } else if (returnAsResult) {
@@ -69,7 +71,7 @@ class _ParseResponseBuilder {
       final List<dynamic> results = map['results'];
       response.result = _handleMultipleResults<T>(object, results);
     } else {
-      response.result = _handleSingleResult<T>(object, map);
+      response.result = _handleSingleResult<T>(object, map, false);
     }
 
     return response;
@@ -80,65 +82,20 @@ class _ParseResponseBuilder {
     final List<T> resultsList = List<T>();
 
     for (dynamic value in data) {
-      resultsList.add(_handleSingleResult<T>(object, value));
+      resultsList.add(_handleSingleResult<T>(object, value, true));
     }
 
     return resultsList;
   }
 
   /// Handles a response with a single result object
-  T _handleSingleResult<T>(T object, Map<String, dynamic> map) {
-    if (object is ParseCloneable) {
+  T _handleSingleResult<T>(T object, Map<String, dynamic> map, bool createNewObject) {
+    if (createNewObject && object is ParseCloneable) {
       return object.clone(map);
+    } else if (object is ParseObject) {
+      return object..fromJson(map);
     } else {
       return null;
     }
-  }
-}
-
-/// Handles an API response and logs data if [bool] debug is enabled
-@protected
-ParseResponse handleResponse<T>(ParseCloneable object, Response response,
-    ParseApiRQ type, bool debug, String className) {
-  final ParseResponse parseResponse = _ParseResponseBuilder().handleResponse<T>(
-      object, response,
-      returnAsResult: shouldReturnAsABaseResult(type));
-
-  if (debug) {
-    logger(ParseCoreData().appName, className, type.toString(), parseResponse);
-  }
-
-  return parseResponse;
-}
-
-/// Handles an API response and logs data if [bool] debug is enabled
-@protected
-ParseResponse handleException(
-    Exception exception, ParseApiRQ type, bool debug, String className) {
-  final ParseResponse parseResponse =
-      buildParseResponseWithException(exception);
-
-  if (debug) {
-    logger(ParseCoreData().appName, className, type.toString(), parseResponse);
-  }
-
-  return parseResponse;
-}
-
-bool shouldReturnAsABaseResult(ParseApiRQ type) {
-  if (type == ParseApiRQ.healthCheck ||
-      type == ParseApiRQ.execute ||
-      type == ParseApiRQ.add ||
-      type == ParseApiRQ.addAll ||
-      type == ParseApiRQ.addUnique ||
-      type == ParseApiRQ.remove ||
-      type == ParseApiRQ.removeAll ||
-      type == ParseApiRQ.increment ||
-      type == ParseApiRQ.decrement ||
-      type == ParseApiRQ.getConfigs ||
-      type == ParseApiRQ.addConfig) {
-    return true;
-  } else {
-    return false;
   }
 }

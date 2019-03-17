@@ -16,7 +16,7 @@ class ParseConfig extends ParseObject {
   Future<ParseResponse> getConfigs() async {
     try {
       final String uri = '${ParseCoreData().serverUrl}/config';
-      final result = await _client.get(uri);
+      final Response result = await _client.get(uri);
       return handleResponse<ParseConfig>(
           this, result, ParseApiRQ.getConfigs, _debug, className);
     } on Exception catch (e) {
