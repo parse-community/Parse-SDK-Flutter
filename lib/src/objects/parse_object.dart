@@ -48,6 +48,11 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
+  /// Fetches the object from the server into this object
+  Future<ParseResponse> fetch() async {
+    return await getObject(objectId);
+  }
+
   /// Gets all objects from this table - Limited response at the moment
   Future<ParseResponse> getAll() async {
     try {
