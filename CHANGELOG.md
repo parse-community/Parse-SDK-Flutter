@@ -1,3 +1,8 @@
+## 1.0.16
+Bug fixes
+Fixed object delete
+Added port support
+
 ## 1.0.15
 Fixed 'full' bool issue
 

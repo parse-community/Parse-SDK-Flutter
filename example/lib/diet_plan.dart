@@ -3,13 +3,13 @@ import 'dart:core';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class DietPlan extends ParseObject implements ParseCloneable {
-  DietPlan() : super(_keyTableName);
+  DietPlan() : super(_keyTableName, debug: true);
   DietPlan.clone() : this();
 
   /// Looks strangely hacky but due to Flutter not using reflection, we have to
   /// mimic a clone
   @override
-  clone(Map map) => DietPlan.clone()..fromJson(map);
+  DietPlan clone(Map<String, dynamic> map) => DietPlan.clone()..fromJson(map);
 
   static const String _keyTableName = 'Diet_Plans';
   static const String keyName = 'Name';

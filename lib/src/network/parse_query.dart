@@ -2,24 +2,24 @@ part of flutter_parse_sdk;
 
 /// Class to create complex queries
 class QueryBuilder<T extends ParseObject> {
-  static const String _NO_OPERATOR_NEEDED = "NO_OP";
-  static const String _SINGLE_QUERY = "SINGLE_QUERY";
-
-  T object;
-  var queries = List<MapEntry>();
-  var limiters = Map();
-
   /// Class to create complex queries
   QueryBuilder(this.object) : super();
 
+  static const String _NO_OPERATOR_NEEDED = 'NO_OP';
+  static const String _SINGLE_QUERY = 'SINGLE_QUERY';
+
+  T object;
+  List<MapEntry<String, dynamic>> queries = <MapEntry<String, dynamic>>[];
+  final Map<String, dynamic> limiters = Map<String, dynamic>();
+
   /// Adds a limit to amount of results return from Parse
   void setLimit(int limit) {
-    limiters["limit"] = limit;
+    limiters['limit'] = limit;
   }
 
   /// Useful for pagination, skips [int] amount of results
   void setAmountToSkip(int skip) {
-    limiters["skip"] = skip;
+    limiters['skip'] = skip;
   }
 
   /// Creates a query based on where
@@ -32,7 +32,7 @@ class QueryBuilder<T extends ParseObject> {
   /// [String] order will be the column of the table that the results are
   /// ordered by
   void orderByAscending(String order) {
-    limiters["order"] = order;
+    limiters['order'] = order;
   }
 
   /// Sorts the results descending order.
@@ -40,7 +40,7 @@ class QueryBuilder<T extends ParseObject> {
   /// [String] order will be the column of the table that the results are
   /// ordered by
   void orderByDescending(String order) {
-    limiters["order"] = "-$order";
+    limiters['order'] = '-$order';
   }
 
   /// Define which keys in an object to return.
@@ -48,33 +48,34 @@ class QueryBuilder<T extends ParseObject> {
   /// [String] keys will only return the columns of a result you want the data for,
   /// this is useful for large objects
   void keysToReturn(List<String> keys) {
-    limiters["keys"] = concatenateArray(keys);
+    limiters['keys'] = concatenateArray(keys);
   }
 
   /// Includes other ParseObjects stored as a Pointer
   void includeObject(List<String> objectTypes) {
-    limiters["include"] = concatenateArray(objectTypes);
+    limiters['include'] = concatenateArray(objectTypes);
   }
 
   /// Returns an object where the [String] column starts with [value]
   void whereStartsWith(String column, String query,
-      {bool caseSensitive: false}) {
+      {bool caseSensitive = false}) {
     if (caseSensitive) {
-      queries.add(
-          MapEntry(_SINGLE_QUERY, '\"$column\":{\"\$regex\": \"^$query\"}'));
+      queries.add(MapEntry<String, dynamic>(
+          _SINGLE_QUERY, '\"$column\":{\"\$regex\": \"^$query\"}'));
     } else {
-      queries.add(MapEntry(_SINGLE_QUERY,
+      queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
           '\"$column\":{\"\$regex\": \"^$query\", \"\$options\": \"i\"}'));
     }
   }
 
   /// Returns an object where the [String] column ends with [value]
-  void whereEndsWith(String column, String query, {bool caseSensitive: false}) {
+  void whereEndsWith(String column, String query,
+      {bool caseSensitive = false}) {
     if (caseSensitive) {
-      queries.add(
-          MapEntry(_SINGLE_QUERY, '\"$column\":{\"\$regex\": \"$query^\"}'));
+      queries.add(MapEntry<String, dynamic>(
+          _SINGLE_QUERY, '\"$column\":{\"\$regex\": \"$query^\"}'));
     } else {
-      queries.add(MapEntry(_SINGLE_QUERY,
+      queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
           '\"$column\":{\"\$regex\": \"$query^\", \"\$options\": \"i\"}'));
     }
   }
@@ -82,93 +83,94 @@ class QueryBuilder<T extends ParseObject> {
   /// Returns an object where the [String] column equals [value]
   void whereEqualTo(String column, dynamic value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry(column, value), _NO_OPERATOR_NEEDED));
+        MapEntry<String, dynamic>(column, value), _NO_OPERATOR_NEEDED));
   }
 
   /// Returns an object where the [String] column contains a value less than
   /// value
   void whereLessThan(String column, dynamic value) {
-    queries.add(
-        _buildQueryWithColumnValueAndOperator(MapEntry(column, value), "\$lt"));
+    queries.add(_buildQueryWithColumnValueAndOperator(
+        MapEntry<String, dynamic>(column, value), '\$lt'));
   }
 
   /// Returns an object where the [String] column contains a value less or equal
   /// to than value
   void whereLessThanOrEqualTo(String column, dynamic value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry(column, value), "\$lte"));
+        MapEntry<String, dynamic>(column, value), '\$lte'));
   }
 
   /// Returns an object where the [String] column contains a value greater
   /// than value
   void whereGreaterThan(String column, dynamic value) {
-    queries.add(
-        _buildQueryWithColumnValueAndOperator(MapEntry(column, value), "\$gt"));
+    queries.add(_buildQueryWithColumnValueAndOperator(
+        MapEntry<String, dynamic>(column, value), '\$gt'));
   }
 
   /// Returns an object where the [String] column contains a value greater
   /// than equal to value
   void whereGreaterThanOrEqualsTo(String column, dynamic value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry(column, value), "\$gte"));
+        MapEntry<String, dynamic>(column, value), '\$gte'));
   }
 
   /// Returns an object where the [String] column is not equal to value
   void whereNotEqualTo(String column, dynamic value) {
-    queries.add(
-        _buildQueryWithColumnValueAndOperator(MapEntry(column, value), "\$ne"));
+    queries.add(_buildQueryWithColumnValueAndOperator(
+        MapEntry<String, dynamic>(column, value), '\$ne'));
   }
 
   /// Returns an object where the [String] column is containedIn
-  void whereContainedIn(String column, List value) {
-    queries.add(
-        _buildQueryWithColumnValueAndOperator(MapEntry(column, value), "\$in"));
+  void whereContainedIn(String column, List<dynamic> value) {
+    queries.add(_buildQueryWithColumnValueAndOperator(
+        MapEntry<String, dynamic>(column, value), '\$in'));
   }
 
   /// Returns an object where the [String] column is notContainedIn
-  void whereNotContainedIn(String column, List value) {
+  void whereNotContainedIn(String column, List<dynamic> value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry(column, value), "\$nin"));
+        MapEntry<String, dynamic>(column, value), '\$nin'));
   }
 
   /// Returns an object where the [String] column for the object has data correctly entered/saved
   void whereValueExists(String column, bool value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry(column, value), "\$exists"));
+        MapEntry<String, dynamic>(column, value), '\$exists'));
   }
 
   /// Returns an object where the [String] column contains select
   void selectKeys(String column, dynamic value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry(column, value), "\$select"));
+        MapEntry<String, dynamic>(column, value), '\$select'));
   }
 
   /// Returns an object where the [String] column doesn't select
   void dontSelectKeys(String column, dynamic value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry(column, value), "\$dontSelect"));
+        MapEntry<String, dynamic>(column, value), '\$dontSelect'));
   }
 
   /// Returns an object where the [String] column contains all
-  void whereArrayContainsAll(String column, List value) {
+  void whereArrayContainsAll(String column, List<dynamic> value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry(column, value.toString()), "\$all"));
+        MapEntry<String, dynamic>(column, value.toString()), '\$all'));
   }
 
   /// Returns an object where the [String] column has a regEx performed on,
   /// this can include ^StringsWith, or ^EndsWith. This can be manipulated to the users desire
   void regEx(String column, String value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry(column, value), "\$regex"));
+        MapEntry<String, dynamic>(column, value), '\$regex'));
   }
 
   /// Performs a search to see if [String] contains other string
-  void whereContains(String column, String value, {bool caseSensitive: false}) {
+  void whereContains(String column, String value,
+      {bool caseSensitive = false}) {
     if (caseSensitive) {
-      queries.add(
-          MapEntry(_SINGLE_QUERY, '\"$column\":{\"\$regex\": \"$value\"}'));
+      queries.add(MapEntry<String, dynamic>(
+          _SINGLE_QUERY, '\"$column\":{\"\$regex\": \"$value\"}'));
     } else {
-      queries.add(MapEntry(_SINGLE_QUERY,
+      queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
           '\"$column\":{\"\$regex\": \"$value\", \"\$options\": \"i\"}'));
     }
   }
@@ -176,60 +178,62 @@ class QueryBuilder<T extends ParseObject> {
   /// Powerful search for containing whole words. This search is much quicker than regex and can search for whole words including wether they are case sensitive or not.
   /// This search can also order by the score of the search
   void whereContainsWholeWord(String column, String query,
-      {bool caseSensitive: false, bool orderByScore: true}) {
-    queries.add(MapEntry(_SINGLE_QUERY,
+      {bool caseSensitive = false, bool orderByScore = true}) {
+    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
         '\"$column\":{\"\$text\":{\"\$search\":{\"\$term\": \"$query\", \"\$caseSensitive\": $caseSensitive }}}'));
-    if (orderByScore) orderByDescending('score');
+    if (orderByScore) {
+      orderByDescending('score');
+    }
   }
 
   /// Returns an objects with key point values near the point given
   void whereNear(String column, ParseGeoPoint point) {
-    var latitude = point.latitude;
-    var longitude = point.longitude;
-    queries.add(MapEntry(_SINGLE_QUERY,
+    final double latitude = point.latitude;
+    final double longitude = point.longitude;
+    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
         '\"$column\":{\"\$nearSphere\":{\"__type\":\"GeoPoint\",\"latitude\":$latitude,\"longitude\":$longitude}}'));
   }
 
   /// Returns an object with key point values near the point given and within the maximum distance given.
   void whereWithinMiles(
       String column, ParseGeoPoint point, double maxDistance) {
-    var latitude = point.latitude;
-    var longitude = point.longitude;
+    final double latitude = point.latitude;
+    final double longitude = point.longitude;
 
-    queries.add(MapEntry(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
         '\"$column\":{\"\$nearSphere\":{\"__type\":\"GeoPoint\",\"latitude\":$latitude,\"longitude\":$longitude},\"\$maxDistanceInMiles\":$maxDistance}'));
   }
 
   /// Returns an object with key point values near the point given and within the maximum distance given.
   void whereWithinKilometers(
       String column, ParseGeoPoint point, double maxDistance) {
-    var latitude = point.latitude;
-    var longitude = point.longitude;
+    final double latitude = point.latitude;
+    final double longitude = point.longitude;
 
-    queries.add(MapEntry(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
         '\"$column\":{\"\$nearSphere\":{\"__type\":\"GeoPoint\",\"latitude\":$latitude,\"longitude\":$longitude},\"\$maxDistanceInKilometers\":$maxDistance}'));
   }
 
   /// Returns an object with key point values near the point given and within the maximum distance given.
   void whereWithinRadians(
       String column, ParseGeoPoint point, double maxDistance) {
-    var latitude = point.latitude;
-    var longitude = point.longitude;
+    final double latitude = point.latitude;
+    final double longitude = point.longitude;
 
-    queries.add(MapEntry(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
         '\"$column\":{\"\$nearSphere\":{\"__type\":\"GeoPoint\",\"latitude\":$latitude,\"longitude\":$longitude},\"\$maxDistanceInRadians\":$maxDistance}'));
   }
 
   /// Returns an object with key point values contained within a given rectangular geographic bounding box.
   void whereWithinGeoBox(
       String column, ParseGeoPoint southwest, ParseGeoPoint northeast) {
-    var latitudeS = southwest.latitude;
-    var longitudeS = southwest.longitude;
+    final double latitudeS = southwest.latitude;
+    final double longitudeS = southwest.longitude;
 
-    var latitudeN = northeast.latitude;
-    var longitudeN = northeast.longitude;
+    final double latitudeN = northeast.latitude;
+    final double longitudeN = northeast.longitude;
 
-    queries.add(MapEntry(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
         '\"$column\":{\"\$within\":{\"\$box\": [{\"__type\": \"GeoPoint\",\"latitude\":$latitudeS,\"longitude\":$longitudeS},{\"__type\": \"GeoPoint\",\"latitude\":$latitudeN,\"longitude\":$longitudeN}]}}'));
   }
 
@@ -243,19 +247,18 @@ class QueryBuilder<T extends ParseObject> {
   /// Builds the query for Parse
   String _buildQuery() {
     queries = _checkForMultipleColumnInstances(queries);
-    var query = "where={${buildQueries(queries)}}${getLimiters(limiters)}";
-    return "$query";
+    return 'where={${buildQueries(queries)}}${getLimiters(limiters)}';
   }
 
   /// Runs through all queries and adds them to a query string
-  String buildQueries(List<MapEntry> queries) {
-    String queryBuilder = "";
+  String buildQueries(List<MapEntry<String, dynamic>> queries) {
+    String queryBuilder = '';
 
-    for (var item in queries) {
+    for (final MapEntry<String, dynamic> item in queries) {
       if (item == queries.first) {
         queryBuilder += item.value;
       } else {
-        queryBuilder += ",${item.value}";
+        queryBuilder += ',${item.value}';
       }
     }
 
@@ -263,12 +266,13 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   String concatenateArray(List<String> queries) {
-    String queryBuilder = "";
+    String queryBuilder = '';
 
-    for (var item in queries) {
+    for (final String item in queries) {
       if (item == queries.first) {
         queryBuilder += item;
       } else {
+        // ignore: prefer_single_quotes
         queryBuilder += ",$item";
       }
     }
@@ -278,37 +282,38 @@ class QueryBuilder<T extends ParseObject> {
 
   /// Creates a query param using the column, the value and the queryOperator
   /// that the column and value are being queried against
-  MapEntry _buildQueryWithColumnValueAndOperator(
+  MapEntry<String, dynamic> _buildQueryWithColumnValueAndOperator(
       MapEntry columnAndValue, String queryOperator) {
-    var key = columnAndValue.key;
-    var value = convertValueToCorrectType(columnAndValue.value);
+    final String key = columnAndValue.key;
+    final dynamic value = convertValueToCorrectType(parseEncode(columnAndValue.value));
 
     if (queryOperator == _NO_OPERATOR_NEEDED) {
-      return MapEntry(_NO_OPERATOR_NEEDED, "\"${key}\": $value");
+      return MapEntry<String, dynamic>(
+        _NO_OPERATOR_NEEDED, "\"${key}\": $value");
     } else {
-      var queryString = "\"$key\":";
-
-      var queryOperatorAndValueMap = Map();
-      queryOperatorAndValueMap[queryOperator] = value;
-      var formattedQueryOperatorAndValue =
-          JsonEncoder().convert(queryOperatorAndValueMap);
-
-      queryString += "$formattedQueryOperatorAndValue";
-      return MapEntry(key, queryString);
+      String queryString = '\"$key\":';
+      final Map<String, dynamic> queryOperatorAndValueMap = Map<String, dynamic>();
+      queryOperatorAndValueMap[queryOperator] = parseEncode(value);
+      final String formattedQueryOperatorAndValue = jsonEncode(queryOperatorAndValueMap);
+      queryString += '$formattedQueryOperatorAndValue';
+      return MapEntry<String, dynamic>(key, queryString);
     }
   }
 
   /// This joins queries that should be joined together... e.g. age > 10 &&
   /// age < 20, this would be similar to age > 10 < 20
-  List _checkForMultipleColumnInstances(List<MapEntry> queries) {
-    List<MapEntry> sanitizedQueries = List();
-    List<String> keysAlreadyCompacted = List();
+  List<MapEntry<String, dynamic>> _checkForMultipleColumnInstances(
+      List<MapEntry<String, dynamic>> queries) {
+    final List<MapEntry<String, dynamic>> sanitizedQueries =
+        List<MapEntry<String, dynamic>>();
+    final List<String> keysAlreadyCompacted = List<String>();
 
     // Run through each query
-    for (var query in queries) {
+    for (final MapEntry<String, dynamic> query in queries) {
       // Add queries that don't need sanitizing
       if (query.key == _NO_OPERATOR_NEEDED || query.key == _SINGLE_QUERY) {
-        sanitizedQueries.add(MapEntry(_NO_OPERATOR_NEEDED, query.value));
+        sanitizedQueries
+            .add(MapEntry<String, dynamic>(_NO_OPERATOR_NEEDED, query.value));
       }
 
       // Check if query with same column name has been sanitized
@@ -319,27 +324,28 @@ class QueryBuilder<T extends ParseObject> {
         keysAlreadyCompacted.add(query.key);
 
         // Build a list of all queries with the same column name
-        var listOfQueriesCompact =
-            queries.where((i) => query.key == i.key).toList();
+        final List<MapEntry<String, dynamic>> listOfQueriesCompact = queries
+            .where((MapEntry<String, dynamic> entry) => query.key == entry.key)
+            .toList();
 
         // Build first part of query
-        var queryStart = "\"${query.key}\":";
-        var queryEnd = "";
+        String queryStart = '\"${query.key}\":';
+        String queryEnd = '';
 
         // Compact all the queries in the correct format
-        for (var queryToCompact in listOfQueriesCompact) {
+        for (MapEntry<String, dynamic> queryToCompact in listOfQueriesCompact) {
           var queryToCompactValue = queryToCompact.value.toString();
           queryToCompactValue = queryToCompactValue.replaceFirst("{", "");
-          queryToCompactValue = queryToCompactValue.replaceRange(
-              queryToCompactValue.length - 1, queryToCompactValue.length, "");
+          queryToCompactValue = queryToCompactValue.replaceRange(queryToCompactValue.length - 1, queryToCompactValue.length, "");
           if (listOfQueriesCompact.first == queryToCompact) {
-            queryEnd += (queryToCompactValue.replaceAll(queryStart, " "));
+            queryEnd += queryToCompactValue.replaceAll(queryStart, ' ');
           } else {
-            queryEnd += (queryToCompactValue.replaceAll(queryStart, ", "));
+            queryEnd += queryToCompactValue.replaceAll(queryStart, ', ');
           }
         }
 
-        sanitizedQueries.add(MapEntry(query.key, queryStart += "{$queryEnd}"));
+        sanitizedQueries.add(
+            MapEntry<String, dynamic>(query.key, queryStart += '{$queryEnd}'));
       }
     }
 
@@ -347,10 +353,14 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   /// Adds the limiters to the query, i.e. skip=10, limit=10
-  String getLimiters(Map map) {
-    String result = "";
-    map.forEach((key, value) {
-      result = (result != null) ? result + "&$key=$value" : "&$key=$value";
+  String getLimiters(Map<String, dynamic> map) {
+    String result = '';
+    map.forEach((String key, dynamic value) {
+      if (result != null) {
+        result = result + '&$key=$value';
+      } else {
+        result = '&$key=$value';
+      }
     });
     return result;
   }
