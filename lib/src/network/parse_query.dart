@@ -182,7 +182,7 @@ class QueryBuilder<T extends ParseObject> {
     if (orderByScore) orderByDescending('score');
   }
 
-    /// Returns an objects with key point values near the point given
+  /// Returns an objects with key point values near the point given
   void whereNear(String column, ParseGeoPoint point) {
     var latitude = point.latitude;
     var longitude = point.longitude;
@@ -281,21 +281,19 @@ class QueryBuilder<T extends ParseObject> {
   MapEntry _buildQueryWithColumnValueAndOperator(
       MapEntry columnAndValue, String queryOperator) {
     var key = columnAndValue.key;
-
     var value = convertValueToCorrectType(columnAndValue.value);
 
     if (queryOperator == _NO_OPERATOR_NEEDED) {
-      return MapEntry(_NO_OPERATOR_NEEDED, "\"${columnAndValue.key}\": $value");
+      return MapEntry(_NO_OPERATOR_NEEDED, "\"${key}\": $value");
     } else {
       var queryString = "\"$key\":";
 
       var queryOperatorAndValueMap = Map();
-      queryOperatorAndValueMap[queryOperator] = columnAndValue.value;
-
+      queryOperatorAndValueMap[queryOperator] = value;
       var formattedQueryOperatorAndValue =
           JsonEncoder().convert(queryOperatorAndValueMap);
-      queryString += "$formattedQueryOperatorAndValue";
 
+      queryString += "$formattedQueryOperatorAndValue";
       return MapEntry(key, queryString);
     }
   }
@@ -332,8 +330,8 @@ class QueryBuilder<T extends ParseObject> {
         for (var queryToCompact in listOfQueriesCompact) {
           var queryToCompactValue = queryToCompact.value.toString();
           queryToCompactValue = queryToCompactValue.replaceFirst("{", "");
-          queryToCompactValue = queryToCompactValue.replaceAll("}", "");
-
+          queryToCompactValue = queryToCompactValue.replaceRange(
+              queryToCompactValue.length - 1, queryToCompactValue.length, "");
           if (listOfQueriesCompact.first == queryToCompact) {
             queryEnd += (queryToCompactValue.replaceAll(queryStart, " "));
           } else {

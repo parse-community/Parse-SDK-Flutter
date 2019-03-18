@@ -218,7 +218,6 @@ class ParseInstallation extends ParseObject {
 
     if (apiResponse.success) {
       var installation = apiResponse.result as ParseObject;
-      print("achou installation");
       return Future.value(installation.get<List<dynamic>>("channels"));
     } else {
       return null;

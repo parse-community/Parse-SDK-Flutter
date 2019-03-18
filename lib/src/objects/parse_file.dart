@@ -73,7 +73,7 @@ class ParseFile extends ParseObject {
     await file.create();
 
     var response = await _client.get(url);
-    file.writeAsBytes(response.bodyBytes);
+    await file.writeAsBytes(response.bodyBytes);
 
     return this;
   }
