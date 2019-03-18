@@ -11,13 +11,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
       : super() {
     setClassName(className);
     _path = '$keyEndPointClasses$className';
-
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+    _debug = isDebugEnabled(providedDebugStatus: debug);
+    _client = getDefaultHttpClient(client, autoSendSessionId);
   }
 
   ParseObject.clone(String className) : this(className);

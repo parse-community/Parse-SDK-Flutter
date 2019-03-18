@@ -8,13 +8,8 @@ class ParseCloudFunction extends ParseObject {
       {bool debug, ParseHTTPClient client, bool autoSendSessionId})
       : super(functionName) {
     _path = '/functions/$functionName';
-
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+    _debug = isDebugEnabled(providedDebugStatus: debug);
+    _client = getDefaultHttpClient(client, autoSendSessionId);
   }
 
   final String functionName;

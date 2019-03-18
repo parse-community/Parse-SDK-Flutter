@@ -1,12 +1,9 @@
 part of flutter_parse_sdk;
 
 class ParseSession extends ParseObject implements ParseCloneable {
-  ParseSession({bool debug, ParseHTTPClient client}) : super(keyClassSession) {
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId: true,
-            securityContext: ParseCoreData().securityContext);
+  ParseSession({bool debug, ParseHTTPClient client, bool autoSendSessionId}) : super(keyClassSession) {
+    _debug = isDebugEnabled(providedDebugStatus: debug);
+    _client = getDefaultHttpClient(client, autoSendSessionId);
   }
 
   @override

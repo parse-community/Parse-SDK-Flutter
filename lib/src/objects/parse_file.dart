@@ -11,19 +11,15 @@ class ParseFile extends ParseObject {
       ParseHTTPClient client,
       bool autoSendSessionId})
       : super(keyFile) {
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+    _debug = isDebugEnabled(providedDebugStatus: debug);
+    _client = getDefaultHttpClient(client, autoSendSessionId);
 
     if (file != null) {
       name = path.basename(file.path);
       _path = '/files/$name';
     } else {
-      name = name;
-      url = url;
+      this.name = name;
+      this.url = url;
     }
   }
 
@@ -73,6 +69,7 @@ class ParseFile extends ParseObject {
     final Directory tempPath = await getTemporaryDirectory();
     file = File('${tempPath.path}/$name');
     await file.create();
+
     final Response response = await _client.get(url);
     await file.writeAsBytes(response.bodyBytes);
 
@@ -98,18 +95,17 @@ class ParseFile extends ParseObject {
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader: getContentType(ext)
     };
+
     try {
-      final String uri = _client.data.serverUrl + '$_path';
+      final Uri uri = getSanitisedUri(_client, _path);
       final List<int> body = await file.readAsBytes();
-      final Response response =
-          await _client.post(uri, headers: headers, body: body);
+      final Response response = await _client.post(uri, headers: headers, body: body);
       if (response.statusCode == 201) {
         final Map<String, dynamic> map = json.decode(response.body);
         url = map['url'].toString();
         name = map['name'].toString();
       }
-      return handleResponse<ParseFile>(
-          this, response, ParseApiRQ.upload, _debug, className);
+      return handleResponse<ParseFile>(this, response, ParseApiRQ.upload, _debug, className);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.upload, _debug, className);
     }

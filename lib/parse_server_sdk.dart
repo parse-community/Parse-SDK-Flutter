@@ -120,7 +120,7 @@ class Parse {
       {bool debug, ParseHTTPClient client, bool autoSendSessionId}) async {
     ParseResponse parseResponse;
 
-    final bool _debug = isDebugEnabled(objectLevelDebug: debug);
+    final bool _debug = isDebugEnabled(providedDebugStatus: debug);
     final ParseHTTPClient _client = client ??
         ParseHTTPClient(
             sendSessionId:

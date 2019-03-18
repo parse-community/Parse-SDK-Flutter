@@ -14,12 +14,8 @@ class ParseGeoPoint extends ParseObject {
     latitude = latitude;
     longitude = longitude;
 
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+    _debug = isDebugEnabled(providedDebugStatus: debug);
+    _client = getDefaultHttpClient(client, autoSendSessionId);
   }
 
   double latitude;
