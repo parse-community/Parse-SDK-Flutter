@@ -86,9 +86,16 @@ class ParseFile extends ParseObject {
   Future<ParseResponse> upload() async {
     if (saved) {
       //Creates a Fake Response to return the correct result
-      final Map<String, String> response = <String, String>{'url': url, 'name': name};
-      return handleResponse<ParseFile>(this, Response(json.encode(response), 201),
-          ParseApiRQ.upload, _debug, className);
+      final Map<String, String> response = <String, String>{
+        'url': url,
+        'name': name
+      };
+      return handleResponse<ParseFile>(
+          this,
+          Response(json.encode(response), 201),
+          ParseApiRQ.upload,
+          _debug,
+          className);
     }
 
     final String ext = path.extension(file.path).replaceAll('.', '');
@@ -99,13 +106,15 @@ class ParseFile extends ParseObject {
     try {
       final Uri uri = getSanitisedUri(_client, _path);
       final List<int> body = await file.readAsBytes();
-      final Response response = await _client.post(uri, headers: headers, body: body);
+      final Response response =
+          await _client.post(uri, headers: headers, body: body);
       if (response.statusCode == 201) {
         final Map<String, dynamic> map = json.decode(response.body);
         url = map['url'].toString();
         name = map['name'].toString();
       }
-      return handleResponse<ParseFile>(this, response, ParseApiRQ.upload, _debug, className);
+      return handleResponse<ParseFile>(
+          this, response, ParseApiRQ.upload, _debug, className);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.upload, _debug, className);
     }

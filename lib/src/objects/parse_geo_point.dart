@@ -4,15 +4,12 @@ class ParseGeoPoint extends ParseObject {
 
   /// Creates a Parse Object of type GeoPoint
   ParseGeoPoint(
-      {double latitude = 0.0,
-      double longitude = 0.0,
+      {this.latitude = 0.0,
+        this.longitude = 0.0,
       bool debug,
       ParseHTTPClient client,
       bool autoSendSessionId})
       : super(keyGeoPoint) {
-
-    latitude = latitude;
-    longitude = longitude;
 
     _debug = isDebugEnabled(providedDebugStatus: debug);
     _client = getDefaultHttpClient(client, autoSendSessionId);
