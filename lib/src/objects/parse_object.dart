@@ -253,7 +253,6 @@ class ParseObject extends ParseBase implements ParseCloneable {
           port: tempUri.port,
           path: '${tempUri.path}$_path',
           query: query);
-
       final Response result = await _client.get(url);
       return handleResponse<ParseObject>(this, result, ParseApiRQ.query, _debug, className);
     } on Exception catch (e) {

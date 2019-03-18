@@ -14,6 +14,10 @@ bool isDebugEnabled({bool objectLevelDebug}) {
 dynamic convertValueToCorrectType(dynamic value) {
   if (value is String && !value.contains('__type')) {
     return '\"$value\"';
+  } 
+  
+  if (value is DateTime || value is ParseObject) {
+    return parseEncode(value);
   } else {
     return value;
   }

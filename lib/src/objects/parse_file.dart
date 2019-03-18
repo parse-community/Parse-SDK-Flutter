@@ -73,9 +73,8 @@ class ParseFile extends ParseObject {
     final Directory tempPath = await getTemporaryDirectory();
     file = File('${tempPath.path}/$name');
     await file.create();
-
     final Response response = await _client.get(url);
-    file.writeAsBytes(response.bodyBytes);
+    await file.writeAsBytes(response.bodyBytes);
 
     return this;
   }

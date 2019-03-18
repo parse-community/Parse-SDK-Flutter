@@ -283,25 +283,19 @@ class QueryBuilder<T extends ParseObject> {
   /// Creates a query param using the column, the value and the queryOperator
   /// that the column and value are being queried against
   MapEntry<String, dynamic> _buildQueryWithColumnValueAndOperator(
-      MapEntry<String, dynamic> columnAndValue, String queryOperator) {
+      MapEntry columnAndValue, String queryOperator) {
     final String key = columnAndValue.key;
-    final dynamic value =
-        convertValueToCorrectType(parseEncode(columnAndValue.value));
+    final dynamic value = convertValueToCorrectType(parseEncode(columnAndValue.value));
 
     if (queryOperator == _NO_OPERATOR_NEEDED) {
       return MapEntry<String, dynamic>(
-          _NO_OPERATOR_NEEDED, '\"${columnAndValue.key}\": $value"');
+        _NO_OPERATOR_NEEDED, "\"${key}\": $value");
     } else {
       String queryString = '\"$key\":';
-
-      final Map<String, dynamic> queryOperatorAndValueMap =
-          Map<String, dynamic>();
-      queryOperatorAndValueMap[queryOperator] =
-          parseEncode(columnAndValue.value);
-      final String formattedQueryOperatorAndValue =
-          jsonEncode(queryOperatorAndValueMap);
+      final Map<String, dynamic> queryOperatorAndValueMap = Map<String, dynamic>();
+      queryOperatorAndValueMap[queryOperator] = parseEncode(value);
+      final String formattedQueryOperatorAndValue = jsonEncode(queryOperatorAndValueMap);
       queryString += '$formattedQueryOperatorAndValue';
-
       return MapEntry<String, dynamic>(key, queryString);
     }
   }
@@ -340,10 +334,9 @@ class QueryBuilder<T extends ParseObject> {
 
         // Compact all the queries in the correct format
         for (MapEntry<String, dynamic> queryToCompact in listOfQueriesCompact) {
-          String queryToCompactValue = queryToCompact.value.toString();
-          queryToCompactValue = queryToCompactValue.replaceFirst('{', '');
-          queryToCompactValue = queryToCompactValue.replaceAll('}', '');
-
+          var queryToCompactValue = queryToCompact.value.toString();
+          queryToCompactValue = queryToCompactValue.replaceFirst("{", "");
+          queryToCompactValue = queryToCompactValue.replaceRange(queryToCompactValue.length - 1, queryToCompactValue.length, "");
           if (listOfQueriesCompact.first == queryToCompact) {
             queryEnd += queryToCompactValue.replaceAll(queryStart, ' ');
           } else {
