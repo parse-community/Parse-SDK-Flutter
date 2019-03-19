@@ -20,10 +20,16 @@ dynamic parseEncode(dynamic value, {bool full}) {
     return _encodeDate(value);
   }
 
+  if (value is List) {
+    return value.map((v) {
+      return parseEncode(v);
+    }).toList();
+  }
+
   if (value is ParseGeoPoint) {
     return value;
   }
-  
+
   if (value is ParseFile) {
     return value;
   }
@@ -32,7 +38,7 @@ dynamic parseEncode(dynamic value, {bool full}) {
     if (full) {
       return value.toJson(full: full);
     } else {
-      return value.toPointer();
+      return _encodeObject(value);
     }
   }
 
@@ -44,5 +50,16 @@ Map<String, dynamic> _encodeUint8List(Uint8List value) {
 }
 
 Map<String, dynamic> _encodeDate(DateTime date) {
-  return <String, dynamic>{'__type': 'Date', 'iso': _parseDateFormat.format(date)};
+  return <String, dynamic>{
+    '__type': 'Date',
+    'iso': _parseDateFormat.format(date)
+  };
+}
+
+Map<String, dynamic> _encodeObject(ParseObject object) {
+  return {
+    "__type": "Pointer",
+    keyVarClassName: object.className,
+    keyVarObjectId: object.objectId
+  };
 }
