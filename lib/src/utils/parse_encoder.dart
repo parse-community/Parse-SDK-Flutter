@@ -58,7 +58,7 @@ Map<String, dynamic> _encodeDate(DateTime date) {
 
 Map<String, dynamic> _encodeObject(ParseObject object) {
   return {
-    "__type": "Pointer",
+    '__type': 'Pointer',
     keyVarClassName: object.className,
     keyVarObjectId: object.objectId
   };
