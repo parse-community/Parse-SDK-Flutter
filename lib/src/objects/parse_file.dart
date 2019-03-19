@@ -11,15 +11,11 @@ class ParseFile extends ParseObject {
       ParseHTTPClient client,
       bool autoSendSessionId})
       : super(keyFile) {
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+    _debug = isDebugEnabled(providedDebugStatus: debug);
+    _client = getDefaultHttpClient(client, autoSendSessionId);
 
     if (file != null) {
-      this.name = path.basename(file.path);
+      name = path.basename(file.path);
       _path = '/files/$name';
     } else {
       this.name = name;
@@ -90,17 +86,25 @@ class ParseFile extends ParseObject {
   Future<ParseResponse> upload() async {
     if (saved) {
       //Creates a Fake Response to return the correct result
-      final Map<String, String> response = <String, String>{'url': url, 'name': name};
-      return handleResponse<ParseFile>(this, Response(json.encode(response), 201),
-          ParseApiRQ.upload, _debug, className);
+      final Map<String, String> response = <String, String>{
+        'url': url,
+        'name': name
+      };
+      return handleResponse<ParseFile>(
+          this,
+          Response(json.encode(response), 201),
+          ParseApiRQ.upload,
+          _debug,
+          className);
     }
 
     final String ext = path.extension(file.path).replaceAll('.', '');
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader: getContentType(ext)
     };
+
     try {
-      final String uri = _client.data.serverUrl + '$_path';
+      final Uri uri = getSanitisedUri(_client, _path);
       final List<int> body = await file.readAsBytes();
       final Response response =
           await _client.post(uri, headers: headers, body: body);

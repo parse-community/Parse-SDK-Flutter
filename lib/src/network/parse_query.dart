@@ -341,7 +341,8 @@ class QueryBuilder<T extends ParseObject> {
         for (MapEntry<String, dynamic> queryToCompact in listOfQueriesCompact) {
           String queryToCompactValue = queryToCompact.value.toString();
           queryToCompactValue = queryToCompactValue.replaceFirst('{', '');
-          queryToCompactValue = queryToCompactValue.replaceRange(queryToCompactValue.length - 1, queryToCompactValue.length, "");
+          queryToCompactValue = queryToCompactValue.replaceRange(
+              queryToCompactValue.length - 1, queryToCompactValue.length, '');
           if (listOfQueriesCompact.first == queryToCompact) {
             queryEnd += queryToCompactValue.replaceAll(queryStart, ' ');
           } else {

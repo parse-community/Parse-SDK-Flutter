@@ -6,12 +6,9 @@ class ParseInstallation extends ParseObject {
   ParseInstallation(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId})
       : super(keyClassInstallation) {
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-            autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+
+    _debug = isDebugEnabled(providedDebugStatus: debug);
+    _client = getDefaultHttpClient(client, autoSendSessionId);
   }
 
   ParseInstallation.forQuery() : super(keyClassUser);

@@ -12,13 +12,13 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// is required as well to create a full new user object on ParseServer. Only
   /// username and password is required to login
   ParseUser(String username, String password, String emailAddress,
-      {String sessionToken, bool debug, ParseHTTPClient client})
+      {String sessionToken,
+      bool debug,
+      ParseHTTPClient client,
+      bool autoSendSessionId})
       : super(keyClassUser) {
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId: true,
-            securityContext: ParseCoreData().securityContext);
+    _debug = isDebugEnabled(providedDebugStatus: debug);
+    _client = getDefaultHttpClient(client, autoSendSessionId);
 
     this.username = username;
     this.password = password;
@@ -75,7 +75,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// returned
   static Future<ParseResponse> getCurrentUserFromServer(
       {String token, bool debug, ParseHTTPClient client}) async {
-    final bool _debug = isDebugEnabled(objectLevelDebug: debug);
+
+    final bool _debug = isDebugEnabled(providedDebugStatus: debug);
     final ParseHTTPClient _client = client ??
         ParseHTTPClient(
             sendSessionId: true,
@@ -314,7 +315,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   static Future<ParseResponse> all({bool debug, ParseHTTPClient client}) async {
     final ParseUser emptyUser = _getEmptyUser();
 
-    final bool _debug = isDebugEnabled(objectLevelDebug: debug);
+    final bool _debug = isDebugEnabled(providedDebugStatus: debug);
     final ParseHTTPClient _client = client ??
         ParseHTTPClient(
             sendSessionId: true,

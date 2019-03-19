@@ -4,12 +4,8 @@ class ParseConfig extends ParseObject {
   /// Creates an instance of ParseConfig so that you can grab all configs from the server
   ParseConfig({bool debug, ParseHTTPClient client, bool autoSendSessionId})
       : super('config') {
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+    _debug = isDebugEnabled(providedDebugStatus: debug);
+    _client = getDefaultHttpClient(client, autoSendSessionId);
   }
 
   /// Gets all configs from the server

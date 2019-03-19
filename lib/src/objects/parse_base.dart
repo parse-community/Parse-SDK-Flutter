@@ -65,7 +65,7 @@ abstract class ParseBase {
       map.remove(keyVarCreatedAt);
       map.remove(keyVarUpdatedAt);
       map.remove(keyVarClassName);
-      map.remove(keyVarAcl);
+      //map.remove(keyVarAcl);
       map.remove(keyParamSessionToken);
     }
 
@@ -205,4 +205,10 @@ abstract class ParseBase {
     }
     return null;
   }
+
+  Map<String, String> toPointer() => <String, String>{
+        '__type': 'Pointer',
+        keyVarClassName: className,
+        keyVarObjectId: objectId
+      };
 }
