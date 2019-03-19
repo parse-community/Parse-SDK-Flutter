@@ -205,10 +205,4 @@ abstract class ParseBase {
     }
     return null;
   }
-
-  Map<String, String> toPointer() => <String, String>{
-        '__type': 'Pointer',
-        keyVarClassName: className,
-        keyVarObjectId: objectId
-      };
 }
