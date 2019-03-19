@@ -1,12 +1,10 @@
 part of flutter_parse_sdk;
 
 class ParseInstallation extends ParseObject {
-
   /// Creates an instance of ParseInstallation
   ParseInstallation(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId})
       : super(keyClassInstallation) {
-
     _debug = isDebugEnabled(providedDebugStatus: debug);
     _client = getDefaultHttpClient(client, autoSendSessionId);
   }
@@ -24,7 +22,8 @@ class ParseInstallation extends ParseObject {
 
   Map<String, dynamic> get acl => super.get<Map<String, dynamic>>(keyVarAcl);
 
-  set acl(Map<String, dynamic> acl) => set<Map<String, dynamic>>(keyVarAcl, acl);
+  set acl(Map<String, dynamic> acl) =>
+      set<Map<String, dynamic>>(keyVarAcl, acl);
 
   String get deviceToken => super.get<String>(keyDeviceToken);
 
@@ -89,8 +88,7 @@ class ParseInstallation extends ParseObject {
   @override
   Future<ParseResponse> create() async {
     final bool isCurrent = await ParseInstallation.isCurrent(this);
-    if (isCurrent)
-      await _updateInstallation();
+    if (isCurrent) await _updateInstallation();
     //ParseResponse parseResponse = await super.create();
     final ParseResponse parseResponse = await _create();
     if (parseResponse.success && isCurrent) {
@@ -159,7 +157,8 @@ class ParseInstallation extends ParseObject {
         objectId = map['objectId'].toString();
       }
 
-      return handleResponse<ParseInstallation>(this, result, ParseApiRQ.create, _debug, className);
+      return handleResponse<ParseInstallation>(
+          this, result, ParseApiRQ.create, _debug, className);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.create, _debug, className);
     }
@@ -179,7 +178,8 @@ class ParseInstallation extends ParseObject {
               ParseApiRQ.save.toString(), uri, body);
         }
         final Response result = await _client.put(uri, body: body);
-        return handleResponse<ParseInstallation>(this, result, ParseApiRQ.save, _debug, className);
+        return handleResponse<ParseInstallation>(
+            this, result, ParseApiRQ.save, _debug, className);
       } on Exception catch (e) {
         return handleException(e, ParseApiRQ.save, _debug, className);
       }

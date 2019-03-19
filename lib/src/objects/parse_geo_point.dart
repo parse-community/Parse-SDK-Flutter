@@ -9,7 +9,6 @@ class ParseGeoPoint extends ParseObject {
       ParseHTTPClient client,
       bool autoSendSessionId})
       : super(keyGeoPoint) {
-
     _debug = isDebugEnabled(providedDebugStatus: debug);
     _client = getDefaultHttpClient(client, autoSendSessionId);
   }
@@ -18,7 +17,6 @@ class ParseGeoPoint extends ParseObject {
   double longitude;
 
   @override
-
   Map<String, dynamic> toJson({bool full = false, bool forApiRQ = false}) =>
       <String, dynamic>{
         '__type': 'GeoPoint',
