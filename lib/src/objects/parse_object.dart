@@ -73,7 +73,6 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final Map<String, dynamic> map = json.decode(result.body);
         objectId = map['objectId'].toString();
       }
-
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.create, _debug, className);
     } on Exception catch (e) {
@@ -90,7 +89,6 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final Uri url = getSanitisedUri(_client, '$_path/$objectId');
         final String body = json.encode(toJson(forApiRQ: true));
         final Response result = await _client.put(url, body: body);
-
         return handleResponse<ParseObject>(
             this, result, ParseApiRQ.save, _debug, className);
       } on Exception catch (e) {
@@ -183,7 +181,6 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final String body =
             '{\"$key\":{\"__op\":\"$arrayAction\",\"objects\":${json.encode(parseEncode(values))}}}';
         final Response result = await _client.put(url, body: body);
-
         return handleResponse<ParseObject>(
             this, result, apiRQType, _debug, className);
       } else {
@@ -277,7 +274,6 @@ class ParseObject extends ParseBase implements ParseCloneable {
       objectId ??= objectId;
       final Uri url = getSanitisedUri(_client, '$_path/$objectId');
       final Response result = await _client.delete(url);
-
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.delete, _debug, className);
     } on Exception catch (e) {
