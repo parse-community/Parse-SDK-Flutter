@@ -19,11 +19,11 @@ class ParseFile extends ParseObject {
             securityContext: ParseCoreData().securityContext);
 
     if (file != null) {
-      name = path.basename(file.path);
+      this.name = path.basename(file.path);
       _path = '/files/$name';
     } else {
-      name = name;
-      url = url;
+      this.name = name;
+      this.url = url;
     }
   }
 
@@ -42,7 +42,7 @@ class ParseFile extends ParseObject {
       <String, String>{'__type': keyFile, 'name': name, 'url': url};
 
   @override
-  String toString() => json.encode(toString());
+  String toString() => json.encode(toJson());
 
   Future<ParseFile> loadStorage() async {
     final Directory tempPath = await getTemporaryDirectory();
@@ -73,6 +73,7 @@ class ParseFile extends ParseObject {
     final Directory tempPath = await getTemporaryDirectory();
     file = File('${tempPath.path}/$name');
     await file.create();
+
     final Response response = await _client.get(url);
     await file.writeAsBytes(response.bodyBytes);
 

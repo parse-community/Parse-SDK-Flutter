@@ -11,8 +11,8 @@ class ParseGeoPoint extends ParseObject {
       bool autoSendSessionId})
       : super(keyGeoPoint) {
 
-    latitude = latitude;
-    longitude = longitude;
+    this.latitude = latitude;
+    this.longitude = longitude;
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _client = client ??

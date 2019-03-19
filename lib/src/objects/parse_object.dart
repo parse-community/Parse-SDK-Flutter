@@ -272,4 +272,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       return handleException(e, ParseApiRQ.delete, _debug, className);
     }
   }
+
+  /// Converts the object to a Pointer to be used ONLY in queries using Pointers
+  Map<String, dynamic> toPointer() => json.encode(parseEncode(this));
 }
