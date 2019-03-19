@@ -21,8 +21,8 @@ dynamic parseEncode(dynamic value, {bool full}) {
   }
 
   if (value is List) {
-    return value.map((v) {
-      return parseEncode(v);
+    return value.map<dynamic>((dynamic value) {
+      return parseEncode(value);
     }).toList();
   }
 
@@ -57,7 +57,7 @@ Map<String, dynamic> _encodeDate(DateTime date) {
 }
 
 Map<String, dynamic> _encodeObject(ParseObject object) {
-  return {
+  return <String, String>{
     '__type': 'Pointer',
     keyVarClassName: object.className,
     keyVarObjectId: object.objectId

@@ -259,6 +259,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
           port: tempUri.port,
           path: '${tempUri.path}$_path',
           query: query);
+
       final Response result = await _client.get(url);
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.query, _debug, className);
@@ -268,10 +269,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Deletes the current object locally and online
-  Future<ParseResponse> delete({String objectId, String path}) async {
+  Future<ParseResponse> delete({String path}) async {
     try {
       path ??= _path;
-      objectId ??= objectId;
       final Uri url = getSanitisedUri(_client, '$_path/$objectId');
       final Response result = await _client.delete(url);
       return handleResponse<ParseObject>(
