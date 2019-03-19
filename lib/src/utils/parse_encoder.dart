@@ -26,10 +26,6 @@ dynamic parseEncode(dynamic value, {bool full}) {
     }).toList();
   }
 
-  if (value is DateTime) {
-    return _encodeDate(value);
-  }
-
   if (value is ParseGeoPoint) {
     return value;
   }
@@ -42,7 +38,7 @@ dynamic parseEncode(dynamic value, {bool full}) {
     if (full) {
       return value.toJson(full: full);
     } else {
-      return value.toPointer();
+      return _encodeObject(value);
     }
   }
 
