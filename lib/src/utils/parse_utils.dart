@@ -4,6 +4,7 @@ part of flutter_parse_sdk;
 ///
 /// Debug can be set in 2 places, one global param in the Parse.initialize, and
 /// then can be overwritten class by class
+
 bool isDebugEnabled({bool providedDebugStatus}) {
   return providedDebugStatus ??= ParseCoreData().debug;
 }
@@ -24,9 +25,8 @@ ParseHTTPClient getDefaultHttpClient(ParseHTTPClient providedClient, bool sendSe
 dynamic convertValueToCorrectType(dynamic value) {
   if (value is String && !value.contains('__type')) {
     return '\"$value\"';
-  } 
-  
-  if (value is DateTime || value is ParseObject) {
+  }
+  if (value is DateTime || value is ParseObject || value is ParseUser) {
     return parseEncode(value);
   } else {
     return value;

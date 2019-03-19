@@ -6,6 +6,7 @@ class ParseInstallation extends ParseObject {
   ParseInstallation(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId})
       : super(keyClassInstallation) {
+
     _debug = isDebugEnabled(providedDebugStatus: debug);
     _client = getDefaultHttpClient(client, autoSendSessionId);
   }
@@ -119,7 +120,7 @@ class ParseInstallation extends ParseObject {
         (await ParseCoreData().getStore()).getString(keyParseStoreInstallation);
 
     if (installationJson != null) {
-      final dynamic installationMap = parseDecode(json.decode(installationJson));
+      final dynamic installationMap = json.decode(installationJson);
 
       if (installationMap != null) {
         return ParseInstallation()..fromJson(installationMap);

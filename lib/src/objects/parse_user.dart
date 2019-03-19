@@ -75,6 +75,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// returned
   static Future<ParseResponse> getCurrentUserFromServer(
       {String token, bool debug, ParseHTTPClient client}) async {
+
     final bool _debug = isDebugEnabled(providedDebugStatus: debug);
     final ParseHTTPClient _client = client ??
         ParseHTTPClient(
