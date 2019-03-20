@@ -1,8 +1,13 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/application_constants.dart';
 import 'package:flutter_plugin_example/diet_plan.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   Stetho.initialize();
@@ -64,9 +69,52 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> createItem() async {
+    //Create user Anonymous
+    ParseUser user = ParseUser('', '', '');
+    final ParseResponse response = await user.loginAnonymous();
+
+    if (response.success) {
+      user = response.result as ParseUser;
+    }
+
+    //Creates a temporary file in local storage to upload to Parse Server
+    //The file can be selected using ImagePicker
+    //File file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    final File file = await _downloadFile(
+        'https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png',
+        'image.png');
+
+    final ParseFile parseFile = ParseFile(file, name: 'image.png');
+    final ParseResponse fileResponse = await parseFile.save();
+
+    if (fileResponse.success) {
+      print('Upload with success');
+    } else {
+      print('Upload with error');
+    }
+
     final ParseObject newObject = ParseObject('TestObjectForApi');
     newObject.set<String>('name', 'testItem');
     newObject.set<int>('age', 26);
+    newObject.set<double>('price', 1.99);
+    newObject.set<bool>('found', true);
+    newObject.set<List<String>>('listString', ['a', 'b', 'c', 'd']);
+    newObject.set<List<int>>('listNumber', [0, 1]);
+    newObject.set<DateTime>('dateTest', DateTime.now());
+    newObject.set<ParseGeoPoint>('location',
+        ParseGeoPoint(latitude: 37.4230567, longitude: -122.0924609));
+    
+    if (user != null) {
+      newObject.set<ParseUser>('user', user); //save Pointer to user
+      newObject.set<List<ParseUser>>(
+          'users', [user, user]); //save array Pointer to users
+    }
+
+    if (parseFile.url != null) {
+      newObject.set<ParseFile>('fileImage', parseFile); //save ParseFile
+      newObject.set<List<ParseFile>>(
+          'fileImages', [parseFile, parseFile]); //save array ParseFile
+    }
 
     final ParseResponse apiResponse = await newObject.create();
 
@@ -129,8 +177,11 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> query() async {
+
+    final ParseUser user = await ParseUser.currentUser();
     final QueryBuilder<ParseObject> queryBuilder =
         QueryBuilder<ParseObject>(ParseObject('TestObjectForApi'))
+          ..whereEqualTo('user', user.toPointer()) //query using Pointer
           ..whereLessThan(keyVarCreatedAt, DateTime.now());
 
     final ParseResponse apiResponse = await queryBuilder.query();
@@ -258,5 +309,16 @@ class _MyAppState extends State<MyApp> {
     if (getResponse.success) {
       print('We have our configs.');
     }
+  }
+
+  //Create a temporary file in local storage for upload in Parse
+  Future<File> _downloadFile(String url, String filename) async {
+    final http.Client _client = http.Client();
+    final http.Response req = await _client.get(Uri.parse(url));
+    final Uint8List bytes = req.bodyBytes;
+    final String dir = (await getApplicationDocumentsDirectory()).path;
+    final File file = File('$dir/$filename');
+    await file.writeAsBytes(bytes);
+    return file;
   }
 }
