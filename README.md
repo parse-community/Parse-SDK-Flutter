@@ -116,6 +116,19 @@ var dietPlan = ParseObject('DietPlan')
 	..set('Name', 'Ketogenic')
 	..set('Fat', 65);
 ```
+
+Types supported:
+ * String
+ * Double
+ * Int
+ * Boolean
+ * DateTime
+ * File
+ * Geopoint
+ * ParseObject/ParseUser (Pointer)
+ * Map
+ * List (all types supported)
+ 
 You then have the ability to do the following with that object:
 The features available are:-
  * Get
@@ -197,9 +210,7 @@ Retrieve it, call
 
 ```dart
 var response = await dietPlan.add('listKeywords', ['a','a','d']);
-
 var response = await dietPlan.addUnique('listKeywords', ['a', 'a','d']);
-
 var response = await dietPlan.remove('listKeywords', ['a']);
 
 ```
@@ -257,7 +268,6 @@ and to add a config:
 ParseConfig().addConfig('TestConfig', 'testing');
 ```
 
-
 ## Installation
 
 The SDK supports Parse Installation and Channels:
@@ -283,6 +293,43 @@ For gest List Channels:
 ```dart
 List<dynamic> channels = await instalattion.getSubscribedChannels();
 ```
+
+## Files
+
+The SDK supports Parse File for Upload e Download. 
+
+```dart
+File imgFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+ParseFile parseFile = ParseFile(imgFile, name: 'image.jpeg');
+var response = await parseFile.save();
+if (fileResponse.success) {
+    print('Upload with success');
+  } else {
+    print('Upload with error');
+  }
+```
+
+For retrieve ParseFile from Parse Object:
+
+```dart
+var image = dietPlan.get('image') as ParseFile;
+print('Image url: ' + image.url);
+print('Image name: ' + image.name);
+
+````
+
+For download ParseFile in local storage:
+
+```dart
+ParseFile file = await parseFile.download();
+```
+
+For retrieve ParseFile from local storage:
+
+```dart
+ParseFile file = await parseFile.loadStorage();
+```
+
 
 ## Other Features of this library
 
