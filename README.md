@@ -212,7 +212,6 @@ Retrieve it, call
 var response = await dietPlan.add('listKeywords', ['a','a','d']);
 var response = await dietPlan.addUnique('listKeywords', ['a', 'a','d']);
 var response = await dietPlan.remove('listKeywords', ['a']);
-
 ```
 
 or using with save function
@@ -222,7 +221,6 @@ dietPlan.setAdd('listKeywords', ['a','a','d']);
 dietPlan.setAddUnique('listKeywords', ['a','a','d']);
 dietPlan.setRemove('listKeywords', ['a']);
 var response = dietPlan.save()
-
 ```
 
 ## Users
@@ -231,8 +229,13 @@ You can create and control users just as normal using this SDK.
 
 To register a user, first create one :
 ```dart
-var user =  ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+var user =  ParseUser().createUser('TestFlutter', 'TestPassword123', 'TestFlutterSDK@gmail.com');
 ```
+or
+```dart
+var user =  ParseUser('TestFlutter', 'TestPassword123', 'TestFlutterSDK@gmail.com');
+```
+
 Then have the user sign up:
 
 ```dart
@@ -248,6 +251,18 @@ Also, once logged in you can manage sessions tokens. This feature can be called 
 ```dart
 user = ParseUser.currentUser();
 ```
+
+To register a user Anonymous, first create one :
+```dart
+var userAnonymous =  ParseUser().createUser('', '', '');
+```
+Then login anonymous:
+
+```dart
+var response = await userAnonymous.loginAnonymous();
+if (response.success) userAnonymous = response.result;
+```
+
 Other user features are:-
  * Request Password Reset
  * Verification Email Request
