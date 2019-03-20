@@ -72,7 +72,8 @@ You can create complex queries to really put your database to the test:
       ..startsWith(DietPlan.keyName, "Keto")
       ..greaterThan(DietPlan.keyFat, 64)
       ..lessThan(DietPlan.keyFat, 66)
-      ..equals(DietPlan.keyCarbs, 5);
+      ..equals(DietPlan.keyCarbs, 5)
+      ..whereEqualTo("owner", user.toPointer()); //Query using Pointer to user
 
     var response = await queryBuilder.query();
 
@@ -180,6 +181,13 @@ Retrieve it, call
 
 ```dart
 var response = await dietPlan.increment("count", 1);
+```
+or using with save function
+
+```dart
+dietPlan.setIncrement('count', 1);
+dietPlan.setDecrement('count', 1);
+var response = dietPlan.save()
 
 ```
 
@@ -188,14 +196,23 @@ var response = await dietPlan.increment("count", 1);
 Retrieve it, call
 
 ```dart
-var response = await dietPlan.add("listKeywords", ["a", "a","d"]);
+var response = await dietPlan.add('listKeywords', ['a','a','d']);
 
-var response = await dietPlan.addUnique("listKeywords", ["a", "a","d"]);
+var response = await dietPlan.addUnique('listKeywords', ['a', 'a','d']);
 
-var response = await dietPlan.remove("listKeywords", ["a"]);
+var response = await dietPlan.remove('listKeywords', ['a']);
 
 ```
 
+or using with save function
+
+```dart
+dietPlan.setAdd('listKeywords', ['a','a','d']);
+dietPlan.setAddUnique('listKeywords', ['a','a','d']);
+dietPlan.setRemove('listKeywords', ['a']);
+var response = dietPlan.save()
+
+```
 
 ## Users
 
@@ -238,6 +255,33 @@ var response = await ParseConfig().getConfigs();
 and to add a config:
 ```dart
 ParseConfig().addConfig('TestConfig', 'testing');
+```
+
+
+## Installation
+
+The SDK supports Parse Installation and Channels:
+
+```dart
+var instalattion = await ParseInstallation.currentInstallation();
+instalattion.deviceToken = 'xyz';
+instalattion.set<ParseUser>('user', user); //Create Pointer to user
+instalattion.subscribeToChannel('C');
+var response = await instalattion.save();
+```
+
+For unsubscribe Channels:
+
+```dart
+var instalattion = await ParseInstallation.currentInstallation();
+instalattion.unsubscribeFromChannel('D');
+var response = await instalattion.save();
+```
+
+For gest List Channels:
+
+```dart
+List<dynamic> channels = await instalattion.getSubscribedChannels();
 ```
 
 ## Other Features of this library
