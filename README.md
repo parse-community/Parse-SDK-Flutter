@@ -231,7 +231,7 @@ You can create and control users just as normal using this SDK.
 
 To register a user, first create one :
 ```dart
-var user =  ParseUser().create("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com");
+var user =  ParseUser().createUser('TestFlutter', 'TestPassword123', 'TestFlutterSDK@gmail.com');
 ```
 Then have the user sign up:
 
@@ -248,6 +248,18 @@ Also, once logged in you can manage sessions tokens. This feature can be called 
 ```dart
 user = ParseUser.currentUser();
 ```
+
+To register a user Anonymous, first create one :
+```dart
+var userAnonymous =  ParseUser().createUser('', '', '');
+```
+Then login anonymous:
+
+```dart
+var response = await user.loginAnonymous();
+if (response.success) user = response.result;
+```
+
 Other user features are:-
  * Request Password Reset
  * Verification Email Request
