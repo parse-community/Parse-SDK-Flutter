@@ -233,6 +233,11 @@ To register a user, first create one :
 ```dart
 var user =  ParseUser().createUser('TestFlutter', 'TestPassword123', 'TestFlutterSDK@gmail.com');
 ```
+or
+```dart
+var user =  ParseUser('TestFlutter', 'TestPassword123', 'TestFlutterSDK@gmail.com');
+```
+
 Then have the user sign up:
 
 ```dart
@@ -256,8 +261,8 @@ var userAnonymous =  ParseUser().createUser('', '', '');
 Then login anonymous:
 
 ```dart
-var response = await user.loginAnonymous();
-if (response.success) user = response.result;
+var response = await userAnonymous.loginAnonymous();
+if (response.success) userAnonymous = response.result;
 ```
 
 Other user features are:-
