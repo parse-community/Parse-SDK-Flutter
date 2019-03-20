@@ -212,7 +212,6 @@ Retrieve it, call
 var response = await dietPlan.add('listKeywords', ['a','a','d']);
 var response = await dietPlan.addUnique('listKeywords', ['a', 'a','d']);
 var response = await dietPlan.remove('listKeywords', ['a']);
-
 ```
 
 or using with save function
@@ -222,7 +221,6 @@ dietPlan.setAdd('listKeywords', ['a','a','d']);
 dietPlan.setAddUnique('listKeywords', ['a','a','d']);
 dietPlan.setRemove('listKeywords', ['a']);
 var response = dietPlan.save()
-
 ```
 
 ## Users
