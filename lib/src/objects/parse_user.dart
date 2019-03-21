@@ -126,9 +126,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
       bodyData[keyVarPassword] = password;
       bodyData[keyVarUsername] = username;
       final Uri url = getSanitisedUri(_client, '$path');
+      final String installationId = await _getInstallationId();
       final Response response = await _client.post(url,
           headers: <String, String>{
             keyHeaderRevocableSession: '1',
+            keyInstallationId: installationId,
           },
           body: json.encode(bodyData));
 
@@ -174,10 +176,12 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
       final Uuid uuid = Uuid();
+      final String installationId = await _getInstallationId();
 
       final Response response = await _client.post(url,
           headers: <String, String>{
             keyHeaderRevocableSession: '1',
+            keyInstallationId: installationId,
           },
           body: jsonEncode(<String, dynamic>{
             'authData': <String, dynamic>{
@@ -203,9 +207,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
   Future<ParseResponse> _loginWith(String provider, Object authData) async {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
+      final String installationId = await _getInstallationId();
       final Response response = await _client.post(url,
           headers: <String, String>{
             keyHeaderRevocableSession: '1',
+            keyInstallationId: installationId,
           },
           body: jsonEncode(<String, dynamic>{
             'authData': <String, dynamic>{provider: authData}
@@ -216,6 +222,12 @@ class ParseUser extends ParseObject implements ParseCloneable {
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.loginWith, _debug, className);
     }
+  }
+
+  static Future<String> _getInstallationId() async {
+    final ParseInstallation parseInstallation =
+        await ParseInstallation.currentInstallation();
+    return parseInstallation.installationId;
   }
 
   /// Sends a request to delete the sessions token from the
