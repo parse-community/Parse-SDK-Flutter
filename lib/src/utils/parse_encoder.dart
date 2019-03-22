@@ -3,7 +3,7 @@ part of flutter_parse_sdk;
 /// Custom encoder for DateTime
 dynamic dateTimeEncoder(dynamic item) {
   if (item is DateTime) {
-    return item.toIso8601String();
+    return _parseDateFormat.format(item);
   }
   return item;
 }
@@ -12,31 +12,27 @@ dynamic dateTimeEncoder(dynamic item) {
 dynamic parseEncode(dynamic value, {bool full}) {
   full ??= false;
 
-  if (value is DateTime) {
-    return _encodeDate(value);
-  }
-
   if (value is Uint8List) {
     return _encodeUint8List(value);
+  }
+
+  if (value is DateTime) {
+    return _encodeDate(value);
   }
 
   if (value is ParseGeoPoint) {
     return value;
   }
-
+  
   if (value is ParseFile) {
     return value;
   }
 
-  if (value is ParseUser) {
-    return value;
-  }
-
-  if (value is ParseObject) {
+  if (value is ParseObject || value is ParseUser) {
     if (full) {
       return value.toJson(full: full);
     } else {
-      return _encodeObject(value);
+      return value.toPointer();
     }
   }
 
@@ -44,17 +40,9 @@ dynamic parseEncode(dynamic value, {bool full}) {
 }
 
 Map<String, dynamic> _encodeUint8List(Uint8List value) {
-  return {"__type": "Bytes", "base64": base64.encode(value)};
-}
-
-Map<String, dynamic> _encodeObject(ParseObject object) {
-  return {
-    "__type": "Pointer",
-    keyVarClassName: object.className,
-    keyVarObjectId: object.objectId
-  };
+  return <String, dynamic>{'__type': 'Bytes', 'base64': base64.encode(value)};
 }
 
 Map<String, dynamic> _encodeDate(DateTime date) {
-  return {"__type": "Date", "iso": date.toIso8601String()};
+  return <String, dynamic>{'__type': 'Date', 'iso': _parseDateFormat.format(date)};
 }

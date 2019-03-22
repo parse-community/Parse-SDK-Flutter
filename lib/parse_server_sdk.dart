@@ -5,16 +5,26 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:devicelocale/devicelocale.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:meta/meta.dart';
-import 'package:path/path.dart' as path;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:uuid/uuid.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:devicelocale/devicelocale.dart';
 import 'package:package_info/package_info.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
+import 'package:web_socket_channel/io.dart';
+
+part 'package:parse_server_sdk/src/objects/response/parse_response_utils.dart';
+
+part 'package:parse_server_sdk/src/objects/response/parse_error_response.dart';
+
+part 'package:parse_server_sdk/src/objects/response/parse_exception_response.dart';
+
+part 'package:parse_server_sdk/src/objects/response/parse_response_builder.dart';
+
+part 'package:parse_server_sdk/src/objects/response/parse_success_no_results.dart';
 
 part 'src/base/parse_constants.dart';
 
@@ -42,15 +52,15 @@ part 'src/objects/parse_function.dart';
 
 part 'src/objects/parse_geo_point.dart';
 
+part 'src/objects/parse_installation.dart';
+
 part 'src/objects/parse_object.dart';
 
 part 'src/objects/parse_response.dart';
 
-part 'src/objects/parse_user.dart';
-
 part 'src/objects/parse_session.dart';
 
-part 'src/objects/parse_installation.dart';
+part 'src/objects/parse_user.dart';
 
 part 'src/utils/parse_decoder.dart';
 
@@ -61,6 +71,8 @@ part 'src/utils/parse_file_extensions.dart';
 part 'src/utils/parse_logger.dart';
 
 part 'src/utils/parse_utils.dart';
+
+part 'src/utils/parse_date_format.dart';
 
 class Parse {
   ParseCoreData data;
@@ -79,8 +91,8 @@ class Parse {
   //        liveQuery: true);
   // ```
   Parse initialize(String appId, String serverUrl,
-      {bool debug: false,
-      String appName: "",
+      {bool debug = false,
+      String appName = '',
       String liveQueryUrl,
       String clientKey,
       String masterKey,
@@ -108,25 +120,23 @@ class Parse {
       {bool debug, ParseHTTPClient client, bool autoSendSessionId}) async {
     ParseResponse parseResponse;
 
-    bool _debug = isDebugEnabled(objectLevelDebug: debug);
-    ParseHTTPClient _client = client ??
+    final bool _debug = isDebugEnabled(objectLevelDebug: debug);
+    final ParseHTTPClient _client = client ??
         ParseHTTPClient(
-            autoSendSessionId:
+            sendSessionId:
                 autoSendSessionId ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
 
-    try {
-      var response =
-          await _client.get("${ParseCoreData().serverUrl}$keyEndPointHealth");
-      parseResponse =
-          ParseResponse.handleResponse(this, response, returnAsResult: true);
-    } on Exception catch (e) {
-      parseResponse = ParseResponse.handleException(e);
-    }
+    const String className = 'parseBase';
+    const ParseApiRQ type = ParseApiRQ.healthCheck;
 
-    if (_debug) {
-      logger(ParseCoreData().appName, keyClassMain,
-          ParseApiRQ.healthCheck.toString(), parseResponse);
+    try {
+      final Response response =
+          await _client.get('${ParseCoreData().serverUrl}$keyEndPointHealth');
+
+      parseResponse = handleResponse<Parse>(null, response, type, _debug, className);
+    } on Exception catch (e) {
+      parseResponse = handleException(e, type, _debug, className);
     }
 
     return parseResponse;
