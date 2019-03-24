@@ -1,3 +1,6 @@
+## 1.0.17
+
+
 ## 1.0.16
 Bug fixes
 Fixed object delete

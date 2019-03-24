@@ -1,7 +1,7 @@
 part of flutter_parse_sdk;
 
 // Library
-const String keySdkVersion = '1.0.16';
+const String keySdkVersion = '1.0.17';
 const String keyLibraryName = 'Flutter Parse SDK';
 
 // End Points

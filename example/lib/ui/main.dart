@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_plugin_example/application_constants.dart';
-import 'package:flutter_plugin_example/diet_plan.dart';
+import 'package:flutter_plugin_example/data/base/api_response.dart';
+import 'package:flutter_plugin_example/data/model/diet_plan.dart';
+import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_diet_plan.dart';
+import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
@@ -38,21 +42,25 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initParse() async {
     // Initialize parse
-    Parse().initialize(ApplicationConstants.keyParseApplicationId,
-        ApplicationConstants.keyParseServerUrl,
-        masterKey: ApplicationConstants.keyParseMasterKey, debug: true);
+    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+        masterKey: keyParseMasterKey, debug: true);
 
     // Check server is healthy and live - Debug is on in this instance so check logs for result
     final ParseResponse response = await Parse().healthCheck();
     if (response.success) {
-      runTestQueries();
+      await runTestQueries();
     } else {
       print('Server health check failed');
     }
   }
 
-  void runTestQueries() {
-    createItem();
+  Future<void> runTestQueries() async {
+    // Basic repository example
+    await repositoryAddItems();
+    await repositoryGetAllItems();
+
+    // Basic usage
+    /*createItem();
     getAllItems();
     getAllItemsByName();
     getSingleItem();
@@ -60,7 +68,7 @@ class _MyAppState extends State<MyApp> {
     query();
     initUser();
     function();
-    functionWithParameters();
+    functionWithParameters();*/
   }
 
   Future<void> createItem() async {
@@ -71,9 +79,7 @@ class _MyAppState extends State<MyApp> {
     final ParseResponse apiResponse = await newObject.create();
 
     if (apiResponse.success && apiResponse.result != null) {
-      print(ApplicationConstants.keyAppName +
-          ': ' +
-          apiResponse.result.toString());
+      print(keyAppName + ': ' + apiResponse.result.toString());
     }
   }
 
@@ -83,7 +89,7 @@ class _MyAppState extends State<MyApp> {
 
     if (apiResponse.success && apiResponse.result != null) {
       for (final ParseObject testObject in apiResponse.result) {
-        print(ApplicationConstants.keyAppName + ': ' + testObject.toString());
+        print(keyAppName + ': ' + testObject.toString());
       }
     }
   }
@@ -93,10 +99,10 @@ class _MyAppState extends State<MyApp> {
 
     if (apiResponse.success && apiResponse.result != null) {
       for (final DietPlan plan in apiResponse.result) {
-        print(ApplicationConstants.keyAppName + ': ' + plan.name);
+        print(keyAppName + ': ' + plan.name);
       }
     } else {
-      print(ApplicationConstants.keyAppName + ': ' + apiResponse.error.message);
+      print(keyAppName + ': ' + apiResponse.error.message);
     }
   }
 
@@ -124,7 +130,7 @@ class _MyAppState extends State<MyApp> {
         print('Retreiving from pin worked!');
       }
     } else {
-      print(ApplicationConstants.keyAppName + ': ' + apiResponse.error.message);
+      print(keyAppName + ': ' + apiResponse.error.message);
     }
   }
 
@@ -221,7 +227,7 @@ class _MyAppState extends State<MyApp> {
     if (apiResponse.success) {
       final List<ParseUser> users = response.result;
       for (final ParseUser user in users) {
-        print(ApplicationConstants.keyAppName + ': ' + user.toString());
+        print(keyAppName + ': ' + user.toString());
       }
     }
   }
@@ -259,4 +265,26 @@ class _MyAppState extends State<MyApp> {
       print('We have our configs.');
     }
   }
+
+  Future<void> repositoryAddItems() async {
+    final List<DietPlan> dietPlans =
+        const JsonDecoder().convert(dietPlansToAdd);
+
+    final DietPlanRepository repository = DietPlanRepository();
+    final ApiResponse response = await repository.addAll(dietPlans);
+    if (response.success) {
+      print(response.result);
+    }
+  }
+
+  Future<void> repositoryGetAllItems() async {
+    final DietPlanRepository repository = DietPlanRepository();
+    final ApiResponse response = await repository.getAll();
+    if (response.success) {
+      print(response.result);
+    }
+  }
 }
+
+const String dietPlansToAdd =
+    '[{"className":"Diet_Plans","objectId":"RlOj8JGnEX","createdAt":"2017-10-17T10:44:11.355Z","updatedAt":"2018-01-30T10:15:21.228Z","Name":"Textbook","Description":"For an active lifestyle and a straight forward macro plan, we suggest this plan.","Fat":25,"Carbs":50,"Protein":25,"Status":0}]';
