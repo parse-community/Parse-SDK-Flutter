@@ -5,6 +5,7 @@ import 'package:flutter_plugin_example/data/base/api_response.dart';
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_diet_plan.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
+import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
@@ -19,10 +20,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  DietPlanRepository repository;
+
   @override
   void initState() {
     super.initState();
-    initParse();
+    WidgetsBinding.instance.addPostFrameCallback((_) => initData());
   }
 
   @override
@@ -35,12 +38,14 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: const Text('Running Parse init'),
         ),
-        floatingActionButton: FloatingActionButton(onPressed: runTestQueries),
       ),
     );
   }
 
-  Future<void> initParse() async {
+  Future<void> initData() async {
+    // Initialize repository
+    await initRepository();
+
     // Initialize parse
     Parse().initialize(keyParseApplicationId, keyParseServerUrl,
         masterKey: keyParseMasterKey, debug: true);
@@ -56,19 +61,19 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> runTestQueries() async {
     // Basic repository example
-    await repositoryAddItems();
-    await repositoryGetAllItems();
+    //await repositoryAddItems();
+    //await repositoryGetAllItems();
 
     // Basic usage
-    /*createItem();
-    getAllItems();
-    getAllItemsByName();
+    //createItem();
+    //getAllItems();
+    //getAllItemsByName();
     getSingleItem();
-    getConfigs();
-    query();
-    initUser();
-    function();
-    functionWithParameters();*/
+    //getConfigs();
+    //query();
+    //initUser();
+    //function();
+    //functionWithParameters();
   }
 
   Future<void> createItem() async {
@@ -98,6 +103,8 @@ class _MyAppState extends State<MyApp> {
     final ParseResponse apiResponse = await DietPlan().getAll();
 
     if (apiResponse.success && apiResponse.result != null) {
+      String json = JsonEncoder().convert(apiResponse.result);
+      print(json);
       for (final DietPlan plan in apiResponse.result) {
         print(keyAppName + ': ' + plan.name);
       }
@@ -107,7 +114,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> getSingleItem() async {
-    final ParseResponse apiResponse = await DietPlan().getObject('R5EonpUDWy');
+    final ParseResponse apiResponse = await DietPlan().getObject('B0xtU0Ekqi');
 
     if (apiResponse.success && apiResponse.result != null) {
       final DietPlan dietPlan = apiResponse.result;
@@ -267,10 +274,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> repositoryAddItems() async {
-    final List<DietPlan> dietPlans =
-        const JsonDecoder().convert(dietPlansToAdd);
+    final List<DietPlan> dietPlans = List();
 
-    final DietPlanRepository repository = DietPlanRepository();
+    final List<dynamic> json = const JsonDecoder().convert(dietPlansToAdd);
+    for (final Map<String, dynamic> element in json) {
+      final DietPlan dietPlan = DietPlan().fromJson(element);
+      dietPlans.add(dietPlan);
+    }
+
+    await initRepository();
     final ApiResponse response = await repository.addAll(dietPlans);
     if (response.success) {
       print(response.result);
@@ -278,13 +290,22 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> repositoryGetAllItems() async {
-    final DietPlanRepository repository = DietPlanRepository();
     final ApiResponse response = await repository.getAll();
     if (response.success) {
       print(response.result);
     }
   }
+
+  Future<void> initRepository() async {
+    repository ??= DietPlanRepository.init(await getDB());
+  }
 }
 
 const String dietPlansToAdd =
-    '[{"className":"Diet_Plans","objectId":"RlOj8JGnEX","createdAt":"2017-10-17T10:44:11.355Z","updatedAt":"2018-01-30T10:15:21.228Z","Name":"Textbook","Description":"For an active lifestyle and a straight forward macro plan, we suggest this plan.","Fat":25,"Carbs":50,"Protein":25,"Status":0}]';
+    '[{"className":"Diet_Plans","Name":"Textbook","Description":"For an active lifestyle and a straight forward macro plan, we suggest this plan.","Fat":25,"Carbs":50,"Protein":25,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Body Builder","Description":"Default Body Builders Diet","Fat":20,"Carbs":40,"Protein":40,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Zone Diet","Description":"Popular with CrossFit users. Zone Diet targets similar macros.","Fat":30,"Carbs":40,"Protein":30,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Low Fat","Description":"Low fat diet.","Fat":15,"Carbs":60,"Protein":25,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Low Carb","Description":"Low Carb diet, main focus on quality fats and protein.","Fat":35,"Carbs":25,"Protein":40,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Paleo","Description":"Paleo diet.","Fat":60,"Carbs":25,"Protein":10,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Ketogenic","Description":"High quality fats, low carbs.","Fat":65,"Carbs":5,"Protein":30,"Status":0}]';
