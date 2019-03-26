@@ -61,19 +61,19 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> runTestQueries() async {
     // Basic repository example
-    //await repositoryAddItems();
-    //await repositoryGetAllItems();
+    await repositoryAddItems();
+    await repositoryGetAllItems();
 
-    // Basic usage
-    //createItem();
-    //getAllItems();
-    //getAllItemsByName();
+    //Basic usage
+    createItem();
+    getAllItems();
+    getAllItemsByName();
     getSingleItem();
-    //getConfigs();
-    //query();
-    //initUser();
-    //function();
-    //functionWithParameters();
+    getConfigs();
+    query();
+    initUser();
+    function();
+    functionWithParameters();
   }
 
   Future<void> createItem() async {
@@ -83,7 +83,7 @@ class _MyAppState extends State<MyApp> {
 
     final ParseResponse apiResponse = await newObject.create();
 
-    if (apiResponse.success && apiResponse.result != null) {
+    if (apiResponse.success && apiResponse.count > 0) {
       print(keyAppName + ': ' + apiResponse.result.toString());
     }
   }
@@ -92,8 +92,8 @@ class _MyAppState extends State<MyApp> {
     final ParseResponse apiResponse =
         await ParseObject('TestObjectForApi').getAll();
 
-    if (apiResponse.success && apiResponse.result != null) {
-      for (final ParseObject testObject in apiResponse.result) {
+    if (apiResponse.success && apiResponse.count > 0) {
+      for (final ParseObject testObject in apiResponse.results) {
         print(keyAppName + ': ' + testObject.toString());
       }
     }
@@ -102,10 +102,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> getAllItems() async {
     final ParseResponse apiResponse = await DietPlan().getAll();
 
-    if (apiResponse.success && apiResponse.result != null) {
-      String json = JsonEncoder().convert(apiResponse.result);
-      print(json);
-      for (final DietPlan plan in apiResponse.result) {
+    if (apiResponse.success && apiResponse.count > 0) {
+      for (final DietPlan plan in apiResponse.results) {
         print(keyAppName + ': ' + plan.name);
       }
     } else {
@@ -116,7 +114,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> getSingleItem() async {
     final ParseResponse apiResponse = await DietPlan().getObject('B0xtU0Ekqi');
 
-    if (apiResponse.success && apiResponse.result != null) {
+    if (apiResponse.success && apiResponse.count > 0) {
       final DietPlan dietPlan = apiResponse.result;
 
       // Shows example of storing values in their proper type and retrieving them
@@ -148,7 +146,7 @@ class _MyAppState extends State<MyApp> {
 
     final ParseResponse apiResponse = await queryBuilder.query();
 
-    if (apiResponse.success && apiResponse.result != null) {
+    if (apiResponse.success && apiResponse.count > 0) {
       final List<ParseObject> listFromApi = apiResponse.result;
       final ParseObject parseObject = listFromApi?.first;
       print('Result: ${parseObject.toString()}');
@@ -231,7 +229,7 @@ class _MyAppState extends State<MyApp> {
           ..whereStartsWith(ParseUser.keyUsername, 'phillw');
 
     final ParseResponse apiResponse = await queryBuilder.query();
-    if (apiResponse.success) {
+    if (apiResponse.success && apiResponse.count > 0) {
       final List<ParseUser> users = response.result;
       for (final ParseUser user in users) {
         print(keyAppName + ': ' + user.toString());
