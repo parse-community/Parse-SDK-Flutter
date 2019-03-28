@@ -284,6 +284,7 @@ class QueryBuilder<T extends ParseObject> {
   /// that the column and value are being queried against
   MapEntry<String, dynamic> _buildQueryWithColumnValueAndOperator(
       MapEntry columnAndValue, String queryOperator) {
+
     final String key = columnAndValue.key;
     final dynamic value = convertValueToCorrectType(parseEncode(columnAndValue.value));
 

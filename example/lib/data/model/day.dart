@@ -23,7 +23,6 @@ class Day extends ParseObject implements ParseCloneable {
   static const String _keyTableName = 'FoodDiary_Day';
   static const String keyDate = 'Date';
   static const String keyOwner = 'Owner';
-  static const String keyWaterIntake = 'WaterIntake';
   static const String keyStatus = 'Status';
 
   DateTime get date => get<DateTime>(keyDate);
@@ -33,11 +32,6 @@ class Day extends ParseObject implements ParseCloneable {
   User get owner => get<User>(keyOwner);
 
   set owner(User owner) => set<User>(keyOwner, owner);
-
-  num get waterIntake => get<num>(keyWaterIntake);
-
-  set waterIntake(num waterIntake) =>
-      super.set<num>(keyWaterIntake, waterIntake);
 
   int get status => get<int>(keyStatus);
 

@@ -145,25 +145,19 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// provided, call this method to login.
   Future<ParseResponse> login() async {
     try {
-      final Uri tempUri = Uri.parse(_client.data.serverUrl);
+      final Map<String, dynamic> queryParams = <String, String>{
+        keyVarUsername: username,
+        keyVarPassword: password
+      };
 
-      final Uri url = Uri(
-          scheme: tempUri.scheme,
-          host: tempUri.host,
-          port: tempUri.port,
-          path: '${tempUri.path}$keyEndPointLogin',
-          queryParameters: <String, String>{
-            keyVarUsername: username,
-            keyVarPassword: password
-          });
+      final Uri url = getSanitisedUri(_client, '$keyEndPointLogin', query: queryParams);
 
       final Response response =
           await _client.get(url, headers: <String, String>{
         keyHeaderRevocableSession: '1',
       });
 
-      return _handleResponse(
-          this, response, ParseApiRQ.login, _debug, className);
+      return _handleResponse(this, response, ParseApiRQ.login, _debug, className);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.login, _debug, className);
     }

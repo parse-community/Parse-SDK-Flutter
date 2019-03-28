@@ -1,14 +1,16 @@
 part of flutter_parse_sdk;
 
-void logger(String appName, String className, String type,
+void logAPIResponse(
+    String className, 
+    String type,
     ParseResponse parseResponse) {
-  String responseString = ' \n';
-  String name = appName;
-  if (name.isNotEmpty) {
-    name = '$appName ';
-  }
 
-  responseString += '----\n${name}API Response ($className : $type) :';
+  const String spacer = ' \n';
+  String responseString = '';
+
+  responseString += '╭-- Parse Response';
+
+  responseString += '\n$className : $type';
 
   if (parseResponse.success) {
     responseString += '\nStatus Code: ${parseResponse.statusCode}';
@@ -27,8 +29,33 @@ void logger(String appName, String className, String type,
     responseString += '\n$errorOrException: ${parseResponse.error.message}';
   }
 
-  responseString += '\n----\n';
+  responseString += '\n╰-- \n';
+  responseString += spacer;
   print(responseString);
+}
+
+void logCUrl(BaseRequest request) {
+  String curlCmd = 'curl';
+  curlCmd += ' -X ' + request.method;
+  bool compressed = false;
+  request.headers.forEach((String name, String value) {
+    if (name?.toLowerCase() == 'accept-encoding' &&
+        value?.toLowerCase() == 'gzip') {
+      compressed = true;
+    }
+    curlCmd += ' -H \'$name: $value\'';
+  });
+  if (request.method == 'POST' || request.method == 'PUT') {
+    if (request is Request) {
+      final String body = latin1.decode(request.bodyBytes);
+      curlCmd += ' -d \'$body\'';
+    }
+  }
+  
+  curlCmd += (compressed ? ' --compressed ' : ' ') + Uri.decodeFull(request.url.toString());
+  print('╭-- Parse Request');
+  print(curlCmd);
+  print('╰--');
 }
 
 void logRequest(

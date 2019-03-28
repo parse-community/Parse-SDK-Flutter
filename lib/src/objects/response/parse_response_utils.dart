@@ -4,12 +4,14 @@ part of flutter_parse_sdk;
 @protected
 ParseResponse handleResponse<T>(ParseCloneable object, Response response,
     ParseApiRQ type, bool debug, String className) {
+
   final ParseResponse parseResponse = _ParseResponseBuilder().handleResponse<T>(
-      object, response,
+      object,
+      response,
       returnAsResult: shouldReturnAsABaseResult(type));
 
   if (debug) {
-    logger(ParseCoreData().appName, className, type.toString(), parseResponse);
+    logAPIResponse(className, type.toString(), parseResponse);
   }
 
   return parseResponse;
@@ -19,11 +21,12 @@ ParseResponse handleResponse<T>(ParseCloneable object, Response response,
 @protected
 ParseResponse handleException(
     Exception exception, ParseApiRQ type, bool debug, String className) {
+
   final ParseResponse parseResponse =
   buildParseResponseWithException(exception);
 
   if (debug) {
-    logger(ParseCoreData().appName, className, type.toString(), parseResponse);
+    logAPIResponse(className, type.toString(), parseResponse);
   }
 
   return parseResponse;

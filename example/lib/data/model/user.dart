@@ -35,8 +35,7 @@ class User extends ParseUser implements ParseCloneable {
   set name(String name) => set<String>(keyName, name);
 
   String get displayPicture => get<String>(keyDisplayPicture);
-  set displayPicture(String displayPicture) =>
-      set<String>(keyDisplayPicture, displayPicture);
+  set displayPicture(String displayPicture) => set<String>(keyDisplayPicture, displayPicture);
 
   bool get proUser => get<bool>(keyProUser);
   set proUser(bool proUser) => set<bool>(keyProUser, proUser);
