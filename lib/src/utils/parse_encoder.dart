@@ -41,15 +41,15 @@ dynamic parseEncode(dynamic value, {bool full}) {
 
 Map<String, dynamic> _encodeUint8List(Uint8List value) {
   return <String, dynamic>{
-    '\"__type\"': '\"Bytes\"',
-    '\"base64\"': '\"${base64.encode(value)}\"'
+    '__type': 'Bytes',
+    'base64': base64.encode(value)
   };
 }
 
 Map<String, dynamic> _encodeDate(DateTime date) {
   return <String, dynamic>{
-    '\"__type\"': '\"Date\"',
-    '\"iso\"': '\"${_parseDateFormat.format(date)}\"'
+    '__type': 'Date',
+    'iso': _parseDateFormat.format(date)
   };
 }
 
