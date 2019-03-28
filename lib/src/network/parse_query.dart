@@ -289,8 +289,7 @@ class QueryBuilder<T extends ParseObject> {
     final dynamic value = convertValueToCorrectType(parseEncode(columnAndValue.value));
 
     if (queryOperator == _NO_OPERATOR_NEEDED) {
-      return MapEntry<String, dynamic>(
-        _NO_OPERATOR_NEEDED, "\"${key}\": $value");
+      return MapEntry<String, dynamic>(_NO_OPERATOR_NEEDED, '\"$key\": ${jsonEncode(value)}');
     } else {
       String queryString = '\"$key\":';
       final Map<String, dynamic> queryOperatorAndValueMap = Map<String, dynamic>();
