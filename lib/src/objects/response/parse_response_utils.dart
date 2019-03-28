@@ -52,5 +52,14 @@ bool shouldReturnAsABaseResult(ParseApiRQ type) {
 
 bool isUnsuccessfulResponse(Response apiResponse) => apiResponse.statusCode != 200 && apiResponse.statusCode != 201;
 
-bool isSuccessButNoResults(Response apiResponse) => apiResponse.body == '{\"results\":[]}';
+bool isSuccessButNoResults(Response apiResponse) {
+  final Map<String, dynamic> decodedResponse = jsonDecode(apiResponse.body);
+  final List<dynamic> results = decodedResponse['results'];
+
+  if (results == null) {
+    return false;
+  }
+
+  return results.isEmpty;
+}
 

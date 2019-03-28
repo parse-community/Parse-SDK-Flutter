@@ -52,7 +52,8 @@ void logCUrl(BaseRequest request) {
     }
   }
 
-  curlCmd += (compressed ? ' --compressed ' : ' ') + Uri.decodeFull(request.url.toString());
+  curlCmd += (compressed ? ' --compressed ' : ' ') + request.url.toString();
+  curlCmd += '\n\n ${Uri.decodeFull(request.url.toString())}';
   print('╭-- Parse Request');
   print(curlCmd);
   print('╰--');
