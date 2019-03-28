@@ -150,7 +150,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
         keyVarPassword: password
       };
 
-      final Uri url = getSanitisedUri(_client, '$keyEndPointLogin', query: queryParams);
+      final Uri url = getSanitisedUri(_client, '$keyEndPointLogin', queryParams: queryParams);
 
       final Response response =
           await _client.get(url, headers: <String, String>{

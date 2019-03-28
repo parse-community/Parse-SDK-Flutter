@@ -9,8 +9,8 @@ void logAPIResponse(
   String responseString = '';
 
   responseString += '╭-- Parse Response';
-
-  responseString += '\n$className : $type';
+  responseString += '\nClass: $className';
+  responseString += '\nFunction: $type';
 
   if (parseResponse.success) {
     responseString += '\nStatus Code: ${parseResponse.statusCode}';
@@ -51,7 +51,7 @@ void logCUrl(BaseRequest request) {
       curlCmd += ' -d \'$body\'';
     }
   }
-  
+
   curlCmd += (compressed ? ' --compressed ' : ' ') + Uri.decodeFull(request.url.toString());
   print('╭-- Parse Request');
   print(curlCmd);

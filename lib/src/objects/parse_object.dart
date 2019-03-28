@@ -253,15 +253,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Can be used to create custom queries
   Future<ParseResponse> query(String query) async {
     try {
-      final Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
-
-      final Uri url = Uri(
-          scheme: tempUri.scheme,
-          host: tempUri.host,
-          port: tempUri.port,
-          path: '${tempUri.path}$_path',
-          query: query);
-
+      final Uri url = getSanitisedUri(_client, '$_path', query: query);
       final Response result = await _client.get(url);
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.query, _debug, className);

@@ -25,7 +25,7 @@ dynamic convertValueToCorrectType(dynamic value) {
 
 /// Sanitises a url
 Uri getSanitisedUri(ParseHTTPClient client, String pathToAppend,
-    {Map<String, dynamic> query}) {
+    {Map<String, dynamic> queryParams, String query}) {
 
   final Uri tempUri = Uri.parse(client.data.serverUrl);
 
@@ -34,7 +34,16 @@ Uri getSanitisedUri(ParseHTTPClient client, String pathToAppend,
       host: tempUri.host,
       port: tempUri.port,
       path: '${tempUri.path}$pathToAppend',
-      queryParameters: query);
+      queryParameters: queryParams,
+      query: query);
 
   return url;
+}
+/// Removes unncessary /
+String removeTrailingSlash(String serverUrl) {
+  if (serverUrl.substring(serverUrl.length -1) == '/') {
+    return serverUrl.substring(0, serverUrl.length -1);
+  } else {
+    return serverUrl;
+  }
 }
