@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/base/api_response.dart';
+import 'package:flutter_plugin_example/data/model/day.dart';
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
+import 'package:flutter_plugin_example/data/model/user.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_diet_plan.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
@@ -61,11 +63,11 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> runTestQueries() async {
     // Basic repository example
-    await repositoryAddItems();
-    await repositoryGetAllItems();
+    /* await repositoryAddItems();
+    await repositoryGetAllItems();*/
 
     //Basic usage
-    createItem();
+    /*createItem();
     getAllItems();
     getAllItemsByName();
     getSingleItem();
@@ -73,7 +75,28 @@ class _MyAppState extends State<MyApp> {
     query();
     initUser();
     function();
-    functionWithParameters();
+    functionWithParameters();*/
+    test();
+  }
+
+  Future<void> test() async {
+    User user = User('test_user', 'test_password', 'test@gmail.com');
+    final ParseResponse signUpResponse = await user.signUp();
+
+    if (signUpResponse.success) {
+      user = signUpResponse.result;
+    } else {
+      final ParseResponse loginResponse = await user.login();
+
+      if (loginResponse.success) {
+        user = loginResponse.result;
+      }
+    }
+
+    final QueryBuilder<Day> query = QueryBuilder<Day>(Day())
+      ..whereEqualTo(Day.keyOwner, user);
+    var item = await query.query();
+    print(item.toString());
   }
 
   Future<void> createItem() async {
