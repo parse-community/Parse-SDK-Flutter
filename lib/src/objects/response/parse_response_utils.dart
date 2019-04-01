@@ -4,12 +4,14 @@ part of flutter_parse_sdk;
 @protected
 ParseResponse handleResponse<T>(ParseCloneable object, Response response,
     ParseApiRQ type, bool debug, String className) {
+
   final ParseResponse parseResponse = _ParseResponseBuilder().handleResponse<T>(
-      object, response,
+      object,
+      response,
       returnAsResult: shouldReturnAsABaseResult(type));
 
   if (debug) {
-    logger(ParseCoreData().appName, className, type.toString(), parseResponse);
+    logAPIResponse(className, type.toString(), parseResponse);
   }
 
   return parseResponse;
@@ -19,11 +21,12 @@ ParseResponse handleResponse<T>(ParseCloneable object, Response response,
 @protected
 ParseResponse handleException(
     Exception exception, ParseApiRQ type, bool debug, String className) {
+
   final ParseResponse parseResponse =
   buildParseResponseWithException(exception);
 
   if (debug) {
-    logger(ParseCoreData().appName, className, type.toString(), parseResponse);
+    logAPIResponse(className, type.toString(), parseResponse);
   }
 
   return parseResponse;
@@ -49,5 +52,14 @@ bool shouldReturnAsABaseResult(ParseApiRQ type) {
 
 bool isUnsuccessfulResponse(Response apiResponse) => apiResponse.statusCode != 200 && apiResponse.statusCode != 201;
 
-bool isSuccessButNoResults(Response apiResponse) => apiResponse.body == '{\"results\":[]}';
+bool isSuccessButNoResults(Response apiResponse) {
+  final Map<String, dynamic> decodedResponse = jsonDecode(apiResponse.body);
+  final List<dynamic> results = decodedResponse['results'];
+
+  if (results == null) {
+    return false;
+  }
+
+  return results.isEmpty;
+}
 

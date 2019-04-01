@@ -23,7 +23,7 @@ dynamic parseEncode(dynamic value, {bool full}) {
   if (value is ParseGeoPoint) {
     return value;
   }
-  
+
   if (value is ParseFile) {
     return value;
   }
@@ -40,9 +40,23 @@ dynamic parseEncode(dynamic value, {bool full}) {
 }
 
 Map<String, dynamic> _encodeUint8List(Uint8List value) {
-  return <String, dynamic>{'__type': 'Bytes', 'base64': base64.encode(value)};
+  return <String, dynamic>{
+    '__type': 'Bytes',
+    'base64': base64.encode(value)
+  };
 }
 
 Map<String, dynamic> _encodeDate(DateTime date) {
-  return <String, dynamic>{'__type': 'Date', 'iso': _parseDateFormat.format(date)};
+  return <String, dynamic>{
+    '__type': 'Date',
+    'iso': _parseDateFormat.format(date)
+  };
+}
+
+Map<String, String> encodeObject(String className, String objectId) {
+  return <String, String>{
+    '__type': 'Pointer',
+    keyVarClassName: className,
+    keyVarObjectId: objectId
+  };
 }

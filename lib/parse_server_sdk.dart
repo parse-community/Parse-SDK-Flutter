@@ -99,7 +99,12 @@ class Parse {
       String sessionId,
       bool autoSendSessionId,
       SecurityContext securityContext}) {
-    ParseCoreData.init(appId, serverUrl,
+
+    final String url = removeTrailingSlash(serverUrl);
+
+    ParseCoreData.init(
+        appId,
+        url,
         debug: debug,
         appName: appName,
         liveQueryUrl: liveQueryUrl,
