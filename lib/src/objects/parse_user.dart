@@ -281,16 +281,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     if (objectId == null) {
       return signUp();
     } else {
-      try {
-        final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-        final String body =
-            json.encode(toJson(forApiRQ: true), toEncodable: dateTimeEncoder);
-        final Response response = await _client.put(url, body: body);
-        return _handleResponse(
-            this, response, ParseApiRQ.save, _debug, className);
-      } on Exception catch (e) {
-        return handleException(e, ParseApiRQ.save, _debug, className);
-      }
+      return super.save();
     }
   }
 
