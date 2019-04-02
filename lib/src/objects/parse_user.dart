@@ -150,14 +150,16 @@ class ParseUser extends ParseObject implements ParseCloneable {
         keyVarPassword: password
       };
 
-      final Uri url = getSanitisedUri(_client, '$keyEndPointLogin', queryParams: queryParams);
+      final Uri url = getSanitisedUri(_client, '$keyEndPointLogin',
+          queryParams: queryParams);
 
       final Response response =
           await _client.get(url, headers: <String, String>{
         keyHeaderRevocableSession: '1',
       });
 
-      return _handleResponse(this, response, ParseApiRQ.login, _debug, className);
+      return _handleResponse(
+          this, response, ParseApiRQ.login, _debug, className);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.login, _debug, className);
     }

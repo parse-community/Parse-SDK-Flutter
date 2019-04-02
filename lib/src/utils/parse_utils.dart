@@ -12,9 +12,9 @@ bool isDebugEnabled({bool objectLevelDebug}) {
 ///
 /// Strings are wrapped with "" but integers and others are not
 dynamic convertValueToCorrectType(dynamic value) {
-  if (value is String && !value.contains('__type')) {
+  /*if (value is String && !value.contains('__type')) {
     return '\"$value\"';
-  } 
+  }*/
   
   if (value is DateTime || value is ParseObject) {
     return parseEncode(value);
