@@ -70,6 +70,9 @@ class _ParseResponseBuilder {
       final List<T> items = _handleMultipleResults<T>(object, results);
       response.results = items;
       response.count = items.length;
+      if (items.isNotEmpty) {
+        response.result = items.first;
+      }
     } else {
       final T item = _handleSingleResult<T>(object, map, false);
       response.count = 1;
