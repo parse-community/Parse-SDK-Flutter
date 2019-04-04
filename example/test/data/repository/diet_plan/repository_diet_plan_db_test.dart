@@ -3,15 +3,18 @@ import 'package:flutter_plugin_example/data/model/diet_plan.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/contract_provider_diet_plan.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/provider_db_diet_plan.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:sembast/sembast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../repository_mock_utils.dart';
 
 void main() {
   DietPlanProviderContract repository;
+  SharedPreferences.setMockInitialValues(Map<String, String>());
 
   Store _getStore(Database database) {
-    return database.getStore('repository_$keyDietPlan');
+    return database.getStore('diet_plan_repository_test');
   }
 
   Future<DietPlanProviderContract> getRepository() async {
@@ -47,6 +50,9 @@ void main() {
     final ApiResponse response = await repository.add(expected);
     final DietPlan actual = response.result;
 
+    // CLEAR FROM DB
+    await deleteFromApi(response.results);
+
     // Then
     expect(actual.objectId, expected.objectId);
     expect(actual.protein, expected.protein);
@@ -67,7 +73,7 @@ void main() {
 
     // When
     final ApiResponse response = await repository.addAll(actual);
-    final List<DietPlan> items = await response.result;
+    final List<DietPlan> items = response.results;
 
     // Then
     expect(response.success, true);
@@ -80,8 +86,12 @@ void main() {
     final DietPlan actual = getDummyDietPlan();
 
     // When
-    await repository.add(actual);
-    final ApiResponse response = await repository.getById('1234abcd');
+    final ApiResponse response = await repository.add(actual);
+    final ApiResponse updateResponse = await repository.getById('1234abcd');
+
+    // CLEAR FROM DB
+    await deleteFromApi(response.results);
+    await deleteFromApi(updateResponse.results);
 
     // Then
     final DietPlan expected = response.result;
@@ -97,11 +107,15 @@ void main() {
     final List<DietPlan> actual = List<DietPlan>()..add(item1)..add(item2);
 
     // When
-    await repository.addAll(actual);
+    final ApiResponse response = await repository.addAll(actual);
 
     // Then
-    final ApiResponse response = await repository.getAll();
-    final List<DietPlan> expected = response.result;
+    final ApiResponse updateResponse = await repository.getAll();
+    final List<DietPlan> expected = updateResponse.results;
+
+    // CLEAR FROM DB
+    await deleteFromApi(response.results);
+    await deleteFromApi(updateResponse.results);
 
     expect(2, expected.length);
     expect(actual[0].objectId, expected[0].objectId);
@@ -112,14 +126,18 @@ void main() {
     // Given
     final DietPlan expected = getDummyDietPlan();
     // ignore: invalid_use_of_protected_member
-    expected.getObjectData()['keyUpdatedAt'] = DateTime.now();
-    await repository.add(expected);
+    expected.getObjectData()[keyVarUpdatedAt] = DateTime.now();
+    final ApiResponse response = await repository.add(expected);
 
     // When
     DateTime dateTime = DateTime.now();
     dateTime = dateTime.subtract(Duration(hours: 1));
-    final ApiResponse response = await repository.getNewerThan(dateTime);
-    final List<DietPlan> actual = response.result;
+    final ApiResponse updateResponse = await repository.getNewerThan(dateTime);
+    final List<DietPlan> actual = updateResponse.results;
+
+    // CLEAR FROM DB
+    await deleteFromApi(response.results);
+    await deleteFromApi(updateResponse.results);
 
     // Then
     expect(actual.isNotEmpty, true);
@@ -130,12 +148,16 @@ void main() {
     // Given
     final DietPlan item = getDummyDietPlan();
     item.protein = 1000;
-    await repository.add(item);
+    final ApiResponse apiResponse = await repository.add(item);
 
     // When
     item.protein = 1000;
-    final ApiResponse response = await repository.update(item);
-    final DietPlan userFood = response.result;
+    final ApiResponse updateResponse = await repository.update(item);
+    final DietPlan userFood = updateResponse.result;
+
+    // CLEAR FROM DB
+    await deleteFromApi(apiResponse.results);
+    await deleteFromApi(updateResponse.results);
 
     // Then
     expect(item.objectId, userFood.objectId);
@@ -155,13 +177,22 @@ void main() {
     item2.objectId = '${objectIdPrefix}1';
     actual.add(item2);
 
-    await repository.addAll(actual);
+    final ApiResponse apiResponse = await repository.addAll(actual);
+
+    // CLEAR FROM DB
+    await deleteFromApi(apiResponse.results);
 
     // When
     actual[0].protein = 1000;
     actual[1].protein = 1000;
-    final ApiResponse response = await repository.updateAll(actual);
-    final List<DietPlan> expected = response.result;
+    final ApiResponse updateResponse = await repository.updateAll(actual);
+    final List<DietPlan> expected = updateResponse.results;
+
+    // CLEAR FROM DB
+    await deleteFromApi(updateResponse.results);
+    // CLEAR FROM DB
+    await deleteFromApi(updateResponse.results);
+    await deleteFromApi(apiResponse.results);
 
     // Then
     expect(actual[0].objectId, expected[0].objectId);

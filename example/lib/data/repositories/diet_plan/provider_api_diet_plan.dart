@@ -22,7 +22,7 @@ class DietPlanProviderApi implements DietPlanProviderContract {
         return response;
       }
 
-      responses.add(response.result);
+      response?.results?.forEach(responses.add);
     }
 
     return ApiResponse(true, 200, responses, null);
@@ -66,7 +66,7 @@ class DietPlanProviderApi implements DietPlanProviderContract {
         return response;
       }
 
-      responses.add(response.result);
+      response?.results?.forEach(responses.add);
     }
 
     return ApiResponse(true, 200, responses, null);
