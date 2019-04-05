@@ -69,6 +69,7 @@ class _ParseResponseBuilder {
       final List<dynamic> results = map['results'];
       final List<T> items = _handleMultipleResults<T>(object, results);
       response.results = items;
+      response.result = items;
       response.count = items.length;
     } else {
       final T item = _handleSingleResult<T>(object, map, false);

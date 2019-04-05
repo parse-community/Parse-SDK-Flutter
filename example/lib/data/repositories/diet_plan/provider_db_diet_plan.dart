@@ -4,6 +4,7 @@ import 'package:flutter_plugin_example/data/base/api_error.dart';
 import 'package:flutter_plugin_example/data/base/api_response.dart';
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/contract_provider_diet_plan.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:sembast/sembast.dart';
 
 class DietPlanProviderDB implements DietPlanProviderContract {
@@ -18,7 +19,7 @@ class DietPlanProviderDB implements DietPlanProviderContract {
     final Record recordToAdd = Record(_store, values, item.objectId);
     final Record recordFromDB = await _db.putRecord(recordToAdd);
     return ApiResponse(
-        true, 200, convertRecordToItem(record: recordFromDB), null);
+        true, 200, <dynamic>[convertRecordToItem(record: recordFromDB)], null);
   }
 
   @override
@@ -66,7 +67,7 @@ class DietPlanProviderDB implements DietPlanProviderContract {
     final Record record = await _store.getRecord(id);
     if (record != null) {
       final DietPlan userFood = convertRecordToItem(record: record);
-      return ApiResponse(true, 200, userFood, null);
+      return ApiResponse(true, 200, <dynamic>[userFood], null);
     } else {
       return errorResponse;
     }
@@ -78,7 +79,7 @@ class DietPlanProviderDB implements DietPlanProviderContract {
 
     final Finder finder = Finder(
         filter:
-            Filter.greaterThan('keyUpdatedAt', date.millisecondsSinceEpoch));
+            Filter.greaterThan(keyVarUpdatedAt, date.millisecondsSinceEpoch));
 
     final List<Record> records = await _store.findRecords(finder);
 
@@ -129,16 +130,16 @@ class DietPlanProviderDB implements DietPlanProviderContract {
     }
 
     return ApiResponse(
-        true, 200, convertRecordToItem(values: returnedItems), null);
+        true, 200, <dynamic>[convertRecordToItem(values: returnedItems)], null);
   }
 
   Map<String, dynamic> convertItemToStorageMap(DietPlan item) {
     final Map<String, dynamic> values = Map<String, dynamic>();
     // ignore: invalid_use_of_protected_member
     values['value'] = json.jsonEncode(item.toJson(full: true));
-    values['objectId'] = item.objectId;
+    values[keyVarObjectId] = item.objectId;
     if (item.updatedAt != null) {
-      values['updatedAt'] = item.updatedAt.millisecondsSinceEpoch;
+      values[keyVarUpdatedAt] = item.updatedAt.millisecondsSinceEpoch;
     }
 
     return values;

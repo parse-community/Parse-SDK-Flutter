@@ -26,6 +26,8 @@ const String keyVarEmail = 'email';
 const String keyVarPassword = 'password';
 const String keyVarSessionToken = 'sessionToken';
 const String keyVarAcl = 'ACL';
+const String keyVarName = 'name';
+const String keyVarURL = 'url';
 
 // Classes
 const String keyClassMain = 'ParseMain';
