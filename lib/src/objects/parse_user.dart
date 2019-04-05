@@ -107,9 +107,13 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Current user is stored locally, but in case of a server update [bool]
   /// fromServer can be called and an updated version of the [User] object will be
   /// returned
-  static Future<ParseUser> currentUser({ParseCloneable user}) async {
-    final ParseCloneable cloneable = user ?? ParseUser._getEmptyUser();
-    return await _getUserFromLocalStore(cloneable);
+  static Future<dynamic> currentUser({ParseCloneable customUserObject}) async {
+
+    if (customUserObject != null) {
+      return await _getUserFromLocalStore(cloneable: customUserObject);
+    } else {
+      return await _getUserFromLocalStore();
+    }
   }
 
   /// Registers a user on Parse Server
@@ -319,15 +323,18 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
-  static Future<ParseUser> _getUserFromLocalStore(ParseCloneable object) async {
+  static Future<dynamic> _getUserFromLocalStore(
+      {ParseCloneable cloneable}) async {
     final String userJson =
         (await ParseCoreData().getStore()).getString(keyParseStoreUser);
 
     if (userJson != null) {
       final Map<String, dynamic> userMap = json.decode(userJson);
-      if (userMap != null) {
+      if (cloneable != null) {
+        return cloneable.clone(userMap);
+      } else {
         ParseCoreData().setSessionId(userMap[keyParamSessionToken]);
-        return object.clone(userMap);
+        return parseDecode(userMap);
       }
     }
 

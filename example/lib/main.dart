@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/base/api_response.dart';
-import 'package:flutter_plugin_example/data/model/day.dart';
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
 import 'package:flutter_plugin_example/data/model/user.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_diet_plan.dart';
+import 'package:flutter_plugin_example/data/repositories/user/repository_user.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
@@ -22,7 +22,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  DietPlanRepository repository;
+  DietPlanRepository dietPlanRepo;
+  UserRepository userRepo;
 
   @override
   void initState() {
@@ -63,11 +64,12 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> runTestQueries() async {
     // Basic repository example
-    await repositoryAddItems();
-    await repositoryGetAllItems();
+    await repositoryAddUser();
+    /*await repositoryAddItems();
+    await repositoryGetAllItems()*/
 
     //Basic usage
-    createItem();
+    /*createItem();
     getAllItems();
     getAllItemsByName();
     getSingleItem();
@@ -76,7 +78,7 @@ class _MyAppState extends State<MyApp> {
     initUser();
     function();
     functionWithParameters();
-    test();
+    test();*/
   }
 
   Future<void> test() async {
@@ -93,9 +95,9 @@ class _MyAppState extends State<MyApp> {
       }
     }
 
-    final QueryBuilder<Day> query = QueryBuilder<Day>(Day())
-      ..whereEqualTo(Day.keyOwner, user);
-    var item = await query.query();
+    final QueryBuilder<DietPlan> query = QueryBuilder<DietPlan>(DietPlan())
+      ..whereEqualTo(keyProtein, 30);
+    final ParseResponse item = await query.query();
     print(item.toString());
   }
 
@@ -294,8 +296,22 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  Future<void> repositoryAddUser() async {
+    final User user = User('test_username', 'password', 'test@gmail.com');
+
+    final ApiResponse response = await userRepo.save(user);
+
+    if (!response.success) {
+      await userRepo.login(user);
+    }
+
+    final User currentUser =
+        await ParseUser.currentUser(customUserObject: User.clone());
+    print(currentUser);
+  }
+
   Future<void> repositoryAddItems() async {
-    final List<DietPlan> dietPlans = List();
+    final List<DietPlan> dietPlans = <DietPlan>[];
 
     final List<dynamic> json = const JsonDecoder().convert(dietPlansToAdd);
     for (final Map<String, dynamic> element in json) {
@@ -304,21 +320,22 @@ class _MyAppState extends State<MyApp> {
     }
 
     await initRepository();
-    final ApiResponse response = await repository.addAll(dietPlans);
+    final ApiResponse response = await dietPlanRepo.addAll(dietPlans);
     if (response.success) {
       print(response.result);
     }
   }
 
   Future<void> repositoryGetAllItems() async {
-    final ApiResponse response = await repository.getAll();
+    final ApiResponse response = await dietPlanRepo.getAll();
     if (response.success) {
       print(response.result);
     }
   }
 
   Future<void> initRepository() async {
-    repository ??= DietPlanRepository.init(await getDB());
+    dietPlanRepo ??= DietPlanRepository.init(await getDB());
+    userRepo ??= UserRepository.init(await getDB());
   }
 }
 
