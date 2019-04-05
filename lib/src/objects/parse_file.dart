@@ -46,7 +46,7 @@ class ParseFile extends ParseObject {
       <String, String>{'__type': keyFile, 'name': name, 'url': url};
 
   @override
-  String toString() => json.encode(toString());
+  String toString() => json.encode(toJson(full: true));
 
   Future<ParseFile> loadStorage() async {
     final Directory tempPath = await getTemporaryDirectory();
