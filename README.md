@@ -110,7 +110,7 @@ The features available are:-
 ## Relational queries
 If you want to retrieve objects where a field contains an object that matches another query, you can use the
 __whereMatchesQuery__ condition.
-For example, imagine you vave Post class and a Comment class, where each Comment has a pointer to its parent Post.
+For example, imagine you have Post class and a Comment class, where each Comment has a pointer to its parent Post.
 You can find comments on posts with images by doing:
 
 ```dart
