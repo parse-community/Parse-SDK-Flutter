@@ -237,6 +237,22 @@ class QueryBuilder<T extends ParseObject> {
         '\"$column\":{\"\$within\":{\"\$box\": [{\"__type\": \"GeoPoint\",\"latitude\":$latitudeS,\"longitude\":$longitudeS},{\"__type\": \"GeoPoint\",\"latitude\":$latitudeN,\"longitude\":$longitudeN}]}}'));
   }
 
+  // Add a constraint to the query that requires a particular key's value match another QueryBuilder
+  void whereMatchesQuery(String column, QueryBuilder query) {
+    String inQuery = query._buildQueryRelational(query.object.className);
+
+    queries.add(MapEntry<String, dynamic>(
+        _SINGLE_QUERY, '\"$column\":{\"\$inQuery\":$inQuery}'));
+  }
+
+  //Add a constraint to the query that requires a particular key's value does not match another QueryBuilder
+  void whereDoesNotMatchQuery(String column, QueryBuilder query) {
+    String inQuery = query._buildQueryRelational(query.object.className);
+
+    queries.add(MapEntry<String, dynamic>(
+        _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
+  }
+
   /// Finishes the query and calls the server
   ///
   /// Make sure to call this after defining your queries
@@ -248,6 +264,12 @@ class QueryBuilder<T extends ParseObject> {
   String _buildQuery() {
     queries = _checkForMultipleColumnInstances(queries);
     return 'where={${buildQueries(queries)}}${getLimiters(limiters)}';
+  }
+
+  /// Builds the query relational for Parse
+  String _buildQueryRelational(String className) {
+    queries = _checkForMultipleColumnInstances(queries);
+    return '{\"where\":{${buildQueries(queries)}},\"className\":\"$className\"${getLimitersRelational(limiters)}}';
   }
 
   /// Runs through all queries and adds them to a query string
@@ -284,17 +306,20 @@ class QueryBuilder<T extends ParseObject> {
   /// that the column and value are being queried against
   MapEntry<String, dynamic> _buildQueryWithColumnValueAndOperator(
       MapEntry columnAndValue, String queryOperator) {
-
     final String key = columnAndValue.key;
-    final dynamic value = convertValueToCorrectType(parseEncode(columnAndValue.value));
+    final dynamic value =
+        convertValueToCorrectType(parseEncode(columnAndValue.value));
 
     if (queryOperator == _NO_OPERATOR_NEEDED) {
-      return MapEntry<String, dynamic>(_NO_OPERATOR_NEEDED, '\"$key\": ${jsonEncode(value)}');
+      return MapEntry<String, dynamic>(
+          _NO_OPERATOR_NEEDED, '\"$key\": ${jsonEncode(value)}');
     } else {
       String queryString = '\"$key\":';
-      final Map<String, dynamic> queryOperatorAndValueMap = Map<String, dynamic>();
+      final Map<String, dynamic> queryOperatorAndValueMap =
+          Map<String, dynamic>();
       queryOperatorAndValueMap[queryOperator] = parseEncode(value);
-      final String formattedQueryOperatorAndValue = jsonEncode(queryOperatorAndValueMap);
+      final String formattedQueryOperatorAndValue =
+          jsonEncode(queryOperatorAndValueMap);
       queryString += '$formattedQueryOperatorAndValue';
       return MapEntry<String, dynamic>(key, queryString);
     }
@@ -336,7 +361,8 @@ class QueryBuilder<T extends ParseObject> {
         for (MapEntry<String, dynamic> queryToCompact in listOfQueriesCompact) {
           var queryToCompactValue = queryToCompact.value.toString();
           queryToCompactValue = queryToCompactValue.replaceFirst("{", "");
-          queryToCompactValue = queryToCompactValue.replaceRange(queryToCompactValue.length - 1, queryToCompactValue.length, "");
+          queryToCompactValue = queryToCompactValue.replaceRange(
+              queryToCompactValue.length - 1, queryToCompactValue.length, "");
           if (listOfQueriesCompact.first == queryToCompact) {
             queryEnd += queryToCompactValue.replaceAll(queryStart, ' ');
           } else {
@@ -360,6 +386,19 @@ class QueryBuilder<T extends ParseObject> {
         result = result + '&$key=$value';
       } else {
         result = '&$key=$value';
+      }
+    });
+    return result;
+  }
+
+  /// Adds the limiters to the query relational, i.e. skip=10, limit=10
+  String getLimitersRelational(Map<String, dynamic> map) {
+    String result = '';
+    map.forEach((String key, dynamic value) {
+      if (result != null) {
+        result = result + ',\"$key":$value';
+      } else {
+        result = '\"$key\":$value';
       }
     });
     return result;
