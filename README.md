@@ -151,7 +151,7 @@ If you only care about the number of games played by a particular player:
         ..whereEqualTo('playerName', 'Jonathan Walsh');
   var apiResponse = await queryPlayers.count();
   if (apiResponse.success && apiResponse.result != null) {
-    int countPlayers = apiResponse.count;
+    int countGames = apiResponse.count;
   }
 ```
 
