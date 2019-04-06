@@ -260,6 +260,11 @@ class QueryBuilder<T extends ParseObject> {
     return object.query(_buildQuery());
   }
 
+  ///Counts the number of objects that match this query
+  Future<ParseResponse> count() async {
+    return object.query(_buildQueryCount());
+  }
+
   /// Builds the query for Parse
   String _buildQuery() {
     queries = _checkForMultipleColumnInstances(queries);
@@ -270,6 +275,12 @@ class QueryBuilder<T extends ParseObject> {
   String _buildQueryRelational(String className) {
     queries = _checkForMultipleColumnInstances(queries);
     return '{\"where\":{${buildQueries(queries)}},\"className\":\"$className\"${getLimitersRelational(limiters)}}';
+  }
+
+  /// Builds the query for Parse
+  String _buildQueryCount() {
+    queries = _checkForMultipleColumnInstances(queries);
+    return 'where={${buildQueries(queries)}}&count=1';
   }
 
   /// Runs through all queries and adds them to a query string

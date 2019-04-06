@@ -71,6 +71,11 @@ class _ParseResponseBuilder {
       response.results = items;
       response.result = items;
       response.count = items.length;
+    } else if (map != null && map.length == 2 && map.containsKey('count')) {
+      final List<int> results = [map['count']];
+      response.results = results;
+      response.result = results;
+      response.count = map['count'];
     } else {
       final T item = _handleSingleResult<T>(object, map, false);
       response.count = 1;
