@@ -106,6 +106,54 @@ The features available are:-
  * Ascending
  * Descending
  * Plenty more!
+ 
+## Relational queries
+If you want to retrieve objects where a field contains an object that matches another query, you can use the
+__whereMatchesQuery__ condition.
+For example, imagine you vave Post class and a Comment class, where each Comment has a pointer to its parent Post.
+You can find comments on posts with images by doing:
+
+```dart
+  QueryBuilder<ParseObject> queryPost =
+      QueryBuilder<ParseObject>(ParseObject('Post'))
+        ..whereValueExists('image', true);
+
+  QueryBuilder<ParseObject> queryComment =
+      QueryBuilder<ParseObject>(ParseObject('Comment'))
+        ..whereMatchesQuery('post', queryPost);
+
+  var apiResponse = await queryComment.query();
+```
+
+If you want to retrieve objects where a field contains an object that does not match another query,  you can use the
+__whereDoesNotMatchQuery__ condition.
+Imagine you have Post class and a Comment class, where each Comment has a pointer to its parent Post.
+You can find comments on posts without images by doing:
+
+```dart
+  QueryBuilder<ParseObject> queryPost =
+      QueryBuilder<ParseObject>(ParseObject('Post'))
+        ..whereValueExists('image', true);
+
+  QueryBuilder<ParseObject> queryComment =
+      QueryBuilder<ParseObject>(ParseObject('Comment'))
+        ..whereDoesNotMatchQuery('post', queryPost);
+
+  var apiResponse = await queryComment.query();
+```
+
+## Counting Objects
+If you only care about the number of games played by a particular player:
+
+```dart
+  QueryBuilder<ParseObject> queryPlayers =
+      QueryBuilder<ParseObject>(ParseObject('GameScore'))
+        ..whereEqualTo('playerName', 'Jonathan Walsh');
+  var apiResponse = await queryPlayers.count();
+  if (apiResponse.success && apiResponse.result != null) {
+    int countPlayers = apiResponse.count;
+  }
+```
 
 ## Objects
 
