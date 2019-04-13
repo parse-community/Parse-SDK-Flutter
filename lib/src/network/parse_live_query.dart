@@ -100,9 +100,11 @@ class LiveQuery {
         }
       }, onError: (error, StackTrace stackTrace) {
         if (_debug) {
-          print('$_printConstLiveQuery: Error: ${error.runtimeType.toString()}');
+          print(
+              '$_printConstLiveQuery: Error: ${error.runtimeType.toString()}');
         }
-        return Future.value(handleException(error, ParseApiRQ.liveQuery, _debug, _className));
+        return Future.value(
+            handleException(error, ParseApiRQ.liveQuery, _debug, _className));
       });
 
       //The connect message is sent from a client to the LiveQuery server.
@@ -110,7 +112,7 @@ class LiveQuery {
       _connectMessage = {
         'op': 'connect',
         'applicationId': _client.data.applicationId,
-        'clientKey': _client.data.clientKey
+        'clientKey': _client.data.clientKey ?? ''
       };
       if (_sendSessionId) {
         _connectMessage['sessionToken'] = _client.data.sessionId;
@@ -170,10 +172,9 @@ class LiveQuery {
       }
     }
     if (_webSocket != null && _webSocket.readyState == WebSocket.open) {
-        if (_debug) {
-          print(
-              '$_printConstLiveQuery: Socket closed');
-        }
+      if (_debug) {
+        print('$_printConstLiveQuery: Socket closed');
+      }
       await _webSocket.close();
     }
   }
