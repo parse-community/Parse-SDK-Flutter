@@ -237,14 +237,17 @@ If you only care about the number of games played by a particular player:
     int countGames = apiResponse.count;
   }
 ```
-## Live Queries
-This tool allows you to subscribe to a Parse.Query you are interested in. Once subscribed, the server will notify clients whenever a Parse.Object that matches the Parse.Query is created or updated, in real-time.
 
-Parse LiveQuery contains two parts, the LiveQuery server and the LiveQuery clients. In order to use live queries, you need to set up both of them.
+## Live Queries
+This tool allows you to subscribe to a QueryBuilder you are interested in. Once subscribed, the server will notify clients
+whenever a ParseObject that matches the QueryBuilder is created or updated, in real-time.
+
+Parse LiveQuery contains two parts, the LiveQuery server and the LiveQuery clients. In order to use live queries, you need
+to set up both of them.
 
 The Parse Server configuration guide on the server is found here https://docs.parseplatform.org/parse-server/guide/#live-queries and is not part of this documentation.
 
-Initialize the Parse Query server by entering the parameter liveQueryUrl in Parse().initialize:
+Initialize the Parse Live Query by entering the parameter liveQueryUrl in Parse().initialize:
 ```dart
   Parse().initialize(
         ApplicationConstants.keyApplicationId,
@@ -260,7 +263,7 @@ Declare LiveQuery:
   final LiveQuery liveQuery = LiveQuery();
 ```
 
-Set the query that will be monitored by LiveQuery:
+Set the QueryBuilder that will be monitored by LiveQuery:
 ```dart
   QueryBuilder<ParseObject> query =
     QueryBuilder<ParseObject>(ParseObject('TestAPI'))
