@@ -35,9 +35,93 @@ Parse().initialize(
         masterKey: ApplicationConstants.keyParseMasterKey,
         clientKey: ApplicationConstants.keyParseClientKey,
         debug: true,
-        liveQuery: true,
+        liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
         autoSendSessionId: true,
         securityContext: securityContext);
+```
+
+## Objects
+You can create custom objects by calling:
+```dart
+var dietPlan = ParseObject('DietPlan')
+	..set('Name', 'Ketogenic')
+	..set('Fat', 65);
+```
+You then have the ability to do the following with that object:
+The features available are:-
+ * Get
+ * GetAll
+ * Create
+ * Save
+ * Query - By object Id
+ * Delete
+ * Complex queries as shown above
+ * Pin
+ * Plenty more
+ * Counters
+ * Array Operators
+
+## Custom Objects
+You can create your own ParseObjects or convert your existing objects into Parse Objects by doing the following:
+
+```dart
+class DietPlan extends ParseObject implements ParseCloneable {
+
+  DietPlan() : super(_keyTableName);
+  DietPlan.clone(): this();
+
+  /// Looks strangely hacky but due to Flutter not using reflection, we have to
+  /// mimic a clone
+  @override clone(Map map) => DietPlan.clone()..fromJson(map);
+
+  static const String _keyTableName = 'Diet_Plans';
+  static const String keyName = 'Name';
+  
+  String get name => get<String>(keyName);
+  set name(String name) => set<String>(keyName, name);
+}
+  
+```
+
+## Add new values to objects
+To add a variable to an object call and retrieve it, call
+
+```dart
+dietPlan.set<int>('RandomInt', 8);
+var randomInt = dietPlan.get<int>('RandomInt');
+```
+
+## Save objects using pins
+You can now save an object by calling .pin() on an instance of an object
+
+```dart
+dietPlan.pin();
+```
+
+and to retrieve it
+
+```dart
+var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
+```
+
+## Increment Counter values in objects
+Retrieve it, call
+
+```dart
+var response = await dietPlan.increment("count", 1);
+
+```
+
+## Array Operator in objects
+Retrieve it, call
+
+```dart
+var response = await dietPlan.add("listKeywords", ["a", "a","d"]);
+
+var response = await dietPlan.addUnique("listKeywords", ["a", "a","d"]);
+
+var response = await dietPlan.remove("listKeywords", ["a"]);
+
 ```
 
 ## Queries
@@ -62,7 +146,6 @@ var dietPlan = await DietPlan().getObject('R5EonpUDWy');
       print(ApplicationConstants.keyAppName + ": " + dietPlan.exception.message);
     }
 ```
-
 
 ## Complex queries
 You can create complex queries to really put your database to the test:
@@ -154,99 +237,134 @@ If you only care about the number of games played by a particular player:
     int countGames = apiResponse.count;
   }
 ```
+## Live Queries
+This tool allows you to subscribe to a Parse.Query you are interested in. Once subscribed, the server will notify clients whenever a Parse.Object that matches the Parse.Query is created or updated, in real-time.
 
-## Objects
+Parse LiveQuery contains two parts, the LiveQuery server and the LiveQuery clients. In order to use live queries, you need to set up both of them.
 
-You can create custom objects by calling:
+The Parse Server configuration guide on the server is found here https://docs.parseplatform.org/parse-server/guide/#live-queries and is not part of this documentation.
+
+Initialize the Parse Query server by entering the parameter liveQueryUrl in Parse().initialize:
 ```dart
-var dietPlan = ParseObject('DietPlan')
-	..set('Name', 'Ketogenic')
-	..set('Fat', 65);
-```
-You then have the ability to do the following with that object:
-The features available are:-
- * Get
- * GetAll
- * Create
- * Save
- * Query - By object Id
- * Delete
- * Complex queries as shown above
- * Pin
- * Plenty more
- * Counters
- * Array Operators
-
-## Custom Objects
-You can create your own ParseObjects or convert your existing objects into Parse Objects by doing the following:
-
-```dart
-class DietPlan extends ParseObject implements ParseCloneable {
-
-  DietPlan() : super(_keyTableName);
-  DietPlan.clone(): this();
-
-  /// Looks strangely hacky but due to Flutter not using reflection, we have to
-  /// mimic a clone
-  @override clone(Map map) => DietPlan.clone()..fromJson(map);
-
-  static const String _keyTableName = 'Diet_Plans';
-  static const String keyName = 'Name';
-  
-  String get name => get<String>(keyName);
-  set name(String name) => set<String>(keyName, name);
-}
-  
+  Parse().initialize(
+        ApplicationConstants.keyApplicationId,
+        ApplicationConstants.keyParseServerUrl,
+        clientKey: ApplicationConstants.keyParseClientKey,
+        debug: true,
+        liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
+        autoSendSessionId: true);
 ```
 
-## Add new values to objects
-
-To add a variable to an object call and retrieve it, call
-
+Declare LiveQuery:
 ```dart
-dietPlan.set<int>('RandomInt', 8);
-var randomInt = dietPlan.get<int>('RandomInt');
+  final LiveQuery liveQuery = LiveQuery();
 ```
 
-## Save objects using pins
-
-You can now save an object by calling .pin() on an instance of an object
+Set the query that will be monitored by LiveQuery:
+```dart
+  QueryBuilder<ParseObject> query =
+    QueryBuilder<ParseObject>(ParseObject('TestAPI'))
+    ..whereEqualTo('intNumber', 1);
+```
+__Create a subscription__
+You’ll get the LiveQuery events through this subscription. 
+The first time you call subscribe, we’ll try to open the WebSocket connection to the LiveQuery server for you.
 
 ```dart
-dietPlan.pin();
+  await liveQuery.subscribe(query);
 ```
 
-and to retrieve it
+__Event Handling__
+We define several types of events you’ll get through a subscription object:
+
+__Create event__
+When a new ParseObject is created and it fulfills the ParseQuery you subscribe, you’ll get this event. 
+The object is the ParseObject which was created.
+```dart
+  liveQuery.on(LiveQueryEvent.create, (value) {
+      print('*** CREATE ***: ${DateTime.now().toString()}\n $value ');
+      print((value as ParseObject).objectId);
+      print((value as ParseObject).updatedAt);
+      print((value as ParseObject).createdAt);
+      print((value as ParseObject).get('objectId'));
+      print((value as ParseObject).get('updatedAt'));
+      print((value as ParseObject).get('createdAt'));
+    });
+```
+
+__Update event__
+When an existing ParseObject which fulfills the ParseQuery you subscribe is updated (The ParseObject fulfills the 
+ParseQuery before and after changes), you’ll get this event. 
+The object is the ParseObject which was updated. Its content is the latest value of the ParseObject.
+```dart
+  liveQuery.on(LiveQueryEvent.update, (value) {
+      print('*** UPDATE ***: ${DateTime.now().toString()}\n $value ');
+      print((value as ParseObject).objectId);
+      print((value as ParseObject).updatedAt);
+      print((value as ParseObject).createdAt);
+      print((value as ParseObject).get('objectId'));
+      print((value as ParseObject).get('updatedAt'));
+      print((value as ParseObject).get('createdAt'));
+    });
+```
+
+__Enter event__
+When an existing ParseObject’s old value does not fulfill the ParseQuery but its new value fulfills the ParseQuery, 
+you’ll get this event. The object is the ParseObject which enters the ParseQuery. 
+Its content is the latest value of the ParseObject.
+```dart
+  liveQuery.on(LiveQueryEvent.enter, (value) {
+      print('*** ENTER ***: ${DateTime.now().toString()}\n $value ');
+      print((value as ParseObject).objectId);
+      print((value as ParseObject).updatedAt);
+      print((value as ParseObject).createdAt);
+      print((value as ParseObject).get('objectId'));
+      print((value as ParseObject).get('updatedAt'));
+      print((value as ParseObject).get('createdAt'));
+    });
+```
+
+__Leave event__
+When an existing ParseObject’s old value fulfills the ParseQuery but its new value doesn’t fulfill the ParseQuery, 
+you’ll get this event. The object is the ParseObject which leaves the ParseQuery. 
+Its content is the latest value of the ParseObject.
+```dart
+  liveQuery.on(LiveQueryEvent.leave, (value) {
+      print('*** LEAVE ***: ${DateTime.now().toString()}\n $value ');
+      print((value as ParseObject).objectId);
+      print((value as ParseObject).updatedAt);
+      print((value as ParseObject).createdAt);
+      print((value as ParseObject).get('objectId'));
+      print((value as ParseObject).get('updatedAt'));
+      print((value as ParseObject).get('createdAt'));
+    });
+```
+
+__Delete event__
+When an existing ParseObject which fulfills the ParseQuery is deleted, you’ll get this event. 
+The object is the ParseObject which is deleted
+```dart
+  liveQuery.on(LiveQueryEvent.delete, (value) {
+      print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
+      print((value as ParseObject).objectId);
+      print((value as ParseObject).updatedAt);
+      print((value as ParseObject).createdAt);
+      print((value as ParseObject).get('objectId'));
+      print((value as ParseObject).get('updatedAt'));
+      print((value as ParseObject).get('createdAt'));
+    });
+```
+
+__Unsubscribe__
+If you would like to stop receiving events from a ParseQuery, you can just unsubscribe the subscription. 
+After that, you won’t get any events from the subscription object and will close the WebSocket connection to the 
+LiveQuery server.
 
 ```dart
-var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
+  await liveQuery.unSubscribe();
 ```
-
-## Increment Counter values in objects
-
-Retrieve it, call
-
-```dart
-var response = await dietPlan.increment("count", 1);
-
-```
-
-## Array Operator in objects
-
-Retrieve it, call
-
-```dart
-var response = await dietPlan.add("listKeywords", ["a", "a","d"]);
-
-var response = await dietPlan.addUnique("listKeywords", ["a", "a","d"]);
-
-var response = await dietPlan.remove("listKeywords", ["a"]);
-
-```
-
 
 ## Users
-
 You can create and control users just as normal using this SDK.
 
 To register a user, first create one :
@@ -277,7 +395,6 @@ Other user features are:-
  * Queries 
 
 ## Config
-
 The SDK now supports Parse Config. A map of all configs can be grabbed from the server by calling :
 ```dart
 var response = await ParseConfig().getConfigs();
@@ -289,13 +406,8 @@ ParseConfig().addConfig('TestConfig', 'testing');
 ```
 
 ## Other Features of this library
-
 Main:
-* Users
 * Installation
-* Objects
-* Queries
-* LiveQueries
 * GeoPoints
 * Files
 * Persistent storage
@@ -313,11 +425,13 @@ User:
 * Save
 * Destroy
 * Queries
+* Anonymous
+* 3rd Party Authentication
 
 Objects:
 * Create new object
 * Extend Parse Object and create local objects that can be saved and retreived
-* Queries:
+* Queries
 
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
