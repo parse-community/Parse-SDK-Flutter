@@ -12,15 +12,6 @@ class LiveQuery {
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _sendSessionId = autoSendSessionId ?? ParseCoreData().autoSendSessionId;
-
-    _connectMessage = {
-      'op': 'connect',
-      'applicationId': _client.data.applicationId,
-      'clientKey': _client.data.clientKey
-    };
-    if (_sendSessionId) {
-      _connectMessage['sessionToken'] = _client.data.sessionId;
-    }
   }
 
   WebSocket _webSocket;
@@ -29,12 +20,11 @@ class LiveQuery {
   bool _sendSessionId;
   IOWebSocketChannel _channel;
   Map<String, dynamic> _connectMessage;
-  Map<String, dynamic> _disconnectMessage;
   Map<String, dynamic> _subscribeMessage;
+  Map<String, dynamic> _unsubscribeMessage;
   Map<String, Function> eventCallbacks = {};
-  Map<String, dynamic> _whereMap = Map<String, dynamic>();
   int _requestIdCount = 1;
-  List<String> _liveQueryEvent = [
+  final List<String> _liveQueryEvent = [
     'create',
     'enter',
     'update',
@@ -42,6 +32,7 @@ class LiveQuery {
     'delete',
     'error'
   ];
+  final String _printConstLiveQuery = 'LiveQuery: ';
 
   int _requestIdGenerator() {
     return _requestIdCount++;
@@ -50,15 +41,16 @@ class LiveQuery {
   Future<void> subscribe(QueryBuilder query) async {
     String _liveQueryURL = _client.data.liveQueryURL;
     if (_liveQueryURL.contains('https')) {
-      _liveQueryURL = _liveQueryURL.replaceAll('https', 'wws');
+      _liveQueryURL = _liveQueryURL.replaceAll('https', 'wss');
     } else if (_liveQueryURL.contains('http')) {
-      _liveQueryURL = _liveQueryURL.replaceAll('http', 'ww');
+      _liveQueryURL = _liveQueryURL.replaceAll('http', 'ws');
     }
 
     final String _className = query.object.className;
-    //Remove limites in LiveQuery
-    query.limiters.clear();
+    query.limiters.clear(); //Remove limites in LiveQuery
     final String _where = query._buildQuery().replaceAll('where=', '');
+    //Convert where condition to Map
+    Map<String, dynamic> _whereMap = Map<String, dynamic>();
     if (_where != '') {
       _whereMap = json.decode(_where);
     }
@@ -66,25 +58,23 @@ class LiveQuery {
     final int requestId = _requestIdGenerator();
 
     try {
-      _webSocket = await WebSocket.connect(
-        _liveQueryURL,
-      );
+      _webSocket = await WebSocket.connect(_liveQueryURL);
 
-      if (_webSocket != null && _webSocket.readyState == WebSocket.OPEN) {
+      if (_webSocket != null && _webSocket.readyState == WebSocket.open) {
         if (_debug) {
-          print('Livequery: Socket opened');
+          print('$_printConstLiveQuery: Socket opened');
         }
       } else {
         if (_debug) {
-          print('Livequery: Error when connection client');
-          return;
+          print('$_printConstLiveQuery: Error when connection client');
+          return Future.value(null);
         }
       }
-      _channel = IOWebSocketChannel(_webSocket);
 
+      _channel = IOWebSocketChannel(_webSocket);
       _channel.stream.listen((dynamic message) {
         if (_debug) {
-          print('Livequery: Listen: ${message}');
+          print('$_printConstLiveQuery: Listen: ${message}');
         }
 
         final Map<String, dynamic> actionData = jsonDecode(message);
@@ -106,16 +96,35 @@ class LiveQuery {
         }
       }, onDone: () {
         if (_debug) {
-          print("Livequery: Task Done");
+          print('$_printConstLiveQuery: Done');
         }
       }, onError: (error) {
-        return handleException(error, ParseApiRQ.liveQuery, _debug, _className);
+        if (_debug) {
+          print(
+              '$_printConstLiveQuery: Error: ${error.runtimeType.toString()}');
+        }
+        return Future.value(
+            handleException(error, ParseApiRQ.liveQuery, _debug, _className));
       });
 
       //The connect message is sent from a client to the LiveQuery server.
       //It should be the first message sent from a client after the WebSocket connection is established.
+      _connectMessage = {
+        'op': 'connect',
+        'applicationId': _client.data.applicationId,
+        'clientKey': _client.data.clientKey
+      };
+      if (_sendSessionId) {
+        _connectMessage['sessionToken'] = _client.data.sessionId;
+      }
+
+      if (_debug) {
+        print('$_printConstLiveQuery: ConnectMessage: $_connectMessage');
+      }
       _channel.sink.add(jsonEncode(_connectMessage));
 
+      //After a client connects to the LiveQuery server,
+      //it can send a subscribe message to subscribe a ParseQuery.
       _subscribeMessage = {
         'op': 'subscribe',
         'requestId': requestId,
@@ -128,16 +137,21 @@ class LiveQuery {
         _subscribeMessage['sessionToken'] = _client.data.sessionId;
       }
 
-      //After a client connects to the LiveQuery server,
-      //it can send a subscribe message to subscribe a ParseQuery.
+      if (_debug) {
+        print('$_printConstLiveQuery: SubscribeMessage: $_subscribeMessage');
+      }
+
       _channel.sink.add(jsonEncode(_subscribeMessage));
 
-      _disconnectMessage = {
+      //Mount message for Unsubscribe
+      _unsubscribeMessage = {
         'op': 'unsubscribe',
         'requestId': requestId,
       };
     } on Exception catch (e) {
-      print('Error: ${e.toString()}');
+      if (_debug) {
+        print('$_printConstLiveQuery: Error: ${e.toString()}');
+      }
       return handleException(e, ParseApiRQ.liveQuery, _debug, _className);
     }
   }
@@ -149,11 +163,18 @@ class LiveQuery {
   Future<void> unSubscribe() async {
     if (_channel != null) {
       if (_channel.sink != null) {
-        await _channel.sink.add(jsonEncode(_disconnectMessage));
+        if (_debug) {
+          print(
+              '$_printConstLiveQuery: UnsubscribeMessage: $_unsubscribeMessage');
+        }
+        await _channel.sink.add(jsonEncode(_unsubscribeMessage));
         await _channel.sink.close();
       }
     }
-    if (_webSocket != null && _webSocket.readyState == WebSocket.OPEN) {
+    if (_webSocket != null && _webSocket.readyState == WebSocket.open) {
+      if (_debug) {
+        print('$_printConstLiveQuery: Socket closed');
+      }
       await _webSocket.close();
     }
   }
