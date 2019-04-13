@@ -281,7 +281,7 @@ __Event Handling__
 We define several types of events you’ll get through a subscription object:
 
 __Create event__
-When a new ParseObject is created and it fulfills the ParseQuery you subscribe, you’ll get this event. 
+When a new ParseObject is created and it fulfills the QueryBuilder you subscribe, you’ll get this event. 
 The object is the ParseObject which was created.
 ```dart
   liveQuery.on(LiveQueryEvent.create, (value) {
@@ -296,8 +296,8 @@ The object is the ParseObject which was created.
 ```
 
 __Update event__
-When an existing ParseObject which fulfills the ParseQuery you subscribe is updated (The ParseObject fulfills the 
-ParseQuery before and after changes), you’ll get this event. 
+When an existing ParseObject which fulfills the QueryBuilder you subscribe is updated (The ParseObject fulfills the 
+QueryBuilder before and after changes), you’ll get this event. 
 The object is the ParseObject which was updated. Its content is the latest value of the ParseObject.
 ```dart
   liveQuery.on(LiveQueryEvent.update, (value) {
@@ -312,8 +312,8 @@ The object is the ParseObject which was updated. Its content is the latest value
 ```
 
 __Enter event__
-When an existing ParseObject’s old value does not fulfill the ParseQuery but its new value fulfills the ParseQuery, 
-you’ll get this event. The object is the ParseObject which enters the ParseQuery. 
+When an existing ParseObject’s old value does not fulfill the QueryBuilder but its new value fulfills the QueryBuilder, 
+you’ll get this event. The object is the ParseObject which enters the QueryBuilder. 
 Its content is the latest value of the ParseObject.
 ```dart
   liveQuery.on(LiveQueryEvent.enter, (value) {
@@ -328,8 +328,8 @@ Its content is the latest value of the ParseObject.
 ```
 
 __Leave event__
-When an existing ParseObject’s old value fulfills the ParseQuery but its new value doesn’t fulfill the ParseQuery, 
-you’ll get this event. The object is the ParseObject which leaves the ParseQuery. 
+When an existing ParseObject’s old value fulfills the QueryBuilder but its new value doesn’t fulfill the QueryBuilder, 
+you’ll get this event. The object is the ParseObject which leaves the QueryBuilder. 
 Its content is the latest value of the ParseObject.
 ```dart
   liveQuery.on(LiveQueryEvent.leave, (value) {
@@ -344,7 +344,7 @@ Its content is the latest value of the ParseObject.
 ```
 
 __Delete event__
-When an existing ParseObject which fulfills the ParseQuery is deleted, you’ll get this event. 
+When an existing ParseObject which fulfills the QueryBuilder is deleted, you’ll get this event. 
 The object is the ParseObject which is deleted
 ```dart
   liveQuery.on(LiveQueryEvent.delete, (value) {
@@ -359,7 +359,7 @@ The object is the ParseObject which is deleted
 ```
 
 __Unsubscribe__
-If you would like to stop receiving events from a ParseQuery, you can just unsubscribe the subscription. 
+If you would like to stop receiving events from a QueryBuilder, you can just unsubscribe the subscription. 
 After that, you won’t get any events from the subscription object and will close the WebSocket connection to the 
 LiveQuery server.
 
