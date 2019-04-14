@@ -17,6 +17,9 @@ class _ParseResponseBuilder {
 
       if (isUnsuccessfulResponse(apiResponse)) {
         return buildErrorResponse(parseResponse, apiResponse);
+      } else if (isHealthCheck(apiResponse)) {
+        parseResponse.success = true;
+        return parseResponse;
       } else if (isSuccessButNoResults(apiResponse)) {
         return buildSuccessResponseWithNoResults(
             parseResponse, 1, 'Successful request, but no results found');
@@ -107,5 +110,9 @@ class _ParseResponseBuilder {
     } else {
       return null;
     }
+  }
+
+  bool isHealthCheck(Response apiResponse) {
+    return apiResponse.body == "{\"status\":\"ok\"}";
   }
 }
