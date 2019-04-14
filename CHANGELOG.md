@@ -1,4 +1,5 @@
 ## 1.0.18
+Bug fix
 
 ## 1.0.17
 LiveQuery fix 
