@@ -103,8 +103,8 @@ class LiveQuery {
           print(
               '$_printConstLiveQuery: Error: ${error.runtimeType.toString()}');
         }
-        return Future.value(
-            handleException(Exception(error), ParseApiRQ.liveQuery, _debug, _className));
+        return Future.value(handleException(
+            Exception(error), ParseApiRQ.liveQuery, _debug, _className));
       });
 
       //The connect message is sent from a client to the LiveQuery server.
