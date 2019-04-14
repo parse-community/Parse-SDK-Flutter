@@ -89,7 +89,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     } else {
       try {
         final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-        final String body = json.encode(toJson(forApiRQ: true));
+        final String body = json.encode(toJson());
         final Response result = await _client.put(url, body: body);
         return handleResponse<ParseObject>(
             this, result, ParseApiRQ.save, _debug, className);
