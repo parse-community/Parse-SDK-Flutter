@@ -20,6 +20,12 @@ dynamic parseEncode(dynamic value, {bool full}) {
     return _encodeDate(value);
   }
 
+  if (value is List) {
+    return value.map<dynamic>((dynamic value) {
+      return parseEncode(value);
+    }).toList();
+  }
+
   if (value is ParseGeoPoint) {
     return value;
   }
@@ -40,10 +46,7 @@ dynamic parseEncode(dynamic value, {bool full}) {
 }
 
 Map<String, dynamic> _encodeUint8List(Uint8List value) {
-  return <String, dynamic>{
-    '__type': 'Bytes',
-    'base64': base64.encode(value)
-  };
+  return <String, dynamic>{'__type': 'Bytes', 'base64': base64.encode(value)};
 }
 
 Map<String, dynamic> _encodeDate(DateTime date) {
