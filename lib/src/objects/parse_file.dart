@@ -28,8 +28,12 @@ class ParseFile extends ParseObject {
   }
 
   File file;
-  String name;
-  String url;
+
+  String get name => super.get<String>(keyVarName);
+  set name(String name) => set<String>(keyVarName, name);
+
+  String get url => super.get<String>(keyVarURL);
+  set url(String url) => set<String>(keyVarURL, url);
 
   @override
   // ignore: overridden_fields
@@ -42,7 +46,7 @@ class ParseFile extends ParseObject {
       <String, String>{'__type': keyFile, 'name': name, 'url': url};
 
   @override
-  String toString() => json.encode(toString());
+  String toString() => json.encode(toJson(full: true));
 
   Future<ParseFile> loadStorage() async {
     final Directory tempPath = await getTemporaryDirectory();

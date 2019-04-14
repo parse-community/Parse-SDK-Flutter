@@ -8,9 +8,7 @@ part of flutter_parse_sdk;
 /// 3. Success with simple OK.
 /// 4. Success with results. Again [ParseResponse()] is returned
 class _ParseResponseBuilder {
-  ParseResponse handleResponse<T>(
-      dynamic object,
-      Response apiResponse,
+  ParseResponse handleResponse<T>(dynamic object, Response apiResponse,
       {bool returnAsResult = false}) {
     final ParseResponse parseResponse = ParseResponse();
 
@@ -69,9 +67,20 @@ class _ParseResponseBuilder {
       response.result = map;
     } else if (map != null && map.length == 1 && map.containsKey('results')) {
       final List<dynamic> results = map['results'];
-      response.result = _handleMultipleResults<T>(object, results);
+      final List<T> items = _handleMultipleResults<T>(object, results);
+      response.results = items;
+      response.result = items;
+      response.count = items.length;
+    } else if (map != null && map.length == 2 && map.containsKey('count')) {
+      final List<int> results = [map['count']];
+      response.results = results;
+      response.result = results;
+      response.count = map['count'];
     } else {
-      response.result = _handleSingleResult<T>(object, map, false);
+      final T item = _handleSingleResult<T>(object, map, false);
+      response.count = 1;
+      response.result = item;
+      response.results = <T>[item];
     }
 
     return response;
@@ -89,7 +98,8 @@ class _ParseResponseBuilder {
   }
 
   /// Handles a response with a single result object
-  T _handleSingleResult<T>(T object, Map<String, dynamic> map, bool createNewObject) {
+  T _handleSingleResult<T>(
+      T object, Map<String, dynamic> map, bool createNewObject) {
     if (createNewObject && object is ParseCloneable) {
       return object.clone(map);
     } else if (object is ParseObject) {
