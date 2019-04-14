@@ -98,18 +98,18 @@ class LiveQuery {
         if (_debug) {
           print('$_printConstLiveQuery: Done');
         }
-      }, onError: (error, StackTrace stackTrace) {
+      }, onError: (Error error, StackTrace stackTrace) {
         if (_debug) {
           print(
               '$_printConstLiveQuery: Error: ${error.runtimeType.toString()}');
         }
         return Future.value(
-            handleException(error, ParseApiRQ.liveQuery, _debug, _className));
+            handleException(Exception(error), ParseApiRQ.liveQuery, _debug, _className));
       });
 
       //The connect message is sent from a client to the LiveQuery server.
       //It should be the first message sent from a client after the WebSocket connection is established.
-      _connectMessage = {
+      _connectMessage = <String, String>{
         'op': 'connect',
         'applicationId': _client.data.applicationId,
         'clientKey': _client.data.clientKey ?? ''
@@ -125,7 +125,7 @@ class LiveQuery {
 
       //After a client connects to the LiveQuery server,
       //it can send a subscribe message to subscribe a ParseQuery.
-      _subscribeMessage = {
+      _subscribeMessage = <String, dynamic>{
         'op': 'subscribe',
         'requestId': requestId,
         'query': {
@@ -144,7 +144,7 @@ class LiveQuery {
       _channel.sink.add(jsonEncode(_subscribeMessage));
 
       //Mount message for Unsubscribe
-      _unsubscribeMessage = {
+      _unsubscribeMessage = <String, dynamic>{
         'op': 'unsubscribe',
         'requestId': requestId,
       };
