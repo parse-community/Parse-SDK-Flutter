@@ -4,11 +4,13 @@ import 'package:flutter_plugin_example/data/repositories/diet_plan/contract_prov
 import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_diet_plan.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../repository_mock_utils.dart';
 
 void main() {
   DietPlanRepository repository;
+  SharedPreferences.setMockInitialValues(Map<String, String>());
 
   DietPlanProviderContract apiRepository;
   DietPlanProviderContract dbRepository;
@@ -23,19 +25,19 @@ void main() {
 
     when(repositoryApi.add(any)).thenAnswer((_) async =>
         Future<ApiResponse>.value(
-            ApiResponse(true, 200, getDummyDietPlan(), null)));
+            ApiResponse(true, 200, <dynamic>[getDummyDietPlan()], null)));
     when(repositoryApi.addAll(any)).thenAnswer((_) async =>
         Future<ApiResponse>.value(ApiResponse(true, 200, mockList, null)));
     when(repositoryApi.update(any)).thenAnswer((_) async =>
         Future<ApiResponse>.value(
-            ApiResponse(true, 200, getDummyDietPlan(), null)));
+            ApiResponse(true, 200, <dynamic>[getDummyDietPlan()], null)));
     when(repositoryApi.updateAll(any)).thenAnswer((_) async =>
         Future<ApiResponse>.value(ApiResponse(true, 200, mockList, null)));
     when(repositoryApi.getNewerThan(any)).thenAnswer((_) async =>
         Future<ApiResponse>.value(ApiResponse(true, 200, mockList, null)));
     when(repositoryApi.getById(any)).thenAnswer((_) async =>
         Future<ApiResponse>.value(
-            ApiResponse(true, 200, getDummyDietPlan(), null)));
+            ApiResponse(true, 200, <dynamic>[getDummyDietPlan()], null)));
     when(repositoryApi.getById(any)).thenAnswer((_) async =>
         Future<ApiResponse>.value(ApiResponse(true, 200, mockList, null)));
 
@@ -51,7 +53,7 @@ void main() {
     dbRepository = await getDBRepository();
 
     final DietPlanRepository repository = DietPlanRepository.init(null,
-        repositoryDB: dbRepository, repositoryAPI: apiRepository);
+        mockDBProvider: dbRepository, mockAPIProvider: apiRepository);
 
     return repository;
   }

@@ -8,19 +8,19 @@ import 'package:sembast/sembast.dart';
 
 class DietPlanRepository implements DietPlanProviderContract {
   static DietPlanRepository init(Database dbConnection,
-      {DietPlanProviderContract repositoryDB,
-      DietPlanProviderContract repositoryAPI}) {
+      {DietPlanProviderContract mockDBProvider,
+      DietPlanProviderContract mockAPIProvider}) {
     final DietPlanRepository repository = DietPlanRepository();
 
-    if (repositoryDB != null) {
-      repository.db = repositoryDB;
+    if (mockDBProvider != null) {
+      repository.db = mockDBProvider;
     } else {
-      final Store store = dbConnection.getStore('repository-$keyDietPlan');
+      final Store store = dbConnection.getStore('repository_store');
       repository.db = DietPlanProviderDB(dbConnection, store);
     }
 
-    if (repositoryAPI != null) {
-      repository.api = repositoryAPI;
+    if (mockAPIProvider != null) {
+      repository.api = mockAPIProvider;
     } else {
       repository.api = DietPlanProviderApi();
     }
@@ -61,26 +61,17 @@ class DietPlanRepository implements DietPlanProviderContract {
 
     final ApiResponse response = await api.addAll(items);
 
-    if (response.success && isValidList(response.result)) {
-      await db.addAll(items);
+    if (response.success && isValidList(response.results)) {
+      await db.addAll(response.results);
     }
 
     return response;
   }
 
   @override
-  Future<ApiResponse> getAll(
-      {bool fromApi = false, bool fromDb = false}) async {
+  Future<ApiResponse> getAll({bool fromApi = false}) {
     if (fromApi) {
       return api.getAll();
-    }
-    if (fromDb) {
-      return db.getAll();
-    }
-
-    ApiResponse response = await db.getAll();
-    if (response.result == null) {
-      response = await api.getAll();
     }
 
     return db.getAll();
@@ -116,9 +107,8 @@ class DietPlanRepository implements DietPlanProviderContract {
 
     final ApiResponse response = await api.getNewerThan(date);
 
-    if (response.success && response.result != null) {
-      final List<DietPlan> list = response.result;
-      await db.updateAll(list);
+    if (response.success && isValidList(response.results)) {
+      await db.updateAll(response.results);
     }
 
     return response;
@@ -165,8 +155,8 @@ class DietPlanRepository implements DietPlanProviderContract {
     }
 
     ApiResponse response = await api.updateAll(items);
-    if (response.success && isValidList(response.result)) {
-      response = await db.updateAll(items);
+    if (response.success && isValidList(response.results)) {
+      response = await db.updateAll(response.results);
     }
 
     return response;

@@ -37,3 +37,11 @@ DietPlan getDummyDietPlan() {
     ..fat = 20
     ..status = 0;
 }
+
+Future<void> deleteFromApi(List<dynamic> results) async {
+  if (results != null && results.isNotEmpty) {
+    for (final ParseObject item in results) {
+      await item.delete();
+    }
+  }
+}

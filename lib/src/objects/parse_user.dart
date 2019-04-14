@@ -107,8 +107,13 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Current user is stored locally, but in case of a server update [bool]
   /// fromServer can be called and an updated version of the [User] object will be
   /// returned
-  static Future<ParseUser> currentUser() {
-    return _getUserFromLocalStore();
+  static Future<dynamic> currentUser({ParseCloneable customUserObject}) async {
+
+    if (customUserObject != null) {
+      return await _getUserFromLocalStore(cloneable: customUserObject);
+    } else {
+      return await _getUserFromLocalStore();
+    }
   }
 
   /// Registers a user on Parse Server
@@ -145,17 +150,13 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// provided, call this method to login.
   Future<ParseResponse> login() async {
     try {
-      final Uri tempUri = Uri.parse(_client.data.serverUrl);
+      final Map<String, dynamic> queryParams = <String, String>{
+        keyVarUsername: username,
+        keyVarPassword: password
+      };
 
-      final Uri url = Uri(
-          scheme: tempUri.scheme,
-          host: tempUri.host,
-          port: tempUri.port,
-          path: '${tempUri.path}$keyEndPointLogin',
-          queryParameters: <String, String>{
-            keyVarUsername: username,
-            keyVarPassword: password
-          });
+      final Uri url = getSanitisedUri(_client, '$keyEndPointLogin',
+          queryParams: queryParams);
 
       final Response response =
           await _client.get(url, headers: <String, String>{
@@ -281,16 +282,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     if (objectId == null) {
       return signUp();
     } else {
-      try {
-        final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-        final String body =
-            json.encode(toJson(forApiRQ: true), toEncodable: dateTimeEncoder);
-        final Response response = await _client.put(url, body: body);
-        return _handleResponse(
-            this, response, ParseApiRQ.save, _debug, className);
-      } on Exception catch (e) {
-        return handleException(e, ParseApiRQ.save, _debug, className);
-      }
+      return super.save();
     }
   }
 
@@ -331,16 +323,18 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
-  static Future<ParseUser> _getUserFromLocalStore() async {
+  static Future<dynamic> _getUserFromLocalStore(
+      {ParseCloneable cloneable}) async {
     final String userJson =
         (await ParseCoreData().getStore()).getString(keyParseStoreUser);
 
     if (userJson != null) {
       final Map<String, dynamic> userMap = json.decode(userJson);
-      if (userMap != null) {
+      if (cloneable != null) {
+        return cloneable.clone(userMap);
+      } else {
         ParseCoreData().setSessionId(userMap[keyParamSessionToken]);
-        final ParseUser user = parseDecode(userMap);
-        return user;
+        return parseDecode(userMap);
       }
     }
 

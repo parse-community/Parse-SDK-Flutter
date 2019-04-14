@@ -3,8 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/base/api_response.dart';
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
+import 'package:flutter_plugin_example/data/model/user.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_diet_plan.dart';
+import 'package:flutter_plugin_example/data/repositories/user/repository_user.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
+import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
@@ -19,10 +22,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  DietPlanRepository dietPlanRepo;
+  UserRepository userRepo;
+
   @override
   void initState() {
     super.initState();
-    initParse();
+    WidgetsBinding.instance.addPostFrameCallback((_) => initData());
   }
 
   @override
@@ -35,12 +41,14 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: const Text('Running Parse init'),
         ),
-        floatingActionButton: FloatingActionButton(onPressed: runTestQueries),
       ),
     );
   }
 
-  Future<void> initParse() async {
+  Future<void> initData() async {
+    // Initialize repository
+    await initRepository();
+
     // Initialize parse
     Parse().initialize(keyParseApplicationId, keyParseServerUrl,
         masterKey: keyParseMasterKey, debug: true);
@@ -56,10 +64,11 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> runTestQueries() async {
     // Basic repository example
-    await repositoryAddItems();
-    await repositoryGetAllItems();
+    await repositoryAddUser();
+    /*await repositoryAddItems();
+    await repositoryGetAllItems()*/
 
-    // Basic usage
+    //Basic usage
     /*createItem();
     getAllItems();
     getAllItemsByName();
@@ -68,7 +77,28 @@ class _MyAppState extends State<MyApp> {
     query();
     initUser();
     function();
-    functionWithParameters();*/
+    functionWithParameters();
+    test();*/
+  }
+
+  Future<void> test() async {
+    User user = User('test_user', 'test_password', 'test@gmail.com');
+    final ParseResponse signUpResponse = await user.signUp();
+
+    if (signUpResponse.success) {
+      user = signUpResponse.result;
+    } else {
+      final ParseResponse loginResponse = await user.login();
+
+      if (loginResponse.success) {
+        user = loginResponse.result;
+      }
+    }
+
+    final QueryBuilder<DietPlan> query = QueryBuilder<DietPlan>(DietPlan())
+      ..whereEqualTo(keyProtein, 30);
+    final ParseResponse item = await query.query();
+    print(item.toString());
   }
 
   Future<void> createItem() async {
@@ -78,7 +108,7 @@ class _MyAppState extends State<MyApp> {
 
     final ParseResponse apiResponse = await newObject.create();
 
-    if (apiResponse.success && apiResponse.result != null) {
+    if (apiResponse.success && apiResponse.count > 0) {
       print(keyAppName + ': ' + apiResponse.result.toString());
     }
   }
@@ -87,8 +117,8 @@ class _MyAppState extends State<MyApp> {
     final ParseResponse apiResponse =
         await ParseObject('TestObjectForApi').getAll();
 
-    if (apiResponse.success && apiResponse.result != null) {
-      for (final ParseObject testObject in apiResponse.result) {
+    if (apiResponse.success && apiResponse.count > 0) {
+      for (final ParseObject testObject in apiResponse.results) {
         print(keyAppName + ': ' + testObject.toString());
       }
     }
@@ -97,8 +127,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> getAllItems() async {
     final ParseResponse apiResponse = await DietPlan().getAll();
 
-    if (apiResponse.success && apiResponse.result != null) {
-      for (final DietPlan plan in apiResponse.result) {
+    if (apiResponse.success && apiResponse.count > 0) {
+      for (final DietPlan plan in apiResponse.results) {
         print(keyAppName + ': ' + plan.name);
       }
     } else {
@@ -107,9 +137,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> getSingleItem() async {
-    final ParseResponse apiResponse = await DietPlan().getObject('R5EonpUDWy');
+    final ParseResponse apiResponse = await DietPlan().getObject('B0xtU0Ekqi');
 
-    if (apiResponse.success && apiResponse.result != null) {
+    if (apiResponse.success && apiResponse.count > 0) {
       final DietPlan dietPlan = apiResponse.result;
 
       // Shows example of storing values in their proper type and retrieving them
@@ -141,7 +171,7 @@ class _MyAppState extends State<MyApp> {
 
     final ParseResponse apiResponse = await queryBuilder.query();
 
-    if (apiResponse.success && apiResponse.result != null) {
+    if (apiResponse.success && apiResponse.count > 0) {
       final List<ParseObject> listFromApi = apiResponse.result;
       final ParseObject parseObject = listFromApi?.first;
       print('Result: ${parseObject.toString()}');
@@ -224,7 +254,7 @@ class _MyAppState extends State<MyApp> {
           ..whereStartsWith(ParseUser.keyUsername, 'phillw');
 
     final ParseResponse apiResponse = await queryBuilder.query();
-    if (apiResponse.success) {
+    if (apiResponse.success && apiResponse.count > 0) {
       final List<ParseUser> users = response.result;
       for (final ParseUser user in users) {
         print(keyAppName + ': ' + user.toString());
@@ -266,25 +296,54 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Future<void> repositoryAddItems() async {
-    final List<DietPlan> dietPlans =
-        const JsonDecoder().convert(dietPlansToAdd);
+  Future<void> repositoryAddUser() async {
+    final User user = User('test_username', 'password', 'test@gmail.com');
 
-    final DietPlanRepository repository = DietPlanRepository();
-    final ApiResponse response = await repository.addAll(dietPlans);
+    final ApiResponse response = await userRepo.save(user);
+
+    if (!response.success) {
+      await userRepo.login(user);
+    }
+
+    final User currentUser =
+        await ParseUser.currentUser(customUserObject: User.clone());
+    print(currentUser);
+  }
+
+  Future<void> repositoryAddItems() async {
+    final List<DietPlan> dietPlans = <DietPlan>[];
+
+    final List<dynamic> json = const JsonDecoder().convert(dietPlansToAdd);
+    for (final Map<String, dynamic> element in json) {
+      final DietPlan dietPlan = DietPlan().fromJson(element);
+      dietPlans.add(dietPlan);
+    }
+
+    await initRepository();
+    final ApiResponse response = await dietPlanRepo.addAll(dietPlans);
     if (response.success) {
       print(response.result);
     }
   }
 
   Future<void> repositoryGetAllItems() async {
-    final DietPlanRepository repository = DietPlanRepository();
-    final ApiResponse response = await repository.getAll();
+    final ApiResponse response = await dietPlanRepo.getAll();
     if (response.success) {
       print(response.result);
     }
   }
+
+  Future<void> initRepository() async {
+    dietPlanRepo ??= DietPlanRepository.init(await getDB());
+    userRepo ??= UserRepository.init(await getDB());
+  }
 }
 
 const String dietPlansToAdd =
-    '[{"className":"Diet_Plans","objectId":"RlOj8JGnEX","createdAt":"2017-10-17T10:44:11.355Z","updatedAt":"2018-01-30T10:15:21.228Z","Name":"Textbook","Description":"For an active lifestyle and a straight forward macro plan, we suggest this plan.","Fat":25,"Carbs":50,"Protein":25,"Status":0}]';
+    '[{"className":"Diet_Plans","Name":"Textbook","Description":"For an active lifestyle and a straight forward macro plan, we suggest this plan.","Fat":25,"Carbs":50,"Protein":25,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Body Builder","Description":"Default Body Builders Diet","Fat":20,"Carbs":40,"Protein":40,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Zone Diet","Description":"Popular with CrossFit users. Zone Diet targets similar macros.","Fat":30,"Carbs":40,"Protein":30,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Low Fat","Description":"Low fat diet.","Fat":15,"Carbs":60,"Protein":25,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Low Carb","Description":"Low Carb diet, main focus on quality fats and protein.","Fat":35,"Carbs":25,"Protein":40,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Paleo","Description":"Paleo diet.","Fat":60,"Carbs":25,"Protein":10,"Status":0},'
+    '{"className":"Diet_Plans","Name":"Ketogenic","Description":"High quality fats, low carbs.","Fat":65,"Carbs":5,"Protein":30,"Status":0}]';
