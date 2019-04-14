@@ -98,7 +98,7 @@ class LiveQuery {
         if (_debug) {
           print('$_printConstLiveQuery: Done');
         }
-      }, onError: (Error error) {
+      }, onError: (error) {
         if (_debug) {
           print(
               '$_printConstLiveQuery: Error: ${error.runtimeType.toString()}');
