@@ -74,7 +74,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final Map<String, dynamic> map = json.decode(result.body);
         objectId = map['objectId'].toString();
       }
-
+      
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.create, _debug, className);
     } on Exception catch (e) {
