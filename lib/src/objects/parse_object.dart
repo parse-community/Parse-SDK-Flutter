@@ -65,7 +65,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   Future<ParseResponse> create() async {
     try {
       final Uri url = getSanitisedUri(_client, '$_path');
-      final String body = json.encode(toJson(forApiRQ: true);
+      final String body = json.encode(toJson(forApiRQ: true));
       final Response result = await _client.post(url, body: body);
 
       //Set the objectId on the object after it is created.
@@ -74,7 +74,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final Map<String, dynamic> map = json.decode(result.body);
         objectId = map['objectId'].toString();
       }
-
+      
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.create, _debug, className);
     } on Exception catch (e) {
