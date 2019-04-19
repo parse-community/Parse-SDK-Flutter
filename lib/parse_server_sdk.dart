@@ -62,6 +62,8 @@ part 'src/objects/parse_session.dart';
 
 part 'src/objects/parse_user.dart';
 
+part 'src/objects/parse_acl.dart';
+
 part 'src/utils/parse_decoder.dart';
 
 part 'src/utils/parse_encoder.dart';
