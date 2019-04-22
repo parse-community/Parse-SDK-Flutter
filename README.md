@@ -55,6 +55,17 @@ if (response.success) {
    dietPlan = response.result;
 }
 ```
+Types supported:
+ * String
+ * Double
+ * Int
+ * Boolean
+ * DateTime
+ * File
+ * Geopoint
+ * ParseObject/ParseUser (Pointer)
+ * Map
+ * List (all types supported)
 
 You then have the ability to do the following with that object:
 The features available are:-
