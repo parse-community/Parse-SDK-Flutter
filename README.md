@@ -50,7 +50,7 @@ await dietPlan.save()
 ```
 Verify that the object has been successfully saved using
 ```dart
-response = await dietPlan.save();
+var response = await dietPlan.save();
 if (response.success) {
    dietPlan = response.result;
 }
