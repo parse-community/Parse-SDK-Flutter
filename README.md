@@ -533,15 +533,7 @@ Main:
 * Manage Session ID's tokens
 
 User:
-* Create       
-* Login
 * Logout
-* CurrentUser
-* RequestPasswordReset
-* VerificationEmailRequest
-* AllUsers
-* Save
-* Destroy
 * Queries
 * Anonymous
 * 3rd Party Authentication
