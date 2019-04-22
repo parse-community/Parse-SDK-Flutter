@@ -416,10 +416,17 @@ Then have the user sign up:
 var response = await user.signUp();
 if (response.success) user = response.result;
 ```
-You can also logout and login with the user:
+You can also login with the user:
 ```dart
 var response = await user.login();
 if (response.success) user = response.result;
+```
+You can also logout with the user:
+```dart
+var response = await user.logout();
+if (response.success) {
+    print('User logout');
+}
 ```
 Also, once logged in you can manage sessions tokens. This feature can be called after Parse().init() on startup to check for a logged in user.
 ```dart
@@ -533,9 +540,8 @@ Main:
 * Manage Session ID's tokens
 
 User:
-* Logout
 * Queries
-* Anonymous
+* Anonymous (View the example application)
 * 3rd Party Authentication
 
 Objects:
