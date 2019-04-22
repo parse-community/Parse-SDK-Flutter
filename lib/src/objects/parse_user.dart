@@ -36,6 +36,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     return fromJson(map);
   }
 
+  static const String keyEmailVerified = 'emailVerified';
   static const String keyUsername = 'username';
   static const String keyEmailAddress = 'email';
   static const String path = '$keyEndPointClasses$keyClassUser';
@@ -44,6 +45,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   set acl(Map<String, dynamic> acl) =>
       set<Map<String, dynamic>>(keyVarAcl, acl);
+
+  bool get emailVerified => super.get<bool>(keyEmailVerified);
+
+  set emailVerified(bool emailVerified) =>
+      set<bool>(keyEmailVerified, emailVerified);
 
   String get username => super.get<String>(keyVarUsername);
 
@@ -108,7 +114,6 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// fromServer can be called and an updated version of the [User] object will be
   /// returned
   static Future<dynamic> currentUser({ParseCloneable customUserObject}) async {
-
     if (customUserObject != null) {
       return await _getUserFromLocalStore(cloneable: customUserObject);
     } else {

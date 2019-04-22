@@ -1,3 +1,7 @@
+## 1.0.20
+ACL now working
+emailVerified
+
 ## 1.0.19
 Bug fix
 

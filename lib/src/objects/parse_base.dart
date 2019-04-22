@@ -65,7 +65,7 @@ abstract class ParseBase {
       map.remove(keyVarCreatedAt);
       map.remove(keyVarUpdatedAt);
       map.remove(keyVarClassName);
-      map.remove(keyVarAcl);
+      //map.remove(keyVarAcl);
       map.remove(keyParamSessionToken);
     }
 
@@ -97,6 +97,8 @@ abstract class ParseBase {
         } else {
           set<DateTime>(keyVarUpdatedAt, value);
         }
+      } else if (key == keyVarAcl) {
+        getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
       } else {
         getObjectData()[key] = parseDecode(value);
       }
@@ -139,6 +141,20 @@ abstract class ParseBase {
       } else {
         getObjectData()[key] = value;
       }
+    }
+  }
+
+  ///Set the [ParseACL] governing this object.
+  void setACL<ParseACL>(ParseACL acl) {
+    getObjectData()[keyVarAcl] = acl;
+  }
+
+  ///Access the [ParseACL] governing this object.
+  ParseACL getACL() {
+    if (getObjectData().containsKey(keyVarAcl)) {
+      return getObjectData()[keyVarAcl];
+    } else {
+      return ParseACL();
     }
   }
 

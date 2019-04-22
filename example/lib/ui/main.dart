@@ -65,11 +65,11 @@ class _MyAppState extends State<MyApp> {
   Future<void> runTestQueries() async {
     // Basic repository example
     await repositoryAddUser();
-    /*await repositoryAddItems();
-    await repositoryGetAllItems()*/
+    await repositoryAddItems();
+    await repositoryGetAllItems();
 
     //Basic usage
-    /*createItem();
+    createItem();
     getAllItems();
     getAllItemsByName();
     getSingleItem();
@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
     initUser();
     function();
     functionWithParameters();
-    test();*/
+    test();
   }
 
   Future<void> test() async {
