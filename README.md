@@ -131,6 +131,14 @@ Retrieve it, call
 var response = await dietPlan.increment("count", 1);
 
 ```
+or using with save function
+
+```dart
+dietPlan.setIncrement('count', 1);
+dietPlan.setDecrement('count', 1);
+var response = dietPlan.save()
+
+```
 
 ## Array Operator in objects
 Retrieve it, call
@@ -142,6 +150,14 @@ var response = await dietPlan.addUnique("listKeywords", ["a", "a","d"]);
 
 var response = await dietPlan.remove("listKeywords", ["a"]);
 
+```
+or using with save function
+
+```dart
+dietPlan.setAdd('listKeywords', ['a','a','d']);
+dietPlan.setAddUnique('listKeywords', ['a','a','d']);
+dietPlan.setRemove('listKeywords', ['a']);
+var response = dietPlan.save()
 ```
 
 ## Queries
