@@ -100,7 +100,6 @@ class ParseACL {
     _permissionsById.forEach((String user, _ACLPermissions permission) {
       map[user] = permission.toJson();
     });
-    print(map);
     return map;
   }
 
