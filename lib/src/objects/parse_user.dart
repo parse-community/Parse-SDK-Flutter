@@ -363,7 +363,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
         type == ParseApiRQ.getAll ||
         type == ParseApiRQ.destroy ||
         type == ParseApiRQ.requestPasswordReset ||
-        type == ParseApiRQ.verificationEmailRequest) {
+        type == ParseApiRQ.verificationEmailRequest ||
+        type == ParseApiRQ.logout) {
       return parseResponse;
     } else {
       final ParseUser user = parseResponse.result;

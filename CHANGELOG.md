@@ -1,3 +1,7 @@
+## 1.0.21
+LiveQuery fix
+Logout fix
+
 ## 1.0.20
 ACL now working
 emailVerified
