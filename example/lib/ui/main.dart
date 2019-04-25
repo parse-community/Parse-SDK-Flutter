@@ -64,21 +64,21 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> runTestQueries() async {
     // Basic repository example
-    await repositoryAddUser();
-    await repositoryAddItems();
-    await repositoryGetAllItems();
+    //await repositoryAddUser();
+    //await repositoryAddItems();
+    //await repositoryGetAllItems();
 
     //Basic usage
-    createItem();
-    getAllItems();
-    getAllItemsByName();
-    getSingleItem();
-    getConfigs();
-    query();
+    //createItem();
+    //getAllItems();
+    //getAllItemsByName();
+    //getSingleItem();
+    //getConfigs();
+    //query();
     initUser();
-    function();
-    functionWithParameters();
-    test();
+    //function();
+    //functionWithParameters();
+    // test();
   }
 
   Future<void> test() async {
@@ -224,6 +224,8 @@ class _MyAppState extends State<MyApp> {
     if (response.success) {
       user = response.result;
     }
+
+    user = await ParseUser.currentUser();
 
     user =
         ParseUser('TestFlutter', 'TestPassword123', 'phill.wiggins@gmail.com');
