@@ -62,6 +62,8 @@ part 'src/objects/parse_session.dart';
 
 part 'src/objects/parse_user.dart';
 
+part 'src/objects/parse_acl.dart';
+
 part 'src/utils/parse_decoder.dart';
 
 part 'src/utils/parse_encoder.dart';
@@ -99,7 +101,12 @@ class Parse {
       String sessionId,
       bool autoSendSessionId,
       SecurityContext securityContext}) {
-    ParseCoreData.init(appId, serverUrl,
+
+    final String url = removeTrailingSlash(serverUrl);
+
+    ParseCoreData.init(
+        appId,
+        url,
         debug: debug,
         appName: appName,
         liveQueryUrl: liveQueryUrl,

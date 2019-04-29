@@ -12,9 +12,9 @@ bool isDebugEnabled({bool objectLevelDebug}) {
 ///
 /// Strings are wrapped with "" but integers and others are not
 dynamic convertValueToCorrectType(dynamic value) {
-  if (value is String && !value.contains('__type')) {
+  /*if (value is String && !value.contains('__type')) {
     return '\"$value\"';
-  } 
+  }*/
   
   if (value is DateTime || value is ParseObject) {
     return parseEncode(value);
@@ -24,14 +24,26 @@ dynamic convertValueToCorrectType(dynamic value) {
 }
 
 /// Sanitises a url
-Uri getSanitisedUri(ParseHTTPClient client, String pathToAppend) {
+Uri getSanitisedUri(ParseHTTPClient client, String pathToAppend,
+    {Map<String, dynamic> queryParams, String query}) {
+
   final Uri tempUri = Uri.parse(client.data.serverUrl);
 
   final Uri url = Uri(
       scheme: tempUri.scheme,
       host: tempUri.host,
       port: tempUri.port,
-      path: '${tempUri.path}$pathToAppend');
+      path: '${tempUri.path}$pathToAppend',
+      queryParameters: queryParams,
+      query: query);
 
   return url;
+}
+/// Removes unncessary /
+String removeTrailingSlash(String serverUrl) {
+  if (serverUrl.substring(serverUrl.length -1) == '/') {
+    return serverUrl.substring(0, serverUrl.length -1);
+  } else {
+    return serverUrl;
+  }
 }

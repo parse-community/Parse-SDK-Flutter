@@ -1,3 +1,21 @@
+## 1.0.21
+LiveQuery fix
+Logout fix
+
+## 1.0.20
+ACL now working
+emailVerified
+
+## 1.0.19
+Bug fix
+
+## 1.0.18
+Bug fix
+
+## 1.0.17
+LiveQuery fix 
+Bug fixes
+
 ## 1.0.16
 Bug fixes
 Fixed object delete

@@ -65,7 +65,7 @@ abstract class ParseBase {
       map.remove(keyVarCreatedAt);
       map.remove(keyVarUpdatedAt);
       map.remove(keyVarClassName);
-      map.remove(keyVarAcl);
+      //map.remove(keyVarAcl);
       map.remove(keyParamSessionToken);
     }
 
@@ -75,7 +75,6 @@ abstract class ParseBase {
   @override
   String toString() => json.encode(toJson());
 
-  @protected
   dynamic fromJson(Map<String, dynamic> objectData) {
     if (objectData == null) {
       return this;
@@ -98,6 +97,8 @@ abstract class ParseBase {
         } else {
           set<DateTime>(keyVarUpdatedAt, value);
         }
+      } else if (key == keyVarAcl) {
+        getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
       } else {
         getObjectData()[key] = parseDecode(value);
       }
@@ -120,7 +121,6 @@ abstract class ParseBase {
   Map<String, dynamic> getObjectData() => _objectData ?? Map<String, dynamic>();
 
   /// Saves in storage
-  @protected
   Future<void> saveInStorage(String key) async {
     final String objectJson = json.encode(toJson(full: true));
     await ParseCoreData().getStore()
@@ -141,6 +141,20 @@ abstract class ParseBase {
       } else {
         getObjectData()[key] = value;
       }
+    }
+  }
+
+  ///Set the [ParseACL] governing this object.
+  void setACL<ParseACL>(ParseACL acl) {
+    getObjectData()[keyVarAcl] = acl;
+  }
+
+  ///Access the [ParseACL] governing this object.
+  ParseACL getACL() {
+    if (getObjectData().containsKey(keyVarAcl)) {
+      return getObjectData()[keyVarAcl];
+    } else {
+      return ParseACL();
     }
   }
 
@@ -206,9 +220,5 @@ abstract class ParseBase {
     return null;
   }
 
-  Map<String, String> toPointer() => <String, String>{
-        '__type': 'Pointer',
-        keyVarClassName: className,
-        keyVarObjectId: objectId
-      };
+  Map<String, dynamic> toPointer() => encodeObject(className, objectId);
 }

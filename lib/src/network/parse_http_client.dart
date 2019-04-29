@@ -36,32 +36,9 @@ class ParseHTTPClient extends BaseClient {
     }
 
     if (data.debug) {
-      _logging(request);
+      logCUrl(request);
     }
 
     return _client.send(request);
-  }
-
-  void _logging(BaseRequest request) {
-    String curlCmd = 'curl';
-    curlCmd += ' -X ' + request.method;
-    bool compressed = false;
-    request.headers.forEach((String name, String value) {
-      if (name?.toLowerCase() == 'accept-encoding' &&
-          value?.toLowerCase() == 'gzip') {
-        compressed = true;
-      }
-      curlCmd += ' -H \'$name: $value\'';
-    });
-    if (request.method == 'POST' || request.method == 'PUT') {
-      if (request is Request) {
-        final String body = latin1.decode(request.bodyBytes);
-        curlCmd += ' -d \'$body\'';
-      }
-    }
-    curlCmd += (compressed ? ' --compressed ' : ' ') + request.url.toString();
-    print('╭-- cURL');
-    print(curlCmd);
-    print('╰-- (copy and paste the above line to a terminal)');
   }
 }
