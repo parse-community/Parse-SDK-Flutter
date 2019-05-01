@@ -330,8 +330,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   static Future<dynamic> _getUserFromLocalStore(
       {ParseCloneable cloneable}) async {
-    final String userJson =
-        (await ParseCoreData().getStore()).getString(keyParseStoreUser);
+    final CoreStore coreStore = await ParseCoreData().getStore();
+    final String userJson = await coreStore.getString(keyParseStoreUser);
 
     if (userJson != null) {
       final Map<String, dynamic> userMap = json.decode(userJson);

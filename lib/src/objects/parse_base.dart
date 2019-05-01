@@ -184,8 +184,8 @@ abstract class ParseBase {
       await unpin();
       final Map<String, dynamic> objectMap = parseEncode(this, full: true);
       final String json = jsonEncode(objectMap);
-      final SharedPreferences store = await ParseCoreData().getStore();
-      store.setString(objectId, json);
+      await ParseCoreData().getStore()
+        ..setString(objectId, json);
       return true;
     } else {
       return false;
@@ -210,8 +210,8 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   dynamic fromPin(String objectId) async {
     if (objectId != null) {
-      final String itemFromStore =
-          (await ParseCoreData().getStore()).getString(objectId);
+      final CoreStore coreStore = await ParseCoreData().getStore();
+      final String itemFromStore = await coreStore.getString(objectId);
 
       if (itemFromStore != null) {
         return fromJson(json.decode(itemFromStore));
