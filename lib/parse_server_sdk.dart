@@ -4,7 +4,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:sembast/sembast.dart';
+import 'package:sembast/sembast_io.dart';
 import 'package:devicelocale/devicelocale.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
@@ -12,9 +13,9 @@ import 'package:meta/meta.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:xxtea/xxtea.dart';
 
 part 'package:parse_server_sdk/src/objects/response/parse_response_utils.dart';
 
@@ -76,6 +77,10 @@ part 'src/utils/parse_utils.dart';
 
 part 'src/utils/parse_date_format.dart';
 
+part 'src/data/core_store.dart';
+part 'src/data/core_store_impl.dart';
+part 'src/data/xxtea_codec.dart';
+
 class Parse {
   ParseCoreData data;
   bool _hasBeenInitialized = false;
@@ -100,13 +105,11 @@ class Parse {
       String masterKey,
       String sessionId,
       bool autoSendSessionId,
-      SecurityContext securityContext}) {
-
+      SecurityContext securityContext,
+      CoreStore coreStore}) {
     final String url = removeTrailingSlash(serverUrl);
 
-    ParseCoreData.init(
-        appId,
-        url,
+    ParseCoreData.init(appId, url,
         debug: debug,
         appName: appName,
         liveQueryUrl: liveQueryUrl,
@@ -114,7 +117,8 @@ class Parse {
         clientKey: clientKey,
         sessionId: sessionId,
         autoSendSessionId: autoSendSessionId,
-        securityContext: securityContext);
+        securityContext: securityContext,
+        store: coreStore);
 
     _hasBeenInitialized = true;
 
@@ -141,7 +145,8 @@ class Parse {
       final Response response =
           await _client.get('${ParseCoreData().serverUrl}$keyEndPointHealth');
 
-      parseResponse = handleResponse<Parse>(null, response, type, _debug, className);
+      parseResponse =
+          handleResponse<Parse>(null, response, type, _debug, className);
     } on Exception catch (e) {
       parseResponse = handleException(e, type, _debug, className);
     }

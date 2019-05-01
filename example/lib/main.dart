@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/base/api_response.dart';
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
@@ -13,7 +15,21 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 void main() {
   Stetho.initialize();
+  _setTargetPlatformForDesktop();
+
   runApp(MyApp());
+}
+
+void _setTargetPlatformForDesktop() {
+  TargetPlatform targetPlatform;
+  if (Platform.isMacOS) {
+    targetPlatform = TargetPlatform.iOS;
+  } else if (Platform.isLinux || Platform.isWindows) {
+    targetPlatform = TargetPlatform.android;
+  }
+  if (targetPlatform != null) {
+    debugDefaultTargetPlatformOverride = targetPlatform;
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -24,11 +40,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   DietPlanRepository dietPlanRepo;
   UserRepository userRepo;
+  String text = "";
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => initData());
+    initData();
   }
 
   @override
@@ -39,7 +56,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: const Text('Running Parse init'),
+          child: Text(text),
         ),
       ),
     );
@@ -47,7 +64,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initData() async {
     // Initialize repository
-    await initRepository();
+    // await initRepository();
 
     // Initialize parse
     Parse().initialize(keyParseApplicationId, keyParseServerUrl,
@@ -55,9 +72,12 @@ class _MyAppState extends State<MyApp> {
 
     // Check server is healthy and live - Debug is on in this instance so check logs for result
     final ParseResponse response = await Parse().healthCheck();
+
     if (response.success) {
       await runTestQueries();
+      text += 'runTestQueries\n';
     } else {
+      text += 'Server health check failed';
       print('Server health check failed');
     }
   }
@@ -69,13 +89,16 @@ class _MyAppState extends State<MyApp> {
     //await repositoryGetAllItems();
 
     //Basic usage
-    //createItem();
-    //getAllItems();
-    //getAllItemsByName();
-    //getSingleItem();
-    //getConfigs();
-    //query();
-    initUser();
+    // createItem();
+    // getAllItems();
+    // getAllItemsByName();
+    // getSingleItem();
+    // getConfigs();
+    // query();
+    // initUser();
+    var instalattion = await ParseInstallation.currentInstallation();
+    var rees = instalattion.create();
+    print(rees);
     //function();
     //functionWithParameters();
     // test();
@@ -239,16 +262,11 @@ class _MyAppState extends State<MyApp> {
       user = response.result;
     }
 
-    /// Remove a user and delete
-    final ParseResponse destroyResponse = await user.destroy();
-    if (destroyResponse.success) {
-      print('object has been destroyed!');
-    }
-
     // Returns type ParseResponse as its a query, not a single result
     response = await ParseUser.all();
     if (response.success) {
       // We have a list of all users (LIMIT SET VIA SDK)
+      print(response.results);
     }
 
     final QueryBuilder<ParseUser> queryBuilder =

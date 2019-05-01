@@ -1,7 +1,6 @@
 part of flutter_parse_sdk;
 
 class ParseInstallation extends ParseObject {
-
   /// Creates an instance of ParseInstallation
   ParseInstallation(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId})
@@ -10,7 +9,7 @@ class ParseInstallation extends ParseObject {
     _client = client ??
         ParseHTTPClient(
             sendSessionId:
-            autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
   }
 
@@ -27,7 +26,8 @@ class ParseInstallation extends ParseObject {
 
   Map<String, dynamic> get acl => super.get<Map<String, dynamic>>(keyVarAcl);
 
-  set acl(Map<String, dynamic> acl) => set<Map<String, dynamic>>(keyVarAcl, acl);
+  set acl(Map<String, dynamic> acl) =>
+      set<Map<String, dynamic>>(keyVarAcl, acl);
 
   String get deviceToken => super.get<String>(keyDeviceToken);
 
@@ -69,8 +69,11 @@ class ParseInstallation extends ParseObject {
       set<String>(keyDeviceType, 'android');
     else if (Platform.isIOS)
       set<String>(keyDeviceType, 'ios');
-    else
-      throw Exception('Unsupported platform/operating system');
+    else if (Platform.isLinux)
+      set<String>(keyDeviceType, 'Linux');
+    else if (Platform.isMacOS)
+      set<String>(keyDeviceType, 'MacOS');
+    else if (Platform.isWindows) set<String>(keyDeviceType, 'Windows');
 
     //Locale
     final String locale = await Devicelocale.currentLocale;
@@ -92,8 +95,7 @@ class ParseInstallation extends ParseObject {
   @override
   Future<ParseResponse> create() async {
     final bool isCurrent = await ParseInstallation.isCurrent(this);
-    if (isCurrent)
-      await _updateInstallation();
+    if (isCurrent) await _updateInstallation();
     //ParseResponse parseResponse = await super.create();
     final ParseResponse parseResponse = await _create();
     if (parseResponse.success && isCurrent) {
@@ -119,11 +121,14 @@ class ParseInstallation extends ParseObject {
 
   /// Gets the locally stored installation
   static Future<ParseInstallation> _getFromLocalStore() async {
+    final CoreStore coreStore = await ParseCoreData().getStore();
+
     final String installationJson =
-        (await ParseCoreData().getStore()).getString(keyParseStoreInstallation);
+        await coreStore.getString(keyParseStoreInstallation);
 
     if (installationJson != null) {
-      final Map<String, dynamic> installationMap = json.decode(installationJson);
+      final Map<String, dynamic> installationMap =
+          json.decode(installationJson);
 
       if (installationMap != null) {
         return ParseInstallation()..fromJson(installationMap);
@@ -162,7 +167,8 @@ class ParseInstallation extends ParseObject {
         objectId = map['objectId'].toString();
       }
 
-      return handleResponse<ParseInstallation>(this, result, ParseApiRQ.create, _debug, className);
+      return handleResponse<ParseInstallation>(
+          this, result, ParseApiRQ.create, _debug, className);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.create, _debug, className);
     }
@@ -182,7 +188,8 @@ class ParseInstallation extends ParseObject {
               ParseApiRQ.save.toString(), uri, body);
         }
         final Response result = await _client.put(uri, body: body);
-        return handleResponse<ParseInstallation>(this, result, ParseApiRQ.save, _debug, className);
+        return handleResponse<ParseInstallation>(
+            this, result, ParseApiRQ.save, _debug, className);
       } on Exception catch (e) {
         return handleException(e, ParseApiRQ.save, _debug, className);
       }
