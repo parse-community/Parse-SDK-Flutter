@@ -11,8 +11,10 @@ import 'package:flutter_plugin_example/data/repositories/user/repository_user.da
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
 import 'package:flutter_plugin_example/pages/decision_page.dart';
+import 'package:flutter_plugin_example/shared_preferences_corestore.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   Stetho.initialize();
@@ -64,7 +66,9 @@ class _MyAppState extends State<MyApp> {
 
     // Initialize parse
     Parse().initialize(keyParseApplicationId, keyParseServerUrl,
-        masterKey: keyParseMasterKey, debug: true);
+        masterKey: keyParseMasterKey,
+        debug: true,
+        coreStore: SharedPreferencesCoreStore(SharedPreferences.getInstance()));
 
     // Check server is healthy and live - Debug is on in this instance so check logs for result
     final ParseResponse response = await Parse().healthCheck();
