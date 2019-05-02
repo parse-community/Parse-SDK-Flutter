@@ -32,6 +32,6 @@ class DietPlan extends ParseObject implements ParseCloneable {
   num get fat => get<num>(keyFat);
   set fat(num fat) => set<num>(keyFat, fat);
 
-  int get status => get<int>(keyStatus);
-  set status(int status) => set<int>(keyStatus, status);
+  bool get status => get<bool>(keyStatus);
+  set status(bool status) => set<bool>(keyStatus, status);
 }
