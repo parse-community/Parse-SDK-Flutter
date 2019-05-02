@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/base/api_response.dart';
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
@@ -8,12 +10,27 @@ import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_di
 import 'package:flutter_plugin_example/data/repositories/user/repository_user.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
+import 'package:flutter_plugin_example/pages/decision_page.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 void main() {
   Stetho.initialize();
+  _setTargetPlatformForDesktop();
+
   runApp(MyApp());
+}
+
+void _setTargetPlatformForDesktop() {
+  TargetPlatform targetPlatform;
+  if (Platform.isMacOS) {
+    targetPlatform = TargetPlatform.iOS;
+  } else if (Platform.isLinux || Platform.isWindows) {
+    targetPlatform = TargetPlatform.android;
+  }
+  if (targetPlatform != null) {
+    debugDefaultTargetPlatformOverride = targetPlatform;
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -24,39 +41,44 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   DietPlanRepository dietPlanRepo;
   UserRepository userRepo;
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => initData());
+    // initData();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
         ),
-        body: Center(
-          child: const Text('Running Parse init'),
-        ),
-      ),
-    );
+        title: 'Parse Server Example',
+        home: DecisionPage());
   }
 
   Future<void> initData() async {
     // Initialize repository
-    await initRepository();
+    // await initRepository();
 
     // Initialize parse
     Parse().initialize(keyParseApplicationId, keyParseServerUrl,
         masterKey: keyParseMasterKey, debug: true);
 
+    //parse serve with secure store and desktop support
+
+//    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+//        masterKey: keyParseMasterKey,
+//        debug: true,
+//        coreStore: CoreStoreImp.getInstance());
+
     // Check server is healthy and live - Debug is on in this instance so check logs for result
     final ParseResponse response = await Parse().healthCheck();
+
     if (response.success) {
       await runTestQueries();
+      print('runTestQueries');
     } else {
       print('Server health check failed');
     }
@@ -69,13 +91,16 @@ class _MyAppState extends State<MyApp> {
     //await repositoryGetAllItems();
 
     //Basic usage
-    //createItem();
-    //getAllItems();
-    //getAllItemsByName();
-    //getSingleItem();
-    //getConfigs();
-    //query();
-    initUser();
+    // createItem();
+    // getAllItems();
+    // getAllItemsByName();
+    // getSingleItem();
+    // getConfigs();
+    // query();
+    // initUser();
+//    var instalattion = await ParseInstallation.currentInstallation();
+//    var rees = instalattion.create();
+//    print(rees);
     //function();
     //functionWithParameters();
     // test();
@@ -239,16 +264,11 @@ class _MyAppState extends State<MyApp> {
       user = response.result;
     }
 
-    /// Remove a user and delete
-    final ParseResponse destroyResponse = await user.destroy();
-    if (destroyResponse.success) {
-      print('object has been destroyed!');
-    }
-
     // Returns type ParseResponse as its a query, not a single result
     response = await ParseUser.all();
     if (response.success) {
       // We have a list of all users (LIMIT SET VIA SDK)
+      print(response.results);
     }
 
     final QueryBuilder<ParseUser> queryBuilder =
@@ -339,13 +359,13 @@ class _MyAppState extends State<MyApp> {
     dietPlanRepo ??= DietPlanRepository.init(await getDB());
     userRepo ??= UserRepository.init(await getDB());
   }
-}
 
-const String dietPlansToAdd =
-    '[{"className":"Diet_Plans","Name":"Textbook","Description":"For an active lifestyle and a straight forward macro plan, we suggest this plan.","Fat":25,"Carbs":50,"Protein":25,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Body Builder","Description":"Default Body Builders Diet","Fat":20,"Carbs":40,"Protein":40,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Zone Diet","Description":"Popular with CrossFit users. Zone Diet targets similar macros.","Fat":30,"Carbs":40,"Protein":30,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Low Fat","Description":"Low fat diet.","Fat":15,"Carbs":60,"Protein":25,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Low Carb","Description":"Low Carb diet, main focus on quality fats and protein.","Fat":35,"Carbs":25,"Protein":40,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Paleo","Description":"Paleo diet.","Fat":60,"Carbs":25,"Protein":10,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Ketogenic","Description":"High quality fats, low carbs.","Fat":65,"Carbs":5,"Protein":30,"Status":0}]';
+  String dietPlansToAdd =
+      '[{"className":"Diet_Plans","Name":"Textbook","Description":"For an active lifestyle and a straight forward macro plan, we suggest this plan.","Fat":25,"Carbs":50,"Protein":25,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Body Builder","Description":"Default Body Builders Diet","Fat":20,"Carbs":40,"Protein":40,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Zone Diet","Description":"Popular with CrossFit users. Zone Diet targets similar macros.","Fat":30,"Carbs":40,"Protein":30,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Low Fat","Description":"Low fat diet.","Fat":15,"Carbs":60,"Protein":25,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Low Carb","Description":"Low Carb diet, main focus on quality fats and protein.","Fat":35,"Carbs":25,"Protein":40,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Paleo","Description":"Paleo diet.","Fat":60,"Carbs":25,"Protein":10,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Ketogenic","Description":"High quality fats, low carbs.","Fat":65,"Carbs":5,"Protein":30,"Status":0}]';
+}

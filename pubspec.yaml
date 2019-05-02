@@ -14,9 +14,14 @@ dependencies:
   # Networking
   web_socket_channel: ^1.0.9
   http: ^0.12.0
-
+  
+  #Database
+  shared_preferences: ^0.5.2
+  sembast: ^1.15.1
+  xxtea: ^2.0.2
+  
+  
   # Utils
-  shared_preferences: ^0.5.0
   path_provider: ^0.5.0+1
   uuid: ^2.0.0
   package_info: ^0.4.0
