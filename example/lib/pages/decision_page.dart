@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/provider_api_diet_plan.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
-import 'package:flutter_plugin_example/shared_preferences_corestore.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home_page.dart';
 import 'login_page.dart';
@@ -64,10 +62,7 @@ class _DecisionPageState extends State<DecisionPage> {
   Future<void> _initParse() async {
     try {
       Parse().initialize(keyParseApplicationId, keyParseServerUrl,
-          masterKey: keyParseMasterKey,
-          debug: true,
-          coreStore:
-              SharedPreferencesCoreStore(SharedPreferences.getInstance()));
+          masterKey: keyParseMasterKey, debug: true);
       final ParseResponse response = await Parse().healthCheck();
       if (response.success) {
         final ParseUser user = await ParseUser.currentUser();

@@ -23,10 +23,11 @@ class ParseCoreData {
       String sessionId,
       bool autoSendSessionId,
       SecurityContext securityContext,
-      CoreStore store}) {
+      FutureOr<CoreStore> store}) {
     _instance = ParseCoreData._init(appId, serverUrl);
-    _instance.storage ??=
-        Future.value(store) ?? CoreStoreImp.getInstance(password: appId);
+    _instance.storage ??= store ??
+        Future<CoreStore>.value(
+            SharedPreferencesCoreStore(SharedPreferences.getInstance()));
     if (debug != null) _instance.debug = debug;
     if (appName != null) _instance.appName = appName;
     if (liveQueryUrl != null) _instance.liveQueryURL = liveQueryUrl;
@@ -48,7 +49,7 @@ class ParseCoreData {
   bool autoSendSessionId;
   SecurityContext securityContext;
   bool debug;
-  Future<CoreStore> storage;
+  FutureOr<CoreStore> storage;
 
   /// Sets the current sessionId.
   ///

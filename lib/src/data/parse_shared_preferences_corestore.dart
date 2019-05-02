@@ -1,7 +1,4 @@
-import 'dart:async';
-
-import 'package:parse_server_sdk/parse_server_sdk.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+part of flutter_parse_sdk;
 
 class SharedPreferencesCoreStore implements CoreStore {
   SharedPreferencesCoreStore(FutureOr<SharedPreferences> sharedPreference)

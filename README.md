@@ -25,7 +25,14 @@ Parse().initialize(
         ApplicationConstants.keyApplicationId,
         ApplicationConstants.keyParseServerUrl);
 ```
+if you want to use secure storage also that's allow using sdk on desktop application 
+```dart
 
+    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+        masterKey: keyParseMasterKey,
+        debug: true,
+        coreStore:  CoreStoreImp.getInstance());
+```
 It's possible to add other params, such as ...
 
 ```dart
