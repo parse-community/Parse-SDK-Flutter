@@ -50,8 +50,11 @@ class _HomePageState extends State<HomePage> {
           body: _showDietList(),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              await widget._dietPlanProvider.add(randomDietPlans[
-                  Random().nextInt(randomDietPlans.length - 1)]);
+              DietPlan dietPlan =
+                  randomDietPlans[Random().nextInt(randomDietPlans.length - 1)];
+              ParseUser user = await ParseUser.currentUser();
+              dietPlan.set('user', user);
+              await widget._dietPlanProvider.add(dietPlan);
               setState(() {});
             },
             tooltip: 'Add Diet Plans',

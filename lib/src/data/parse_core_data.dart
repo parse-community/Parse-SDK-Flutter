@@ -26,7 +26,7 @@ class ParseCoreData {
       CoreStore store}) {
     _instance = ParseCoreData._init(appId, serverUrl);
     _instance.storage ??=
-        store ?? CoreStoreImp.getInstance(password: masterKey);
+        Future.value(store) ?? CoreStoreImp.getInstance(password: appId);
     if (debug != null) _instance.debug = debug;
     if (appName != null) _instance.appName = appName;
     if (liveQueryUrl != null) _instance.liveQueryURL = liveQueryUrl;
