@@ -53,7 +53,7 @@ dynamic parseDecode(dynamic value) {
     switch (map['__type']) {
       case 'Date':
         final String iso = map['iso'];
-        return  _parseDateFormat.parse(iso);
+        return _parseDateFormat.parse(iso);
       case 'Bytes':
         final String val = map['base64'];
         return base64.decode(val);

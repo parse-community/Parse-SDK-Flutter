@@ -1,5 +1,7 @@
 part of flutter_parse_sdk;
 
+// ignore_for_file: always_specify_types
+
 /// Get the extension type of the file
 String getExtension(String contentType) {
   if (_extensions.containsKey(contentType) &&

@@ -128,14 +128,15 @@ class Parse {
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
   Future<ParseResponse> healthCheck(
-      {bool debug, ParseHTTPClient client, bool autoSendSessionId}) async {
+      {bool debug, ParseHTTPClient client, bool sendSessionIdByDefault}) async {
     ParseResponse parseResponse;
 
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
+
     final ParseHTTPClient _client = client ??
         ParseHTTPClient(
             sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
 
     const String className = 'parseBase';
@@ -144,7 +145,6 @@ class Parse {
     try {
       final Response response =
           await _client.get('${ParseCoreData().serverUrl}$keyEndPointHealth');
-
       parseResponse =
           handleResponse<Parse>(null, response, type, _debug, className);
     } on Exception catch (e) {

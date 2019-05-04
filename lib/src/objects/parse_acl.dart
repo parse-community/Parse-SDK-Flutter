@@ -16,7 +16,8 @@ class ParseACL {
   }
 
   final String _publicKEY = '*';
-  final Map<String, _ACLPermissions> _permissionsById = {};
+  final Map<String, _ACLPermissions> _permissionsById =
+  <String, _ACLPermissions>{};
 
   /// Helper for setting stuff
   void _setPermissionsIfNonEmpty(
@@ -125,8 +126,8 @@ class _ACLPermissions {
   _ACLPermissions(this._readPermission, this._writePermission);
   final String _keyReadPermission = 'read';
   final String _keyWritePermission = 'write';
-  bool _readPermission = false;
-  bool _writePermission = false;
+  bool _readPermission;
+  bool _writePermission;
 
   bool getReadPermission() {
     return _readPermission;

@@ -40,7 +40,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   DietPlanRepository dietPlanRepo;
   UserRepository userRepo;
-  String text = "";
+
+  String text = '';
 
   @override
   void initState() {
@@ -64,7 +65,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initData() async {
     // Initialize repository
-    // await initRepository();
+    await initRepository();
 
     // Initialize parse
     Parse().initialize(keyParseApplicationId, keyParseServerUrl,
@@ -84,24 +85,29 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> runTestQueries() async {
     // Basic repository example
-    //await repositoryAddUser();
-    //await repositoryAddItems();
-    //await repositoryGetAllItems();
+    await repositoryAddUser();
+    await repositoryAddItems();
+    await repositoryGetAllItems();
 
     //Basic usage
-    // createItem();
-    // getAllItems();
-    // getAllItemsByName();
-    // getSingleItem();
-    // getConfigs();
-    // query();
-    // initUser();
-    var instalattion = await ParseInstallation.currentInstallation();
-    var rees = instalattion.create();
-    print(rees);
-    //function();
-    //functionWithParameters();
-    // test();
+    await createItem();
+    await getAllItems();
+    await getAllItemsByName();
+    await getSingleItem();
+    await getConfigs();
+    await query();
+    await initUser();
+    await initInstallation();
+    await function();
+    await functionWithParameters();
+    await test();
+  }
+
+  Future<void> initInstallation() async {
+    final ParseInstallation installation =
+    await ParseInstallation.currentInstallation();
+    final ParseResponse response = await installation.create();
+    print(response);
   }
 
   Future<void> test() async {
