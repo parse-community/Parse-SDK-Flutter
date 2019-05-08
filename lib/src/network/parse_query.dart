@@ -239,7 +239,7 @@ class QueryBuilder<T extends ParseObject> {
 
   // Add a constraint to the query that requires a particular key's value match another QueryBuilder
   void whereMatchesQuery(String column, QueryBuilder query) {
-    String inQuery = query._buildQueryRelational(query.object.className);
+    final String inQuery = query._buildQueryRelational(query.object.className);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$inQuery\":$inQuery}'));
@@ -247,7 +247,7 @@ class QueryBuilder<T extends ParseObject> {
 
   //Add a constraint to the query that requires a particular key's value does not match another QueryBuilder
   void whereDoesNotMatchQuery(String column, QueryBuilder query) {
-    String inQuery = query._buildQueryRelational(query.object.className);
+    final String inQuery = query._buildQueryRelational(query.object.className);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
@@ -371,9 +371,9 @@ class QueryBuilder<T extends ParseObject> {
         // Compact all the queries in the correct format
         for (MapEntry<String, dynamic> queryToCompact in listOfQueriesCompact) {
           var queryToCompactValue = queryToCompact.value.toString();
-          queryToCompactValue = queryToCompactValue.replaceFirst("{", "");
+          queryToCompactValue = queryToCompactValue.replaceFirst('{', '');
           queryToCompactValue = queryToCompactValue.replaceRange(
-              queryToCompactValue.length - 1, queryToCompactValue.length, "");
+              queryToCompactValue.length - 1, queryToCompactValue.length, '');
           if (listOfQueriesCompact.first == queryToCompact) {
             queryEnd += queryToCompactValue.replaceAll(queryStart, ' ');
           } else {

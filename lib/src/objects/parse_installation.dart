@@ -199,13 +199,15 @@ class ParseInstallation extends ParseObject {
   ///Subscribes the device to a channel of push notifications.
   void subscribeToChannel(String value) {
     final List<dynamic> channel = <String>[value];
-    addUnique('channels', channel);
+    setAddUnique('channels', channel);
+    save();
   }
 
   ///Unsubscribes the device to a channel of push notifications.
   void unsubscribeFromChannel(String value) {
     final List<dynamic> channel = <String>[value];
-    removeAll('channels', channel);
+    setRemove('channels', channel);
+    save();
   }
 
   ///Returns an <List<String>> containing all the channel names this device is subscribed to.

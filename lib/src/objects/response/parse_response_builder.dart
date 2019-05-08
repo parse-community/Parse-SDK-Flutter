@@ -113,6 +113,6 @@ class _ParseResponseBuilder {
   }
 
   bool isHealthCheck(Response apiResponse) {
-    return apiResponse.body == "{\"status\":\"ok\"}";
+    return apiResponse.body == '{\"status\":\"ok\"}';
   }
 }

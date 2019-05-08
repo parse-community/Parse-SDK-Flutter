@@ -47,7 +47,7 @@ class LiveQuery {
     }
 
     final String _className = query.object.className;
-    query.limiters.clear(); //Remove limites in LiveQuery
+    query.limiters.clear(); //Remove limits in LiveQuery
     final String _where = query._buildQuery().replaceAll('where=', '');
     //Convert where condition to Map
     Map<String, dynamic> _whereMap = Map<String, dynamic>();
@@ -74,7 +74,7 @@ class LiveQuery {
       _channel = IOWebSocketChannel(_webSocket);
       _channel.stream.listen((dynamic message) {
         if (_debug) {
-          print('$_printConstLiveQuery: Listen: ${message}');
+          print('$_printConstLiveQuery: Listen: $message');
         }
 
         final Map<String, dynamic> actionData = jsonDecode(message);
@@ -167,7 +167,7 @@ class LiveQuery {
           print(
               '$_printConstLiveQuery: UnsubscribeMessage: $_unsubscribeMessage');
         }
-        await _channel.sink.add(jsonEncode(_unsubscribeMessage));
+        _channel.sink.add(jsonEncode(_unsubscribeMessage));
         await _channel.sink.close();
       }
     }
