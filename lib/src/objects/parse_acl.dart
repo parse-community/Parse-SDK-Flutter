@@ -1,7 +1,7 @@
 part of flutter_parse_sdk;
 
 /// [ParseACL] is used to control which users can access or modify a particular object
-/// [ParseObject] can have its own [ParceACL]
+/// [ParseObject] can have its own [ParseACL]
 /// You can grant read and write permissions separately to specific users
 ///  or you can grant permissions to "the public" so that, for example, any user could read a particular object but
 /// only a particular set of users could write to that object
@@ -126,8 +126,8 @@ class _ACLPermissions {
   _ACLPermissions(this._readPermission, this._writePermission);
   final String _keyReadPermission = 'read';
   final String _keyWritePermission = 'write';
-  bool _readPermission;
-  bool _writePermission;
+  final bool _readPermission;
+  final bool _writePermission;
 
   bool getReadPermission() {
     return _readPermission;
