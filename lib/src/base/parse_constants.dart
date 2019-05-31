@@ -36,6 +36,7 @@ const String keyClassSession = '_Session';
 const String keyClassInstallation = '_Installation';
 const String keyGeoPoint = 'GeoPoint';
 const String keyFile = 'File';
+const String keyRelation = 'Relation';
 
 // Headers
 const String keyHeaderSessionToken = 'X-Parse-Session-Token';

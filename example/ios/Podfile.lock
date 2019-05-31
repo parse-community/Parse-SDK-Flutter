@@ -34,13 +34,13 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences/ios"
 
 SPEC CHECKSUMS:
-  devicelocale: c1be0ad8a4bc50c184faf25bf8abe318e9bd69ba
-  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
-  flutter_stetho: 21464137ea9bb03914912de8916a7acfdcbfc0a5
-  package_info: d7c98b64f60add4c2908b9d94d82a45d3c8827ad
-  path_provider: 09407919825bfe3c2deae39453b7a5b44f467873
-  shared_preferences: 5a1d487c427ee18fcd3ea1f2a131569481834b53
+  devicelocale: feebbe5e7a30adb8c4f83185de1b50ff19b44f00
+  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
+  flutter_stetho: 0e844616b41b86d6429e86a518ae3a46e83af7cd
+  package_info: 78cabb3c322943c55d39676f4a5bfc748c01d055
+  path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
+  shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
 
 PODFILE CHECKSUM: aff02bfeed411c636180d6812254b2daeea14d09
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.1

@@ -77,6 +77,8 @@ dynamic parseDecode(dynamic value) {
         final num longitude = map['longitude'] ?? 0.0;
         return ParseGeoPoint(
             latitude: latitude.toDouble(), longitude: longitude.toDouble());
+      case 'Relation':
+        return ParseRelation().fromJson(map);
     }
   }
 

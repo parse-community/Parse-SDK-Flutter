@@ -44,6 +44,7 @@ part 'src/objects/parse_function.dart';
 part 'src/objects/parse_geo_point.dart';
 part 'src/objects/parse_installation.dart';
 part 'src/objects/parse_object.dart';
+part 'src/objects/parse_relation.dart';
 part 'src/objects/parse_response.dart';
 part 'src/objects/parse_session.dart';
 part 'src/objects/parse_user.dart';
