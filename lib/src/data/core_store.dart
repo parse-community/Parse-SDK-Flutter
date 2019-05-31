@@ -15,17 +15,17 @@ abstract class CoreStore {
 
   Future<List<String>> getStringList(String key);
 
-  Future setBool(String key, bool value);
+  Future<dynamic> setBool(String key, bool value);
 
-  Future setInt(String key, int value);
+  Future<dynamic> setInt(String key, int value);
 
-  Future setDouble(String key, double value);
+  Future<dynamic> setDouble(String key, double value);
 
-  Future setString(String key, String value);
+  Future<dynamic> setString(String key, String value);
 
-  Future setStringList(String key, List<String> values);
+  Future<dynamic> setStringList(String key, List<String> values);
 
-  Future remove(String key);
+  Future<dynamic> remove(String key);
 
-  Future clear();
+  Future<dynamic> clear();
 }

@@ -74,7 +74,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final Map<String, dynamic> map = json.decode(result.body);
         objectId = map['objectId'].toString();
       }
-      
+
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.create, _debug, className);
     } on Exception catch (e) {
@@ -97,6 +97,11 @@ class ParseObject extends ParseBase implements ParseCloneable {
         return handleException(e, ParseApiRQ.save, _debug, className);
       }
     }
+  }
+
+  /// Get the instance of ParseRelation class associated with the given key. 
+  ParseRelation getRelation(String key) {
+    return ParseRelation(parent: this, key: key);
   }
 
   /// Removes an element from an Array
@@ -172,6 +177,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Add a single element to an array of an object
   void setAdd(String key, dynamic values) {
     _arrayOperation('Add', key, values);
+  }
+
+  void addRelation(String key, List<dynamic> values) {
+    _arrayOperation('AddRelation', key, values);
+  }
+
+  void removeRelation(String key, List<dynamic> values) {
+    _arrayOperation('RemoveRelation', key, values);
   }
 
   /// Can be used to add arrays to a given type

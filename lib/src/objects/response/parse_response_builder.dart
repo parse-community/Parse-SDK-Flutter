@@ -75,7 +75,7 @@ class _ParseResponseBuilder {
       response.result = items;
       response.count = items.length;
     } else if (map != null && map.length == 2 && map.containsKey('count')) {
-      final List<int> results = [map['count']];
+      final List<int> results = <int>[map['count']];
       response.results = results;
       response.result = results;
       response.count = map['count'];
@@ -113,6 +113,6 @@ class _ParseResponseBuilder {
   }
 
   bool isHealthCheck(Response apiResponse) {
-    return apiResponse.body == "{\"status\":\"ok\"}";
+    return apiResponse.body == '{\"status\":\"ok\"}';
   }
 }

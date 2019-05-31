@@ -4,7 +4,6 @@ const String keyLatitude = 'latitude';
 const String keyLongitude = 'longitude';
 
 class ParseGeoPoint extends ParseObject {
-
   /// Creates a Parse Object of type GeoPoint
   ParseGeoPoint(
       {double latitude = 0.0,
@@ -13,7 +12,6 @@ class ParseGeoPoint extends ParseObject {
       ParseHTTPClient client,
       bool autoSendSessionId})
       : super(keyGeoPoint) {
-
     this.latitude = latitude;
     this.longitude = longitude;
 
@@ -32,7 +30,8 @@ class ParseGeoPoint extends ParseObject {
   set longitude(double longitude) => set<double>(keyLongitude, longitude);
 
   @override
-  Map<String, dynamic> toJson({bool full = false, bool forApiRQ = false}) => <String, dynamic>{
+  Map<String, dynamic> toJson({bool full = false, bool forApiRQ = false}) =>
+      <String, dynamic>{
         '__type': 'GeoPoint',
         'latitude': latitude,
         'longitude': longitude

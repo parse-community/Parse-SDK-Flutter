@@ -1,10 +1,7 @@
 part of flutter_parse_sdk;
 
-void logAPIResponse(
-    String className, 
-    String type,
+void logAPIResponse(String className, String type,
     ParseResponse parseResponse) {
-
   const String spacer = ' \n';
   String responseString = '';
 
@@ -66,10 +63,10 @@ void logRequest(
   if (name.isNotEmpty) {
     name = '$appName ';
   }
-    requestString += '----\n${name}API Request ($className : $type) :';
-    requestString += '\nUri: $uri';
-    requestString += '\nBody: $body';
+  requestString += '----\n${name}API Request ($className : $type) :';
+  requestString += '\nUri: $uri';
+  requestString += '\nBody: $body';
 
-    requestString += '\n----\n';
-    print(requestString);
+  requestString += '\n----\n';
+  print(requestString);
 }

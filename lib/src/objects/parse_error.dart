@@ -2,7 +2,6 @@ part of flutter_parse_sdk;
 
 /// ParseException is used in [ParseResult] to inform the user of the exception
 class ParseError {
-
   ParseError(
       {this.code = -1,
         this.message = 'Unknown error',

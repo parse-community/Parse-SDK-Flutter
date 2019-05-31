@@ -4,7 +4,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:sembast/sembast.dart';
+import 'package:sembast/sembast_io.dart';
 import 'package:devicelocale/devicelocale.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
@@ -12,13 +13,11 @@ import 'package:meta/meta.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:sembast/sembast.dart';
-import 'package:sembast/sembast_io.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:xxtea/xxtea.dart';
 
+part 'package:parse_server_sdk/src/objects/response/parse_response_utils.dart';
 part 'package:parse_server_sdk/src/objects/response/parse_error_response.dart';
 part 'package:parse_server_sdk/src/objects/response/parse_exception_response.dart';
 part 'package:parse_server_sdk/src/objects/response/parse_response_builder.dart';
@@ -44,6 +43,7 @@ part 'src/objects/parse_function.dart';
 part 'src/objects/parse_geo_point.dart';
 part 'src/objects/parse_installation.dart';
 part 'src/objects/parse_object.dart';
+part 'src/objects/parse_relation.dart';
 part 'src/objects/parse_response.dart';
 part 'src/objects/parse_session.dart';
 part 'src/objects/parse_user.dart';
@@ -53,6 +53,12 @@ part 'src/utils/parse_encoder.dart';
 part 'src/utils/parse_file_extensions.dart';
 part 'src/utils/parse_logger.dart';
 part 'src/utils/parse_utils.dart';
+
+part 'src/utils/parse_date_format.dart';
+
+part 'src/data/core_store.dart';
+part 'src/data/core_store_impl.dart';
+part 'src/data/xxtea_codec.dart';
 
 class Parse {
   ParseCoreData data;
@@ -79,7 +85,7 @@ class Parse {
       String sessionId,
       bool autoSendSessionId,
       SecurityContext securityContext,
-        FutureOr<CoreStore> coreStore}) {
+      CoreStore coreStore}) {
     final String url = removeTrailingSlash(serverUrl);
 
     ParseCoreData.init(appId, url,
@@ -101,14 +107,15 @@ class Parse {
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
   Future<ParseResponse> healthCheck(
-      {bool debug, ParseHTTPClient client, bool autoSendSessionId}) async {
+      {bool debug, ParseHTTPClient client, bool sendSessionIdByDefault}) async {
     ParseResponse parseResponse;
 
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
+
     final ParseHTTPClient _client = client ??
         ParseHTTPClient(
             sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
 
     const String className = 'parseBase';
@@ -117,7 +124,6 @@ class Parse {
     try {
       final Response response =
           await _client.get('${ParseCoreData().serverUrl}$keyEndPointHealth');
-
       parseResponse =
           handleResponse<Parse>(null, response, type, _debug, className);
     } on Exception catch (e) {
