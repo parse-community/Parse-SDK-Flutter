@@ -99,6 +99,11 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
+  /// Get the instance of ParseRelation class associated with the given key. 
+  ParseRelation getRelation(String key) {
+    return ParseRelation(parent: this, key: key);
+  }
+
   /// Removes an element from an Array
   @Deprecated('Prefer to use the setRemove() method in save()')
   Future<ParseResponse> remove(String key, dynamic values) async {
@@ -172,6 +177,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Add a single element to an array of an object
   void setAdd(String key, dynamic values) {
     _arrayOperation('Add', key, values);
+  }
+
+  void addRelation(String key, List<dynamic> values) {
+    _arrayOperation('AddRelation', key, values);
+  }
+
+  void removeRelation(String key, List<dynamic> values) {
+    _arrayOperation('RemoveRelation', key, values);
   }
 
   /// Can be used to add arrays to a given type

@@ -34,6 +34,10 @@ dynamic parseEncode(dynamic value, {bool full}) {
     return value;
   }
 
+  if (value is ParseRelation) {
+    return value.toJson();
+  }
+
   if (value is ParseObject || value is ParseUser) {
     if (full) {
       return value.toJson(full: full);

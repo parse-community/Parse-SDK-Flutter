@@ -25,7 +25,14 @@ Parse().initialize(
         ApplicationConstants.keyApplicationId,
         ApplicationConstants.keyParseServerUrl);
 ```
+if you want to use secure storage also that's allow using sdk on desktop application 
+```dart
 
+    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+        masterKey: keyParseMasterKey,
+        debug: true,
+        coreStore:  CoreStoreImp.getInstance());
+```
 It's possible to add other params, such as ...
 
 ```dart
@@ -530,6 +537,21 @@ final Map<String, String> params = <String, String>{'plan': 'paid'};
 function.execute(parameters: params);
 ```
 
+## Relation
+The SDK supports Relation.
+
+To Retrive a relation instance for user, call:
+```dart
+final relation = user.getRelation('dietPlans');
+```
+
+and then you can add a relation to the passed in object.
+
+```dart
+relation.add(dietPlan);
+final result = await user.save();
+```
+
 ## Other Features of this library
 Main:
 * Installation (View the example application)
@@ -552,5 +574,5 @@ Objects:
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzE4NjUwNDIwXX0=
+eyJoaXN0b3J5IjpbLTU4MDA4MDUwNCw3MTg2NTA0MjBdfQ==
 -->
