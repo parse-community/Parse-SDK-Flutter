@@ -35,7 +35,7 @@ DietPlan getDummyDietPlan() {
     ..protein = 40
     ..carbs = 40
     ..fat = 20
-    ..status = false;
+    ..status = 0;
 }
 
 Future<void> deleteFromApi(List<dynamic> results) async {
