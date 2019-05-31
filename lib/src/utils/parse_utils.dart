@@ -15,7 +15,7 @@ dynamic convertValueToCorrectType(dynamic value) {
   /*if (value is String && !value.contains('__type')) {
     return '\"$value\"';
   }*/
-
+  
   if (value is DateTime || value is ParseObject) {
     return parseEncode(value);
   } else {
@@ -26,6 +26,7 @@ dynamic convertValueToCorrectType(dynamic value) {
 /// Sanitises a url
 Uri getSanitisedUri(ParseHTTPClient client, String pathToAppend,
     {Map<String, dynamic> queryParams, String query}) {
+
   final Uri tempUri = Uri.parse(client.data.serverUrl);
 
   final Uri url = Uri(
@@ -38,11 +39,10 @@ Uri getSanitisedUri(ParseHTTPClient client, String pathToAppend,
 
   return url;
 }
-
 /// Removes unncessary /
 String removeTrailingSlash(String serverUrl) {
-  if (serverUrl.substring(serverUrl.length - 1) == '/') {
-    return serverUrl.substring(0, serverUrl.length - 1);
+  if (serverUrl.substring(serverUrl.length -1) == '/') {
+    return serverUrl.substring(0, serverUrl.length -1);
   } else {
     return serverUrl;
   }

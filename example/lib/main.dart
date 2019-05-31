@@ -10,6 +10,7 @@ import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_di
 import 'package:flutter_plugin_example/data/repositories/user/repository_user.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
+import 'package:flutter_plugin_example/pages/decision_page.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
@@ -40,74 +41,69 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   DietPlanRepository dietPlanRepo;
   UserRepository userRepo;
-
-  String text = '';
-
   @override
   void initState() {
     super.initState();
-    initData();
+    // initData();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
         ),
-        body: Center(
-          child: Text(text),
-        ),
-      ),
-    );
+        title: 'Parse Server Example',
+        home: DecisionPage());
   }
 
   Future<void> initData() async {
     // Initialize repository
-    await initRepository();
+    // await initRepository();
 
     // Initialize parse
     Parse().initialize(keyParseApplicationId, keyParseServerUrl,
         masterKey: keyParseMasterKey, debug: true);
+
+    //parse serve with secure store and desktop support
+
+//    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+//        masterKey: keyParseMasterKey,
+//        debug: true,
+//        coreStore: CoreStoreImp.getInstance());
 
     // Check server is healthy and live - Debug is on in this instance so check logs for result
     final ParseResponse response = await Parse().healthCheck();
 
     if (response.success) {
       await runTestQueries();
-      text += 'runTestQueries\n';
+      print('runTestQueries');
     } else {
-      text += 'Server health check failed';
       print('Server health check failed');
     }
   }
 
   Future<void> runTestQueries() async {
     // Basic repository example
-    await repositoryAddUser();
-    await repositoryAddItems();
-    await repositoryGetAllItems();
+    //await repositoryAddUser();
+    //await repositoryAddItems();
+    //await repositoryGetAllItems();
 
     //Basic usage
-    await createItem();
-    await getAllItems();
-    await getAllItemsByName();
-    await getSingleItem();
-    await getConfigs();
-    await query();
-    await initUser();
-    await initInstallation();
-    await function();
-    await functionWithParameters();
-    await test();
-  }
-
-  Future<void> initInstallation() async {
-    final ParseInstallation installation =
-    await ParseInstallation.currentInstallation();
-    final ParseResponse response = await installation.create();
-    print(response);
+    // createItem();
+    // getAllItems();
+    // getAllItemsByName();
+    // getSingleItem();
+    // getConfigs();
+    // query();
+    // initUser();
+//    var instalattion = await ParseInstallation.currentInstallation();
+//    var rees = instalattion.create();
+//    print(rees);
+    //function();
+    //functionWithParameters();
+    // test();
   }
 
   Future<void> test() async {
@@ -363,13 +359,13 @@ class _MyAppState extends State<MyApp> {
     dietPlanRepo ??= DietPlanRepository.init(await getDB());
     userRepo ??= UserRepository.init(await getDB());
   }
-}
 
-const String dietPlansToAdd =
-    '[{"className":"Diet_Plans","Name":"Textbook","Description":"For an active lifestyle and a straight forward macro plan, we suggest this plan.","Fat":25,"Carbs":50,"Protein":25,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Body Builder","Description":"Default Body Builders Diet","Fat":20,"Carbs":40,"Protein":40,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Zone Diet","Description":"Popular with CrossFit users. Zone Diet targets similar macros.","Fat":30,"Carbs":40,"Protein":30,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Low Fat","Description":"Low fat diet.","Fat":15,"Carbs":60,"Protein":25,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Low Carb","Description":"Low Carb diet, main focus on quality fats and protein.","Fat":35,"Carbs":25,"Protein":40,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Paleo","Description":"Paleo diet.","Fat":60,"Carbs":25,"Protein":10,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Ketogenic","Description":"High quality fats, low carbs.","Fat":65,"Carbs":5,"Protein":30,"Status":0}]';
+  String dietPlansToAdd =
+      '[{"className":"Diet_Plans","Name":"Textbook","Description":"For an active lifestyle and a straight forward macro plan, we suggest this plan.","Fat":25,"Carbs":50,"Protein":25,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Body Builder","Description":"Default Body Builders Diet","Fat":20,"Carbs":40,"Protein":40,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Zone Diet","Description":"Popular with CrossFit users. Zone Diet targets similar macros.","Fat":30,"Carbs":40,"Protein":30,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Low Fat","Description":"Low fat diet.","Fat":15,"Carbs":60,"Protein":25,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Low Carb","Description":"Low Carb diet, main focus on quality fats and protein.","Fat":35,"Carbs":25,"Protein":40,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Paleo","Description":"Paleo diet.","Fat":60,"Carbs":25,"Protein":10,"Status":0},'
+      '{"className":"Diet_Plans","Name":"Ketogenic","Description":"High quality fats, low carbs.","Fat":65,"Carbs":5,"Protein":30,"Status":0}]';
+}

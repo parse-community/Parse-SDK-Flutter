@@ -17,15 +17,14 @@
 import 'dart:io';
 
 int main() {
-  final String programDir = Platform.environment['PROGRAMFILES(X86)'];
-  final String pathPrefix = '$programDir\\Microsoft Visual Studio';
-  const String pathSuffix = 'VC\\Auxiliary\\Build\\vcvars64.bat';
-  final List<String> years = <String>['2017', '2019'];
-  final List<String> flavors = <String>[
-    'Community', 'Professional', 'Enterprise', 'Preview'];
-  for (final String year in years) {
-    for (final String flavor in flavors) {
-      final String testPath = '$pathPrefix\\$year\\$flavor\\$pathSuffix';
+  final programDir = Platform.environment['PROGRAMFILES(X86)'];
+  final pathPrefix = '$programDir\\Microsoft Visual Studio';
+  const pathSuffix = 'VC\\Auxiliary\\Build\\vcvars64.bat';
+  final years = ['2017', '2019'];
+  final flavors = ['Community', 'Professional', 'Enterprise', 'Preview'];
+  for (final year in years) {
+    for (final flavor in flavors) {
+      final testPath = '$pathPrefix\\$year\\$flavor\\$pathSuffix';
       if (File(testPath).existsSync()) {
         print(testPath);
         return 0;
