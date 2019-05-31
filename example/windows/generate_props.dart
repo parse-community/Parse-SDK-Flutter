@@ -18,8 +18,8 @@
 import 'dart:io';
 
 void main(List<String> arguments) {
-  final outputPath = arguments[0];
-  final settings = {
+  final String outputPath = arguments[0];
+  final Map<String, String> settings = <String, String>{
     'FLUTTER_ROOT': arguments[1],
     'EXTRA_BUNDLE_FLAGS': arguments[2],
   };
@@ -39,16 +39,16 @@ ${getItemGroupContent(settings)}
 }
 
 String getUserMacrosContent(Map<String, String> settings) {
-  final macroList = StringBuffer();
-  for (final setting in settings.entries) {
+  final StringBuffer macroList = StringBuffer();
+  for (final MapEntry<dynamic, dynamic> setting in settings.entries) {
     macroList.writeln('    <${setting.key}>${setting.value}</${setting.key}>');
   }
   return macroList.toString();
 }
 
 String getItemGroupContent(Map<String, String> settings) {
-  final macroList = StringBuffer();
-  for (final name in settings.keys) {
+  final StringBuffer macroList = StringBuffer();
+  for (final String name in settings.keys) {
     macroList.writeln('''    <BuildMacro Include="$name">
       <Value>\$($name)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>

@@ -34,8 +34,9 @@ class ParseCloudFunction extends ParseObject {
     }
 
     final Response result =
-      await _client.post(uri, body: json.encode(getObjectData()));
-      return handleResponse<ParseCloudFunction>(this, result, ParseApiRQ.execute, _debug, className);
+    await _client.post(uri, body: json.encode(getObjectData()));
+    return handleResponse<ParseCloudFunction>(
+        this, result, ParseApiRQ.execute, _debug, className);
   }
 
   /// Executes a cloud function that returns a ParseObject type

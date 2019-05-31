@@ -1,20 +1,27 @@
 part of flutter_parse_sdk;
 
 class CoreStoreImp implements CoreStore {
+
   CoreStoreImp._internal(this._store);
+
   static CoreStoreImp _instance;
+
   static Future<CoreStoreImp> getInstance(
       {DatabaseFactory factory, String password = 'flutter_sdk'}) async {
+
     if (_instance == null) {
       factory ??= databaseFactoryIo;
       final SembastCodec codec = getXXTeaSembastCodec(password: password);
       String dbDirectory = '';
-      if (Platform.isIOS || Platform.isAndroid)
+
+      if (Platform.isIOS || Platform.isAndroid) {
         dbDirectory = (await getApplicationDocumentsDirectory()).path;
-      final String dbPath = path.join('$dbDirectory+/parse', 'parse.db');
-      final Database db = await factory.openDatabase(dbPath, codec: codec);
-      _instance = CoreStoreImp._internal(db);
+        final String dbPath = path.join('$dbDirectory+/parse', 'parse.db');
+        final Database db = await factory.openDatabase(dbPath, codec: codec);
+        _instance = CoreStoreImp._internal(db);
+      }
     }
+
     return _instance;
   }
 
@@ -31,62 +38,67 @@ class CoreStoreImp implements CoreStore {
   }
 
   @override
-  Future get(String key) {
+  Future<String> get(String key) {
     return _store.get(key);
   }
 
   @override
   Future<bool> getBool(String key) async {
-    return await _store.get(key) as bool;
+    final bool storedValue = await _store.get(key);
+    return storedValue;
   }
 
   @override
   Future<double> getDouble(String key) async {
-    return await _store.get(key) as double;
+    final double storedValue = await _store.get(key);
+    return storedValue;
   }
 
   @override
   Future<int> getInt(String key) async {
-    return await _store.get(key) as int;
+    final int storedValue = await _store.get(key);
+    return storedValue;
   }
 
   @override
   Future<String> getString(String key) async {
-    return await _store.get(key) as String;
+    final String storedValue = await _store.get(key);
+    return storedValue;
   }
 
   @override
   Future<List<String>> getStringList(String key) async {
-    return await _store.get(key) as List<String>;
+    final List<String> storedValue = await _store.get(key);
+    return storedValue;
   }
 
   @override
-  Future remove(String key) {
+  Future<dynamic> remove(String key) {
     return _store.delete(key);
   }
 
   @override
-  Future setBool(String key, bool value) {
+  Future<dynamic> setBool(String key, bool value) {
     return _store.put(value, key);
   }
 
   @override
-  Future setDouble(String key, double value) {
+  Future<dynamic> setDouble(String key, double value) {
     return _store.put(value, key);
   }
 
   @override
-  Future setInt(String key, int value) {
+  Future<dynamic> setInt(String key, int value) {
     return _store.put(value, key);
   }
 
   @override
-  Future setString(String key, String value) {
+  Future<dynamic> setString(String key, String value) {
     return _store.put(value, key);
   }
 
   @override
-  Future setStringList(String key, List<String> values) {
+  Future<dynamic> setStringList(String key, List<String> values) {
     return _store.put(values, key);
   }
 }

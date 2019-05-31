@@ -238,16 +238,18 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   // Add a constraint to the query that requires a particular key's value match another QueryBuilder
+  // ignore: always_specify_types
   void whereMatchesQuery(String column, QueryBuilder query) {
-    String inQuery = query._buildQueryRelational(query.object.className);
+    final String inQuery = query._buildQueryRelational(query.object.className);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$inQuery\":$inQuery}'));
   }
 
   //Add a constraint to the query that requires a particular key's value does not match another QueryBuilder
+  // ignore: always_specify_types
   void whereDoesNotMatchQuery(String column, QueryBuilder query) {
-    String inQuery = query._buildQueryRelational(query.object.className);
+    final String inQuery = query._buildQueryRelational(query.object.className);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
@@ -305,8 +307,7 @@ class QueryBuilder<T extends ParseObject> {
       if (item == queries.first) {
         queryBuilder += item;
       } else {
-        // ignore: prefer_single_quotes
-        queryBuilder += ",$item";
+        queryBuilder += ',$item';
       }
     }
 
@@ -316,7 +317,7 @@ class QueryBuilder<T extends ParseObject> {
   /// Creates a query param using the column, the value and the queryOperator
   /// that the column and value are being queried against
   MapEntry<String, dynamic> _buildQueryWithColumnValueAndOperator(
-      MapEntry columnAndValue, String queryOperator) {
+      MapEntry<String, dynamic> columnAndValue, String queryOperator) {
     final String key = columnAndValue.key;
     final dynamic value =
         convertValueToCorrectType(parseEncode(columnAndValue.value));
@@ -370,10 +371,10 @@ class QueryBuilder<T extends ParseObject> {
 
         // Compact all the queries in the correct format
         for (MapEntry<String, dynamic> queryToCompact in listOfQueriesCompact) {
-          var queryToCompactValue = queryToCompact.value.toString();
-          queryToCompactValue = queryToCompactValue.replaceFirst("{", "");
+          String queryToCompactValue = queryToCompact.value.toString();
+          queryToCompactValue = queryToCompactValue.replaceFirst('{', '');
           queryToCompactValue = queryToCompactValue.replaceRange(
-              queryToCompactValue.length - 1, queryToCompactValue.length, "");
+              queryToCompactValue.length - 1, queryToCompactValue.length, '');
           if (listOfQueriesCompact.first == queryToCompact) {
             queryEnd += queryToCompactValue.replaceAll(queryStart, ' ');
           } else {
