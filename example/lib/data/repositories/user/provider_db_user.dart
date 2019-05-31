@@ -79,7 +79,6 @@ class UserProviderDB implements UserProviderContract {
 
   Map<String, dynamic> convertItemToStorageMap(User item) {
     final Map<String, dynamic> values = Map<String, dynamic>();
-    // ignore: invalid_use_of_protected_member
     values['value'] = json.jsonEncode(item.toJson(full: true));
     values[keyVarObjectId] = item.objectId;
     item.updatedAt != null
@@ -91,7 +90,8 @@ class UserProviderDB implements UserProviderContract {
   User convertRecordToItem({Record record, Map<String, dynamic> values}) {
     try {
       values ??= record.value;
-      final User item = User.clone().fromJson(json.jsonDecode(values['value']));
+      final User item =
+          User.clone().fromJson(json.jsonDecode(values['value']));
       return item;
     } catch (e) {
       return null;
