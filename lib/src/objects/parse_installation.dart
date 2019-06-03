@@ -82,8 +82,9 @@ class ParseInstallation extends ParseObject {
     }
 
     //Timezone
-    //TODO set<String>(keyTimeZone, );
-
+    final String currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+    set<String>(keyTimeZone, currentTimeZone);
+    
     //App info
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     set<String>(keyAppName, packageInfo.appName);

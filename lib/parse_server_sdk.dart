@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:xxtea/xxtea.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 part 'package:parse_server_sdk/src/objects/response/parse_error_response.dart';
 part 'package:parse_server_sdk/src/objects/response/parse_exception_response.dart';
