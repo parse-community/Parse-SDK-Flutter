@@ -18,6 +18,7 @@ dependencies:
   sembast: ^1.15.1
   xxtea: ^2.0.2
   
+  flutter_native_timezone: ^1.0.4
   
   # Utils
   path_provider: ^0.5.0+1
