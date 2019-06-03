@@ -4,5 +4,8 @@ dart:
   - stable
   - dev
 
+install:
+  - flutter packages get
+
 dart_task:
-- test: --platform vm
+  - test: --platform vm
