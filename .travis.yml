@@ -4,8 +4,11 @@ dart:
   - stable
   - dev
 
+before_install:
+  - git clone https://github.com/flutter/flutter.git -b beta --depth 1
+  - ./flutter/bin/flutter doctor
 install:
-  - flutter packages get
+  - ./flutter/bin/flutter packages get
 
 dart_task:
   - test: --platform vm
