@@ -31,11 +31,6 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   ParseUser.forQuery() : super(keyClassUser);
 
-  @override
-  dynamic clone(Map<String, dynamic> map) {
-    return fromJson(map);
-  }
-
   static const String keyEmailVerified = 'emailVerified';
   static const String keyUsername = 'username';
   static const String keyEmailAddress = 'email';
