@@ -27,11 +27,11 @@ dynamic parseEncode(dynamic value, {bool full}) {
   }
 
   if (value is ParseGeoPoint) {
-    return value;
+    return value.toJson();
   }
 
   if (value is ParseFile) {
-    return value;
+    return value.toJson();
   }
 
   if (value is ParseRelation) {
