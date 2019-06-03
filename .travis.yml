@@ -4,11 +4,16 @@ dart:
   - stable
   - dev
 
-before_install:
-  - git clone https://github.com/flutter/flutter.git -b beta --depth 1
-  - ./flutter/bin/flutter doctor
 install:
-  - ./flutter/bin/flutter packages get
+  - git clone https://github.com/flutter/flutter.git -b stable --depth 1
+  - export PATH=./flutter/bin:$PATH
+  - flutter doctor
 
-dart_task:
-  - test: --platform vm
+script:
+  - flutter packages get
+  - flutter analyze --no-pub --no-current-package lib/ test/
+  - flutter test --no-pub test/
+
+cache:
+  directories:
+  - "$HOME/.pub-cache"
