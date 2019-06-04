@@ -11,7 +11,7 @@ class LiveQuery {
             securityContext: ParseCoreData().securityContext);
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _sendSessionId = autoSendSessionId ?? ParseCoreData().autoSendSessionId;
+    _sendSessionId = autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
   }
 
   WebSocket _webSocket;
