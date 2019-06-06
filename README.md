@@ -154,9 +154,9 @@ var response = await dietPlan.remove("listKeywords", ["a"]);
 or using with save function
 
 ```dart
-dietPlan.setAdd('listKeywords', ['a','a','d']);
-dietPlan.setAddUnique('listKeywords', ['a','a','d']);
-dietPlan.setRemove('listKeywords', ['a']);
+dietPlan.setAddAll('listKeywords', ['a','a','d']);
+dietPlan.setAddAllUnique('listKeywords', ['a','a','d']);
+dietPlan.setRemoveAll('listKeywords', ['a']);
 var response = dietPlan.save()
 ```
 
