@@ -8,10 +8,10 @@ part of flutter_parse_sdk;
 /// 3. Success with simple OK.
 /// 4. Success with results. Again [ParseResponse()] is returned
 class _ParseResponseBuilder {
-  ParseResponse handleResponse<T>(dynamic object, Response apiResponse,
-      {bool returnAsResult = false}) {
+  ParseResponse handleResponse<T>(
+      dynamic object, Response apiResponse, ParseApiRQ type) {
     final ParseResponse parseResponse = ParseResponse();
-
+    final bool returnAsResult = shouldReturnAsABaseResult(type);
     if (apiResponse != null) {
       parseResponse.statusCode = apiResponse.statusCode;
 
@@ -27,7 +27,7 @@ class _ParseResponseBuilder {
         return _handleSuccessWithoutParseObject(
             parseResponse, object, apiResponse.body);
       } else {
-        return _handleSuccess<T>(parseResponse, object, apiResponse.body);
+        return _handleSuccess<T>(parseResponse, object, apiResponse.body, type);
       }
     } else {
       parseResponse.error = ParseError(
@@ -60,30 +60,49 @@ class _ParseResponseBuilder {
   }
 
   /// Handles successful response with results
-  ParseResponse _handleSuccess<T>(
-      ParseResponse response, dynamic object, String responseBody) {
+  ParseResponse _handleSuccess<T>(ParseResponse response, dynamic object,
+      String responseBody, ParseApiRQ type) {
     response.success = true;
 
-    final Map<String, dynamic> map = json.decode(responseBody);
+    final dynamic result = json.decode(responseBody);
 
-    if (object is Parse) {
-      response.result = map;
-    } else if (map != null && map.length == 1 && map.containsKey('results')) {
-      final List<dynamic> results = map['results'];
-      final List<T> items = _handleMultipleResults<T>(object, results);
-      response.results = items;
-      response.result = items;
-      response.count = items.length;
-    } else if (map != null && map.length == 2 && map.containsKey('count')) {
-      final List<int> results = <int>[map['count']];
-      response.results = results;
-      response.result = results;
-      response.count = map['count'];
-    } else {
-      final T item = _handleSingleResult<T>(object, map, false);
-      response.count = 1;
-      response.result = item;
-      response.results = <T>[item];
+    if (type == ParseApiRQ.batch) {
+      final List<dynamic> list = result;
+      if (object is List && object.length == list.length) {
+        response.count = object.length;
+        response.results = List<dynamic>();
+        for (int i = 0; i < object.length; i++) {
+          final Map<String, dynamic> objectResult = list[i];
+          if (objectResult.containsKey('success')) {
+            final T item = _handleSingleResult<T>(object[i], objectResult['success'], false);
+            response.results.add(item);
+          } else {
+            final ParseError error = ParseError(code: objectResult[keyCode], message: objectResult[keyError].toString());
+            response.results.add(error);
+          }
+        }
+      }
+    } else if (result is Map) {
+      final Map<String, dynamic> map = result;
+      if (object is Parse) {
+        response.result = map;
+      } else if (map != null && map.length == 1 && map.containsKey('results')) {
+        final List<dynamic> results = map['results'];
+        final List<T> items = _handleMultipleResults<T>(object, results);
+        response.results = items;
+        response.result = items;
+        response.count = items.length;
+      } else if (map != null && map.length == 2 && map.containsKey('count')) {
+        final List<int> results = <int>[map['count']];
+        response.results = results;
+        response.result = results;
+        response.count = map['count'];
+      } else {
+        final T item = _handleSingleResult<T>(object, map, false);
+        response.count = 1;
+        response.result = item;
+        response.results = <T>[item];
+      }
     }
 
     return response;
@@ -92,7 +111,6 @@ class _ParseResponseBuilder {
   /// Handles a response with a multiple result object
   List<T> _handleMultipleResults<T>(dynamic object, List<dynamic> data) {
     final List<T> resultsList = List<T>();
-
     for (dynamic value in data) {
       resultsList.add(_handleSingleResult<T>(object, value, true));
     }

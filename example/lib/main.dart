@@ -105,7 +105,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initInstallation() async {
     final ParseInstallation installation =
-    await ParseInstallation.currentInstallation();
+        await ParseInstallation.currentInstallation();
     final ParseResponse response = await installation.create();
     print(response);
   }
@@ -244,13 +244,13 @@ class _MyAppState extends State<MyApp> {
     /// Update current user from server - Best done to verify user is still a valid user
     response = await ParseUser.getCurrentUserFromServer(
         token: user?.get<String>(keyHeaderSessionToken));
-    if (response.success) {
+    if (response?.success ?? false) {
       user = response.result;
     }
 
     /// log user out
-    response = await user.logout();
-    if (response.success) {
+    response = await user?.logout();
+    if (response?.success ?? false) {
       user = response.result;
     }
 

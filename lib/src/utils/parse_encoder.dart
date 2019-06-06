@@ -26,6 +26,12 @@ dynamic parseEncode(dynamic value, {bool full}) {
     }).toList();
   }
 
+  if (value is Map) {
+    value.forEach((dynamic k, dynamic v) {
+      value[k] = parseEncode(v);
+    });
+  }
+
   if (value is ParseGeoPoint) {
     return value.toJson();
   }
