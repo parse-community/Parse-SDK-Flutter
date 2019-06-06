@@ -39,11 +39,46 @@ Uri getSanitisedUri(ParseHTTPClient client, String pathToAppend,
   return url;
 }
 
+/// Sanitises a url
+Uri getCustomUri(ParseHTTPClient client, String path,
+    {Map<String, dynamic> queryParams, String query}) {
+  final Uri tempUri = Uri.parse(client.data.serverUrl);
+
+  final Uri url = Uri(
+      scheme: tempUri.scheme,
+      host: tempUri.host,
+      port: tempUri.port,
+      path: path,
+      queryParameters: queryParams,
+      query: query);
+
+  return url;
+}
+
 /// Removes unncessary /
 String removeTrailingSlash(String serverUrl) {
-  if (serverUrl.substring(serverUrl.length - 1) == '/') {
+  if (serverUrl.isNotEmpty && serverUrl.substring(serverUrl.length - 1) == '/') {
     return serverUrl.substring(0, serverUrl.length - 1);
   } else {
     return serverUrl;
+  }
+}
+
+Future<ParseResponse> batchRequest(List<dynamic> requests,
+    List<ParseObject> objects, {ParseHTTPClient client,  bool debug}) async {
+  debug = isDebugEnabled(objectLevelDebug: debug);
+  client = client ??
+      ParseHTTPClient(
+          sendSessionId: ParseCoreData().autoSendSessionId,
+          securityContext: ParseCoreData().securityContext);
+  try {
+    final Uri url = getSanitisedUri(client, '/batch');
+    final String body = json.encode(<String, dynamic>{'requests': requests});
+    final Response result = await client.post(url, body: body);
+
+    return handleResponse<ParseObject>(
+        objects, result, ParseApiRQ.batch, debug, 'parse_utils');
+  } on Exception catch (e) {
+    return handleException(e, ParseApiRQ.batch, debug, 'parse_utils');
   }
 }

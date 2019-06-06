@@ -19,9 +19,7 @@ class ParseRelation<T extends ParseObject> {
     if (object != null) {
       _targetClass = object.getClassName();
       _objects.add(object);
-      _parent.addRelation(_key, _objects.map((T value) {
-        return value.toPointer();
-      }).toList());
+      _parent.addRelation(_key, _objects.toList());
     }
   }
 
@@ -29,9 +27,7 @@ class ParseRelation<T extends ParseObject> {
     if (object != null) {
       _targetClass = object.getClassName();
       _objects.remove(object);
-      _parent.removeRelation(_key, _objects.map((T value) {
-        return value.toPointer();
-      }).toList());
+      _parent.removeRelation(_key, _objects.toList());
     }
   }
 

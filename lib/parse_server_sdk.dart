@@ -3,6 +3,7 @@ library flutter_parse_sdk;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
