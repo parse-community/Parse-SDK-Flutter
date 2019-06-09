@@ -138,6 +138,12 @@ class QueryBuilder<T extends ParseObject> {
         MapEntry<String, dynamic>(column, value), '\$exists'));
   }
 
+  /// Retrieves related objets where [String] column is a relation field to the class [String] className
+  void whereRelatedTo(String column, String className, String objectId) {
+    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
+        '\"\$relatedTo\":{\"object\":{\"__type\":\"Pointer\",\"className\":\"$className\",\"objectId\":\"$objectId\"},\"key\":\"$column\"}'));
+  }
+
   /// Returns an object where the [String] column contains select
   void selectKeys(String column, dynamic value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
