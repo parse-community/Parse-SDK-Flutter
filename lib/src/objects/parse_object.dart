@@ -1,5 +1,6 @@
 part of flutter_parse_sdk;
 
+// ignore_for_file: always_specify_types
 class ParseObject extends ParseBase implements ParseCloneable {
   /// Creates a new Parse Object
   ///
@@ -141,7 +142,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       /* Batch requests have currently a limit of 50 packaged requests per single request
       This splitting will split the overall array into segments of upto 50 requests
       and execute them concurrently with a wrapper task for all of them. */
-      final List<List<ParseObject>> chunks = [];
+      final List<List<ParseObject>> chunks = <List<ParseObject>>[];
       for (int i = 0; i < current.length; i += 50) {
         chunks.add(current.sublist(i, min(current.length, i + 50)));
       }

@@ -1,6 +1,8 @@
 ![enter image description here](https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png)
 ![enter image description here](https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png?fit=200%2C200&ssl=1&resize=350%2C200)
 
+[![Build Status](https://travis-ci.org/phillwiggins/flutter_parse_sdk.svg?branch=master)](https://travis-ci.org/phillwiggins/flutter_parse_sdk)
+
 ## Parse For Flutter! 
 Hi, this is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like (http://Back4App.com).
 
@@ -25,7 +27,14 @@ Parse().initialize(
         ApplicationConstants.keyApplicationId,
         ApplicationConstants.keyParseServerUrl);
 ```
+if you want to use secure storage also that's allow using sdk on desktop application 
+```dart
 
+    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+        masterKey: keyParseMasterKey,
+        debug: true,
+        coreStore:  CoreStoreImp.getInstance());
+```
 It's possible to add other params, such as ...
 
 ```dart
