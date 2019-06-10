@@ -29,9 +29,6 @@ class ParseCoreData {
     _instance.storage ??=
         store ?? CoreStoreImp.getInstance(password: masterKey);
 
-    _instance.storage ??=
-        store ?? CoreStoreImp.getInstance(password: masterKey);
-
     if (debug != null) {
       _instance.debug = debug;
     }
