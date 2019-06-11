@@ -1,5 +1,6 @@
 part of flutter_parse_sdk;
 
+// ignore_for_file: always_specify_types
 class ParseRelation<T extends ParseObject> {
   ParseRelation({ParseObject parent, String key}) {
     _parent = parent;

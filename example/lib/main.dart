@@ -71,15 +71,23 @@ class _MyAppState extends State<MyApp> {
     Parse().initialize(keyParseApplicationId, keyParseServerUrl,
         masterKey: keyParseMasterKey, debug: true);
 
+    //parse serve with secure store and desktop support
+
+    //    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+    //        masterKey: keyParseMasterKey,
+    //        debug: true,
+    //        coreStore: CoreStoreImp.getInstance());
+
     // Check server is healthy and live - Debug is on in this instance so check logs for result
     final ParseResponse response = await Parse().healthCheck();
 
     if (response.success) {
       await runTestQueries();
       text += 'runTestQueries\n';
+      print(text);
     } else {
       text += 'Server health check failed';
-      print('Server health check failed');
+      print(text);
     }
   }
 
