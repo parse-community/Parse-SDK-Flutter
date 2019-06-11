@@ -46,7 +46,8 @@ Parse().initialize(
         debug: true,
         liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
         autoSendSessionId: true,
-        securityContext: securityContext);
+        securityContext: securityContext,
+	coreStore: CoreStoreSembastImp.getInstance());
 ```
 
 ## Objects
@@ -132,6 +133,14 @@ and to retrieve it
 ```dart
 var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
 ```
+
+## Storage
+We now have 2 types of storage, secure and unsecure. We currently rely on 2 third party options:
+
+ * SharedPreferences 
+ * Sembast
+
+Sembast offers secured storage, whilst SharePreferences wraps NSUserDefaults (on iOS) and SharedPreferences (on Android).
 
 ## Increment Counter values in objects
 Retrieve it, call
