@@ -378,8 +378,8 @@ class _MyAppState extends State<MyApp> {
   /// SharedPreferences - Not secure but will work with older versions of SDK - CoreStoreSharedPrefsImpl
   /// Sembast - NoSQL DB - Has security - CoreStoreSembastImpl
   Future<CoreStore> initCoreStore() async {
-    return CoreStoreSembastImp.getInstance();
-    //return CoreStoreSharedPrefsImp.getInstance();
+    //return CoreStoreSembastImp.getInstance();
+    return CoreStoreSharedPrefsImp.getInstance();
   }
 }
 
