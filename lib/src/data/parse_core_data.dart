@@ -27,7 +27,7 @@ class ParseCoreData {
     _instance = ParseCoreData._init(appId, serverUrl);
 
     _instance.storage ??=
-        store ?? CoreStoreImp.getInstance(password: masterKey);
+        store ?? CoreStoreSembastImp.getInstance(password: masterKey);
 
     if (debug != null) {
       _instance.debug = debug;
@@ -65,7 +65,7 @@ class ParseCoreData {
   bool autoSendSessionId;
   SecurityContext securityContext;
   bool debug;
-  Future<CoreStore> storage;
+  CoreStore storage;
 
   /// Sets the current sessionId.
   ///
@@ -75,7 +75,7 @@ class ParseCoreData {
     this.sessionId = sessionId;
   }
 
-  Future<CoreStore> getStore() {
+  CoreStore getStore() {
     return storage;
   }
 

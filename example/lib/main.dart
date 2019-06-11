@@ -66,17 +66,18 @@ class _MyAppState extends State<MyApp> {
   Future<void> initData() async {
     // Initialize repository
     await initRepository();
+    final CoreStore coreStore = await initCoreStore();
 
     // Initialize parse
     Parse().initialize(keyParseApplicationId, keyParseServerUrl,
-        masterKey: keyParseMasterKey, debug: true);
+        masterKey: keyParseMasterKey, debug: true, coreStore: coreStore);
 
     //parse serve with secure store and desktop support
 
     //    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
     //        masterKey: keyParseMasterKey,
     //        debug: true,
-    //        coreStore: CoreStoreImp.getInstance());
+    //        coreStore: CoreStoreSharedPrefsImp.getInstance());
 
     // Check server is healthy and live - Debug is on in this instance so check logs for result
     final ParseResponse response = await Parse().healthCheck();
@@ -370,6 +371,15 @@ class _MyAppState extends State<MyApp> {
   Future<void> initRepository() async {
     dietPlanRepo ??= DietPlanRepository.init(await getDB());
     userRepo ??= UserRepository.init(await getDB());
+  }
+
+
+  /// Available options:
+  /// SharedPreferences - Not secure but will work with older versions of SDK - CoreStoreSharedPrefsImpl
+  /// Sembast - NoSQL DB - Has security - CoreStoreSembastImpl
+  Future<CoreStore> initCoreStore() async {
+    return CoreStoreSembastImp.getInstance();
+    //return CoreStoreSharedPrefsImp.getInstance();
   }
 }
 
