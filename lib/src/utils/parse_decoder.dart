@@ -53,7 +53,7 @@ dynamic parseDecode(dynamic value) {
     switch (map['__type']) {
       case 'Date':
         final String iso = map['iso'];
-        return  _parseDateFormat.parse(iso);
+        return _parseDateFormat.parse(iso);
       case 'Bytes':
         final String val = map['base64'];
         return base64.decode(val);
@@ -77,6 +77,9 @@ dynamic parseDecode(dynamic value) {
         final num longitude = map['longitude'] ?? 0.0;
         return ParseGeoPoint(
             latitude: latitude.toDouble(), longitude: longitude.toDouble());
+      case 'Relation':
+        // ignore: always_specify_types
+        return ParseRelation().fromJson(map);
     }
   }
 

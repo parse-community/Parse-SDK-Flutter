@@ -11,7 +11,7 @@ class LiveQuery {
             securityContext: ParseCoreData().securityContext);
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _sendSessionId = autoSendSessionId ?? ParseCoreData().autoSendSessionId;
+    _sendSessionId = autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
   }
 
   WebSocket _webSocket;
@@ -22,9 +22,9 @@ class LiveQuery {
   Map<String, dynamic> _connectMessage;
   Map<String, dynamic> _subscribeMessage;
   Map<String, dynamic> _unsubscribeMessage;
-  Map<String, Function> eventCallbacks = {};
+  Map<String, Function> eventCallbacks = <String, Function>{};
   int _requestIdCount = 1;
-  final List<String> _liveQueryEvent = [
+  final List<String> _liveQueryEvent = <String>[
     'create',
     'enter',
     'update',
@@ -38,7 +38,9 @@ class LiveQuery {
     return _requestIdCount++;
   }
 
-  Future<void> subscribe(QueryBuilder query) async {
+  // ignore: always_specify_types
+  Future subscribe(QueryBuilder query) async {
+
     String _liveQueryURL = _client.data.liveQueryURL;
     if (_liveQueryURL.contains('https')) {
       _liveQueryURL = _liveQueryURL.replaceAll('https', 'wss');
@@ -47,8 +49,9 @@ class LiveQuery {
     }
 
     final String _className = query.object.className;
-    query.limiters.clear(); //Remove limites in LiveQuery
+    query.limiters.clear(); //Remove limits in LiveQuery
     final String _where = query._buildQuery().replaceAll('where=', '');
+
     //Convert where condition to Map
     Map<String, dynamic> _whereMap = Map<String, dynamic>();
     if (_where != '') {
@@ -67,14 +70,14 @@ class LiveQuery {
       } else {
         if (_debug) {
           print('$_printConstLiveQuery: Error when connection client');
-          return Future.value(null);
+          return Future<void>.value(null);
         }
       }
 
       _channel = IOWebSocketChannel(_webSocket);
       _channel.stream.listen((dynamic message) {
         if (_debug) {
-          print('$_printConstLiveQuery: Listen: ${message}');
+          print('$_printConstLiveQuery: Listen: $message');
         }
 
         final Map<String, dynamic> actionData = jsonDecode(message);
@@ -103,7 +106,7 @@ class LiveQuery {
           print(
               '$_printConstLiveQuery: Error: ${error.runtimeType.toString()}');
         }
-        return Future.value(handleException(
+        return Future<ParseResponse>.value(handleException(
             Exception(error), ParseApiRQ.liveQuery, _debug, _className));
       });
 
@@ -128,7 +131,7 @@ class LiveQuery {
       _subscribeMessage = <String, dynamic>{
         'op': 'subscribe',
         'requestId': requestId,
-        'query': {
+        'query': <String, dynamic>{
           'className': _className,
           'where': _whereMap,
         }
@@ -167,7 +170,7 @@ class LiveQuery {
           print(
               '$_printConstLiveQuery: UnsubscribeMessage: $_unsubscribeMessage');
         }
-        await _channel.sink.add(jsonEncode(_unsubscribeMessage));
+        _channel.sink.add(jsonEncode(_unsubscribeMessage));
         await _channel.sink.close();
       }
     }

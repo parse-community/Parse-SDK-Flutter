@@ -1,3 +1,5 @@
+## 1.0.22
+
 ## 1.0.21
 LiveQuery fix
 Logout fix

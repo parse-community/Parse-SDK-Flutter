@@ -8,7 +8,8 @@ import 'package:flutter_plugin_example/data/repositories/diet_plan/contract_prov
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage(this._dietPlanProvider);
+  const HomePage(this._dietPlanProvider);
+
   final DietPlanProviderContract _dietPlanProvider;
 
   @override
@@ -16,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<DietPlan> randomDietPlans = [];
+  List<DietPlan> randomDietPlans = <DietPlan>[];
 
   @override
   void initState() {
@@ -50,9 +51,9 @@ class _HomePageState extends State<HomePage> {
           body: _showDietList(),
           floatingActionButton: FloatingActionButton(
             onPressed: () async {
-              DietPlan dietPlan =
+              final DietPlan dietPlan =
                   randomDietPlans[Random().nextInt(randomDietPlans.length - 1)];
-              ParseUser user = await ParseUser.currentUser();
+              final ParseUser user = await ParseUser.currentUser();
               dietPlan.set('user', user);
               await widget._dietPlanProvider.add(dietPlan);
               setState(() {});
@@ -80,15 +81,15 @@ class _HomePageState extends State<HomePage> {
                 shrinkWrap: true,
                 itemCount: snapshot.data.results.length,
                 itemBuilder: (BuildContext context, int index) {
-                  DietPlan dietPlan = snapshot.data.results[index];
-                  String id = dietPlan.objectId;
-                  String name = dietPlan.name;
-                  String description = dietPlan.description;
-                  bool status = dietPlan.status;
+                  final DietPlan dietPlan = snapshot.data.results[index];
+                  final String id = dietPlan.objectId;
+                  final String name = dietPlan.name;
+                  final String description = dietPlan.description;
+                  final bool status = dietPlan.status;
                   return Dismissible(
                     key: Key(id),
                     background: Container(color: Colors.red),
-                    onDismissed: (direction) async {
+                    onDismissed: (DismissDirection direction) async {
                       widget._dietPlanProvider.remove(dietPlan);
                     },
                     child: ListTile(

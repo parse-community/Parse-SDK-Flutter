@@ -23,20 +23,36 @@ class ParseCoreData {
       String sessionId,
       bool autoSendSessionId,
       SecurityContext securityContext,
-      FutureOr<CoreStore> store}) {
+      CoreStore store}) {
     _instance = ParseCoreData._init(appId, serverUrl);
-    _instance.storage ??= store ??
-        Future<CoreStore>.value(
-            SharedPreferencesCoreStore(SharedPreferences.getInstance()));
-    if (debug != null) _instance.debug = debug;
-    if (appName != null) _instance.appName = appName;
-    if (liveQueryUrl != null) _instance.liveQueryURL = liveQueryUrl;
-    if (clientKey != null) _instance.clientKey = clientKey;
-    if (masterKey != null) _instance.masterKey = masterKey;
-    if (sessionId != null) _instance.sessionId = sessionId;
-    if (autoSendSessionId != null)
+
+    _instance.storage ??=
+        store ?? CoreStoreImp.getInstance(password: masterKey);
+
+    if (debug != null) {
+      _instance.debug = debug;
+    }
+    if (appName != null) {
+      _instance.appName = appName;
+    }
+    if (liveQueryUrl != null) {
+      _instance.liveQueryURL = liveQueryUrl;
+    }
+    if (clientKey != null) {
+      _instance.clientKey = clientKey;
+    }
+    if (masterKey != null) {
+      _instance.masterKey = masterKey;
+    }
+    if (sessionId != null) {
+      _instance.sessionId = sessionId;
+    }
+    if (autoSendSessionId != null) {
       _instance.autoSendSessionId = autoSendSessionId;
-    if (securityContext != null) _instance.securityContext = securityContext;
+    }
+    if (securityContext != null) {
+      _instance.securityContext = securityContext;
+    }
   }
 
   String appName;
@@ -49,7 +65,7 @@ class ParseCoreData {
   bool autoSendSessionId;
   SecurityContext securityContext;
   bool debug;
-  FutureOr<CoreStore> storage;
+  Future<CoreStore> storage;
 
   /// Sets the current sessionId.
   ///

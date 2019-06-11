@@ -2,13 +2,10 @@ part of flutter_parse_sdk;
 
 /// Handles an API response and logs data if [bool] debug is enabled
 @protected
-ParseResponse handleResponse<T>(ParseCloneable object, Response response,
+ParseResponse handleResponse<T>(dynamic object, Response response,
     ParseApiRQ type, bool debug, String className) {
-
-  final ParseResponse parseResponse = _ParseResponseBuilder().handleResponse<T>(
-      object,
-      response,
-      returnAsResult: shouldReturnAsABaseResult(type));
+  final ParseResponse parseResponse =
+      _ParseResponseBuilder().handleResponse<T>(object, response, type);
 
   if (debug) {
     logAPIResponse(className, type.toString(), parseResponse);
@@ -21,9 +18,8 @@ ParseResponse handleResponse<T>(ParseCloneable object, Response response,
 @protected
 ParseResponse handleException(
     Exception exception, ParseApiRQ type, bool debug, String className) {
-
   final ParseResponse parseResponse =
-  buildParseResponseWithException(exception);
+      buildParseResponseWithException(exception);
 
   if (debug) {
     logAPIResponse(className, type.toString(), parseResponse);
@@ -50,11 +46,18 @@ bool shouldReturnAsABaseResult(ParseApiRQ type) {
   }
 }
 
-bool isUnsuccessfulResponse(Response apiResponse) => apiResponse.statusCode != 200 && apiResponse.statusCode != 201;
+bool isUnsuccessfulResponse(Response apiResponse) =>
+    apiResponse.statusCode != 200 && apiResponse.statusCode != 201;
 
 bool isSuccessButNoResults(Response apiResponse) {
-  final Map<String, dynamic> decodedResponse = jsonDecode(apiResponse.body);
-  final List<dynamic> results = decodedResponse['results'];
+  final dynamic decodedResponse = jsonDecode(apiResponse.body);
+  List<dynamic> results;
+  if (decodedResponse is Map<String, dynamic>) {
+    results = decodedResponse['results'];
+  } else if (decodedResponse is List<dynamic>) {
+    results = decodedResponse;
+  }
+
 
   if (results == null) {
     return false;
@@ -62,4 +65,3 @@ bool isSuccessButNoResults(Response apiResponse) {
 
   return results.isEmpty;
 }
-

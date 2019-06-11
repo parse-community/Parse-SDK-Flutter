@@ -10,7 +10,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String _email;
   String _password;
@@ -22,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
 
   // Check if form is valid before perform login or signup
   bool _validateAndSave() {
-    final form = _formKey.currentState;
+    final FormState form = _formKey.currentState;
     if (form.validate()) {
       form.save();
       return true;
@@ -33,11 +33,11 @@ class _LoginPageState extends State<LoginPage> {
   // Perform login or signup
   Future<void> _validateAndSubmit() async {
     setState(() {
-      _errorMessage = "";
+      _errorMessage = '';
       _isLoading = true;
     });
     if (_validateAndSave()) {
-      User user = User(_email, _password, _email);
+      final User user = User(_email, _password, _email);
 
       ParseResponse response;
       try {
@@ -73,14 +73,14 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    _errorMessage = "";
+    _errorMessage = '';
     _isLoading = false;
     super.initState();
   }
 
   void _changeFormToSignUp() {
     _formKey.currentState.reset();
-    _errorMessage = "";
+    _errorMessage = '';
     setState(() {
       _formMode = FormMode.SIGNUP;
     });
@@ -88,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _changeFormToLogin() {
     _formKey.currentState.reset();
-    _errorMessage = "";
+    _errorMessage = '';
     setState(() {
       _formMode = FormMode.LOGIN;
     });
@@ -185,8 +185,8 @@ class _LoginPageState extends State<LoginPage> {
               Icons.mail,
               color: Colors.grey,
             )),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
-        onSaved: (value) => _email = value,
+        validator: (String value) => value.isEmpty ? 'Email can\'t be empty' : null,
+        onSaved: (String value) => _email = value,
       ),
     );
   }
@@ -204,8 +204,8 @@ class _LoginPageState extends State<LoginPage> {
               Icons.lock,
               color: Colors.grey,
             )),
-        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
-        onSaved: (value) => _password = value,
+        validator: (String value) => value.isEmpty ? 'Password can\'t be empty' : null,
+        onSaved: (String value) => _password = value,
       ),
     );
   }

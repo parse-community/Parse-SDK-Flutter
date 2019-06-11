@@ -31,62 +31,67 @@ class CoreStoreImp implements CoreStore {
   }
 
   @override
-  Future get(String key) {
+  Future<dynamic> get(String key) {
     return _store.get(key);
   }
 
   @override
   Future<bool> getBool(String key) async {
-    return await _store.get(key) as bool;
+    final bool storedItem = await _store.get(key);
+    return storedItem;
   }
 
   @override
   Future<double> getDouble(String key) async {
-    return await _store.get(key) as double;
+    final double storedItem = await _store.get(key);
+    return storedItem;
   }
 
   @override
   Future<int> getInt(String key) async {
-    return await _store.get(key) as int;
+    final int storedItem = await _store.get(key);
+    return storedItem;
   }
 
   @override
   Future<String> getString(String key) async {
-    return await _store.get(key) as String;
+    final String storedItem = await _store.get(key);
+    return storedItem;
   }
 
   @override
   Future<List<String>> getStringList(String key) async {
-    return await _store.get(key) as List<String>;
+    final List<String> storedItem = await _store.get(key);
+    return storedItem;
   }
 
   @override
-  Future remove(String key) {
+  Future<void> remove(String key) {
     return _store.delete(key);
   }
 
   @override
-  Future setBool(String key, bool value) {
+  Future<void> setBool(String key, bool value) {
     return _store.put(value, key);
   }
 
   @override
-  Future setDouble(String key, double value) {
+  Future<void> setDouble(String key, double value) {
     return _store.put(value, key);
   }
 
   @override
-  Future setInt(String key, int value) {
+  Future<void> setInt(String key, int value) {
     return _store.put(value, key);
   }
 
   @override
-  Future setString(String key, String value) {
+  Future<void> setString(String key, String value) {
     return _store.put(value, key);
   }
 
   @override
-  Future setStringList(String key, List<String> values) {
+  Future<void> setStringList(String key, List<String> values) {
     return _store.put(values, key);
   }
 }

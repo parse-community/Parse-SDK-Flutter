@@ -15,7 +15,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```yml
 dependencies:  
-    parse_server_sdk: ^1.0.21
+    parse_server_sdk: ^1.0.22
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -163,9 +163,9 @@ var response = await dietPlan.remove("listKeywords", ["a"]);
 or using with save function
 
 ```dart
-dietPlan.setAdd('listKeywords', ['a','a','d']);
-dietPlan.setAddUnique('listKeywords', ['a','a','d']);
-dietPlan.setRemove('listKeywords', ['a']);
+dietPlan.setAddAll('listKeywords', ['a','a','d']);
+dietPlan.setAddAllUnique('listKeywords', ['a','a','d']);
+dietPlan.setRemoveAll('listKeywords', ['a']);
 var response = dietPlan.save()
 ```
 
@@ -537,6 +537,21 @@ Executes a cloud function with parameters
 final ParseCloudFunction function = ParseCloudFunction('hello');
 final Map<String, String> params = <String, String>{'plan': 'paid'};
 function.execute(parameters: params);
+```
+
+## Relation
+The SDK supports Relation.
+
+To Retrive a relation instance for user, call:
+```dart
+final relation = user.getRelation('dietPlans');
+```
+
+and then you can add a relation to the passed in object.
+
+```dart
+relation.add(dietPlan);
+final result = await user.save();
 ```
 
 ## Other Features of this library

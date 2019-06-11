@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -13,35 +12,32 @@ class S implements WidgetsLocalizations {
   const S();
 
   static const GeneratedLocalizationsDelegate delegate =
-      const GeneratedLocalizationsDelegate();
+  GeneratedLocalizationsDelegate();
 
   static S of(BuildContext context) =>
       Localizations.of<S>(context, WidgetsLocalizations);
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
-
 }
 
 class en extends S {
   const en();
 }
 
-
-class GeneratedLocalizationsDelegate extends LocalizationsDelegate<WidgetsLocalizations> {
+class GeneratedLocalizationsDelegate
+    extends LocalizationsDelegate<WidgetsLocalizations> {
   const GeneratedLocalizationsDelegate();
 
   List<Locale> get supportedLocales {
     return const <Locale>[
-
-      const Locale("en", ""),
-
+      Locale("en", ""),
     ];
   }
 
   LocaleResolutionCallback resolution({Locale fallback}) {
     return (Locale locale, Iterable<Locale> supported) {
-      final Locale languageLocale = new Locale(locale.languageCode, "");
+      final Locale languageLocale = Locale(locale.languageCode, "");
       if (supported.contains(locale))
         return locale;
       else if (supported.contains(languageLocale))
@@ -57,12 +53,11 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<WidgetsLocali
   Future<WidgetsLocalizations> load(Locale locale) {
     final String lang = getLang(locale);
     switch (lang) {
-
       case "en":
-        return new SynchronousFuture<WidgetsLocalizations>(const en());
+        return SynchronousFuture<WidgetsLocalizations>(const en());
 
       default:
-        return new SynchronousFuture<WidgetsLocalizations>(const S());
+        return SynchronousFuture<WidgetsLocalizations>(const S());
     }
   }
 

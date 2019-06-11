@@ -88,7 +88,7 @@ class _DecisionPageState extends State<DecisionPage> {
     final MaterialPageRoute<bool> newRoute =
         MaterialPageRoute<bool>(builder: (BuildContext context) => page);
 
-    bool nav = await Navigator.of(context)
+    final bool nav = await Navigator.of(context)
         .pushAndRemoveUntil<bool>(newRoute, ModalRoute.withName('/'));
     if (nav == true) {
       _initParse();
