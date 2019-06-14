@@ -194,13 +194,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   void _saveChanges() {
-    _savingChanges = _unsavedChanges;
+    _savingChanges.clear();
+    _savingChanges.addAll(_unsavedChanges);
     _unsavedChanges.clear();
   }
 
   void _revertSavingChanges() {
     _savingChanges.addAll(_unsavedChanges);
-    _unsavedChanges = _savingChanges;
+    _unsavedChanges.addAll(_savingChanges);
     _savingChanges.clear();
   }
 

@@ -74,10 +74,13 @@ class _ParseResponseBuilder {
         for (int i = 0; i < object.length; i++) {
           final Map<String, dynamic> objectResult = list[i];
           if (objectResult.containsKey('success')) {
-            final T item = _handleSingleResult<T>(object[i], objectResult['success'], false);
+            final T item = _handleSingleResult<T>(
+                object[i], objectResult['success'], false);
             response.results.add(item);
           } else {
-            final ParseError error = ParseError(code: objectResult[keyCode], message: objectResult[keyError].toString());
+            final ParseError error = ParseError(
+                code: objectResult[keyCode],
+                message: objectResult[keyError].toString());
             response.results.add(error);
           }
         }
@@ -124,14 +127,17 @@ class _ParseResponseBuilder {
       return object.clone(map);
     } else if (object is ParseObject) {
       // Merge unsaved changes and response.
-      final Map<String, dynamic> unsaved = object._unsavedChanges;
+      final Map<String, dynamic> unsaved = Map<String, dynamic>();
+      unsaved.addAll(object._unsavedChanges);
       unsaved.forEach((String k, dynamic v) {
         if (map[k] != null && map[k] != v) {
           // Changes after save & before response. Keep it.
           map.remove(k);
         }
       });
-      return object..fromJson(map);
+      return object
+        ..fromJson(map)
+        .._unsavedChanges = unsaved;
     } else {
       return null;
     }
