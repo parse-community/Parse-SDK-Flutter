@@ -304,7 +304,7 @@ class _MyAppState extends State<MyApp> {
     if (result.success) {
       if (result.result is ParseObject) {
         final ParseObject parseObject = result.result;
-        print(parseObject.className);
+        print(parseObject.parseClassName);
       }
     }
   }

@@ -246,7 +246,7 @@ class QueryBuilder<T extends ParseObject> {
   // Add a constraint to the query that requires a particular key's value match another QueryBuilder
   // ignore: always_specify_types
   void whereMatchesQuery(String column, QueryBuilder query) {
-    final String inQuery = query._buildQueryRelational(query.object.className);
+    final String inQuery = query._buildQueryRelational(query.object.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$inQuery\":$inQuery}'));
@@ -255,7 +255,7 @@ class QueryBuilder<T extends ParseObject> {
   //Add a constraint to the query that requires a particular key's value does not match another QueryBuilder
   // ignore: always_specify_types
   void whereDoesNotMatchQuery(String column, QueryBuilder query) {
-    final String inQuery = query._buildQueryRelational(query.object.className);
+    final String inQuery = query._buildQueryRelational(query.object.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
