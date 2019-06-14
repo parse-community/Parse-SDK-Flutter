@@ -74,10 +74,13 @@ class _ParseResponseBuilder {
         for (int i = 0; i < object.length; i++) {
           final Map<String, dynamic> objectResult = list[i];
           if (objectResult.containsKey('success')) {
-            final T item = _handleSingleResult<T>(object[i], objectResult['success'], false);
+            final T item = _handleSingleResult<T>(
+                object[i], objectResult['success'], false);
             response.results.add(item);
           } else {
-            final ParseError error = ParseError(code: objectResult[keyCode], message: objectResult[keyError].toString());
+            final ParseError error = ParseError(
+                code: objectResult[keyCode],
+                message: objectResult[keyError].toString());
             response.results.add(error);
           }
         }
@@ -121,10 +124,10 @@ class _ParseResponseBuilder {
   /// Handles a response with a single result object
   T _handleSingleResult<T>(
       T object, Map<String, dynamic> map, bool createNewObject) {
-    if (createNewObject && object is ParseCloneable) {
-      return object.clone(map);
-    } else if (object is ParseObject) {
+    if (object is ParseObject) {
       return object..fromJson(map);
+    } else if (createNewObject && object is ParseCloneable) {
+      return object.clone(map);
     } else {
       return null;
     }

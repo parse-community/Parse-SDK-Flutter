@@ -10,11 +10,11 @@ import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_di
 import 'package:flutter_plugin_example/data/repositories/user/repository_user.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
-import 'package:flutter_stetho/flutter_stetho.dart';
+// import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 void main() {
-  Stetho.initialize();
+  // Stetho.initialize();
   _setTargetPlatformForDesktop();
 
   runApp(MyApp());
@@ -119,7 +119,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> test() async {
-    User user = User('test_user', 'test_password', 'test@gmail.com');
+    User user = User('unreal', 'hhhhhh', 'unreal0@sina.cn');
     final ParseResponse signUpResponse = await user.signUp();
 
     if (signUpResponse.success) {
