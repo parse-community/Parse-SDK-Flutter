@@ -3,9 +3,9 @@ part of flutter_parse_sdk;
 abstract class ParseBase {
   String parseClassName;
   Type type;
-  bool _dirty = false;
-  Map<String, dynamic> _unsavedChanges = Map<String, dynamic>();
-  Map<String, dynamic> _savingChanges = Map<String, dynamic>();
+  bool _dirty = false; // reserved property
+  final Map<String, dynamic> _unsavedChanges = Map<String, dynamic>();
+  final Map<String, dynamic> _savingChanges = Map<String, dynamic>();
 
   /// Stores all the values of a class
   Map<String, dynamic> _objectData = Map<String, dynamic>();
@@ -274,4 +274,18 @@ abstract class ParseBase {
   }
 
   Map<String, dynamic> toPointer() => encodeObject(parseClassName, objectId);
+
+  /// Deprecated
+  @Deprecated('Prefer to use parseClassName')
+  String className;
+  @Deprecated('Prefer to use parseClassName')
+  String getClassName() => parseClassName;
+  @Deprecated('Prefer to use parseClassName')
+  String setClassName(String className) => parseClassName = className;
+  @protected @Deprecated('Prefer to use _getObjectData method, or operator [] for certain key.')
+  Map<String, dynamic> getObjectData() => _getObjectData();
+
+  @protected @Deprecated('Prefer to use _setObjectData method, or operator [] for certain key.')
+  void setObjectData(Map<String, dynamic> objectData) =>
+      _setObjectData(objectData);
 }

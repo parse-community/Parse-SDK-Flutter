@@ -137,7 +137,8 @@ class _ParseResponseBuilder {
       });
       return object
         ..fromJson(map)
-        .._unsavedChanges = unsaved;
+        .._unsavedChanges.clear()
+        .._unsavedChanges.addAll(unsaved);
     } else {
       return null;
     }
