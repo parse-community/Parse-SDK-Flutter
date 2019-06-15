@@ -79,7 +79,7 @@ class Parse {
   //        debug: true,
   //        liveQuery: true);
   // ```
-  Parse initialize(String appId, String serverUrl,
+  Future<Parse> initialize(String appId, String serverUrl,
       {bool debug = false,
       String appName = '',
       String liveQueryUrl,
@@ -88,10 +88,10 @@ class Parse {
       String sessionId,
       bool autoSendSessionId,
       SecurityContext securityContext,
-      CoreStore coreStore}) {
+        CoreStore coreStore}) async {
     final String url = removeTrailingSlash(serverUrl);
 
-    ParseCoreData.init(appId, url,
+    await ParseCoreData.init(appId, url,
         debug: debug,
         appName: appName,
         liveQueryUrl: liveQueryUrl,

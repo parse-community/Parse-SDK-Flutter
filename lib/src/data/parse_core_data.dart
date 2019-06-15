@@ -14,7 +14,7 @@ class ParseCoreData {
   ///
   /// This class should not be user unless switching servers during the app,
   /// which is odd. Should only be user by Parse.init
-  static void init(String appId, String serverUrl,
+  static Future<void> init(String appId, String serverUrl,
       {bool debug,
       String appName,
       String liveQueryUrl,
@@ -23,11 +23,11 @@ class ParseCoreData {
       String sessionId,
       bool autoSendSessionId,
       SecurityContext securityContext,
-      CoreStore store}) {
+        CoreStore store}) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
     _instance.storage ??=
-        store ?? CoreStoreSharedPrefsImp.getInstance(password: masterKey);
+        store ?? await CoreStoreSharedPrefsImp.getInstance(password: masterKey);
 
     if (debug != null) {
       _instance.debug = debug;

@@ -10,11 +10,9 @@ import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_di
 import 'package:flutter_plugin_example/data/repositories/user/repository_user.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
-import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 void main() {
-  Stetho.initialize();
   _setTargetPlatformForDesktop();
 
   runApp(MyApp());
@@ -69,7 +67,7 @@ class _MyAppState extends State<MyApp> {
     final CoreStore coreStore = await initCoreStore();
 
     // Initialize parse
-    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+    await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
         masterKey: keyParseMasterKey, debug: true, coreStore: coreStore);
 
     //parse serve with secure store and desktop support

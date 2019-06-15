@@ -9,7 +9,7 @@ void main() {
     test('whereRelatedTo', () async {
       final MockClient client = MockClient();
 
-      Parse().initialize('appId', 'https://test.parse.com', debug: true);
+      await Parse().initialize('appId', 'https://test.parse.com', debug: true);
 
       final QueryBuilder<ParseObject> queryBuilder =
           QueryBuilder<ParseObject>(ParseObject('_User', client: client));
