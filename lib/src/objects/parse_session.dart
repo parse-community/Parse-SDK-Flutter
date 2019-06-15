@@ -39,9 +39,9 @@ class ParseSession extends ParseObject implements ParseCloneable {
       final Response response = await _client.get(url);
 
       return handleResponse<ParseSession>(
-          this, response, ParseApiRQ.logout, _debug, className);
+          this, response, ParseApiRQ.logout, _debug, parseClassName);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.logout, _debug, className);
+      return handleException(e, ParseApiRQ.logout, _debug, parseClassName);
     }
   }
 }

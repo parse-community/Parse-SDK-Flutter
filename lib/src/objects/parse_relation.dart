@@ -18,7 +18,7 @@ class ParseRelation<T extends ParseObject> {
   
   void add(T object) {
     if (object != null) {
-      _targetClass = object.getClassName();
+      _targetClass = object.parseClassName;
       _objects.add(object);
       _parent.addRelation(_key, _objects.toList());
     }
@@ -26,14 +26,14 @@ class ParseRelation<T extends ParseObject> {
 
   void remove(T object) {
     if (object != null) {
-      _targetClass = object.getClassName();
+      _targetClass = object.parseClassName;
       _objects.remove(object);
       _parent.removeRelation(_key, _objects.toList());
     }
   }
 
   Map<String, dynamic> toJson() =>
-      <String, String>{'__type': keyRelation, 'className': _objects?.first?.className, 'objects': parseEncode(_objects?.toList())};
+      <String, String>{'__type': keyRelation, 'className': _objects?.first?.parseClassName, 'objects': parseEncode(_objects?.toList())};
 
   ParseRelation<T> fromJson(Map<String, dynamic> map) => ParseRelation<T>()
                                                       .._objects = parseDecode(map['objects'])

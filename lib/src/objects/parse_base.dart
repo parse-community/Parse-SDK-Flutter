@@ -1,12 +1,11 @@
 part of flutter_parse_sdk;
 
 abstract class ParseBase {
-  String className;
+  String parseClassName;
   Type type;
-
-  String setClassName(String className) => this.className = className;
-
-  String getClassName() => className;
+  bool _dirty = false; // reserved property
+  final Map<String, dynamic> _unsavedChanges = Map<String, dynamic>();
+  final Map<String, dynamic> _savingChanges = Map<String, dynamic>();
 
   /// Stores all the values of a class
   Map<String, dynamic> _objectData = Map<String, dynamic>();
@@ -15,6 +14,40 @@ abstract class ParseBase {
   String get objectId => get<String>(keyVarObjectId);
 
   set objectId(String objectId) => set<String>(keyVarObjectId, objectId);
+
+  bool isDirty({String key}) {
+    if (key != null) {
+      return _unsavedChanges[key] != null;
+    }
+    return _isDirty(true);
+  }
+
+  bool _isDirty(bool considerChildren) {
+    if (_dirty || _unsavedChanges.isNotEmpty) {
+      return true;
+    }
+
+    if (considerChildren) {
+      return _areChildrenDirty(Set<dynamic>());
+    }
+    return false;
+  }
+
+  bool _areChildrenDirty(Set<dynamic> seenObjects) {
+    if (seenObjects.contains(this)) {
+      return false;
+    }
+    seenObjects.add(this);
+    if (_dirty || _unsavedChanges.isNotEmpty) {
+      return true;
+    }
+    _getObjectData().forEach((String key, dynamic value) {
+      if (value is ParseObject && value._areChildrenDirty(seenObjects)) {
+        return true;
+      }
+    });
+    return false;
+  }
 
   /// Returns [DateTime] createdAt
   DateTime get createdAt {
@@ -40,7 +73,7 @@ abstract class ParseBase {
   @protected
   Map<String, dynamic> toJson({bool full, bool forApiRQ = false}) {
     final Map<String, dynamic> map = <String, dynamic>{
-      keyVarClassName: className,
+      keyVarClassName: parseClassName,
     };
 
     if (objectId != null) {
@@ -55,7 +88,8 @@ abstract class ParseBase {
       map[keyVarUpdatedAt] = _parseDateFormat.format(updatedAt);
     }
 
-    getObjectData().forEach((String key, dynamic value) {
+    final Map<String, dynamic> target = forApiRQ ? _unsavedChanges : _getObjectData();
+    target.forEach((String key, dynamic value) {
       if (!map.containsKey(key)) {
         map[key] = parseEncode(value, full: full);
       }
@@ -81,7 +115,7 @@ abstract class ParseBase {
     }
 
     objectData.forEach((String key, dynamic value) {
-      if (key == className || key == '__type') {
+      if (key == parseClassName || key == '__type') {
         // NO OP
       } else if (key == keyVarObjectId) {
         objectId = value;
@@ -98,9 +132,9 @@ abstract class ParseBase {
           set<DateTime>(keyVarUpdatedAt, value);
         }
       } else if (key == keyVarAcl) {
-        getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
+        this[keyVarAcl] = ParseACL().fromJson(value);
       } else {
-        getObjectData()[key] = parseDecode(value);
+        this[key] = parseDecode(value);
       }
     });
 
@@ -113,17 +147,32 @@ abstract class ParseBase {
 
   /// Sets all the objects variables
   @protected
-  void setObjectData(Map<String, dynamic> objectData) =>
+  void _setObjectData(Map<String, dynamic> objectData) =>
       _objectData = objectData;
 
   /// Returns the objects variables
   @protected
-  Map<String, dynamic> getObjectData() => _objectData ?? Map<String, dynamic>();
+  Map<String, dynamic> _getObjectData() => _objectData ?? Map<String, dynamic>();
 
+  bool containsValue(Object value) {
+    return _getObjectData().containsValue(value);
+  }
+
+  bool containsKey(Object key) {
+    return _getObjectData().containsKey(key);
+  }
+
+  dynamic operator [](Object key) {
+    get<dynamic>(key);
+  }
+
+  void operator []=(String key, dynamic value) {
+    set<dynamic>(key, value);
+  }
   /// Saves in storage
   Future<void> saveInStorage(String key) async {
     final String objectJson = json.encode(toJson(full: true));
-    await ParseCoreData().getStore()
+    ParseCoreData().getStore()
       ..setString(key, objectJson);
   }
 
@@ -134,25 +183,29 @@ abstract class ParseBase {
   /// needed or not, set to false
   void set<T>(String key, T value, {bool forceUpdate = true}) {
     if (value != null) {
-      if (getObjectData().containsKey(key)) {
+      if (_getObjectData().containsKey(key)) {
+        if (_getObjectData()[key] == value) {
+          return;
+        }
         if (forceUpdate) {
-          getObjectData()[key] = value;
+          _getObjectData()[key] = value;
         }
       } else {
-        getObjectData()[key] = value;
+        _getObjectData()[key] = value;
       }
+      _unsavedChanges[key] = value;
     }
   }
 
   ///Set the [ParseACL] governing this object.
   void setACL<ParseACL>(ParseACL acl) {
-    getObjectData()[keyVarAcl] = acl;
+    _getObjectData()[keyVarAcl] = acl;
   }
 
   ///Access the [ParseACL] governing this object.
   ParseACL getACL() {
-    if (getObjectData().containsKey(keyVarAcl)) {
-      return getObjectData()[keyVarAcl];
+    if (_getObjectData().containsKey(keyVarAcl)) {
+      return _getObjectData()[keyVarAcl];
     } else {
       return ParseACL();
     }
@@ -164,12 +217,12 @@ abstract class ParseBase {
   /// getType<int> and an int will be returned, null, or a defaultValue if
   /// provided
   dynamic get<T>(String key, {T defaultValue}) {
-    if (getObjectData().containsKey(key)) {
-      if (T != null && getObjectData()[key] is T) {
-        final T data = getObjectData()[key];
+    if (_getObjectData().containsKey(key)) {
+      if (T != null && _getObjectData()[key] is T) {
+        final T data = _getObjectData()[key];
         return data;
       } else {
-        return getObjectData()[key];
+        return _getObjectData()[key];
       }
     } else {
       return defaultValue;
@@ -184,7 +237,7 @@ abstract class ParseBase {
       await unpin();
       final Map<String, dynamic> objectMap = parseEncode(this, full: true);
       final String json = jsonEncode(objectMap);
-      await ParseCoreData().getStore()
+      ParseCoreData().getStore()
         ..setString(objectId, json);
       return true;
     } else {
@@ -197,7 +250,7 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> unpin({String key}) async {
     if (objectId != null) {
-      await ParseCoreData().getStore()
+      ParseCoreData().getStore()
         ..remove(key ?? objectId);
       return true;
     }
@@ -210,7 +263,7 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   dynamic fromPin(String objectId) async {
     if (objectId != null) {
-      final CoreStore coreStore = await ParseCoreData().getStore();
+      final CoreStore coreStore = ParseCoreData().getStore();
       final String itemFromStore = await coreStore.getString(objectId);
 
       if (itemFromStore != null) {
@@ -220,5 +273,19 @@ abstract class ParseBase {
     return null;
   }
 
-  Map<String, dynamic> toPointer() => encodeObject(className, objectId);
+  Map<String, dynamic> toPointer() => encodeObject(parseClassName, objectId);
+
+  /// Deprecated
+  @Deprecated('Prefer to use parseClassName')
+  String className;
+  @Deprecated('Prefer to use parseClassName')
+  String getClassName() => parseClassName;
+  @Deprecated('Prefer to use parseClassName')
+  String setClassName(String className) => parseClassName = className;
+  @protected @Deprecated('Prefer to use _getObjectData method, or operator [] for certain key.')
+  Map<String, dynamic> getObjectData() => _getObjectData();
+
+  @protected @Deprecated('Prefer to use _setObjectData method, or operator [] for certain key.')
+  void setObjectData(Map<String, dynamic> objectData) =>
+      _setObjectData(objectData);
 }

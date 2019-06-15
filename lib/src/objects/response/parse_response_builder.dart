@@ -74,10 +74,13 @@ class _ParseResponseBuilder {
         for (int i = 0; i < object.length; i++) {
           final Map<String, dynamic> objectResult = list[i];
           if (objectResult.containsKey('success')) {
-            final T item = _handleSingleResult<T>(object[i], objectResult['success'], false);
+            final T item = _handleSingleResult<T>(
+                object[i], objectResult['success'], false);
             response.results.add(item);
           } else {
-            final ParseError error = ParseError(code: objectResult[keyCode], message: objectResult[keyError].toString());
+            final ParseError error = ParseError(
+                code: objectResult[keyCode],
+                message: objectResult[keyError].toString());
             response.results.add(error);
           }
         }
@@ -109,12 +112,11 @@ class _ParseResponseBuilder {
   }
 
   /// Handles a response with a multiple result object
-  List<T> _handleMultipleResults<T>(dynamic object, List<dynamic> data) {
+  List<T> _handleMultipleResults<T>(T object, List<dynamic> data) {
     final List<T> resultsList = List<T>();
     for (dynamic value in data) {
       resultsList.add(_handleSingleResult<T>(object, value, true));
     }
-
     return resultsList;
   }
 
@@ -124,7 +126,19 @@ class _ParseResponseBuilder {
     if (createNewObject && object is ParseCloneable) {
       return object.clone(map);
     } else if (object is ParseObject) {
-      return object..fromJson(map);
+      // Merge unsaved changes and response.
+      final Map<String, dynamic> unsaved = Map<String, dynamic>();
+      unsaved.addAll(object._unsavedChanges);
+      unsaved.forEach((String k, dynamic v) {
+        if (map[k] != null && map[k] != v) {
+          // Changes after save & before response. Keep it.
+          map.remove(k);
+        }
+      });
+      return object
+        ..fromJson(map)
+        .._unsavedChanges.clear()
+        .._unsavedChanges.addAll(unsaved);
     } else {
       return null;
     }
