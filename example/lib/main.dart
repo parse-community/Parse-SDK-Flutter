@@ -68,7 +68,9 @@ class _MyAppState extends State<MyApp> {
 
     // Initialize parse
     await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
-        masterKey: keyParseMasterKey, debug: true, coreStore: coreStore);
+        masterKey: keyParseMasterKey,
+        debug: true,
+        coreStore: await CoreStoreSharedPrefsImp.getInstance());
 
     //parse serve with secure store and desktop support
 

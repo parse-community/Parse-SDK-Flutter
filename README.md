@@ -23,22 +23,22 @@ or clone this repository and add to your project. As this is an early developmen
 Once you have the library added to your project, upon first call to your app (Similar to what your application class would be) add the following...
 
 ```dart
-Parse().initialize(
+  await Parse().initialize(
         ApplicationConstants.keyApplicationId,
         ApplicationConstants.keyParseServerUrl);
 ```
 if you want to use secure storage also that's allow using sdk on desktop application 
 ```dart
 
-    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+  await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
         masterKey: keyParseMasterKey,
         debug: true,
-        coreStore:  CoreStoreImp.getInstance());
+        coreStore: await CoreStoreSembastImp.getInstance());
 ```
 It's possible to add other params, such as ...
 
 ```dart
-Parse().initialize(
+  await Parse().initialize(
         ApplicationConstants.keyApplicationId,
         ApplicationConstants.keyParseServerUrl,
         masterKey: ApplicationConstants.keyParseMasterKey,
@@ -47,7 +47,7 @@ Parse().initialize(
         liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
         autoSendSessionId: true,
         securityContext: securityContext,
-	coreStore: CoreStoreSembastImp.getInstance());
+	    coreStore: await CoreStoreSharedPrefsImp.getInstance());
 ```
 
 ## Objects
