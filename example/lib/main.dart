@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:english_words/english_words.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/base/api_response.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_di
 import 'package:flutter_plugin_example/data/repositories/user/repository_user.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
+import 'package:json_table/json_table.dart';
 // import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
@@ -37,12 +39,15 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin {
   DietPlanRepository dietPlanRepo;
   UserRepository userRepo;
+  // Map<String, dynamic> _result;
+  List<Map<String, dynamic>> _result = [];
 
+  String info = "";
   String text = '';
-
+  LiveQuery liveQuery;
   @override
   void initState() {
     super.initState();
@@ -50,17 +55,135 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
-          child: Text(text),
-        ),
-      ),
+          appBar: AppBar(
+            title: const Text('Parse sdk live test'),
+          ),
+          body: Container(
+            margin: EdgeInsets.all(10.0),
+            child: Column(
+              children: <Widget>[
+                // JsonTable(
+                //   jsonDecode(_result.isEmpty ? "[{}]" : _result[0].toString()),
+                //   tableHeaderBuilder: (String header) {
+                //     return Container(
+                //       padding:
+                //           EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                //       decoration: BoxDecoration(
+                //           border: Border.all(width: 0.5),
+                //           color: Colors.grey[300]),
+                //       child: Text(
+                //         header,
+                //         textAlign: TextAlign.center,
+                //         style: Theme.of(context).textTheme.display1.copyWith(
+                //             fontWeight: FontWeight.w700,
+                //             fontSize: 14.0,
+                //             color: Colors.black87),
+                //       ),
+                //     );
+                //   },
+                //   tableCellBuilder: (dynamic value) {
+                //     return Container(
+                //       padding:
+                //           EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                //       decoration: BoxDecoration(
+                //           border: Border.all(
+                //               width: 0.5, color: Colors.grey.withOpacity(0.5))),
+                //       child: Text(
+                //         value,
+                //         textAlign: TextAlign.center,
+                //         style: Theme.of(context)
+                //             .textTheme
+                //             .display1
+                //             .copyWith(fontSize: 14.0, color: Colors.grey[900]),
+                //       ),
+                //     );
+                //   },
+                // ),
+                Flexible(
+                    child: ListView(
+                  children:
+                      _result.map((location) => _ResultItem(location)).toList(),
+                )),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    // Button(label: '开始监听', onPressed: _listen()),
+                    RaisedButton(
+                        onPressed: () {
+                          updateSingleItem(context);
+                        },
+                        color: Colors.blue[400],
+                        child: new Text('更新',
+                            style: new TextStyle(color: Colors.white))),
+                  ],
+                ),
+                // RaisedButton(
+                //     onPressed: () {
+                //       _listen();
+                //     },
+                //     color: Colors.blue[400],
+                //     child:
+                //         new Text('开始监听', style: new TextStyle(color: Colors.white))),
+                // RaisedButton(
+                //     onPressed: () {
+                //       _change(context);
+                //     },
+                //     color: Colors.blue[400],
+                //     child:
+                //         new Text('修改数据', style: new TextStyle(color: Colors.white))),
+              ],
+            ),
+          )),
     );
+  }
+
+  Future<void> _listen() async {
+    QueryBuilder<ParseObject> query = QueryBuilder<ParseObject>(DietPlan())
+      ..whereEqualTo('objectId', 'Y06whIh1sS');
+    // LiveQuery liveQuery = LiveQuery();
+    // print("=====query: $query");
+    await liveQuery.subscribe(query);
+
+    liveQuery.on(LiveQueryEvent.update, (dynamic value) {
+      print("监听数据连接成功，开始订阅消息！");
+
+      print('*** UPDATE ***: ${DateTime.now().toString()}\n $value');
+      print((value as ParseObject).objectId);
+      print((value as ParseObject).updatedAt);
+      print((value as ParseObject).createdAt);
+      // print((value as ParseObject).get('objectId'));
+      // print((value as ParseObject).get('updatedAt'));
+      // print((value as ParseObject).get('createdAt'));
+
+      print("监听到数据变化：" + (value as ParseObject).toJson().toString());
+      // _result.add(value);
+    });
+  }
+
+  Future<void> updateSingleItem(BuildContext context) async {
+    final ParseResponse apiResponse = await DietPlan().getObject('Y06whIh1sS');
+
+    if (apiResponse.success && apiResponse.count > 0) {
+      final DietPlan dietPlan = apiResponse.result;
+
+      // Shows example of storing values in their proper type and retrieving them
+      var s = new WordPair.random().asPascalCase;
+      dietPlan.set<String>('Name', s);
+      await dietPlan.save();
+      // await createItem();
+      // Shows example of pinning an item
+      // await dietPlan.pin();
+
+      // shows example of retrieving a pin
+      setState(() {});
+    } else {
+      print(keyAppName + ': ' + apiResponse.error.message);
+    }
   }
 
   Future<void> initData() async {
@@ -69,8 +192,15 @@ class _MyAppState extends State<MyApp> {
 
     // Initialize parse
     Parse().initialize(keyParseApplicationId, keyParseServerUrl,
-        masterKey: keyParseMasterKey, debug: true);
+        masterKey: keyParseMasterKey,
+        liveQueryUrl: keyParseServerUrl,
+        // clientKey: "XXXi3GejX3SIxpDgSbKHHV8uHUUP3QGiPPTlxxxx",
+        sessionId: "1212121",
+        autoSendSessionId: true,
+        debug: true);
+    // ParseHTTPClient client = ParseHTTPClient();
 
+    liveQuery = LiveQuery();
     //parse serve with secure store and desktop support
 
     //    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
@@ -82,9 +212,31 @@ class _MyAppState extends State<MyApp> {
     final ParseResponse response = await Parse().healthCheck();
 
     if (response.success) {
-      await runTestQueries();
-      text += 'runTestQueries\n';
-      print(text);
+      // await _listen();
+      QueryBuilder<ParseObject> query = QueryBuilder<ParseObject>(DietPlan())
+        ..whereEqualTo('objectId', 'Y06whIh1sS');
+      // LiveQuery liveQuery = LiveQuery();
+      // print("=====query: $query");
+      await liveQuery.subscribe(query);
+
+      await liveQuery.on(LiveQueryEvent.update, (dynamic value) {
+        print("监听数据连接成功，开始订阅消息！");
+
+        print('*** UPDATE ***: ${DateTime.now().toString()}\n $value');
+        print((value as ParseObject).objectId);
+        print((value as ParseObject).updatedAt);
+        print((value as ParseObject).createdAt);
+        print((value as ParseObject).get<String>('Name'));
+        // print((value as ParseObject).get('updatedAt'));
+        // print((value as ParseObject).get('createdAt'));
+        _result.clear();
+        print("监听到数据变化：" + (value as ParseObject).toJson().toString());
+        _result.add(value.toJson());
+        print(_result.toString());
+      });
+      // await runTestQueries();
+      // text += 'runTestQueries\n';
+      // print(text);
     } else {
       text += 'Server health check failed';
       print(text);
@@ -119,7 +271,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> test() async {
-    User user = User('unreal', 'hhhhhh', 'unreal0@sina.cn');
+    User user = User('unreal0', 'hhhhhh', 'unreal0@sina.cn');
     final ParseResponse signUpResponse = await user.signUp();
 
     if (signUpResponse.success) {
@@ -381,3 +533,88 @@ const String dietPlansToAdd =
     '{"className":"Diet_Plans","Name":"Low Carb","Description":"Low Carb diet, main focus on quality fats and protein.","Fat":35,"Carbs":25,"Protein":40,"Status":0},'
     '{"className":"Diet_Plans","Name":"Paleo","Description":"Paleo diet.","Fat":60,"Carbs":25,"Protein":10,"Status":0},'
     '{"className":"Diet_Plans","Name":"Ketogenic","Description":"High quality fats, low carbs.","Fat":65,"Carbs":5,"Protein":30,"Status":0}]';
+
+class _ResultItem extends StatelessWidget {
+  final Map<String, dynamic> _data;
+
+  const _ResultItem(this._data, {Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            DateTime.now().toIso8601String(),
+            style: TextStyle(color: Colors.grey),
+          ),
+          SizedBox(width: 4.0, height: 4.0),
+          // Text(
+          //   "$_data",
+          //   style: TextStyle(color: Colors.black87),
+          // ),
+          Text(
+            jsonFormat(_data),
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String jsonFormat(Map<String, Object> json) {
+    JsonEncoder encoder = JsonEncoder.withIndent('  ');
+    return encoder.convert(json);
+  }
+}
+
+// class DietPlan extends ParseObject {
+//   DietPlan() : super(DIET_PLAN);
+
+//   String name;
+//   String description;
+//   num protein;
+//   num carbs;
+//   num fat;
+//   num status;
+
+//   static const String DIET_PLAN = 'post';
+//   static const String NAME = 'title';
+//   // static const String DESCRIPTION = 'text';
+//   // static const String PROTEIN = 'Protein';
+//   // static const String CARBS = 'Carbs';
+//   // static const String FAT = 'Fat';
+//   // static const String STATUS = 'Status';
+
+//   @override
+//   dynamic fromJson(Map<String, dynamic> objectData) {
+//     this.name = objectData[NAME];
+//     // this.description = objectData[DESCRIPTION];
+//     // this.protein = objectData[PROTEIN];
+//     // this.carbs = objectData[CARBS];
+//     // this.fat = objectData[FAT];
+//     // this.status = objectData[STATUS];
+//     return this;
+//   }
+
+//   // Map<String, dynamic> toJson() => {
+//   //       NAME: name,
+//   //       // DESCRIPTION: description,
+//   //       // PROTEIN: protein,
+//   //       // CARBS: carbs,
+//   //       // FAT: fat,
+//   //       // STATUS: status,
+//   //     };
+
+//   @override
+//   String toString() {
+//     return toJson().toString();
+//   }
+
+//   @override
+//   dynamic copy() {
+//     return DietPlan();
+//   }
+// }

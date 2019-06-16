@@ -11,6 +11,10 @@ dependencies:
   # flutter_stetho: ^0.2.2
   sembast: ^1.13.3+1
   shared_preferences: ^0.5.0
+  json_table: ^0.3.0
+  intl: ^0.15.8
+  english_words: ^3.1.4
+  json_serializable: ^3.0.0
 
 dev_dependencies:
   parse_server_sdk:
