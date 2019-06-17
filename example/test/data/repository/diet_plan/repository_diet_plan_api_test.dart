@@ -34,7 +34,7 @@ void main() {
     test('add DietPlan from API', () async {
       // Given
       final DietPlan expected = getDummyDietPlan();
-      expected.getObjectData()['objectId'] = null;
+      expected['objectId'] = null;
 
       // When
       final ApiResponse response = await repository.add(expected);
@@ -51,11 +51,11 @@ void main() {
       // Given
       final List<DietPlan> actual = List<DietPlan>();
       final DietPlan item1 = getDummyDietPlan();
-      item1.getObjectData()['objectId'] = null;
+      item1['objectId'] = null;
       item1.protein = 5;
       actual.add(item1);
       final DietPlan item2 = getDummyDietPlan();
-      item2.getObjectData()['objectId'] = null;
+      item2['objectId'] = null;
       item2.protein = 6;
       actual.add(item2);
 
@@ -74,7 +74,7 @@ void main() {
     test('getById DietPlan from API', () async {
       // Given
       final DietPlan dummy = getDummyDietPlan();
-      dummy.getObjectData()['objectId'] = null;
+      dummy['objectId'] = null;
 
       // When
       final ApiResponse response = await repository.add(dummy);
@@ -95,7 +95,7 @@ void main() {
     test('getNewerThan DietPlan from API', () async {
       // Given
       final DietPlan dummy = getDummyDietPlan();
-      dummy.getObjectData()['objectId'] = null;
+      dummy['objectId'] = null;
 
       // When
       final ApiResponse baseResponse = await repository.add(dummy);
@@ -120,11 +120,11 @@ void main() {
       final List<DietPlan> actual = List<DietPlan>();
 
       final DietPlan item1 = getDummyDietPlan();
-      item1.getObjectData()['objectId'] = null;
+      item1['objectId'] = null;
       item1.protein = 5;
       actual.add(item1);
       final DietPlan item2 = getDummyDietPlan();
-      item2.getObjectData()['objectId'] = null;
+      item2['objectId'] = null;
       item2.protein = 6;
       actual.add(item2);
 
@@ -142,7 +142,7 @@ void main() {
     test('update DietPlan from API', () async {
       // Given
       final DietPlan expected = getDummyDietPlan();
-      expected.getObjectData()['objectId'] = null;
+      expected['objectId'] = null;
       final ApiResponse response = await repository.add(expected);
       final DietPlan initialResponse = response.result;
 
@@ -165,11 +165,11 @@ void main() {
       final List<DietPlan> actual = List<DietPlan>();
 
       final DietPlan item1 = getDummyDietPlan();
-      item1.getObjectData()['objectId'] = null;
+      item1['objectId'] = null;
       item1.protein = 7;
       actual.add(item1);
       final DietPlan item2 = getDummyDietPlan();
-      item2.getObjectData()['objectId'] = null;
+      item2['objectId'] = null;
       item2.protein = 8;
       actual.add(item2);
       await repository.addAll(actual);

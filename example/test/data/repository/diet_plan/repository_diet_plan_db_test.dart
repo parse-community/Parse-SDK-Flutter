@@ -126,7 +126,7 @@ void main() {
     // Given
     final DietPlan expected = getDummyDietPlan();
     // ignore: invalid_use_of_protected_member
-    expected.getObjectData()[keyVarUpdatedAt] = DateTime.now();
+    expected[keyVarUpdatedAt] = DateTime.now();
     final ApiResponse response = await repository.add(expected);
 
     // When

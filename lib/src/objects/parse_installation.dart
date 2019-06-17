@@ -162,7 +162,7 @@ class ParseInstallation extends ParseObject {
       final String uri = '${_client.data.serverUrl}$keyEndPointInstallations';
       final String body = json.encode(toJson(forApiRQ: true));
       if (_debug) {
-        logRequest(ParseCoreData().appName, className,
+        logRequest(ParseCoreData().appName, parseClassName,
             ParseApiRQ.create.toString(), uri, body);
       }
       final Response result = await _client.post(uri, body: body);
@@ -175,15 +175,15 @@ class ParseInstallation extends ParseObject {
       }
 
       return handleResponse<ParseInstallation>(
-          this, result, ParseApiRQ.create, _debug, className);
+          this, result, ParseApiRQ.create, _debug, parseClassName);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.create, _debug, className);
+      return handleException(e, ParseApiRQ.create, _debug, parseClassName);
     }
   }
 
   /// Saves the current object online
   Future<ParseResponse> _save() async {
-    if (getObjectData()[keyVarObjectId] == null) {
+    if (objectId== null) {
       return create();
     } else {
       try {
@@ -191,14 +191,14 @@ class ParseInstallation extends ParseObject {
             '${ParseCoreData().serverUrl}$keyEndPointInstallations/$objectId';
         final String body = json.encode(toJson(forApiRQ: true));
         if (_debug) {
-          logRequest(ParseCoreData().appName, className,
+          logRequest(ParseCoreData().appName, parseClassName,
               ParseApiRQ.save.toString(), uri, body);
         }
         final Response result = await _client.put(uri, body: body);
         return handleResponse<ParseInstallation>(
-            this, result, ParseApiRQ.save, _debug, className);
+            this, result, ParseApiRQ.save, _debug, parseClassName);
       } on Exception catch (e) {
-        return handleException(e, ParseApiRQ.save, _debug, className);
+        return handleException(e, ParseApiRQ.save, _debug, parseClassName);
       }
     }
   }

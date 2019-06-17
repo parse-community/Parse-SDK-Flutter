@@ -48,7 +48,7 @@ class LiveQuery {
       _liveQueryURL = _liveQueryURL.replaceAll('http', 'ws');
     }
 
-    final String _className = query.object.className;
+    final String _className = query.object.parseClassName;
     query.limiters.clear(); //Remove limits in LiveQuery
     final String _where = query._buildQuery().replaceAll('where=', '');
 

@@ -23,22 +23,22 @@ or clone this repository and add to your project. As this is an early developmen
 Once you have the library added to your project, upon first call to your app (Similar to what your application class would be) add the following...
 
 ```dart
-Parse().initialize(
+  await Parse().initialize(
         ApplicationConstants.keyApplicationId,
         ApplicationConstants.keyParseServerUrl);
 ```
 if you want to use secure storage also that's allow using sdk on desktop application 
 ```dart
 
-    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+  await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
         masterKey: keyParseMasterKey,
         debug: true,
-        coreStore:  CoreStoreImp.getInstance());
+        coreStore: await CoreStoreSembastImp.getInstance());
 ```
 It's possible to add other params, such as ...
 
 ```dart
-Parse().initialize(
+  await Parse().initialize(
         ApplicationConstants.keyApplicationId,
         ApplicationConstants.keyParseServerUrl,
         masterKey: ApplicationConstants.keyParseMasterKey,
@@ -46,7 +46,8 @@ Parse().initialize(
         debug: true,
         liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
         autoSendSessionId: true,
-        securityContext: securityContext);
+        securityContext: securityContext,
+	    coreStore: await CoreStoreSharedPrefsImp.getInstance());
 ```
 
 ## Objects
@@ -132,6 +133,14 @@ and to retrieve it
 ```dart
 var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
 ```
+
+## Storage
+We now have 2 types of storage, secure and unsecure. We currently rely on 2 third party options:
+
+ * SharedPreferences 
+ * Sembast
+
+Sembast offers secured storage, whilst SharePreferences wraps NSUserDefaults (on iOS) and SharedPreferences (on Android).
 
 ## Increment Counter values in objects
 Retrieve it, call

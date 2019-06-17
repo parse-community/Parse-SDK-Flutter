@@ -26,10 +26,14 @@ class ParseUser extends ParseObject implements ParseCloneable {
     this.sessionToken = sessionToken;
   }
 
+  ParseUser.forQuery() : super(keyClassUser);
+
   ParseUser.clone(Map<String, dynamic> map)
       : this(map[keyVarUsername], map[keyVarPassword], map[keyVarEmail]);
 
-  ParseUser.forQuery() : super(keyClassUser);
+  @override
+  dynamic clone(Map<String, dynamic> map) =>
+      ParseUser.clone(map)..fromJson(map);
 
   static const String keyEmailVerified = 'emailVerified';
   static const String keyUsername = 'username';
@@ -96,10 +100,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUserName');
       final Response response = await _client.get(url, headers: headers);
       return _handleResponse(_getEmptyUser(), response, ParseApiRQ.currentUser,
-          _debug, _getEmptyUser().className);
+          _debug, _getEmptyUser().parseClassName);
     } on Exception catch (e) {
       return handleException(
-          e, ParseApiRQ.currentUser, _debug, _getEmptyUser().className);
+          e, ParseApiRQ.currentUser, _debug, _getEmptyUser().parseClassName);
     }
   }
 
@@ -138,9 +142,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
           body: json.encode(bodyData));
 
       return _handleResponse(
-          this, response, ParseApiRQ.signUp, _debug, className);
+          this, response, ParseApiRQ.signUp, _debug, parseClassName);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.signUp, _debug, className);
+      return handleException(e, ParseApiRQ.signUp, _debug, parseClassName);
     }
   }
 
@@ -164,9 +168,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
       });
 
       return _handleResponse(
-          this, response, ParseApiRQ.login, _debug, className);
+          this, response, ParseApiRQ.login, _debug, parseClassName);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.login, _debug, className);
+      return handleException(e, ParseApiRQ.login, _debug, parseClassName);
     }
   }
 
@@ -187,9 +191,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
           }));
 
       return _handleResponse(
-          this, response, ParseApiRQ.loginAnonymous, _debug, className);
+          this, response, ParseApiRQ.loginAnonymous, _debug, parseClassName);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.loginAnonymous, _debug, className);
+      return handleException(e, ParseApiRQ.loginAnonymous, _debug, parseClassName);
     }
   }
 
@@ -213,9 +217,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
           }));
 
       return _handleResponse(
-          this, response, ParseApiRQ.loginWith, _debug, className);
+          this, response, ParseApiRQ.loginWith, _debug, parseClassName);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.loginWith, _debug, className);
+      return handleException(e, ParseApiRQ.loginWith, _debug, parseClassName);
     }
   }
 
@@ -230,7 +234,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
     if (deleteLocalUserData == true) {
       unpin(key: keyParseStoreUser);
-      setObjectData(null);
+      _setObjectData(null);
     }
 
     try {
@@ -239,9 +243,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
           headers: <String, String>{keyHeaderSessionToken: sessionId});
 
       return _handleResponse(
-          this, response, ParseApiRQ.logout, _debug, className);
+          this, response, ParseApiRQ.logout, _debug, parseClassName);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.logout, _debug, className);
+      return handleException(e, ParseApiRQ.logout, _debug, parseClassName);
     }
   }
 
@@ -252,10 +256,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
           '${_client.data.serverUrl}$keyEndPointVerificationEmail',
           body: json.encode(<String, dynamic>{keyVarEmail: emailAddress}));
       return _handleResponse(this, response,
-          ParseApiRQ.verificationEmailRequest, _debug, className);
+          ParseApiRQ.verificationEmailRequest, _debug, parseClassName);
     } on Exception catch (e) {
       return handleException(
-          e, ParseApiRQ.verificationEmailRequest, _debug, className);
+          e, ParseApiRQ.verificationEmailRequest, _debug, parseClassName);
     }
   }
 
@@ -266,10 +270,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
           '${_client.data.serverUrl}$keyEndPointRequestPasswordReset',
           body: json.encode(<String, dynamic>{keyVarEmail: emailAddress}));
       return _handleResponse(
-          this, response, ParseApiRQ.requestPasswordReset, _debug, className);
+          this, response, ParseApiRQ.requestPasswordReset, _debug, parseClassName);
     } on Exception catch (e) {
       return handleException(
-          e, ParseApiRQ.requestPasswordReset, _debug, className);
+          e, ParseApiRQ.requestPasswordReset, _debug, parseClassName);
     }
   }
 
@@ -293,9 +297,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
         final Uri url = getSanitisedUri(_client, '$_path/$objectId');
         final Response response = await _client.delete(url);
         return _handleResponse(
-            this, response, ParseApiRQ.destroy, _debug, className);
+            this, response, ParseApiRQ.destroy, _debug, parseClassName);
       } on Exception catch (e) {
-        return handleException(e, ParseApiRQ.destroy, _debug, className);
+        return handleException(e, ParseApiRQ.destroy, _debug, parseClassName);
       }
     }
 

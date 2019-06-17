@@ -1,20 +1,22 @@
 part of flutter_parse_sdk;
 
-class CoreStoreImp implements CoreStore {
-  CoreStoreImp._internal(this._store);
-  static CoreStoreImp _instance;
-  static Future<CoreStoreImp> getInstance(
-      {DatabaseFactory factory, String password = 'flutter_sdk'}) async {
+class CoreStoreSembastImp implements CoreStore {
+  CoreStoreSembastImp._internal(this._store);
+  static CoreStoreSembastImp _instance;
+
+  static Future<CoreStore> getInstance({DatabaseFactory factory, String password = 'flutter_sdk'}) async {
+
     if (_instance == null) {
       factory ??= databaseFactoryIo;
       final SembastCodec codec = getXXTeaSembastCodec(password: password);
       String dbDirectory = '';
       if (Platform.isIOS || Platform.isAndroid)
         dbDirectory = (await getApplicationDocumentsDirectory()).path;
-      final String dbPath = path.join('$dbDirectory+/parse', 'parse.db');
+      final String dbPath = path.join('$dbDirectory/parse', 'parse.db');
       final Database db = await factory.openDatabase(dbPath, codec: codec);
-      _instance = CoreStoreImp._internal(db);
+      _instance = CoreStoreSembastImp._internal(db);
     }
+
     return _instance;
   }
 
