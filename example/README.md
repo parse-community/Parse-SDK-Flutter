@@ -1,8 +1,10 @@
-# flutter_plugin_example
+# flutter_ParseServer_example
 
-Demonstrates how to use the flutter_plugin plugin.
+Demonstrates ParseServer sdk.
 
-## Getting Started
+## 连接 docker server
+[docker-compose-parse-server](https://github.com/unreal0/docker-compose-parse-server).
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+## demo
+* live parse demo
+* data add/delete/change/find
