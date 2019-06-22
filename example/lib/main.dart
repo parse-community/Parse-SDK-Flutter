@@ -144,7 +144,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin {
 
   Future<void> _listen() async {
     QueryBuilder<ParseObject> query = QueryBuilder<ParseObject>(DietPlan())
-      ..whereEqualTo('objectId', 'Y06whIh1sS');
+      ..whereEqualTo('objectId', 'jSH0CHYwjL');
     // LiveQuery liveQuery = LiveQuery();
     // print("=====query: $query");
     await liveQuery.subscribe(query);
@@ -166,7 +166,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin {
   }
 
   Future<void> updateSingleItem(BuildContext context) async {
-    final ParseResponse apiResponse = await DietPlan().getObject('Y06whIh1sS');
+    final ParseResponse apiResponse = await DietPlan().getObject('jSH0CHYwjL');
 
     if (apiResponse.success && apiResponse.count > 0) {
       final DietPlan dietPlan = apiResponse.result;
@@ -193,7 +193,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin {
     // Initialize parse
     Parse().initialize(keyParseApplicationId, keyParseServerUrl,
         masterKey: keyParseMasterKey,
-        liveQueryUrl: keyParseServerUrl,
+        liveQueryUrl: keyParseLiveServerUrl,
         // clientKey: "XXXi3GejX3SIxpDgSbKHHV8uHUUP3QGiPPTlxxxx",
         sessionId: "1212121",
         autoSendSessionId: true,
@@ -214,7 +214,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin {
     if (response.success) {
       // await _listen();
       QueryBuilder<ParseObject> query = QueryBuilder<ParseObject>(DietPlan())
-        ..whereEqualTo('objectId', 'Y06whIh1sS');
+        ..whereEqualTo('objectId', 'jSH0CHYwjL');
       // LiveQuery liveQuery = LiveQuery();
       // print("=====query: $query");
       await liveQuery.subscribe(query);
