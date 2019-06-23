@@ -61,7 +61,7 @@ class _DecisionPageState extends State<DecisionPage> {
 
   Future<void> _initParse() async {
     try {
-      Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+      await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
           masterKey: keyParseMasterKey, debug: true);
       final ParseResponse response = await Parse().healthCheck();
       if (response.success) {

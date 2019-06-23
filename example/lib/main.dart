@@ -10,11 +10,9 @@ import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_di
 import 'package:flutter_plugin_example/data/repositories/user/repository_user.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
-import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 void main() {
-  Stetho.initialize();
   _setTargetPlatformForDesktop();
 
   runApp(MyApp());
@@ -66,17 +64,20 @@ class _MyAppState extends State<MyApp> {
   Future<void> initData() async {
     // Initialize repository
     await initRepository();
+    final CoreStore coreStore = await initCoreStore();
 
     // Initialize parse
-    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
-        masterKey: keyParseMasterKey, debug: true);
+    await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+        masterKey: keyParseMasterKey,
+        debug: true,
+        coreStore: await CoreStoreSharedPrefsImp.getInstance());
 
     //parse serve with secure store and desktop support
 
     //    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
     //        masterKey: keyParseMasterKey,
     //        debug: true,
-    //        coreStore: CoreStoreImp.getInstance());
+    //        coreStore: CoreStoreSharedPrefsImp.getInstance());
 
     // Check server is healthy and live - Debug is on in this instance so check logs for result
     final ParseResponse response = await Parse().healthCheck();
@@ -303,7 +304,7 @@ class _MyAppState extends State<MyApp> {
     if (result.success) {
       if (result.result is ParseObject) {
         final ParseObject parseObject = result.result;
-        print(parseObject.className);
+        print(parseObject.parseClassName);
       }
     }
   }
@@ -370,6 +371,15 @@ class _MyAppState extends State<MyApp> {
   Future<void> initRepository() async {
     dietPlanRepo ??= DietPlanRepository.init(await getDB());
     userRepo ??= UserRepository.init(await getDB());
+  }
+
+
+  /// Available options:
+  /// SharedPreferences - Not secure but will work with older versions of SDK - CoreStoreSharedPrefsImpl
+  /// Sembast - NoSQL DB - Has security - CoreStoreSembastImpl
+  Future<CoreStore> initCoreStore() async {
+    //return CoreStoreSembastImp.getInstance();
+    return CoreStoreSharedPrefsImp.getInstance();
   }
 }
 

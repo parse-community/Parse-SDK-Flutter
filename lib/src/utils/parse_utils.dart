@@ -57,7 +57,8 @@ Uri getCustomUri(ParseHTTPClient client, String path,
 
 /// Removes unncessary /
 String removeTrailingSlash(String serverUrl) {
-  if (serverUrl.isNotEmpty && serverUrl.substring(serverUrl.length - 1) == '/') {
+  if (serverUrl.isNotEmpty &&
+      serverUrl.substring(serverUrl.length - 1) == '/') {
     return serverUrl.substring(0, serverUrl.length - 1);
   } else {
     return serverUrl;
@@ -65,7 +66,7 @@ String removeTrailingSlash(String serverUrl) {
 }
 
 Future<ParseResponse> batchRequest(List<dynamic> requests,
-    List<ParseObject> objects, {ParseHTTPClient client,  bool debug}) async {
+    List<ParseObject> objects, {ParseHTTPClient client, bool debug}) async {
   debug = isDebugEnabled(objectLevelDebug: debug);
   client = client ??
       ParseHTTPClient(

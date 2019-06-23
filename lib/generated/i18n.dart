@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 // ignore_for_file: non_constant_identifier_names
 // ignore_for_file: camel_case_types
 // ignore_for_file: prefer_single_quotes
@@ -12,7 +13,7 @@ class S implements WidgetsLocalizations {
   const S();
 
   static const GeneratedLocalizationsDelegate delegate =
-  GeneratedLocalizationsDelegate();
+      GeneratedLocalizationsDelegate();
 
   static S of(BuildContext context) =>
       Localizations.of<S>(context, WidgetsLocalizations);

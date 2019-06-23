@@ -102,7 +102,7 @@ class ParseFile extends ParseObject {
           Response(json.encode(response), 201),
           ParseApiRQ.upload,
           _debug,
-          className);
+          parseClassName);
     }
 
     final String ext = path.extension(file.path).replaceAll('.', '');
@@ -120,9 +120,9 @@ class ParseFile extends ParseObject {
         name = map['name'].toString();
       }
       return handleResponse<ParseFile>(
-          this, response, ParseApiRQ.upload, _debug, className);
+          this, response, ParseApiRQ.upload, _debug, parseClassName);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.upload, _debug, className);
+      return handleException(e, ParseApiRQ.upload, _debug, parseClassName);
     }
   }
 }

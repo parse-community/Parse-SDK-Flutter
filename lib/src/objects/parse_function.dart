@@ -30,13 +30,13 @@ class ParseCloudFunction extends ParseObject {
       {Map<String, dynamic> parameters, Map<String, dynamic> headers}) async {
     final String uri = '${_client.data.serverUrl}$_path';
     if (parameters != null) {
-      setObjectData(parameters);
+      _setObjectData(parameters);
     }
 
     final Response result =
-    await _client.post(uri, body: json.encode(getObjectData()));
+    await _client.post(uri, body: json.encode(_getObjectData()));
     return handleResponse<ParseCloudFunction>(
-        this, result, ParseApiRQ.execute, _debug, className);
+        this, result, ParseApiRQ.execute, _debug, parseClassName);
   }
 
   /// Executes a cloud function that returns a ParseObject type
@@ -46,11 +46,11 @@ class ParseCloudFunction extends ParseObject {
       {Map<String, dynamic> parameters, Map<String, dynamic> headers}) async {
     final String uri = '${_client.data.serverUrl}$_path';
     if (parameters != null) {
-      setObjectData(parameters);
+      _setObjectData(parameters);
     }
     final Response result =
-        await _client.post(uri, body: json.encode(getObjectData()));
+        await _client.post(uri, body: json.encode(_getObjectData()));
     return handleResponse<T>(
-        this, result, ParseApiRQ.executeObjectionFunction, _debug, className);
+        this, result, ParseApiRQ.executeObjectionFunction, _debug, parseClassName);
   }
 }
