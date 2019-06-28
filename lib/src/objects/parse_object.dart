@@ -108,6 +108,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
         else {
           _revertSavingChanges();
         }
+        return response;
       }
     }
     return childrenResponse;
