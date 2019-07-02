@@ -136,11 +136,13 @@ class ParseUser extends ParseObject implements ParseCloneable {
       bodyData[keyVarPassword] = password;
       bodyData[keyVarUsername] = username;
       final Uri url = getSanitisedUri(_client, '$path');
+      final String body = json.encode(bodyData);
+      _saveChanges();
       final Response response = await _client.post(url,
           headers: <String, String>{
             keyHeaderRevocableSession: '1',
           },
-          body: json.encode(bodyData));
+          body: body);
 
       return _handleResponse(
           this, response, ParseApiRQ.signUp, _debug, parseClassName);
@@ -162,7 +164,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
       final Uri url = getSanitisedUri(_client, '$keyEndPointLogin',
           queryParams: queryParams);
-
+      _saveChanges();
       final Response response =
           await _client.get(url, headers: <String, String>{
         keyHeaderRevocableSession: '1',
@@ -356,7 +358,6 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
     final Map<String, dynamic> responseData = jsonDecode(response.body);
     if (responseData.containsKey(keyVarObjectId)) {
-      parseResponse.result.fromJson(responseData);
       user.sessionToken = responseData[keyParamSessionToken];
       ParseCoreData().setSessionId(user.sessionToken);
     }
