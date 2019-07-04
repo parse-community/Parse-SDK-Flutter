@@ -55,13 +55,13 @@ You can create custom objects by calling:
 var dietPlan = ParseObject('DietPlan')
 	..set('Name', 'Ketogenic')
 	..set('Fat', 65);
-await dietPlan.save()
+await dietPlan.save();
 ```
 Verify that the object has been successfully saved using
 ```dart
 var response = await dietPlan.save();
 if (response.success) {
-   dietPlan = response.result;
+   dietPlan = response.results.first;
 }
 ```
 Types supported:
@@ -205,7 +205,7 @@ var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
 var response = await queryBuilder.query();
 
 if (response.success) {
-  print(ApplicationConstants.keyAppName + ": " + ((response.result as List<dynamic>).first as DietPlan).toString());
+  print(ApplicationConstants.keyAppName + ": " + ((response.results as List<dynamic>).first as DietPlan).toString());
 } else {
   print(ApplicationConstants.keyAppName + ": " + response.exception.message);
 }
@@ -295,11 +295,11 @@ The Parse Server configuration guide on the server is found here https://docs.pa
 Initialize the Parse Live Query by entering the parameter liveQueryUrl in Parse().initialize:
 ```dart
 Parse().initialize(
-      ApplicationConstants.keyApplicationId,
-      ApplicationConstants.keyParseServerUrl,
-      clientKey: ApplicationConstants.keyParseClientKey,
+      keyApplicationId,
+      keyParseServerUrl,
+      clientKey: keyParseClientKey,
       debug: true,
-      liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
+      liveQueryUrl: keyLiveQueryUrl,
       autoSendSessionId: true);
 ```
 
@@ -561,5 +561,5 @@ Objects:
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTQxMTMxNDk0MSw3MTg2NTA0MjBdfQ==
+eyJoaXN0b3J5IjpbLTIwNDQ4NTM3NDIsNzE4NjUwNDIwXX0=
 -->
