@@ -1,3 +1,4 @@
+
 ![enter image description here](https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png)
 ![enter image description here](https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png?fit=200%2C200&ssl=1&resize=350%2C200)
 
@@ -15,7 +16,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```yml
 dependencies:  
-    parse_server_sdk: ^1.0.22
+    parse_server_sdk: ^1.0.2
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -24,30 +25,33 @@ Once you have the library added to your project, upon first call to your app (Si
 
 ```dart
   await Parse().initialize(
-        ApplicationConstants.keyApplicationId,
-        ApplicationConstants.keyParseServerUrl);
+        keyApplicationId,
+        keyParseServerUrl);
 ```
 if you want to use secure storage also that's allow using sdk on desktop application 
 ```dart
 
-  await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
-        masterKey: keyParseMasterKey,
-        debug: true,
-        coreStore: await CoreStoreSembastImp.getInstance());
+await Parse().initialize(
+  	keyParseApplicationId, 
+  	keyParseServerUrl,
+    coreStore: await CoreStoreSembastImp.getInstance());
 ```
 It's possible to add other params, such as ...
 
 ```dart
   await Parse().initialize(
-        ApplicationConstants.keyApplicationId,
-        ApplicationConstants.keyParseServerUrl,
-        masterKey: ApplicationConstants.keyParseMasterKey,
-        clientKey: ApplicationConstants.keyParseClientKey,
-        debug: true,
-        liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
-        autoSendSessionId: true,
-        securityContext: securityContext,
+        keyApplicationId,
+        keyParseServerUrl,
+        masterKey: 
 	    coreStore: await CoreStoreSharedPrefsImp.getInstance());
+        cityConttserCnte,etre: atendSessionId: true,keyParseMasterKey,     // Required for Back4App and others
+        clientKey: keyParseClientKey,     // Required for some setups
+        debug: true, 					  // When enabled, prints logs to console
+        liveQueryUrl: keyLiveQueryUrl,    // Required if using LiveQuery 
+        autoSCoetoeSe        // Some confurations require this to be true
+    dresetnstne,
+	     // Again, required for some setups
+		coreStore: await CoreStoreSharedPrefsImp.getInstance()); // Will use SharedPreferences instead of Sembast as an internal DB
 ```
 
 ## Objects
@@ -586,4 +590,8 @@ Objects:
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
 eyJoaXN0b3J5IjpbLTU4MDA4MDUwNCw3MTg2NTA0MjBdfQ==
+-->
+
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbMTA2MDU4Nzg0MCw3MTg2NTA0MjBdfQ==
 -->
