@@ -28,7 +28,7 @@ Once you have the library added to your project, upon first call to your app (Si
         keyApplicationId,
         keyParseServerUrl);
 ```
-if you want to use secure storage also that's allow using sdk on desktop application 
+if you want to use secure storage or use the Flutter web/desktop SDK, please change to the below instance of CoreStorage as it has no dependencies on Flutter.
 ```dart
 
 await Parse().initialize(
@@ -36,7 +36,7 @@ await Parse().initialize(
   	keyParseServerUrl,
     coreStore: await CoreStoreSembastImp.getInstance());
 ```
-It's possible to add other params, such as ...
+It's possible to add other parameters to work with your instance of Parse Server:- 
 
 ```dart
   await Parse().initialize(
@@ -593,5 +593,5 @@ eyJoaXN0b3J5IjpbLTU4MDA4MDUwNCw3MTg2NTA0MjBdfQ==
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTA2MDU4Nzg0MCw3MTg2NTA0MjBdfQ==
+eyJoaXN0b3J5IjpbMjA2NzgxNDQ3NCw3MTg2NTA0MjBdfQ==
 -->
