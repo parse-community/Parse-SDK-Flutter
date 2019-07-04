@@ -1,8 +1,5 @@
 
-![enter image description here](https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png)
-![enter image description here](https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png?fit=200%2C200&ssl=1&resize=350%2C200)
-
-[![Build Status](https://travis-ci.org/phillwiggins/flutter_parse_sdk.svg?branch=master)](https://travis-ci.org/phillwiggins/flutter_parse_sdk)
+![enter image description here](https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png)![enter image description here](https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png?fit=200%2C200&ssl=1&resize=350%2C200)
 
 ## Parse For Flutter! 
 Hi, this is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like (http://Back4App.com).
@@ -16,7 +13,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```yml
 dependencies:  
-    parse_server_sdk: ^1.0.2
+    parse_server_sdk: ^1.0.22
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -24,11 +21,12 @@ or clone this repository and add to your project. As this is an early developmen
 Once you have the library added to your project, upon first call to your app (Similar to what your application class would be) add the following...
 
 ```dart
-  await Parse().initialize(
+await Parse().initialize(
         keyApplicationId,
         keyParseServerUrl);
 ```
-if you want to use secure storage or use the Flutter web/desktop SDK, please change to the below instance of CoreStorage as it has no dependencies on Flutter.
+
+If you want to use secure storage or use the Flutter web/desktop SDK, please change to the below instance of CoreStorage as it has no dependencies on Flutter.
 ```dart
 
 await Parse().initialize(
@@ -39,22 +37,17 @@ await Parse().initialize(
 It's possible to add other parameters to work with your instance of Parse Server:- 
 
 ```dart
-  await Parse().initialize(
-        keyApplicationId,
-        keyParseServerUrl,
+Parse().initialize(
+        ApplicationConstants.keyApplicationId,
+        ApplicationConstants.keyParseServerUrl,
         masterKey: 
 	    coreStore: await CoreStoreSharedPrefsImp.getInstance());
-        cityConttserCnte,etre: atendSessionId: true,keyParseMasterKey,     // Required for Back4App and others
-        clientKey: keyParseClientKey,     // Required for some setups
-        debug: true, 					  // When enabled, prints logs to console
-        liveQueryUrl: keyLiveQueryUrl,    // Required if using LiveQuery 
-        autoSCoetoeSe        // Some confurations require this to be true
-    dresetnstne,
-	     // Again, required for some setups
-		coreStore: await CoreStoreSharedPrefsImp.getInstance()); // Will use SharedPreferences instead of Sembast as an internal DB
-```
-
-## Objects
+        cityConttserCnte,etre: atendSessionId: true,ApplicationConstants.keyParseMasterKey,
+        clientKey: ApplicationConstants.keyParseClientKey,
+        debug: true,
+        liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
+        autoSCoetoeSe
+    dresetnstne); // Wi## Objects
 You can create custom objects by calling:
 ```dart
 var dietPlan = ParseObject('DietPlan')
@@ -138,14 +131,6 @@ and to retrieve it
 var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
 ```
 
-## Storage
-We now have 2 types of storage, secure and unsecure. We currently rely on 2 third party options:
-
- * SharedPreferences 
- * Sembast
-
-Sembast offers secured storage, whilst SharePreferences wraps NSUserDefaults (on iOS) and SharedPreferences (on Android).
-
 ## Increment Counter values in objects
 Retrieve it, call
 
@@ -176,9 +161,9 @@ var response = await dietPlan.remove("listKeywords", ["a"]);
 or using with save function
 
 ```dart
-dietPlan.setAddAll('listKeywords', ['a','a','d']);
-dietPlan.setAddAllUnique('listKeywords', ['a','a','d']);
-dietPlan.setRemoveAll('listKeywords', ['a']);
+dietPlan.setAdd('listKeywords', ['a','a','d']);
+dietPlan.setAddUnique('listKeywords', ['a','a','d']);
+dietPlan.setRemove('listKeywords', ['a']);
 var response = dietPlan.save()
 ```
 
@@ -552,21 +537,6 @@ final Map<String, String> params = <String, String>{'plan': 'paid'};
 function.execute(parameters: params);
 ```
 
-## Relation
-The SDK supports Relation.
-
-To Retrive a relation instance for user, call:
-```dart
-final relation = user.getRelation('dietPlans');
-```
-
-and then you can add a relation to the passed in object.
-
-```dart
-relation.add(dietPlan);
-final result = await user.save();
-```
-
 ## Other Features of this library
 Main:
 * Installation (View the example application)
@@ -589,9 +559,5 @@ Objects:
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU4MDA4MDUwNCw3MTg2NTA0MjBdfQ==
--->
-
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbMjA2NzgxNDQ3NCw3MTg2NTA0MjBdfQ==
+eyJoaXN0b3J5IjpbLTE2MDE0MzAxMTIsNzE4NjUwNDIwXX0=
 -->
