@@ -37,17 +37,19 @@ await Parse().initialize(
 It's possible to add other parameters to work with your instance of Parse Server:- 
 
 ```dart
-Parse().initialize(
-        ApplicationConstants.keyApplicationId,
-        ApplicationConstants.keyParseServerUrl,
-        masterKey: 
-	    coreStore: await CoreStoreSharedPrefsImp.getInstance());
-        cityConttserCnte,etre: atendSessionId: true,ApplicationConstants.keyParseMasterKey,
-        clientKey: ApplicationConstants.keyParseClientKey,
-        debug: true,
-        liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
-        autoSCoetoeSe
-    dresetnstne); // Wi## Objects
+  await Parse().initialize(
+        keyApplicationId,
+        keyParseServerUrl,
+        masterKey: keyParseMasterKey, // Required for Back4App and others
+        clientKey: keyParseClientKey, // Required for some setups
+        debug: true, // When enabled, prints logs to console
+        liveQueryUrl: keyLiveQueryUrl, // Required if using LiveQuery 
+        autoSendSessionId: true, // Some confurations require this to be true
+        securityContext: securityContext, // Again, required for some setups
+		coreStore: await CoreStoreSharedPrefsImp.getInstance()); // Will use SharedPreferences instead of Sembast as an internal DB
+```
+
+## Objects
 You can create custom objects by calling:
 ```dart
 var dietPlan = ParseObject('DietPlan')
@@ -559,5 +561,5 @@ Objects:
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2MDE0MzAxMTIsNzE4NjUwNDIwXX0=
+eyJoaXN0b3J5IjpbLTQxMTMxNDk0MSw3MTg2NTA0MjBdfQ==
 -->
