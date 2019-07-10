@@ -11,7 +11,8 @@ class LiveQuery {
             securityContext: ParseCoreData().securityContext);
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _sendSessionId = autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
+    _sendSessionId =
+        autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
   }
 
   WebSocket _webSocket;
@@ -40,7 +41,6 @@ class LiveQuery {
 
   // ignore: always_specify_types
   Future subscribe(QueryBuilder query) async {
-
     String _liveQueryURL = _client.data.liveQueryURL;
     if (_liveQueryURL.contains('https')) {
       _liveQueryURL = _liveQueryURL.replaceAll('https', 'wss');
@@ -101,7 +101,7 @@ class LiveQuery {
         if (_debug) {
           print('$_printConstLiveQuery: Done');
         }
-      }, onError: (Error error) {
+      }, onError: (Object error) {
         if (_debug) {
           print(
               '$_printConstLiveQuery: Error: ${error.runtimeType.toString()}');
