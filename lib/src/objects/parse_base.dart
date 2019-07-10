@@ -102,6 +102,7 @@ abstract class ParseBase {
       map.remove(keyVarUpdatedAt);
       map.remove(keyVarClassName);
       //map.remove(keyVarAcl);
+      map.remove(keyVarObjectId);
       map.remove(keyParamSessionToken);
     }
 
