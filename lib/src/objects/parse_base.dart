@@ -3,7 +3,7 @@ part of flutter_parse_sdk;
 abstract class ParseBase {
   String parseClassName;
   Type type;
-  bool _dirty = false; // reserved property
+  final bool _dirty = false; // reserved property
   final Map<String, dynamic> _unsavedChanges = Map<String, dynamic>();
   final Map<String, dynamic> _savingChanges = Map<String, dynamic>();
 
@@ -41,12 +41,13 @@ abstract class ParseBase {
     if (_dirty || _unsavedChanges.isNotEmpty) {
       return true;
     }
+    bool match = false;
     _getObjectData().forEach((String key, dynamic value) {
       if (value is ParseObject && value._areChildrenDirty(seenObjects)) {
-        return true;
+        match = true;
       }
     });
-    return false;
+    return match;
   }
 
   /// Returns [DateTime] createdAt
@@ -88,7 +89,8 @@ abstract class ParseBase {
       map[keyVarUpdatedAt] = _parseDateFormat.format(updatedAt);
     }
 
-    final Map<String, dynamic> target = forApiRQ ? _unsavedChanges : _getObjectData();
+    final Map<String, dynamic> target =
+        forApiRQ ? _unsavedChanges : _getObjectData();
     target.forEach((String key, dynamic value) {
       if (!map.containsKey(key)) {
         map[key] = parseEncode(value, full: full);
@@ -152,7 +154,8 @@ abstract class ParseBase {
 
   /// Returns the objects variables
   @protected
-  Map<String, dynamic> _getObjectData() => _objectData ?? Map<String, dynamic>();
+  Map<String, dynamic> _getObjectData() =>
+      _objectData ?? Map<String, dynamic>();
 
   bool containsValue(Object value) {
     return _getObjectData().containsValue(value);
@@ -169,11 +172,11 @@ abstract class ParseBase {
   void operator []=(String key, dynamic value) {
     set<dynamic>(key, value);
   }
+
   /// Saves in storage
   Future<void> saveInStorage(String key) async {
     final String objectJson = json.encode(toJson(full: true));
-    ParseCoreData().getStore()
-      ..setString(key, objectJson);
+    ParseCoreData().getStore()..setString(key, objectJson);
   }
 
   /// Sets type [T] from objectData
@@ -237,8 +240,7 @@ abstract class ParseBase {
       await unpin();
       final Map<String, dynamic> objectMap = parseEncode(this, full: true);
       final String json = jsonEncode(objectMap);
-      ParseCoreData().getStore()
-        ..setString(objectId, json);
+      ParseCoreData().getStore()..setString(objectId, json);
       return true;
     } else {
       return false;
@@ -250,8 +252,7 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> unpin({String key}) async {
     if (objectId != null) {
-      ParseCoreData().getStore()
-        ..remove(key ?? objectId);
+      ParseCoreData().getStore()..remove(key ?? objectId);
       return true;
     }
 
@@ -282,10 +283,14 @@ abstract class ParseBase {
   String getClassName() => parseClassName;
   @Deprecated('Prefer to use parseClassName')
   String setClassName(String className) => parseClassName = className;
-  @protected @Deprecated('Prefer to use _getObjectData method, or operator [] for certain key.')
+  @protected
+  @Deprecated(
+      'Prefer to use _getObjectData method, or operator [] for certain key.')
   Map<String, dynamic> getObjectData() => _getObjectData();
 
-  @protected @Deprecated('Prefer to use _setObjectData method, or operator [] for certain key.')
+  @protected
+  @Deprecated(
+      'Prefer to use _setObjectData method, or operator [] for certain key.')
   void setObjectData(Map<String, dynamic> objectData) =>
       _setObjectData(objectData);
 }

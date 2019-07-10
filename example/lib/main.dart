@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initData() async {
     // Initialize repository
     await initRepository();
-    final CoreStore coreStore = await initCoreStore();
+    // final CoreStore coreStore = await initCoreStore();
 
     // Initialize parse
     await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
@@ -372,7 +372,6 @@ class _MyAppState extends State<MyApp> {
     dietPlanRepo ??= DietPlanRepository.init(await getDB());
     userRepo ??= UserRepository.init(await getDB());
   }
-
 
   /// Available options:
   /// SharedPreferences - Not secure but will work with older versions of SDK - CoreStoreSharedPrefsImpl

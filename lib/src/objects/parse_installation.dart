@@ -127,7 +127,7 @@ class ParseInstallation extends ParseObject {
 
   /// Gets the locally stored installation
   static Future<ParseInstallation> _getFromLocalStore() async {
-    final CoreStore coreStore = await ParseCoreData().getStore();
+    final CoreStore coreStore = ParseCoreData().getStore();
 
     final String installationJson =
         await coreStore.getString(keyParseStoreInstallation);
@@ -183,7 +183,7 @@ class ParseInstallation extends ParseObject {
 
   /// Saves the current object online
   Future<ParseResponse> _save() async {
-    if (objectId== null) {
+    if (objectId == null) {
       return create();
     } else {
       try {

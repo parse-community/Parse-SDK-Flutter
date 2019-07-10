@@ -75,7 +75,7 @@ class LiveQuery {
       }
 
       _channel = IOWebSocketChannel(_webSocket);
-      _channel.stream.listen((message) {
+      _channel.stream.listen((dynamic message) {
         if (_debug) {
           print('$_printConstLiveQuery: Listen: $message');
         }
