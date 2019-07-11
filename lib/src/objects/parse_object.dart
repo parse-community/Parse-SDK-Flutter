@@ -470,11 +470,18 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Can be used set an objects variable to undefined rather than null
-  Future<ParseResponse> unset(String key) async {
+  ///
+  /// If object is not saved remotely, set offlineOnly to true to avoid api calls.
+  Future<ParseResponse> unset(String key, {bool offlineOnly = false}) async {
     final dynamic object = _objectData[key];
     _objectData.remove(key);
     _unsavedChanges.remove(key);
     _savingChanges.remove(key);
+
+    if (offlineOnly) {
+      return ParseResponse()
+        ..success = true;
+    }
 
     try {
       if (objectId != null) {
@@ -491,9 +498,6 @@ class ParseObject extends ParseBase implements ParseCloneable {
           return ParseResponse()
             ..success = true;
         }
-      } else {
-        return ParseResponse()
-          ..success = true;
       }
     } on Exception catch (e) {
       _objectData[key] = object;
