@@ -469,6 +469,42 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
+  /// Can be used set an objects variable to undefined rather than null
+  Future<ParseResponse> unset(String key) async {
+    final dynamic object = _objectData[key];
+    _objectData.remove(key);
+    _unsavedChanges.remove(key);
+    _savingChanges.remove(key);
+
+    try {
+      if (objectId != null) {
+        final Uri url = getSanitisedUri(_client, '$_path/$objectId');
+        final String body = '{\"$key\":{\"__op\":\"Delete\"}}';
+        final Response result = await _client.put(url, body: body);
+        final ParseResponse response = handleResponse<ParseObject>(
+            this, result, ParseApiRQ.unset, _debug, parseClassName);
+        if (!response.success) {
+          _objectData[key] = object;
+          _unsavedChanges[key] = object;
+          _savingChanges[key] = object;
+        } else {
+          return ParseResponse()
+            ..success = true;
+        }
+      } else {
+        return ParseResponse()
+          ..success = true;
+      }
+    } on Exception catch (e) {
+      _objectData[key] = object;
+      _unsavedChanges[key] = object;
+      _savingChanges[key] = object;
+    }
+
+    return ParseResponse()
+      ..success = false;
+  }
+
   /// Can be used to create custom queries
   Future<ParseResponse> query(String query) async {
     try {

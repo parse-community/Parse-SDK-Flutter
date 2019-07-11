@@ -186,7 +186,6 @@ abstract class ParseBase {
   /// [bool] forceUpdate is always true, if unsure as to whether an item is
   /// needed or not, set to false
   void set<T>(String key, T value, {bool forceUpdate = true}) {
-    if (value != null) {
       if (_getObjectData().containsKey(key)) {
         if (_getObjectData()[key] == value) {
           return;
@@ -198,7 +197,6 @@ abstract class ParseBase {
         _getObjectData()[key] = value;
       }
       _unsavedChanges[key] = value;
-    }
   }
 
   ///Set the [ParseACL] governing this object.

@@ -5,6 +5,7 @@ enum ParseApiRQ {
   healthCheck,
   get,
   getAll,
+  unset,
   create,
   save,
   query,
