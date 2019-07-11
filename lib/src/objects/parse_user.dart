@@ -33,8 +33,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   @override
   dynamic clone(Map<String, dynamic> map) =>
-      ParseUser.clone(map)
-        ..fromJson(map);
+      ParseUser.clone(map)..fromJson(map);
 
   static const String keyEmailVerified = 'emailVerified';
   static const String keyUsername = 'username';
@@ -273,9 +272,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
       final Response response = await _client.post(
           '${_client.data.serverUrl}$keyEndPointRequestPasswordReset',
           body: json.encode(<String, dynamic>{keyVarEmail: emailAddress}));
-      return _handleResponse(
-          this, response, ParseApiRQ.requestPasswordReset, _debug,
-          parseClassName);
+      return _handleResponse(this, response, ParseApiRQ.requestPasswordReset,
+          _debug, parseClassName);
     } on Exception catch (e) {
       return handleException(
           e, ParseApiRQ.requestPasswordReset, _debug, parseClassName);
@@ -334,7 +332,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   static Future<dynamic> _getUserFromLocalStore(
       {ParseCloneable cloneable}) async {
-    final CoreStore coreStore = await ParseCoreData().getStore();
+    final CoreStore coreStore = ParseCoreData().getStore();
     final String userJson = await coreStore.getString(keyParseStoreUser);
 
     if (userJson != null) {

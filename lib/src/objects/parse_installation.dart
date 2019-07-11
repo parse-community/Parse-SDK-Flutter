@@ -9,7 +9,7 @@ class ParseInstallation extends ParseObject {
     _client = client ??
         ParseHTTPClient(
             sendSessionId:
-            autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
   }
 
@@ -127,14 +127,14 @@ class ParseInstallation extends ParseObject {
 
   /// Gets the locally stored installation
   static Future<ParseInstallation> _getFromLocalStore() async {
-    final CoreStore coreStore = await ParseCoreData().getStore();
+    final CoreStore coreStore = ParseCoreData().getStore();
 
     final String installationJson =
-    await coreStore.getString(keyParseStoreInstallation);
+        await coreStore.getString(keyParseStoreInstallation);
 
     if (installationJson != null) {
       final Map<String, dynamic> installationMap =
-      json.decode(installationJson);
+          json.decode(installationJson);
 
       if (installationMap != null) {
         return ParseInstallation()..fromJson(installationMap);

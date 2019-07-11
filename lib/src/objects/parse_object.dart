@@ -104,8 +104,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       if (response != null) {
         if (response.success) {
           _savingChanges.clear();
-        }
-        else {
+        } else {
           _revertSavingChanges();
         }
         return response;
@@ -163,9 +162,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final List<dynamic> requests = chunk.map<dynamic>((ParseObject obj) {
           return obj._getRequestJson(obj.objectId == null ? 'POST' : 'PUT');
         }).toList();
-        chunk.forEach((ParseObject obj) {
+        for (ParseObject obj in chunk) {
           obj._saveChanges();
-        });
+        }
         final ParseResponse response = await batchRequest(requests, chunk);
         totalResponse.success &= response.success;
         if (response.success) {
@@ -175,16 +174,15 @@ class ParseObject extends ParseBase implements ParseCloneable {
             if (response.results[i] is ParseError) {
               // Batch request succeed, but part of batch failed.
               chunk[i]._revertSavingChanges();
-            }
-            else {
+            } else {
               chunk[i]._savingChanges.clear();
             }
           }
         } else {
           // If there was an error, we want to roll forward the save changes before rethrowing.
-          chunk.forEach((ParseObject obj) {
+          for (ParseObject obj in chunk) {
             obj._revertSavingChanges();
-          });
+          }
           totalResponse.statusCode = response.statusCode;
           totalResponse.error = response.error;
         }
