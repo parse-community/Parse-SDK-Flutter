@@ -68,6 +68,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
   set sessionToken(String sessionToken) =>
       set<String>(keyVarSessionToken, sessionToken);
 
+  String get authData => super.get<String>(keyVarAuthData);
+
+  set authData(String authData) =>
+      set<String>(keyVarAuthData, authData);
+
   static ParseUser createUser(
       [String username, String password, String emailAddress]) {
     return ParseUser(username, password, emailAddress);
