@@ -115,11 +115,14 @@ class LiveQuery {
       _connectMessage = <String, String>{
         'op': 'connect',
         'applicationId': _client.data.applicationId,
-        'clientKey': _client.data.clientKey ?? ''
       };
       if (_sendSessionId) {
         _connectMessage['sessionToken'] = _client.data.sessionId;
       }
+      if (_client.data.clientKey != null)
+        _connectMessage['clientKey'] = _client.data.clientKey;
+      if (_client.data.masterKey != null)
+        _connectMessage['masterKey'] = _client.data.masterKey;
 
       if (_debug) {
         print('$_printConstLiveQuery: ConnectMessage: $_connectMessage');
