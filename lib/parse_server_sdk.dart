@@ -90,6 +90,8 @@ part 'src/utils/parse_logger.dart';
 
 part 'src/utils/parse_utils.dart';
 
+part 'src/utils/parse_login_helpers.dart';
+
 class Parse {
   ParseCoreData data;
   bool _hasBeenInitialized = false;
