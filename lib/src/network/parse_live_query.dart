@@ -49,6 +49,7 @@ class LiveQuery {
     }
 
     final String _className = query.object.parseClassName;
+    final keysToReturn = query.limiters['keys']?.split(',');
     query.limiters.clear(); //Remove limits in LiveQuery
     final String _where = query._buildQuery().replaceAll('where=', '');
 
@@ -134,6 +135,8 @@ class LiveQuery {
         'query': <String, dynamic>{
           'className': _className,
           'where': _whereMap,
+          if (keysToReturn != null && keysToReturn.length > 0)
+            'fields': keysToReturn
         }
       };
       if (_sendSessionId) {
