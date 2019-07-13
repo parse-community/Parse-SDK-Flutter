@@ -499,7 +499,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
             ..success = true;
         }
       }
-    } on Exception catch (e) {
+    } on Exception {
       _objectData[key] = object;
       _unsavedChanges[key] = object;
       _savingChanges[key] = object;
