@@ -5,7 +5,7 @@ part of flutter_parse_sdk;
 ParseResponse handleResponse<T>(dynamic object, Response response,
     ParseApiRQ type, bool debug, String className) {
   final ParseResponse parseResponse =
-      _ParseResponseBuilder().handleResponse<T>(object, response, type);
+  _ParseResponseBuilder().handleResponse<T>(object, response, type);
 
   if (debug) {
     logAPIResponse(className, type.toString(), parseResponse);
@@ -19,7 +19,7 @@ ParseResponse handleResponse<T>(dynamic object, Response response,
 ParseResponse handleException(
     Exception exception, ParseApiRQ type, bool debug, String className) {
   final ParseResponse parseResponse =
-      buildParseResponseWithException(exception);
+  buildParseResponseWithException(exception);
 
   if (debug) {
     logAPIResponse(className, type.toString(), parseResponse);

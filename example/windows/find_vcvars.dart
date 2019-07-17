@@ -22,7 +22,11 @@ int main() {
   const String pathSuffix = 'VC\\Auxiliary\\Build\\vcvars64.bat';
   final List<String> years = <String>['2017', '2019'];
   final List<String> flavors = <String>[
-    'Community', 'Professional', 'Enterprise', 'Preview'];
+    'Community',
+    'Professional',
+    'Enterprise',
+    'Preview'
+  ];
   for (final String year in years) {
     for (final String flavor in flavors) {
       final String testPath = '$pathPrefix\\$year\\$flavor\\$pathSuffix';

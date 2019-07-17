@@ -185,7 +185,8 @@ class _LoginPageState extends State<LoginPage> {
               Icons.mail,
               color: Colors.grey,
             )),
-        validator: (String value) => value.isEmpty ? 'Email can\'t be empty' : null,
+        validator: (String value) =>
+            value.isEmpty ? 'Email can\'t be empty' : null,
         onSaved: (String value) => _email = value,
       ),
     );
@@ -204,7 +205,8 @@ class _LoginPageState extends State<LoginPage> {
               Icons.lock,
               color: Colors.grey,
             )),
-        validator: (String value) => value.isEmpty ? 'Password can\'t be empty' : null,
+        validator: (String value) =>
+            value.isEmpty ? 'Password can\'t be empty' : null,
         onSaved: (String value) => _password = value,
       ),
     );

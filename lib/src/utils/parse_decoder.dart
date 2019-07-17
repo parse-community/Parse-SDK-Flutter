@@ -78,7 +78,7 @@ dynamic parseDecode(dynamic value) {
         return ParseGeoPoint(
             latitude: latitude.toDouble(), longitude: longitude.toDouble());
       case 'Relation':
-        // ignore: always_specify_types
+      // ignore: always_specify_types
         return ParseRelation().fromJson(map);
     }
   }

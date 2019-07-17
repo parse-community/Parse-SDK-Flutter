@@ -5,8 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:sembast/sembast.dart';
-import 'package:sembast/sembast_io.dart';
+
 import 'package:devicelocale/devicelocale.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
@@ -14,11 +13,12 @@ import 'package:meta/meta.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:sembast/sembast.dart';
+import 'package:sembast/sembast_io.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:xxtea/xxtea.dart';
-
-part 'package:parse_server_sdk/src/objects/response/parse_response_utils.dart';
 
 part 'package:parse_server_sdk/src/objects/response/parse_error_response.dart';
 
@@ -26,7 +26,17 @@ part 'package:parse_server_sdk/src/objects/response/parse_exception_response.dar
 
 part 'package:parse_server_sdk/src/objects/response/parse_response_builder.dart';
 
+part 'package:parse_server_sdk/src/objects/response/parse_response_utils.dart';
+
 part 'package:parse_server_sdk/src/objects/response/parse_success_no_results.dart';
+
+part 'package:parse_server_sdk/src/data/core_store.dart';
+
+part 'package:parse_server_sdk/src/storage/core_store_sem_impl.dart';
+
+part 'package:parse_server_sdk/src/storage/core_store_sp_impl.dart';
+
+part 'package:parse_server_sdk/src/storage/xxtea_codec.dart';
 
 part 'src/base/parse_constants.dart';
 
@@ -39,6 +49,8 @@ part 'src/network/parse_http_client.dart';
 part 'src/network/parse_live_query.dart';
 
 part 'src/network/parse_query.dart';
+
+part 'src/objects/parse_acl.dart';
 
 part 'src/objects/parse_base.dart';
 
@@ -66,7 +78,7 @@ part 'src/objects/parse_session.dart';
 
 part 'src/objects/parse_user.dart';
 
-part 'src/objects/parse_acl.dart';
+part 'src/utils/parse_date_format.dart';
 
 part 'src/utils/parse_decoder.dart';
 
@@ -77,12 +89,6 @@ part 'src/utils/parse_file_extensions.dart';
 part 'src/utils/parse_logger.dart';
 
 part 'src/utils/parse_utils.dart';
-
-part 'src/utils/parse_date_format.dart';
-
-part 'src/data/core_store.dart';
-part 'src/data/core_store_impl.dart';
-part 'src/data/xxtea_codec.dart';
 
 class Parse {
   ParseCoreData data;
@@ -100,7 +106,7 @@ class Parse {
   //        debug: true,
   //        liveQuery: true);
   // ```
-  Parse initialize(String appId, String serverUrl,
+  Future<Parse> initialize(String appId, String serverUrl,
       {bool debug = false,
       String appName = '',
       String liveQueryUrl,
@@ -108,11 +114,11 @@ class Parse {
       String masterKey,
       String sessionId,
       bool autoSendSessionId,
-      SecurityContext securityContext,
-      CoreStore coreStore}) {
+        SecurityContext securityContext,
+        CoreStore coreStore}) async {
     final String url = removeTrailingSlash(serverUrl);
 
-    ParseCoreData.init(appId, url,
+    await ParseCoreData.init(appId, url,
         debug: debug,
         appName: appName,
         liveQueryUrl: liveQueryUrl,

@@ -189,24 +189,27 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin {
   Future<void> initData() async {
     // Initialize repository
     await initRepository();
+    final CoreStore coreStore = await initCoreStore();
 
     // Initialize parse
-    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+    await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
         masterKey: keyParseMasterKey,
         liveQueryUrl: keyParseLiveServerUrl,
         // clientKey: "XXXi3GejX3SIxpDgSbKHHV8uHUUP3QGiPPTlxxxx",
         sessionId: "1212121",
         autoSendSessionId: true,
-        debug: true);
+        debug: true,
+        coreStore: await CoreStoreSharedPrefsImp.getInstance());
     // ParseHTTPClient client = ParseHTTPClient();
 
     liveQuery = LiveQuery();
+
     //parse serve with secure store and desktop support
 
     //    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
     //        masterKey: keyParseMasterKey,
     //        debug: true,
-    //        coreStore: CoreStoreImp.getInstance());
+    //        coreStore: CoreStoreSharedPrefsImp.getInstance());
 
     // Check server is healthy and live - Debug is on in this instance so check logs for result
     final ParseResponse response = await Parse().healthCheck();
@@ -455,7 +458,7 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin {
     if (result.success) {
       if (result.result is ParseObject) {
         final ParseObject parseObject = result.result;
-        print(parseObject.className);
+        print(parseObject.parseClassName);
       }
     }
   }
@@ -522,6 +525,14 @@ class _MyAppState extends State<MyApp> with AutomaticKeepAliveClientMixin {
   Future<void> initRepository() async {
     dietPlanRepo ??= DietPlanRepository.init(await getDB());
     userRepo ??= UserRepository.init(await getDB());
+  }
+
+  /// Available options:
+  /// SharedPreferences - Not secure but will work with older versions of SDK - CoreStoreSharedPrefsImpl
+  /// Sembast - NoSQL DB - Has security - CoreStoreSembastImpl
+  Future<CoreStore> initCoreStore() async {
+    //return CoreStoreSembastImp.getInstance();
+    return CoreStoreSharedPrefsImp.getInstance();
   }
 }
 

@@ -112,22 +112,33 @@ class _ParseResponseBuilder {
   }
 
   /// Handles a response with a multiple result object
-  List<T> _handleMultipleResults<T>(dynamic object, List<dynamic> data) {
+  List<T> _handleMultipleResults<T>(T object, List<dynamic> data) {
     final List<T> resultsList = List<T>();
     for (dynamic value in data) {
       resultsList.add(_handleSingleResult<T>(object, value, true));
     }
-
     return resultsList;
   }
 
   /// Handles a response with a single result object
   T _handleSingleResult<T>(
       T object, Map<String, dynamic> map, bool createNewObject) {
-    if (object is ParseObject) {
-      return object..fromJson(map);
-    } else if (createNewObject && object is ParseCloneable) {
+    if (createNewObject && object is ParseCloneable) {
       return object.clone(map);
+    } else if (object is ParseObject) {
+      // Merge unsaved changes and response.
+      final Map<String, dynamic> unsaved = Map<String, dynamic>();
+      unsaved.addAll(object._unsavedChanges);
+      unsaved.forEach((String k, dynamic v) {
+        if (map[k] != null && map[k] != v) {
+          // Changes after save & before response. Keep it.
+          map.remove(k);
+        }
+      });
+      return object
+        ..fromJson(map)
+        .._unsavedChanges.clear()
+        .._unsavedChanges.addAll(unsaved);
     } else {
       return null;
     }
