@@ -246,7 +246,8 @@ class QueryBuilder<T extends ParseObject> {
   // Add a constraint to the query that requires a particular key's value match another QueryBuilder
   // ignore: always_specify_types
   void whereMatchesQuery(String column, QueryBuilder query) {
-    final String inQuery = query._buildQueryRelational(query.object.parseClassName);
+    final String inQuery =
+        query._buildQueryRelational(query.object.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$inQuery\":$inQuery}'));
@@ -255,7 +256,8 @@ class QueryBuilder<T extends ParseObject> {
   //Add a constraint to the query that requires a particular key's value does not match another QueryBuilder
   // ignore: always_specify_types
   void whereDoesNotMatchQuery(String column, QueryBuilder query) {
-    final String inQuery = query._buildQueryRelational(query.object.parseClassName);
+    final String inQuery =
+        query._buildQueryRelational(query.object.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
@@ -266,6 +268,11 @@ class QueryBuilder<T extends ParseObject> {
   /// Make sure to call this after defining your queries
   Future<ParseResponse> query() async {
     return object.query(_buildQuery());
+  }
+
+  Future<ParseResponse> distinct(String className) async {
+    String queryString = "distinct=$className";
+    return object.distinct(queryString);
   }
 
   ///Counts the number of objects that match this query

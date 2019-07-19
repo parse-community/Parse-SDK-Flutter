@@ -15,6 +15,7 @@ const String keyEndPointVerificationEmail = '/verificationEmailRequest';
 const String keyEndPointRequestPasswordReset = '/requestPasswordReset';
 const String keyEndPointClasses = '/classes/';
 const String keyEndPointHealth = '/health';
+const String keyEndPointAggregate = '/aggregate/';
 
 // ParseObject variables
 const String keyVarClassName = 'className';

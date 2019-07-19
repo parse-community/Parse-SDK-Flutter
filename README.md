@@ -1,7 +1,5 @@
-![enter image description here](https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png)
-![enter image description here](https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png?fit=200%2C200&ssl=1&resize=350%2C200)
 
-[![Build Status](https://travis-ci.org/phillwiggins/flutter_parse_sdk.svg?branch=master)](https://travis-ci.org/phillwiggins/flutter_parse_sdk)
+![Parse Logo](https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png)![Flutter Logo](https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png?fit=200%2C200&ssl=1&resize=350%2C200)
 
 ## Parse For Flutter! 
 Hi, this is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like (http://Back4App.com).
@@ -23,31 +21,32 @@ or clone this repository and add to your project. As this is an early developmen
 Once you have the library added to your project, upon first call to your app (Similar to what your application class would be) add the following...
 
 ```dart
-  await Parse().initialize(
-        ApplicationConstants.keyApplicationId,
-        ApplicationConstants.keyParseServerUrl);
+await Parse().initialize(
+        keyApplicationId,
+        keyParseServerUrl);
 ```
-if you want to use secure storage also that's allow using sdk on desktop application 
+
+If you want to use secure storage or use the Flutter web/desktop SDK, please change to the below instance of CoreStorage as it has no dependencies on Flutter.
 ```dart
 
-  await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
-        masterKey: keyParseMasterKey,
-        debug: true,
-        coreStore: await CoreStoreSembastImp.getInstance());
+await Parse().initialize(
+  	keyParseApplicationId, 
+  	keyParseServerUrl,
+    coreStore: await CoreStoreSembastImp.getInstance());
 ```
-It's possible to add other params, such as ...
+It's possible to add other parameters to work with your instance of Parse Server:- 
 
 ```dart
   await Parse().initialize(
-        ApplicationConstants.keyApplicationId,
-        ApplicationConstants.keyParseServerUrl,
-        masterKey: ApplicationConstants.keyParseMasterKey,
-        clientKey: ApplicationConstants.keyParseClientKey,
-        debug: true,
-        liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
-        autoSendSessionId: true,
-        securityContext: securityContext,
-	    coreStore: await CoreStoreSharedPrefsImp.getInstance());
+        keyApplicationId,
+        keyParseServerUrl,
+        masterKey: keyParseMasterKey, // Required for Back4App and others
+        clientKey: keyParseClientKey, // Required for some setups
+        debug: true, // When enabled, prints logs to console
+        liveQueryUrl: keyLiveQueryUrl, // Required if using LiveQuery 
+        autoSendSessionId: true, // Some confurations require this to be true
+        securityContext: securityContext, // Again, required for some setups
+		coreStore: await CoreStoreSharedPrefsImp.getInstance()); // Will use SharedPreferences instead of Sembast as an internal DB
 ```
 
 ## Objects
@@ -56,13 +55,13 @@ You can create custom objects by calling:
 var dietPlan = ParseObject('DietPlan')
 	..set('Name', 'Ketogenic')
 	..set('Fat', 65);
-await dietPlan.save()
+await dietPlan.save();
 ```
 Verify that the object has been successfully saved using
 ```dart
 var response = await dietPlan.save();
 if (response.success) {
-   dietPlan = response.result;
+   dietPlan = response.results.first;
 }
 ```
 Types supported:
@@ -134,14 +133,6 @@ and to retrieve it
 var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
 ```
 
-## Storage
-We now have 2 types of storage, secure and unsecure. We currently rely on 2 third party options:
-
- * SharedPreferences 
- * Sembast
-
-Sembast offers secured storage, whilst SharePreferences wraps NSUserDefaults (on iOS) and SharedPreferences (on Android).
-
 ## Increment Counter values in objects
 Retrieve it, call
 
@@ -172,9 +163,9 @@ var response = await dietPlan.remove("listKeywords", ["a"]);
 or using with save function
 
 ```dart
-dietPlan.setAddAll('listKeywords', ['a','a','d']);
-dietPlan.setAddAllUnique('listKeywords', ['a','a','d']);
-dietPlan.setRemoveAll('listKeywords', ['a']);
+dietPlan.setAdd('listKeywords', ['a','a','d']);
+dietPlan.setAddUnique('listKeywords', ['a','a','d']);
+dietPlan.setRemove('listKeywords', ['a']);
 var response = dietPlan.save()
 ```
 
@@ -214,7 +205,7 @@ var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
 var response = await queryBuilder.query();
 
 if (response.success) {
-  print(ApplicationConstants.keyAppName + ": " + ((response.result as List<dynamic>).first as DietPlan).toString());
+  print(ApplicationConstants.keyAppName + ": " + ((response.results as List<dynamic>).first as DietPlan).toString());
 } else {
   print(ApplicationConstants.keyAppName + ": " + response.exception.message);
 }
@@ -304,11 +295,11 @@ The Parse Server configuration guide on the server is found here https://docs.pa
 Initialize the Parse Live Query by entering the parameter liveQueryUrl in Parse().initialize:
 ```dart
 Parse().initialize(
-      ApplicationConstants.keyApplicationId,
-      ApplicationConstants.keyParseServerUrl,
-      clientKey: ApplicationConstants.keyParseClientKey,
+      keyApplicationId,
+      keyParseServerUrl,
+      clientKey: keyParseClientKey,
       debug: true,
-      liveQueryUrl: ApplicationConstants.keyLiveQueryUrl,
+      liveQueryUrl: keyLiveQueryUrl,
       autoSendSessionId: true);
 ```
 
@@ -580,21 +571,6 @@ final Map<String, String> params = <String, String>{'plan': 'paid'};
 function.execute(parameters: params);
 ```
 
-## Relation
-The SDK supports Relation.
-
-To Retrive a relation instance for user, call:
-```dart
-final relation = user.getRelation('dietPlans');
-```
-
-and then you can add a relation to the passed in object.
-
-```dart
-relation.add(dietPlan);
-final result = await user.save();
-```
-
 ## Other Features of this library
 Main:
 * Installation (View the example application)
@@ -616,6 +592,3 @@ Objects:
 
 ## Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU4MDA4MDUwNCw3MTg2NTA0MjBdfQ==
--->

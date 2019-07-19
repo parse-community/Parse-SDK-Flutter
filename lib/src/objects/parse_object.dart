@@ -12,6 +12,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       : super() {
     parseClassName = className;
     _path = '$keyEndPointClasses$className';
+    _aggregatepath = '$keyEndPointAggregate$className';
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _client = client ??
@@ -28,6 +29,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       ParseObject.clone(parseClassName)..fromJson(map);
 
   String _path;
+  String _aggregatepath;
   bool _debug;
   ParseHTTPClient _client;
 
@@ -513,6 +515,17 @@ class ParseObject extends ParseBase implements ParseCloneable {
   Future<ParseResponse> query(String query) async {
     try {
       final Uri url = getSanitisedUri(_client, '$_path', query: query);
+      final Response result = await _client.get(url);
+      return handleResponse<ParseObject>(
+          this, result, ParseApiRQ.query, _debug, parseClassName);
+    } on Exception catch (e) {
+      return handleException(e, ParseApiRQ.query, _debug, parseClassName);
+    }
+  }
+
+  Future<ParseResponse> distinct(String query) async {
+    try {
+      final Uri url = getSanitisedUri(_client, '$_aggregatepath', query: query);
       final Response result = await _client.get(url);
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.query, _debug, parseClassName);
