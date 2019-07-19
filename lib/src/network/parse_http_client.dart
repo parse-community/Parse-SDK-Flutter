@@ -6,7 +6,7 @@ class ParseHTTPClient extends BaseClient {
       : _sendSessionId = sendSessionId,
         _client = securityContext != null
             ? IOClient(HttpClient(context: securityContext))
-            : IOClient();
+            : Client();
 
   final Client _client;
   final bool _sendSessionId;
