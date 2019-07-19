@@ -91,10 +91,16 @@ class _ParseResponseBuilder {
         response.result = map;
       } else if (map != null && map.length == 1 && map.containsKey('results')) {
         final List<dynamic> results = map['results'];
-        final List<T> items = _handleMultipleResults<T>(object, results);
-        response.results = items;
-        response.result = items;
-        response.count = items.length;
+        if (results[0] is String) {
+          response.results = results;
+          response.result = results;
+          response.count = results.length;
+        } else {
+          final List<T> items = _handleMultipleResults<T>(object, results);
+          response.results = items;
+          response.result = items;
+          response.count = items.length;
+        }
       } else if (map != null && map.length == 2 && map.containsKey('count')) {
         final List<int> results = <int>[map['count']];
         response.results = results;
