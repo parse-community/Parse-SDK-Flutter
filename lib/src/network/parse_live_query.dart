@@ -117,7 +117,7 @@ class LiveQuery {
         'op': 'connect',
         'applicationId': _client.data.applicationId
       };
-      if (_sendSessionId) {
+      if (_sendSessionId && _client.data.sessionId != null) {
         _connectMessage['sessionToken'] = _client.data.sessionId;
       }
 
@@ -143,7 +143,7 @@ class LiveQuery {
             'fields': keysToReturn
         }
       };
-      if (_sendSessionId) {
+      if (_sendSessionId && _client.data.sessionId != null) {
         _subscribeMessage['sessionToken'] = _client.data.sessionId;
       }
 
