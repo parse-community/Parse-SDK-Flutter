@@ -441,6 +441,13 @@ Also, once logged in you can manage sessions tokens. This feature can be called 
 ```dart
 user = ParseUser.currentUser();
 ```
+
+To add additional columns to the user:
+```dart
+var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com")
+            ..set("userLocation", "FlutterLand");
+```
+
 Other user features are:-
  * Request Password Reset
  * Verification Email Request
