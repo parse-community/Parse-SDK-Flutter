@@ -136,10 +136,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
         return null;
       }
 
-      final Map<String, dynamic> bodyData = <String, dynamic>{};
-      bodyData[keyVarEmail] = emailAddress;
-      bodyData[keyVarPassword] = password;
-      bodyData[keyVarUsername] = username;
+      final Map<String, dynamic> bodyData = _getObjectData();
       final Uri url = getSanitisedUri(_client, '$path');
       final String body = json.encode(bodyData);
       _saveChanges();
