@@ -1,6 +1,6 @@
 part of flutter_parse_sdk;
 
-class ParseFile extends ParseObject {
+class ParseFile extends ParseBase {
   /// Creates a new file
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
@@ -9,8 +9,7 @@ class ParseFile extends ParseObject {
       String url,
       bool debug,
       ParseHTTPClient client,
-      bool autoSendSessionId})
-      : super(keyFile) {
+      bool autoSendSessionId}) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _client = client ??
         ParseHTTPClient(
@@ -27,6 +26,9 @@ class ParseFile extends ParseObject {
     }
   }
 
+  bool _debug;
+  ParseHTTPClient _client;
+  
   File file;
 
   String get name => super.get<String>(keyVarName);
