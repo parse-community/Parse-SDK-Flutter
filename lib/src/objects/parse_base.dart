@@ -23,7 +23,7 @@ abstract class ParseBase {
   }
 
   bool _isDirty(bool considerChildren) {
-    if (_dirty || _unsavedChanges.isNotEmpty) {
+    if (_dirty || _unsavedChanges.isNotEmpty || objectId == null) {
       return true;
     }
 
