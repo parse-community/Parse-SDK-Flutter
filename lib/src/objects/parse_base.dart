@@ -167,7 +167,7 @@ abstract class ParseBase {
   }
 
   dynamic operator [](Object key) {
-    get<dynamic>(key);
+    return get<dynamic>(key);
   }
 
   void operator []=(String key, dynamic value) {
