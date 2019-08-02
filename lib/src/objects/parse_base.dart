@@ -203,7 +203,7 @@ abstract class ParseBase {
 
   ///Set the [ParseACL] governing this object.
   void setACL<ParseACL>(ParseACL acl) {
-    _getObjectData()[keyVarAcl] = acl;
+    set(keyVarAcl, acl);
   }
 
   ///Access the [ParseACL] governing this object.
