@@ -271,7 +271,7 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   Future<ParseResponse> distinct(String className) async {
-    String queryString = "distinct=$className";
+    final String queryString = 'distinct=$className';
     return object.distinct(queryString);
   }
 

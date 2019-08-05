@@ -44,9 +44,9 @@ It's possible to add other parameters to work with your instance of Parse Server
         clientKey: keyParseClientKey, // Required for some setups
         debug: true, // When enabled, prints logs to console
         liveQueryUrl: keyLiveQueryUrl, // Required if using LiveQuery 
-        autoSendSessionId: true, // Some confurations require this to be true
+        autoSendSessionId: true, // Required for authentication and ACL
         securityContext: securityContext, // Again, required for some setups
-		coreStore: await CoreStoreSharedPrefsImp.getInstance()); // Will use SharedPreferences instead of Sembast as an internal DB
+	coreStore: await CoreStoreSharedPrefsImp.getInstance()); // Local data storage method. Will use SharedPreferences instead of Sembast as an internal DB
 ```
 
 ## Objects
@@ -132,6 +132,17 @@ and to retrieve it
 ```dart
 var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
 ```
+
+## Storage
+We now have 2 types of storage, secure and unsecure. We currently rely on 2 third party options:
+
+- SharedPreferences
+- Sembast
+Sembast offers secured storage, whilst SharePreferences wraps NSUserDefaults (on iOS) and SharedPreferences (on Android).
+
+The storage method is defined in the parameter __coreStore__ in  Parse().initialize
+
+Check sample code for options
 
 ## Increment Counter values in objects
 Retrieve it, call
@@ -576,6 +587,40 @@ Executes a cloud function with parameters
 final ParseCloudFunction function = ParseCloudFunction('hello');
 final Map<String, String> params = <String, String>{'plan': 'paid'};
 function.execute(parameters: params);
+```
+
+## Relation
+
+The SDK supports Relation.
+
+To add relation to object:
+
+```dart
+dietPlan.addRelation('fruits', [ParseObject("Fruits")..set("objectId", "XGadzYxnac")]);
+```
+
+To remove relation to object:
+
+```dart
+dietPlan.removeRelation('fruits', [ParseObject("Fruits")..set("objectId", "XGadzYxnac")]);
+```
+
+To Retrive a relation instance for user, call:
+```dart
+final relation = dietPlan.getRelation('fruits');
+```
+
+and then you can add a relation to the passed in object:
+```
+relation.add(dietPlan);
+final result = await user.save();
+```
+
+To retrieve objects that are members of Relation field of a parent object:
+```dart
+QueryBuilder<ParseObject> query =
+    QueryBuilder<ParseObject>(ParseObject('Fruits'))
+      ..whereRelatedTo('fruits', 'DietPlan', DietPlan.objectId);
 ```
 
 ## Other Features of this library
