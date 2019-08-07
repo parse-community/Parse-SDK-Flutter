@@ -191,13 +191,12 @@ abstract class ParseBase {
         if (_getObjectData()[key] == value) {
           return;
         }
-        if (forceUpdate) {
-          _getObjectData()[key] = value;
-        }
+        _getObjectData()[key] =
+            ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
       } else {
         _getObjectData()[key] = value;
       }
-      _unsavedChanges[key] = value;
+      _unsavedChanges[key] = _getObjectData()[key];
     }
   }
 

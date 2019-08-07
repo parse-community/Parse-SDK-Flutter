@@ -92,6 +92,8 @@ part 'src/utils/parse_utils.dart';
 
 part 'src/utils/parse_login_helpers.dart';
 
+part 'src/objects/parse_merge.dart';
+
 class Parse {
   ParseCoreData data;
   bool _hasBeenInitialized = false;
@@ -116,8 +118,8 @@ class Parse {
       String masterKey,
       String sessionId,
       bool autoSendSessionId,
-        SecurityContext securityContext,
-        CoreStore coreStore}) async {
+      SecurityContext securityContext,
+      CoreStore coreStore}) async {
     final String url = removeTrailingSlash(serverUrl);
 
     await ParseCoreData.init(appId, url,
@@ -147,7 +149,7 @@ class Parse {
     final ParseHTTPClient _client = client ??
         ParseHTTPClient(
             sendSessionId:
-            sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
+                sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
 
     const String className = 'parseBase';
