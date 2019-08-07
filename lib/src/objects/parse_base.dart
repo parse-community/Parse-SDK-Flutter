@@ -191,13 +191,18 @@ abstract class ParseBase {
         if (_getObjectData()[key] == value) {
           return;
         }
-        if (forceUpdate) {
-          _getObjectData()[key] = value;
-        }
+        /*if (!forceUpdate) {
+          if (value is Map<String, dynamic>) {
+            value = mergeWithPrevious(_getObjectData()[key], value);
+          }
+        }*/
+        // value = mergeWithPrevious(_unsavedChanges[key], value);
+        _getObjectData()[key] =
+            ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
       } else {
         _getObjectData()[key] = value;
       }
-      _unsavedChanges[key] = value;
+      _unsavedChanges[key] = _getObjectData()[key];
     }
   }
 
