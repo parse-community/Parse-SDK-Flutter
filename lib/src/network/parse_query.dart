@@ -32,7 +32,11 @@ class QueryBuilder<T extends ParseObject> {
   /// [String] order will be the column of the table that the results are
   /// ordered by
   void orderByAscending(String order) {
-    limiters['order'] = order;
+    if (limiters.isEmpty) {
+      limiters['order'] = order;
+    } else {
+      limiters['order'] = limiters['order'] + ',' + order;
+    }
   }
 
   /// Sorts the results descending order.
@@ -40,7 +44,11 @@ class QueryBuilder<T extends ParseObject> {
   /// [String] order will be the column of the table that the results are
   /// ordered by
   void orderByDescending(String order) {
-    limiters['order'] = '-$order';
+    if (limiters.isEmpty) {
+      limiters['order'] = '-$order';
+    } else {
+      limiters['order'] = limiters['order'] + ',' + '-$order';
+    }
   }
 
   /// Define which keys in an object to return.
