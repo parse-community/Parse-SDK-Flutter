@@ -5,7 +5,7 @@ homepage: https://github.com/phillwiggins/flutter_parse_sdk
 author: PhillWiggins <phill.wiggins@gmail.com>
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:

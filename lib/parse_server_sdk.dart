@@ -17,8 +17,10 @@ import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:xxtea/xxtea.dart';
+
+export 'src/network/parse_live_query.dart'
+  if (dart.library.js) 'src/network/parse_live_query_web.dart';
 
 part 'package:parse_server_sdk/src/objects/response/parse_error_response.dart';
 
@@ -45,8 +47,6 @@ part 'src/data/parse_core_data.dart';
 part 'src/enums/parse_enum_api_rq.dart';
 
 part 'src/network/parse_http_client.dart';
-
-part 'src/network/parse_live_query.dart';
 
 part 'src/network/parse_query.dart';
 
