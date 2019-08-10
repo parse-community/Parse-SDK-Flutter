@@ -291,8 +291,16 @@ class ParseUser extends ParseObject implements ParseCloneable {
     if (objectId == null) {
       return await signUp();
     } else {
-      return await super.save();
+      final ParseResponse response = await super.save();
+      if (response.success) {
+        await _onResponseSuccess();
+      }
+      return response;
     }
+  }
+
+  Future<void> _onResponseSuccess() async {
+    await saveInStorage(keyParseStoreUser);
   }
 
   /// Removes a user from Parse Server locally and online
@@ -371,7 +379,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       return parseResponse;
     } else {
       final ParseUser user = parseResponse.result;
-      await user?.saveInStorage(keyParseStoreUser);
+      await user?._onResponseSuccess();
       return parseResponse;
     }
   }
