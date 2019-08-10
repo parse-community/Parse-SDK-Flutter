@@ -275,7 +275,7 @@ class QueryBuilder<T extends ParseObject> {
   ///
   /// Make sure to call this after defining your queries
   Future<ParseResponse> query() async {
-    return object.query(_buildQuery());
+    return object.query(buildQuery());
   }
 
   Future<ParseResponse> distinct(String className) async {
@@ -289,7 +289,7 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   /// Builds the query for Parse
-  String _buildQuery() {
+  String buildQuery() {
     queries = _checkForMultipleColumnInstances(queries);
     return 'where={${buildQueries(queries)}}${getLimiters(limiters)}';
   }
