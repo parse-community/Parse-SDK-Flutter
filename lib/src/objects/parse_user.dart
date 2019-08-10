@@ -100,7 +100,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUserName');
       final Response response = await _client.get(url, headers: headers);
-      return _handleResponse(_getEmptyUser(), response, ParseApiRQ.currentUser,
+      return await _handleResponse(_getEmptyUser(), response, ParseApiRQ.currentUser,
           _debug, _getEmptyUser().parseClassName);
     } on Exception catch (e) {
       return handleException(
@@ -144,7 +144,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
           },
           body: body);
 
-      return _handleResponse(
+      return await _handleResponse(
           this, response, ParseApiRQ.signUp, _debug, parseClassName);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.signUp, _debug, parseClassName);
@@ -170,7 +170,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
         keyHeaderRevocableSession: '1',
       });
 
-      return _handleResponse(
+      return await _handleResponse(
           this, response, ParseApiRQ.login, _debug, parseClassName);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.login, _debug, parseClassName);
@@ -193,7 +193,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
             }
           }));
 
-      return _handleResponse(
+      return await _handleResponse(
           this, response, ParseApiRQ.loginAnonymous, _debug, parseClassName);
     } on Exception catch (e) {
       return handleException(
@@ -220,7 +220,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
             'authData': <String, dynamic>{provider: authData}
           }));
 
-      return _handleResponse(
+      return await _handleResponse(
           this, response, ParseApiRQ.loginWith, _debug, parseClassName);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.loginWith, _debug, parseClassName);
@@ -246,7 +246,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       final Response response = await _client.post(url,
           headers: <String, String>{keyHeaderSessionToken: sessionId});
 
-      return _handleResponse(
+      return await _handleResponse(
           this, response, ParseApiRQ.logout, _debug, parseClassName);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.logout, _debug, parseClassName);
@@ -259,7 +259,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       final Response response = await _client.post(
           '${_client.data.serverUrl}$keyEndPointVerificationEmail',
           body: json.encode(<String, dynamic>{keyVarEmail: emailAddress}));
-      return _handleResponse(this, response,
+      return await _handleResponse(this, response,
           ParseApiRQ.verificationEmailRequest, _debug, parseClassName);
     } on Exception catch (e) {
       return handleException(
@@ -273,7 +273,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       final Response response = await _client.post(
           '${_client.data.serverUrl}$keyEndPointRequestPasswordReset',
           body: json.encode(<String, dynamic>{keyVarEmail: emailAddress}));
-      return _handleResponse(
+      return await _handleResponse(
           this, response, ParseApiRQ.requestPasswordReset, _debug,
           parseClassName);
     } on Exception catch (e) {
@@ -289,10 +289,18 @@ class ParseUser extends ParseObject implements ParseCloneable {
   @override
   Future<ParseResponse> save() async {
     if (objectId == null) {
-      return signUp();
+      return await signUp();
     } else {
-      return super.save();
+      final ParseResponse response = await super.save();
+      if (response.success) {
+        await _onResponseSuccess();
+      }
+      return response;
     }
+  }
+
+  Future<void> _onResponseSuccess() async {
+    await saveInStorage(keyParseStoreUser);
   }
 
   /// Removes a user from Parse Server locally and online
@@ -301,7 +309,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       try {
         final Uri url = getSanitisedUri(_client, '$_path/$objectId');
         final Response response = await _client.delete(url);
-        return _handleResponse(
+        return await _handleResponse(
             this, response, ParseApiRQ.destroy, _debug, parseClassName);
       } on Exception catch (e) {
         return handleException(e, ParseApiRQ.destroy, _debug, parseClassName);
@@ -334,7 +342,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   static Future<dynamic> _getUserFromLocalStore(
       {ParseCloneable cloneable}) async {
-    final CoreStore coreStore = await ParseCoreData().getStore();
+    final CoreStore coreStore = ParseCoreData().getStore();
     final String userJson = await coreStore.getString(keyParseStoreUser);
 
     if (userJson != null) {
@@ -351,8 +359,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   /// Handles all the response data for this class
-  static ParseResponse _handleResponse(ParseUser user, Response response,
-      ParseApiRQ type, bool debug, String className) {
+  static Future<ParseResponse> _handleResponse(ParseUser user, Response response,
+      ParseApiRQ type, bool debug, String className) async {
     final ParseResponse parseResponse =
         handleResponse<ParseUser>(user, response, type, debug, className);
 
@@ -371,7 +379,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       return parseResponse;
     } else {
       final ParseUser user = parseResponse.result;
-      user?.saveInStorage(keyParseStoreUser);
+      await user?._onResponseSuccess();
       return parseResponse;
     }
   }

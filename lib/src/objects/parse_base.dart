@@ -45,6 +45,7 @@ abstract class ParseBase {
       if (value is ParseObject && value._areChildrenDirty(seenObjects)) {
         return true;
       }
+      return false;
     });
     return false;
   }
@@ -175,8 +176,7 @@ abstract class ParseBase {
   /// Saves in storage
   Future<void> saveInStorage(String key) async {
     final String objectJson = json.encode(toJson(full: true));
-    ParseCoreData().getStore()
-      ..setString(key, objectJson);
+    await ParseCoreData().getStore().setString(key, objectJson);
   }
 
   /// Sets type [T] from objectData
@@ -240,8 +240,7 @@ abstract class ParseBase {
       await unpin();
       final Map<String, dynamic> objectMap = parseEncode(this, full: true);
       final String json = jsonEncode(objectMap);
-      ParseCoreData().getStore()
-        ..setString(objectId, json);
+      await ParseCoreData().getStore().setString(objectId, json);
       return true;
     } else {
       return false;
@@ -253,8 +252,7 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> unpin({String key}) async {
     if (objectId != null) {
-      ParseCoreData().getStore()
-        ..remove(key ?? objectId);
+      await ParseCoreData().getStore().remove(key ?? objectId);
       return true;
     }
 
