@@ -46,7 +46,6 @@ abstract class ParseBase {
       if (value is ParseObject && value._areChildrenDirty(seenObjects)) {
         match = true;
       }
-      return false;
     });
     return match;
   }
