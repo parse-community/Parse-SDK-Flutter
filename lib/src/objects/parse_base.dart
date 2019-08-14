@@ -187,15 +187,11 @@ abstract class ParseBase {
   void set<T>(String key, T value, {bool forceUpdate = true}) {
     if (value != null) {
       if (_getObjectData().containsKey(key)) {
-        if (_getObjectData()[key] == value) {
+        if (_getObjectData()[key] == value && !forceUpdate) {
           return;
         }
-        if (forceUpdate) {
-          _getObjectData()[key] = value;
-        }
-      } else {
-        _getObjectData()[key] = value;
       }
+      _getObjectData()[key] = value;
       _unsavedChanges[key] = value;
     }
   }
