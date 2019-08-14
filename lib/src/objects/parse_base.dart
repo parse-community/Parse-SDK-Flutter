@@ -121,23 +121,23 @@ abstract class ParseBase {
       if (key == parseClassName || key == '__type') {
         // NO OP
       } else if (key == keyVarObjectId) {
-        objectId = value;
+        _getObjectData()[keyVarObjectId] = value;
       } else if (key == keyVarCreatedAt) {
         if (keyVarCreatedAt is String) {
-          set<DateTime>(keyVarCreatedAt, _parseDateFormat.parse(value));
+          _getObjectData()[keyVarCreatedAt] = _parseDateFormat.parse(value);
         } else {
-          set<DateTime>(keyVarCreatedAt, value);
+          _getObjectData()[keyVarCreatedAt] = value;
         }
       } else if (key == keyVarUpdatedAt) {
         if (keyVarUpdatedAt is String) {
-          set<DateTime>(keyVarUpdatedAt, _parseDateFormat.parse(value));
+          _getObjectData()[keyVarUpdatedAt] = _parseDateFormat.parse(value);
         } else {
-          set<DateTime>(keyVarUpdatedAt, value);
+          _getObjectData()[keyVarUpdatedAt] = _parseDateFormat.parse(value);
         }
       } else if (key == keyVarAcl) {
-        this[keyVarAcl] = ParseACL().fromJson(value);
+        _getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
       } else {
-        this[key] = parseDecode(value);
+        _getObjectData()[key] = parseDecode(value);
       }
     });
 
