@@ -121,23 +121,23 @@ abstract class ParseBase {
       if (key == parseClassName || key == '__type') {
         // NO OP
       } else if (key == keyVarObjectId) {
-        objectId = value;
+        _getObjectData()[keyVarObjectId] = value;
       } else if (key == keyVarCreatedAt) {
         if (keyVarCreatedAt is String) {
-          set<DateTime>(keyVarCreatedAt, _parseDateFormat.parse(value));
+          _getObjectData()[keyVarCreatedAt] = _parseDateFormat.parse(value);
         } else {
-          set<DateTime>(keyVarCreatedAt, value);
+          _getObjectData()[keyVarCreatedAt] = value;
         }
       } else if (key == keyVarUpdatedAt) {
         if (keyVarUpdatedAt is String) {
-          set<DateTime>(keyVarUpdatedAt, _parseDateFormat.parse(value));
+          _getObjectData()[keyVarUpdatedAt] = _parseDateFormat.parse(value);
         } else {
-          set<DateTime>(keyVarUpdatedAt, value);
+          _getObjectData()[keyVarUpdatedAt] = _parseDateFormat.parse(value);
         }
       } else if (key == keyVarAcl) {
-        this[keyVarAcl] = ParseACL().fromJson(value);
+        _getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
       } else {
-        this[key] = parseDecode(value);
+        _getObjectData()[key] = parseDecode(value);
       }
     });
 
@@ -177,7 +177,7 @@ abstract class ParseBase {
   /// Saves in storage
   Future<void> saveInStorage(String key) async {
     final String objectJson = json.encode(toJson(full: true));
-    ParseCoreData().getStore()..setString(key, objectJson);
+    await ParseCoreData().getStore().setString(key, objectJson);
   }
 
   /// Sets type [T] from objectData
@@ -185,10 +185,10 @@ abstract class ParseBase {
   /// To set an int, call setType<int> and an int will be saved
   /// [bool] forceUpdate is always true, if unsure as to whether an item is
   /// needed or not, set to false
-  void set<T>(String key, T value, {bool forceUpdate = true}) {
+  void set<T>(String key, T value, {bool forceUpdate = false}) {
     if (value != null) {
       if (_getObjectData().containsKey(key)) {
-        if (_getObjectData()[key] == value) {
+        if (_getObjectData()[key] == value && !forceUpdate) {
           return;
         }
         _getObjectData()[key] =
@@ -240,7 +240,7 @@ abstract class ParseBase {
       await unpin();
       final Map<String, dynamic> objectMap = parseEncode(this, full: true);
       final String json = jsonEncode(objectMap);
-      ParseCoreData().getStore()..setString(objectId, json);
+      await ParseCoreData().getStore().setString(objectId, json);
       return true;
     } else {
       return false;
@@ -252,7 +252,7 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> unpin({String key}) async {
     if (objectId != null) {
-      ParseCoreData().getStore()..remove(key ?? objectId);
+      await ParseCoreData().getStore().remove(key ?? objectId);
       return true;
     }
 
