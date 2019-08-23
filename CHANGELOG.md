@@ -1,4 +1,8 @@
+## 1.0.24
+
 ## 1.0.23
+Fixed LiveQuery
+Bug fixes
 
 ## 1.0.22
 Added dirty children
