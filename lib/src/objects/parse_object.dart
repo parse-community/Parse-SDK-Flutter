@@ -12,6 +12,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       : super() {
     parseClassName = className;
     _path = '$keyEndPointClasses$className';
+    _aggregatepath = '$keyEndPointAggregate$className';
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _client = client ??
@@ -28,6 +29,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       ParseObject.clone(parseClassName)..fromJson(map);
 
   String _path;
+  String _aggregatepath;
   bool _debug;
   ParseHTTPClient _client;
 
@@ -104,8 +106,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       if (response != null) {
         if (response.success) {
           _savingChanges.clear();
-        }
-        else {
+        } else {
           _revertSavingChanges();
         }
         return response;
@@ -163,9 +164,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final List<dynamic> requests = chunk.map<dynamic>((ParseObject obj) {
           return obj._getRequestJson(obj.objectId == null ? 'POST' : 'PUT');
         }).toList();
-        chunk.forEach((ParseObject obj) {
+        for (ParseObject obj in chunk) {
           obj._saveChanges();
-        });
+        }
         final ParseResponse response = await batchRequest(requests, chunk);
         totalResponse.success &= response.success;
         if (response.success) {
@@ -175,16 +176,15 @@ class ParseObject extends ParseBase implements ParseCloneable {
             if (response.results[i] is ParseError) {
               // Batch request succeed, but part of batch failed.
               chunk[i]._revertSavingChanges();
-            }
-            else {
+            } else {
               chunk[i]._savingChanges.clear();
             }
           }
         } else {
           // If there was an error, we want to roll forward the save changes before rethrowing.
-          chunk.forEach((ParseObject obj) {
+          for (ParseObject obj in chunk) {
             obj._revertSavingChanges();
-          });
+          }
           totalResponse.statusCode = response.statusCode;
           totalResponse.error = response.error;
         }
@@ -471,10 +471,61 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
+  /// Can be used set an objects variable to undefined rather than null
+  ///
+  /// If object is not saved remotely, set offlineOnly to true to avoid api calls.
+  Future<ParseResponse> unset(String key, {bool offlineOnly = false}) async {
+    final dynamic object = _objectData[key];
+    _objectData.remove(key);
+    _unsavedChanges.remove(key);
+    _savingChanges.remove(key);
+
+    if (offlineOnly) {
+      return ParseResponse()
+        ..success = true;
+    }
+
+    try {
+      if (objectId != null) {
+        final Uri url = getSanitisedUri(_client, '$_path/$objectId');
+        final String body = '{\"$key\":{\"__op\":\"Delete\"}}';
+        final Response result = await _client.put(url, body: body);
+        final ParseResponse response = handleResponse<ParseObject>(
+            this, result, ParseApiRQ.unset, _debug, parseClassName);
+        if (!response.success) {
+          _objectData[key] = object;
+          _unsavedChanges[key] = object;
+          _savingChanges[key] = object;
+        } else {
+          return ParseResponse()
+            ..success = true;
+        }
+      }
+    } on Exception {
+      _objectData[key] = object;
+      _unsavedChanges[key] = object;
+      _savingChanges[key] = object;
+    }
+
+    return ParseResponse()
+      ..success = false;
+  }
+
   /// Can be used to create custom queries
   Future<ParseResponse> query(String query) async {
     try {
       final Uri url = getSanitisedUri(_client, '$_path', query: query);
+      final Response result = await _client.get(url);
+      return handleResponse<ParseObject>(
+          this, result, ParseApiRQ.query, _debug, parseClassName);
+    } on Exception catch (e) {
+      return handleException(e, ParseApiRQ.query, _debug, parseClassName);
+    }
+  }
+
+  Future<ParseResponse> distinct(String query) async {
+    try {
+      final Uri url = getSanitisedUri(_client, '$_aggregatepath', query: query);
       final Response result = await _client.get(url);
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.query, _debug, parseClassName);

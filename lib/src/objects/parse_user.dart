@@ -69,6 +69,12 @@ class ParseUser extends ParseObject implements ParseCloneable {
   set sessionToken(String sessionToken) =>
       set<String>(keyVarSessionToken, sessionToken);
 
+  Map<String, dynamic> get authData =>
+      super.get<Map<String, dynamic>>(keyVarAuthData);
+
+  set authData(Map<String, dynamic> authData) =>
+      set<Map<String, dynamic>>(keyVarAuthData, authData);
+
   static ParseUser createUser(
       [String username, String password, String emailAddress]) {
     return ParseUser(username, password, emailAddress);
@@ -100,7 +106,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUserName');
       final Response response = await _client.get(url, headers: headers);
-      return await _handleResponse(_getEmptyUser(), response, ParseApiRQ.currentUser,
+      return await _handleResponse(
+          _getEmptyUser(), response, ParseApiRQ.currentUser,
           _debug, _getEmptyUser().parseClassName);
     } on Exception catch (e) {
       return handleException(
@@ -131,10 +138,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
         return null;
       }
 
-      final Map<String, dynamic> bodyData = <String, dynamic>{};
-      bodyData[keyVarEmail] = emailAddress;
-      bodyData[keyVarPassword] = password;
-      bodyData[keyVarUsername] = username;
+      final Map<String, dynamic> bodyData = _getObjectData();
       final Uri url = getSanitisedUri(_client, '$path');
       final String body = json.encode(bodyData);
       _saveChanges();
@@ -359,7 +363,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   /// Handles all the response data for this class
-  static Future<ParseResponse> _handleResponse(ParseUser user, Response response,
+  static Future<ParseResponse> _handleResponse(ParseUser user,
+      Response response,
       ParseApiRQ type, bool debug, String className) async {
     final ParseResponse parseResponse =
         handleResponse<ParseUser>(user, response, type, debug, className);

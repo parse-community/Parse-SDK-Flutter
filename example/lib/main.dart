@@ -94,22 +94,22 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> runTestQueries() async {
     // Basic repository example
-    await repositoryAddUser();
+    /* await repositoryAddUser();
     await repositoryAddItems();
     await repositoryGetAllItems();
-
+*/
     //Basic usage
-    await createItem();
+    /* await createItem();
     await getAllItems();
     await getAllItemsByName();
     await getSingleItem();
     await getConfigs();
-    await query();
+    await query();*/
     await initUser();
-    await initInstallation();
+    /* await initInstallation();
     await function();
     await functionWithParameters();
-    await test();
+    await test();*/
   }
 
   Future<void> initInstallation() async {
@@ -221,16 +221,19 @@ class _MyAppState extends State<MyApp> {
   Future<void> initUser() async {
     // All return type ParseUser except all
     ParseUser user =
-        ParseUser('TestFlutter', 'TestPassword123', 'test.flutter@gmail.com');
+    ParseUser('RE9fU360lishjFKC5dLZS4Zwm', 'password', 'test@facebook.com');
 
     /// Sign-up
-    ParseResponse response = await user.signUp();
+    /*ParseResponse response = await user.signUp();
     if (response.success) {
       user = response.result;
-    }
+    }*/
+
+    ParseUser user1 = await ParseUser.currentUser();
+    user1.authData;
 
     /// Login
-    response = await user.login();
+    ParseResponse response = await user.login();
     if (response.success) {
       user = response.result;
     }

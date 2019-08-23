@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
-
-import 'package:web_socket_channel/io.dart';
+import 'dart:html';
 
 import '../../parse_server_sdk.dart';
 
@@ -24,7 +22,6 @@ class LiveQuery {
   ParseHTTPClient _client;
   bool _debug;
   bool _sendSessionId;
-  IOWebSocketChannel _channel;
   Map<String, dynamic> _connectMessage;
   Map<String, dynamic> _subscribeMessage;
   Map<String, dynamic> _unsubscribeMessage;
@@ -67,9 +64,10 @@ class LiveQuery {
     final int requestId = _requestIdGenerator();
 
     try {
-      _webSocket = await WebSocket.connect(_liveQueryURL);
+      _webSocket = WebSocket(_liveQueryURL);
+      await _webSocket.onOpen.first;
 
-      if (_webSocket != null && _webSocket.readyState == WebSocket.open) {
+      if (_webSocket != null && _webSocket.readyState == WebSocket.OPEN) {
         if (_debug) {
           print('$_printConstLiveQuery: Socket opened');
         }
@@ -80,8 +78,8 @@ class LiveQuery {
         }
       }
 
-      _channel = IOWebSocketChannel(_webSocket);
-      _channel.stream.listen((dynamic message) {
+      _webSocket.onMessage.listen((MessageEvent e) {
+        final dynamic message = e.data;
         if (_debug) {
           print('$_printConstLiveQuery: Listen: $message');
         }
@@ -92,13 +90,8 @@ class LiveQuery {
           if (actionData.containsKey('object')) {
             final Map<String, dynamic> map = actionData['object'];
             final String className = map['className'];
-            if (className == '_User') {
-              eventCallbacks[actionData['op']](
-                  ParseUser(null, null, null).fromJson(map));
-            } else {
-              eventCallbacks[actionData['op']](
-                  ParseObject(className).fromJson(map));
-            }
+            eventCallbacks[actionData['op']](
+                ParseObject(className).fromJson(map));
           } else {
             eventCallbacks[actionData['op']](actionData);
           }
@@ -122,7 +115,7 @@ class LiveQuery {
         'op': 'connect',
         'applicationId': _client.data.applicationId
       };
-      if (_sendSessionId && _client.data.sessionId != null) {
+      if (_sendSessionId) {
         _connectMessage['sessionToken'] = _client.data.sessionId;
       }
 
@@ -134,7 +127,7 @@ class LiveQuery {
       if (_debug) {
         print('$_printConstLiveQuery: ConnectMessage: $_connectMessage');
       }
-      _channel.sink.add(jsonEncode(_connectMessage));
+      _webSocket.sendString(jsonEncode(_connectMessage));
 
       //After a client connects to the LiveQuery server,
       //it can send a subscribe message to subscribe a ParseQuery.
@@ -148,7 +141,7 @@ class LiveQuery {
             'fields': keysToReturn
         }
       };
-      if (_sendSessionId && _client.data.sessionId != null) {
+      if (_sendSessionId) {
         _subscribeMessage['sessionToken'] = _client.data.sessionId;
       }
 
@@ -156,7 +149,7 @@ class LiveQuery {
         print('$_printConstLiveQuery: SubscribeMessage: $_subscribeMessage');
       }
 
-      _channel.sink.add(jsonEncode(_subscribeMessage));
+      _webSocket.sendString(jsonEncode(_subscribeMessage));
 
       //Mount message for Unsubscribe
       _unsubscribeMessage = <String, dynamic>{
@@ -176,17 +169,8 @@ class LiveQuery {
   }
 
   Future<void> unSubscribe() async {
-    if (_channel != null) {
-      if (_channel.sink != null) {
-        if (_debug) {
-          print(
-              '$_printConstLiveQuery: UnsubscribeMessage: $_unsubscribeMessage');
-        }
-        _channel.sink.add(jsonEncode(_unsubscribeMessage));
-        await _channel.sink.close();
-      }
-    }
-    if (_webSocket != null && _webSocket.readyState == WebSocket.open) {
+    if (_webSocket != null && _webSocket.readyState == WebSocket.OPEN) {
+      _webSocket.sendString(jsonEncode(_unsubscribeMessage));
       if (_debug) {
         print('$_printConstLiveQuery: Socket closed');
       }

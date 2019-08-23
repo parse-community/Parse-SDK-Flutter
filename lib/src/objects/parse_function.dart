@@ -27,14 +27,14 @@ class ParseCloudFunction extends ParseObject {
   ///
   /// To add the parameters, create an object and call [set](value to set)
   Future<ParseResponse> execute(
-      {Map<String, dynamic> parameters, Map<String, dynamic> headers}) async {
+      {Map<String, dynamic> parameters, Map<String, String> headers}) async {
     final String uri = '${_client.data.serverUrl}$_path';
     if (parameters != null) {
       _setObjectData(parameters);
     }
 
-    final Response result =
-    await _client.post(uri, body: json.encode(_getObjectData()));
+    final Response result = await _client.post(uri,
+        headers: headers, body: json.encode(_getObjectData()));
     return handleResponse<ParseCloudFunction>(
         this, result, ParseApiRQ.execute, _debug, parseClassName);
   }
@@ -43,14 +43,14 @@ class ParseCloudFunction extends ParseObject {
   ///
   /// To add the parameters, create an object and call [set](value to set)
   Future<ParseResponse> executeObjectFunction<T extends ParseObject>(
-      {Map<String, dynamic> parameters, Map<String, dynamic> headers}) async {
+      {Map<String, dynamic> parameters, Map<String, String> headers}) async {
     final String uri = '${_client.data.serverUrl}$_path';
     if (parameters != null) {
       _setObjectData(parameters);
     }
-    final Response result =
-        await _client.post(uri, body: json.encode(_getObjectData()));
-    return handleResponse<T>(
-        this, result, ParseApiRQ.executeObjectionFunction, _debug, parseClassName);
+    final Response result = await _client.post(uri,
+        headers: headers, body: json.encode(_getObjectData()));
+    return handleResponse<T>(this, result, ParseApiRQ.executeObjectionFunction,
+        _debug, parseClassName);
   }
 }
