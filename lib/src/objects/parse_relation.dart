@@ -15,7 +15,7 @@ class ParseRelation<T extends ParseObject> {
   QueryBuilder getQuery() {
     return QueryBuilder(ParseObject(_targetClass));
   }
-  
+
   void add(T object) {
     if (object != null) {
       _targetClass = object.parseClassName;
@@ -33,9 +33,13 @@ class ParseRelation<T extends ParseObject> {
   }
 
   Map<String, dynamic> toJson() =>
-      <String, String>{'__type': keyRelation, 'className': _objects?.first?.parseClassName, 'objects': parseEncode(_objects?.toList())};
+      <String, String>{
+        '__type': keyRelation,
+        'className': _objects?.first?.parseClassName,
+        'objects': parseEncode(_objects?.toList())
+      };
 
   ParseRelation<T> fromJson(Map<String, dynamic> map) => ParseRelation<T>()
-                                                      .._objects = parseDecode(map['objects'])
-                                                      .._targetClass = map['className'];
+    .._objects = parseDecode(map['objects'])
+    .._targetClass = map['className'];
 }

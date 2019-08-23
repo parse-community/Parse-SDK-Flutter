@@ -58,7 +58,6 @@ bool isSuccessButNoResults(Response apiResponse) {
     results = decodedResponse;
   }
 
-
   if (results == null) {
     return false;
   }

@@ -17,8 +17,9 @@ class ParseHTTPClient extends BaseClient {
   /// Overrides the call method for HTTP Client and adds custom headers
   @override
   Future<StreamedResponse> send(BaseRequest request) {
-    if (!identical(0, 0.0))
+    if (!identical(0, 0.0)) {
       request.headers[keyHeaderUserAgent] = _userAgent;
+    }
     request.headers[keyHeaderApplicationId] = data.applicationId;
     if ((_sendSessionId == true) &&
         (data.sessionId != null) &&

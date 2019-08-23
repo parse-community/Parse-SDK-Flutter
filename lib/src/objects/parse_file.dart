@@ -37,7 +37,6 @@ class ParseFile extends ParseBase {
   String get url => super.get<String>(keyVarURL);
   set url(String url) => set<String>(keyVarURL, url);
 
-  @override
   String _path;
 
   bool get saved => url != null;
@@ -85,7 +84,6 @@ class ParseFile extends ParseBase {
   }
 
   /// Uploads a file to Parse Server
-  @override
   Future<ParseResponse> save() async {
     return upload();
   }

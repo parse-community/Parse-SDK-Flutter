@@ -66,7 +66,8 @@ String removeTrailingSlash(String serverUrl) {
 }
 
 Future<ParseResponse> batchRequest(List<dynamic> requests,
-    List<ParseObject> objects, {ParseHTTPClient client, bool debug}) async {
+    List<ParseObject> objects,
+    {ParseHTTPClient client, bool debug}) async {
   debug = isDebugEnabled(objectLevelDebug: debug);
   client = client ??
       ParseHTTPClient(
