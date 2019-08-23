@@ -38,7 +38,6 @@ class ParseFile extends ParseBase {
   set url(String url) => set<String>(keyVarURL, url);
 
   @override
-  // ignore: overridden_fields
   String _path;
 
   bool get saved => url != null;

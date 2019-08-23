@@ -21,7 +21,7 @@ class CoreStoreSembastImp implements CoreStore {
     return _instance;
   }
 
-  Database _store;
+  final Database _store;
 
   @override
   Future<bool> clear() {

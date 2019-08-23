@@ -230,7 +230,7 @@ class ParseMergeTool {
   dynamic _applyToValueAddUnique(dynamic oldValue, dynamic newValue) {
     for (var objectToAdd in newValue) {
       if (objectToAdd is ParseObject && objectToAdd.objectId != null) {
-        var index = 0;
+        int index = 0;
         for (var objc in oldValue) {
           if (objc is ParseObject && objc.objectId == objectToAdd.objectId) {
             oldValue[index] = objectToAdd;

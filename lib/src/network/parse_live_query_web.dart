@@ -1,5 +1,4 @@
 import 'dart:convert';
-// ignore: uri_does_not_exist
 import 'dart:html';
 
 import '../../parse_server_sdk.dart';
@@ -65,7 +64,7 @@ class LiveQuery {
     final int requestId = _requestIdGenerator();
 
     try {
-      _webSocket = new WebSocket(_liveQueryURL);
+      _webSocket = WebSocket(_liveQueryURL);
       await _webSocket.onOpen.first;
 
       if (_webSocket != null && _webSocket.readyState == WebSocket.OPEN) {

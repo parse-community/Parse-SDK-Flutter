@@ -15,7 +15,7 @@ class CoreStoreSharedPrefsImp implements CoreStore {
     return _instance;
   }
 
-  SharedPreferences _store;
+  final SharedPreferences _store;
 
   @override
   Future<bool> clear() {
