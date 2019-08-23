@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'dart:html';
+// ignore: uri_does_not_exist
+import 'dart:html' as HTML;
 
 import '../../parse_server_sdk.dart';
 
@@ -18,7 +19,7 @@ class LiveQuery {
         autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
   }
 
-  WebSocket _webSocket;
+  HTML.WebSocket _webSocket;
   ParseHTTPClient _client;
   bool _debug;
   bool _sendSessionId;
@@ -64,10 +65,10 @@ class LiveQuery {
     final int requestId = _requestIdGenerator();
 
     try {
-      _webSocket = WebSocket(_liveQueryURL);
+      _webSocket = HTML.WebSocket(_liveQueryURL);
       await _webSocket.onOpen.first;
 
-      if (_webSocket != null && _webSocket.readyState == WebSocket.OPEN) {
+      if (_webSocket != null && _webSocket.readyState == HTML.WebSocket.OPEN) {
         if (_debug) {
           print('$_printConstLiveQuery: Socket opened');
         }
@@ -78,7 +79,7 @@ class LiveQuery {
         }
       }
 
-      _webSocket.onMessage.listen((MessageEvent e) {
+      _webSocket.onMessage.listen((HTML.MessageEvent e) {
         final dynamic message = e.data;
         if (_debug) {
           print('$_printConstLiveQuery: Listen: $message');
@@ -169,7 +170,7 @@ class LiveQuery {
   }
 
   Future<void> unSubscribe() async {
-    if (_webSocket != null && _webSocket.readyState == WebSocket.OPEN) {
+    if (_webSocket != null && _webSocket.readyState == HTML.WebSocket.OPEN) {
       _webSocket.sendString(jsonEncode(_unsubscribeMessage));
       if (_debug) {
         print('$_printConstLiveQuery: Socket closed');
