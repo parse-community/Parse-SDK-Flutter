@@ -27,6 +27,10 @@ class ParseSession extends ParseObject implements ParseCloneable {
 
   String get installationId => super.get<String>(keyVarInstallationId);
 
+  set installationId(String installationId) =>
+      set<String>(keyVarInstallationId, installationId);
+
+
   Future<ParseResponse> getCurrentSessionFromServer() async {
     try {
 
