@@ -315,11 +315,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   /// Removes a user from Parse Server locally and online
-  Future<ParseResponse> destroy() async {
+  Future<ParseResponse> destroy({Map<String, String> headers}) async {
     if (objectId != null) {
       try {
         final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-        final Response response = await _client.delete(url);
+        final Response response = await _client.delete(url, headers: headers);
         return await _handleResponse(
             this, response, ParseApiRQ.destroy, _debug, parseClassName);
       } on Exception catch (e) {
