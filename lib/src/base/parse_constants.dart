@@ -1,7 +1,7 @@
 part of flutter_parse_sdk;
 
 // Library
-const String keySdkVersion = '1.0.22';
+const String keySdkVersion = '1.0.24';
 const String keyLibraryName = 'Flutter Parse SDK';
 
 // End Points
@@ -15,6 +15,7 @@ const String keyEndPointVerificationEmail = '/verificationEmailRequest';
 const String keyEndPointRequestPasswordReset = '/requestPasswordReset';
 const String keyEndPointClasses = '/classes/';
 const String keyEndPointHealth = '/health';
+const String keyEndPointAggregate = '/aggregate/';
 
 // ParseObject variables
 const String keyVarClassName = 'className';
@@ -25,6 +26,7 @@ const String keyVarUsername = 'username';
 const String keyVarEmail = 'email';
 const String keyVarPassword = 'password';
 const String keyVarSessionToken = 'sessionToken';
+const String keyVarAuthData = 'authData';
 const String keyVarAcl = 'ACL';
 const String keyVarName = 'name';
 const String keyVarURL = 'url';

@@ -1,4 +1,12 @@
+## 1.0.24
+
+## 1.0.23
+Fixed LiveQuery
+Bug fixes
+
 ## 1.0.22
+Added dirty children
+Added option of sembast or share_preferences 
 
 ## 1.0.21
 LiveQuery fix

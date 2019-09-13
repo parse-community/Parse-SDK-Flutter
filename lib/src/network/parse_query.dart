@@ -32,7 +32,11 @@ class QueryBuilder<T extends ParseObject> {
   /// [String] order will be the column of the table that the results are
   /// ordered by
   void orderByAscending(String order) {
-    limiters['order'] = order;
+    if (!limiters.containsKey('order')) {
+      limiters['order'] = order;
+    } else {
+      limiters['order'] = limiters['order'] + ',' + order;
+    }
   }
 
   /// Sorts the results descending order.
@@ -40,7 +44,11 @@ class QueryBuilder<T extends ParseObject> {
   /// [String] order will be the column of the table that the results are
   /// ordered by
   void orderByDescending(String order) {
-    limiters['order'] = '-$order';
+    if (!limiters.containsKey('order')) {
+      limiters['order'] = '-$order';
+    } else {
+      limiters['order'] = limiters['order'] + ',' + '-$order';
+    }
   }
 
   /// Define which keys in an object to return.
@@ -246,7 +254,8 @@ class QueryBuilder<T extends ParseObject> {
   // Add a constraint to the query that requires a particular key's value match another QueryBuilder
   // ignore: always_specify_types
   void whereMatchesQuery(String column, QueryBuilder query) {
-    final String inQuery = query._buildQueryRelational(query.object.parseClassName);
+    final String inQuery =
+    query._buildQueryRelational(query.object.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$inQuery\":$inQuery}'));
@@ -255,7 +264,8 @@ class QueryBuilder<T extends ParseObject> {
   //Add a constraint to the query that requires a particular key's value does not match another QueryBuilder
   // ignore: always_specify_types
   void whereDoesNotMatchQuery(String column, QueryBuilder query) {
-    final String inQuery = query._buildQueryRelational(query.object.parseClassName);
+    final String inQuery =
+    query._buildQueryRelational(query.object.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
@@ -265,7 +275,12 @@ class QueryBuilder<T extends ParseObject> {
   ///
   /// Make sure to call this after defining your queries
   Future<ParseResponse> query() async {
-    return object.query(_buildQuery());
+    return object.query(buildQuery());
+  }
+
+  Future<ParseResponse> distinct(String className) async {
+    final String queryString = 'distinct=$className';
+    return object.distinct(queryString);
   }
 
   ///Counts the number of objects that match this query
@@ -274,7 +289,7 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   /// Builds the query for Parse
-  String _buildQuery() {
+  String buildQuery() {
     queries = _checkForMultipleColumnInstances(queries);
     return 'where={${buildQueries(queries)}}${getLimiters(limiters)}';
   }

@@ -1,5 +1,6 @@
 part of flutter_parse_sdk;
 
+// ignore_for_file: deprecated_member_use
 class CoreStoreSembastImp implements CoreStore {
   CoreStoreSembastImp._internal(this._store);
 
@@ -21,7 +22,7 @@ class CoreStoreSembastImp implements CoreStore {
     return _instance;
   }
 
-  Database _store;
+  final Database _store;
 
   @override
   Future<bool> clear() {

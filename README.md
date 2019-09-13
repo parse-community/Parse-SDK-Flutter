@@ -13,7 +13,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```yml
 dependencies:  
-    parse_server_sdk: ^1.0.22
+    parse_server_sdk: ^1.0.24
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -44,9 +44,9 @@ It's possible to add other parameters to work with your instance of Parse Server
         clientKey: keyParseClientKey, // Required for some setups
         debug: true, // When enabled, prints logs to console
         liveQueryUrl: keyLiveQueryUrl, // Required if using LiveQuery 
-        autoSendSessionId: true, // Some confurations require this to be true
+        autoSendSessionId: true, // Required for authentication and ACL
         securityContext: securityContext, // Again, required for some setups
-		coreStore: await CoreStoreSharedPrefsImp.getInstance()); // Will use SharedPreferences instead of Sembast as an internal DB
+	coreStore: await CoreStoreSharedPrefsImp.getInstance()); // Local data storage method. Will use SharedPreferences instead of Sembast as an internal DB
 ```
 
 ## Objects
@@ -132,6 +132,17 @@ and to retrieve it
 ```dart
 var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
 ```
+
+## Storage
+We now have 2 types of storage, secure and unsecure. We currently rely on 2 third party options:
+
+- SharedPreferences
+- Sembast
+Sembast offers secured storage, whilst SharePreferences wraps NSUserDefaults (on iOS) and SharedPreferences (on Android).
+
+The storage method is defined in the parameter __coreStore__ in  Parse().initialize
+
+Check sample code for options
 
 ## Increment Counter values in objects
 Retrieve it, call
@@ -441,6 +452,13 @@ Also, once logged in you can manage sessions tokens. This feature can be called 
 ```dart
 user = ParseUser.currentUser();
 ```
+
+To add additional columns to the user:
+```dart
+var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com")
+            ..set("userLocation", "FlutterLand");
+```
+
 Other user features are:-
  * Request Password Reset
  * Verification Email Request
@@ -448,6 +466,38 @@ Other user features are:-
  * Save
  * Destroy user
  * Queries 
+ 
+ ## Facebook, OAuth and 3rd Party Login/User
+ 
+ Usually, each provider will provide their own library for logins, but the loginWith method on ParseUser accepts a name of provider, then a Map<String, dynamic> with the authentication details required.
+ For Facebook and the example below, we used the library provided at https://pub.dev/packages/flutter_facebook_login
+ 
+ ```
+ Future<void> goToFacebookLogin() async {
+        final FacebookLogin facebookLogin = FacebookLogin();
+        final FacebookLoginResult result = await facebookLogin.logInWithReadPermissions(['email']);
+    
+        switch (result.status) {
+          case FacebookLoginStatus.loggedIn:
+            final ParseResponse response = await ParseUser.loginWith(
+                'facebook',
+                facebook(result.accessToken.token,
+                    result.accessToken.userId,
+                    result.accessToken.expires));
+    
+            if (response.success) {
+              // User is logged in, test with ParseUser.currentUser()
+            }
+            break;
+          case FacebookLoginStatus.cancelledByUser:
+                // User cancelled
+            break;
+          case FacebookLoginStatus.error:
+                // Error
+            break;
+        }
+      }
+```
 
 ## Security for Objects - ParseACL
 For any object, you can specify which users are allowed to read the object, and which users are allowed to modify an object.
@@ -537,6 +587,40 @@ Executes a cloud function with parameters
 final ParseCloudFunction function = ParseCloudFunction('hello');
 final Map<String, String> params = <String, String>{'plan': 'paid'};
 function.execute(parameters: params);
+```
+
+## Relation
+
+The SDK supports Relation.
+
+To add relation to object:
+
+```dart
+dietPlan.addRelation('fruits', [ParseObject("Fruits")..set("objectId", "XGadzYxnac")]);
+```
+
+To remove relation to object:
+
+```dart
+dietPlan.removeRelation('fruits', [ParseObject("Fruits")..set("objectId", "XGadzYxnac")]);
+```
+
+To Retrive a relation instance for user, call:
+```dart
+final relation = dietPlan.getRelation('fruits');
+```
+
+and then you can add a relation to the passed in object:
+```
+relation.add(dietPlan);
+final result = await user.save();
+```
+
+To retrieve objects that are members of Relation field of a parent object:
+```dart
+QueryBuilder<ParseObject> query =
+    QueryBuilder<ParseObject>(ParseObject('Fruits'))
+      ..whereRelatedTo('fruits', 'DietPlan', DietPlan.objectId);
 ```
 
 ## Other Features of this library

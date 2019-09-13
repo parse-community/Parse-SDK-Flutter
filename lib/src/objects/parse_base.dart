@@ -23,7 +23,7 @@ abstract class ParseBase {
   }
 
   bool _isDirty(bool considerChildren) {
-    if (_dirty || _unsavedChanges.isNotEmpty) {
+    if (_dirty || _unsavedChanges.isNotEmpty || objectId == null) {
       return true;
     }
 
@@ -41,12 +41,14 @@ abstract class ParseBase {
     if (_dirty || _unsavedChanges.isNotEmpty) {
       return true;
     }
+    bool match = false;
     _getObjectData().forEach((String key, dynamic value) {
       if (value is ParseObject && value._areChildrenDirty(seenObjects)) {
-        return true;
+        match = true;
       }
+      return false;
     });
-    return false;
+    return match;
   }
 
   /// Returns [DateTime] createdAt
@@ -88,9 +90,8 @@ abstract class ParseBase {
       map[keyVarUpdatedAt] = _parseDateFormat.format(updatedAt);
     }
 
-    final Map<String, dynamic> target = forApiRQ
-        ? _unsavedChanges
-        : _getObjectData();
+    final Map<String, dynamic> target =
+    forApiRQ ? _unsavedChanges : _getObjectData();
     target.forEach((String key, dynamic value) {
       if (!map.containsKey(key)) {
         map[key] = parseEncode(value, full: full);
@@ -102,6 +103,7 @@ abstract class ParseBase {
       map.remove(keyVarUpdatedAt);
       map.remove(keyVarClassName);
       //map.remove(keyVarAcl);
+      map.remove(keyVarObjectId);
       map.remove(keyParamSessionToken);
     }
 
@@ -120,23 +122,23 @@ abstract class ParseBase {
       if (key == parseClassName || key == '__type') {
         // NO OP
       } else if (key == keyVarObjectId) {
-        objectId = value;
+        _getObjectData()[keyVarObjectId] = value;
       } else if (key == keyVarCreatedAt) {
         if (keyVarCreatedAt is String) {
-          set<DateTime>(keyVarCreatedAt, _parseDateFormat.parse(value));
+          _getObjectData()[keyVarCreatedAt] = _parseDateFormat.parse(value);
         } else {
-          set<DateTime>(keyVarCreatedAt, value);
+          _getObjectData()[keyVarCreatedAt] = value;
         }
       } else if (key == keyVarUpdatedAt) {
         if (keyVarUpdatedAt is String) {
-          set<DateTime>(keyVarUpdatedAt, _parseDateFormat.parse(value));
+          _getObjectData()[keyVarUpdatedAt] = _parseDateFormat.parse(value);
         } else {
-          set<DateTime>(keyVarUpdatedAt, value);
+          _getObjectData()[keyVarUpdatedAt] = _parseDateFormat.parse(value);
         }
       } else if (key == keyVarAcl) {
-        this[keyVarAcl] = ParseACL().fromJson(value);
+        _getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
       } else {
-        this[key] = parseDecode(value);
+        _getObjectData()[key] = parseDecode(value);
       }
     });
 
@@ -166,17 +168,17 @@ abstract class ParseBase {
   }
 
   dynamic operator [](Object key) {
-    get<dynamic>(key);
+    return get<dynamic>(key);
   }
 
   void operator []=(String key, dynamic value) {
     set<dynamic>(key, value);
   }
+
   /// Saves in storage
   Future<void> saveInStorage(String key) async {
     final String objectJson = json.encode(toJson(full: true));
-    ParseCoreData().getStore()
-      ..setString(key, objectJson);
+    await ParseCoreData().getStore().setString(key, objectJson);
   }
 
   /// Sets type [T] from objectData
@@ -184,25 +186,24 @@ abstract class ParseBase {
   /// To set an int, call setType<int> and an int will be saved
   /// [bool] forceUpdate is always true, if unsure as to whether an item is
   /// needed or not, set to false
-  void set<T>(String key, T value, {bool forceUpdate = true}) {
+  void set<T>(String key, T value, {bool forceUpdate = false}) {
     if (value != null) {
       if (_getObjectData().containsKey(key)) {
-        if (_getObjectData()[key] == value) {
+        if (_getObjectData()[key] == value && !forceUpdate) {
           return;
         }
-        if (forceUpdate) {
-          _getObjectData()[key] = value;
-        }
+        _getObjectData()[key] =
+            ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
       } else {
         _getObjectData()[key] = value;
       }
-      _unsavedChanges[key] = value;
+      _unsavedChanges[key] = _getObjectData()[key];
     }
   }
 
   ///Set the [ParseACL] governing this object.
   void setACL<ParseACL>(ParseACL acl) {
-    _getObjectData()[keyVarAcl] = acl;
+    set(keyVarAcl, acl);
   }
 
   ///Access the [ParseACL] governing this object.
@@ -240,8 +241,7 @@ abstract class ParseBase {
       await unpin();
       final Map<String, dynamic> objectMap = parseEncode(this, full: true);
       final String json = jsonEncode(objectMap);
-      ParseCoreData().getStore()
-        ..setString(objectId, json);
+      await ParseCoreData().getStore().setString(objectId, json);
       return true;
     } else {
       return false;
@@ -253,8 +253,7 @@ abstract class ParseBase {
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> unpin({String key}) async {
     if (objectId != null) {
-      ParseCoreData().getStore()
-        ..remove(key ?? objectId);
+      await ParseCoreData().getStore().remove(key ?? objectId);
       return true;
     }
 
