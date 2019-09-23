@@ -236,12 +236,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
   Future<ParseResponse> logout({bool deleteLocalUserData = true}) async {
     final String sessionId = _client.data.sessionId;
 
-    _client.data.sessionId = null;
-    ParseCoreData().setSessionId(null);
+    forgetLocalSession();
 
     if (deleteLocalUserData == true) {
-      unpin(key: keyParseStoreUser);
-      _setObjectData(null);
+      await this.deleteLocalUserData();
     }
 
     try {
@@ -254,6 +252,17 @@ class ParseUser extends ParseObject implements ParseCloneable {
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.logout, _debug, parseClassName);
     }
+  }
+
+  void forgetLocalSession() async {
+    _client.data.sessionId = null;
+    ParseCoreData().setSessionId(null);
+  }
+
+  /// Delete the local user data.
+  Future<void> deleteLocalUserData() async {
+    await unpin(key: keyParseStoreUser);
+    _setObjectData(null);
   }
 
   /// Sends a verification email to the users email address

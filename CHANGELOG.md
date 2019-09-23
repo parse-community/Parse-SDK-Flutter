@@ -1,4 +1,7 @@
+## 1.0.25
+
 ## 1.0.24
+Fixed lint
 
 ## 1.0.23
 Fixed LiveQuery

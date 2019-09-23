@@ -1,6 +1,6 @@
 part of flutter_parse_sdk;
 
-class ParseFile extends ParseBase {
+class ParseFile extends ParseObject {
   /// Creates a new file
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
@@ -9,7 +9,8 @@ class ParseFile extends ParseBase {
       String url,
       bool debug,
       ParseHTTPClient client,
-        bool autoSendSessionId}) {
+        bool autoSendSessionId})
+      : super('ParseFile', debug: debug, autoSendSessionId: autoSendSessionId) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _client = client ??
         ParseHTTPClient(
@@ -26,9 +27,6 @@ class ParseFile extends ParseBase {
     }
   }
 
-  bool _debug;
-  ParseHTTPClient _client;
-  
   File file;
 
   String get name => super.get<String>(keyVarName);
@@ -36,8 +34,6 @@ class ParseFile extends ParseBase {
 
   String get url => super.get<String>(keyVarURL);
   set url(String url) => set<String>(keyVarURL, url);
-
-  String _path;
 
   bool get saved => url != null;
 
@@ -84,6 +80,7 @@ class ParseFile extends ParseBase {
   }
 
   /// Uploads a file to Parse Server
+  @override
   Future<ParseResponse> save() async {
     return upload();
   }
