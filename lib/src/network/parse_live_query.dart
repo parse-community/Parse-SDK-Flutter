@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:connectivity/connectivity.dart';
@@ -30,7 +31,7 @@ class Subscription {
   }
 }
 
-class Client {
+class Client with WidgetsBindingObserver {
   factory Client() => _getInstance();
   Client._internal(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
@@ -57,6 +58,7 @@ class Client {
         reconnect();
       }
     });
+    WidgetsBinding.instance.addObserver(this);
   }
   static Client get instance => _getInstance();
   static Client _instance;
@@ -81,6 +83,25 @@ class Client {
   Future<void> reconnect() async {
     await _connect();
     _connectLiveQuery();
+  }
+
+  int readyState() {
+    if (_webSocket != null) {
+      return _webSocket.readyState;
+    }
+    return WebSocket.connecting;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.resumed: 
+        reconnect();
+        break;
+      default:
+        break;
+    }
   }
 
   Future<dynamic> disconnect() async {
