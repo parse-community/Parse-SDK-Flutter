@@ -167,7 +167,7 @@ class QueryBuilder<T extends ParseObject> {
   /// Returns an object where the [String] column contains all
   void whereArrayContainsAll(String column, List<dynamic> value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry<String, dynamic>(column, value.toString()), '\$all'));
+        MapEntry<String, dynamic>(column, value), '\$all'));
   }
 
   /// Returns an object where the [String] column has a regEx performed on,
