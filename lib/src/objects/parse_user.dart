@@ -33,8 +33,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   @override
   dynamic clone(Map<String, dynamic> map) =>
-      ParseUser.clone(map)
-        ..fromJson(map);
+      ParseUser.clone(map)..fromJson(map);
 
   static const String keyEmailVerified = 'emailVerified';
   static const String keyUsername = 'username';
@@ -141,9 +140,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
       final Uri url = getSanitisedUri(_client, '$path');
       final String body = json.encode(bodyData);
       _saveChanges();
+      final String installationId = await _getInstallationId();
       final Response response = await _client.post(url,
           headers: <String, String>{
             keyHeaderRevocableSession: '1',
+            if (installationId != null) keyHeaderInstallationId: installationId,
           },
           body: body);
 
@@ -185,10 +186,12 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
       final Uuid uuid = Uuid();
+      final String installationId = await _getInstallationId();
 
       final Response response = await _client.post(url,
           headers: <String, String>{
             keyHeaderRevocableSession: '1',
+            if (installationId != null) keyHeaderInstallationId: installationId,
           },
           body: jsonEncode(<String, dynamic>{
             'authData': <String, dynamic>{
@@ -215,9 +218,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
   Future<ParseResponse> _loginWith(String provider, Object authData) async {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
+      final String installationId = await _getInstallationId();
       final Response response = await _client.post(url,
           headers: <String, String>{
             keyHeaderRevocableSession: '1',
+            if (installationId != null) keyHeaderInstallationId: installationId,
           },
           body: jsonEncode(<String, dynamic>{
             'authData': <String, dynamic>{provider: authData}
@@ -396,4 +401,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   static ParseUser _getEmptyUser() => ParseUser(null, null, null);
+
+  static Future<String> _getInstallationId() async {
+    final ParseInstallation parseInstallation =
+        await ParseInstallation.currentInstallation();
+    return parseInstallation?.installationId;
+  }
 }
