@@ -84,9 +84,22 @@ class ParseUser extends ParseObject implements ParseCloneable {
   ///
   /// Current user is stored locally, but in case of a server update [bool]
   /// fromServer can be called and an updated version of the [User] object will be
-  /// returned
-  static Future<ParseResponse> getCurrentUserFromServer(
-      {String token, bool debug, ParseHTTPClient client}) async {
+  /// returned.
+  ///
+  /// NOTE: If using custom ParseUserObject create instance and user [getUpdatedUser]
+  static Future<ParseResponse> getCurrentUserFromServer(String token,
+      {bool debug, ParseHTTPClient client}) async {
+    final ParseUser user = _getEmptyUser();
+    user.sessionToken = token;
+    return user.getUpdatedUser(debug: debug, client: client);
+  }
+
+  /// Get the updated version of the user from the server
+  ///
+  /// Uses token to get the latest version of the user. Prefer this to [getCurrentUserFromServer]
+  /// if using custom ParseUser object
+  Future<ParseResponse> getUpdatedUser(
+      {bool debug, ParseHTTPClient client}) async {
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
     final ParseHTTPClient _client = client ??
         ParseHTTPClient(
@@ -94,23 +107,23 @@ class ParseUser extends ParseObject implements ParseCloneable {
             securityContext: ParseCoreData().securityContext);
 
     // We can't get the current user and session without a sessionId
-    if ((ParseCoreData().sessionId == null) && (token == null)) {
+    if ((ParseCoreData().sessionId == null) && (sessionToken == null)) {
       return null;
     }
 
     final Map<String, String> headers = <String, String>{};
-    if (token != null) {
-      headers[keyHeaderSessionToken] = token;
+    if (sessionToken != null) {
+      headers[keyHeaderSessionToken] = sessionToken;
     }
 
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUserName');
       final Response response = await _client.get(url, headers: headers);
-      return await _handleResponse(_getEmptyUser(), response,
-          ParseApiRQ.currentUser, _debug, _getEmptyUser().parseClassName);
+      return await _handleResponse(this, response,
+          ParseApiRQ.currentUser, _debug, this.parseClassName);
     } on Exception catch (e) {
       return handleException(
-          e, ParseApiRQ.currentUser, _debug, _getEmptyUser().parseClassName);
+          e, ParseApiRQ.currentUser, _debug, parseClassName);
     }
   }
 
