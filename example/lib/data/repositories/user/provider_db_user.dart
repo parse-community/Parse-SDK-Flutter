@@ -11,7 +11,7 @@ import 'contract_provider_user.dart';
 class UserProviderDB implements UserProviderContract {
   UserProviderDB(this._db, this._store);
 
-  final Store _store;
+  final StoreRef<String, Map<String, dynamic>> _store;
   final Database _db;
 
   @override
@@ -19,8 +19,9 @@ class UserProviderDB implements UserProviderContract {
       String username, String password, String emailAddress) async {
     final User user = User(username, password, emailAddress);
     final Map<String, dynamic> values = convertItemToStorageMap(user);
-    final Record recordToAdd = Record(_store, values, user.objectId);
-    final Record recordFromDB = await _db.putRecord(recordToAdd);
+    await _store.record(user.objectId).put(_db, values);
+    final Map<String, dynamic> recordFromDB =
+        await _store.record(user.objectId).get(_db);
     return convertRecordToItem(record: recordFromDB);
   }
 
@@ -36,7 +37,9 @@ class UserProviderDB implements UserProviderContract {
 
   @override
   Future<ApiResponse> destroy(User user) async {
-    await _store.delete(user.objectId);
+    final Finder finder =
+        Finder(filter: Filter.equals('objectId', user.objectId));
+    await _store.delete(_db, finder: finder);
     return ApiResponse(true, 200, null, null);
   }
 
@@ -53,8 +56,9 @@ class UserProviderDB implements UserProviderContract {
   @override
   Future<ApiResponse> save(User user) async {
     final Map<String, dynamic> values = convertItemToStorageMap(user);
-    final Record recordToAdd = Record(_store, values, user.objectId);
-    final Record recordFromDB = await _db.putRecord(recordToAdd);
+    await _store.record(user.objectId).put(_db, values);
+    final Map<String, dynamic> recordFromDB =
+        await _store.record(user.objectId).get(_db);
     return ApiResponse(
         true, 200, <dynamic>[convertRecordToItem(record: recordFromDB)], null);
   }
@@ -88,7 +92,7 @@ class UserProviderDB implements UserProviderContract {
     return values;
   }
 
-  User convertRecordToItem({Record record, Map<String, dynamic> values}) {
+  User convertRecordToItem({dynamic record, Map<String, dynamic> values}) {
     try {
       values ??= record.value;
       final User item = User.clone().fromJson(json.jsonDecode(values['value']));

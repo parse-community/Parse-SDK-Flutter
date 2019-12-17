@@ -15,7 +15,8 @@ class UserRepository implements UserProviderContract {
     if (mockDBProvider != null) {
       repository.db = mockDBProvider;
     } else {
-      final Store store = dbConnection.getStore('reposutory_user');
+      final StoreRef<String, Map<String, dynamic>> store =
+          stringMapStoreFactory.store('repository_user');
       repository.db = UserProviderDB(dbConnection, store);
     }
 
