@@ -15,7 +15,8 @@ class DietPlanRepository implements DietPlanProviderContract {
     if (mockDBProvider != null) {
       repository.db = mockDBProvider;
     } else {
-      final Store store = dbConnection.getStore('repository_store');
+      final StoreRef<String, Map<String, dynamic>> store =
+          stringMapStoreFactory.store('repository_diet');
       repository.db = DietPlanProviderDB(dbConnection, store);
     }
 
