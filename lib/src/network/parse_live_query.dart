@@ -50,8 +50,7 @@ class Client with WidgetsBindingObserver {
     } else if (_liveQueryURL.contains('http')) {
       _liveQueryURL = _liveQueryURL.replaceAll('http', 'ws');
     }
-    Connectivity()
-        .onConnectivityChanged
+    Connectivity().onConnectivityChanged
         .listen((ConnectivityResult connectivityResult) {
       print('onConnectivityChanged:$connectivityResult');
       if (connectivityResult != ConnectivityResult.none) {
