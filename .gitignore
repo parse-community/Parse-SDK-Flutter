@@ -13,7 +13,6 @@ pubspec.lock
 .idea/
 
 # Android related
-gradle.properties
 **/android/**/gradle-wrapper.jar
 **/android/.gradle
 **/android/captures/
@@ -26,7 +25,6 @@ gradle.properties
 
 build/
 .idea
-example/.flutter-plugins-dependencies
 example/ios/Frameworks/
 example/lib/ui/
 
