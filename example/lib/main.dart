@@ -258,7 +258,7 @@ class _MyAppState extends State<MyApp> {
 
     /// Update current user from server - Best done to verify user is still a valid user
     response = await ParseUser.getCurrentUserFromServer(
-        token: user?.get<String>(keyHeaderSessionToken));
+        user?.get<String>(keyHeaderSessionToken));
     if (response?.success ?? false) {
       user = response.result;
     }
