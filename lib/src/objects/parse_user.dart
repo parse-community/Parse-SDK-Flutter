@@ -33,8 +33,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   @override
   dynamic clone(Map<String, dynamic> map) =>
-      ParseUser.clone(map)
-        ..fromJson(map);
+      ParseUser.clone(map)..fromJson(map);
 
   static const String keyEmailVerified = 'emailVerified';
   static const String keyUsername = 'username';
@@ -84,9 +83,22 @@ class ParseUser extends ParseObject implements ParseCloneable {
   ///
   /// Current user is stored locally, but in case of a server update [bool]
   /// fromServer can be called and an updated version of the [User] object will be
-  /// returned
-  static Future<ParseResponse> getCurrentUserFromServer(
-      {String token, bool debug, ParseHTTPClient client}) async {
+  /// returned.
+  ///
+  /// NOTE: If using custom ParseUserObject create instance and user [getUpdatedUser]
+  static Future<ParseResponse> getCurrentUserFromServer(String token,
+      {bool debug, ParseHTTPClient client}) async {
+    final ParseUser user = _getEmptyUser();
+    user.sessionToken = token;
+    return user.getUpdatedUser(debug: debug, client: client);
+  }
+
+  /// Get the updated version of the user from the server
+  ///
+  /// Uses token to get the latest version of the user. Prefer this to [getCurrentUserFromServer]
+  /// if using custom ParseUser object
+  Future<ParseResponse> getUpdatedUser(
+      {bool debug, ParseHTTPClient client}) async {
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
     final ParseHTTPClient _client = client ??
         ParseHTTPClient(
@@ -94,23 +106,23 @@ class ParseUser extends ParseObject implements ParseCloneable {
             securityContext: ParseCoreData().securityContext);
 
     // We can't get the current user and session without a sessionId
-    if ((ParseCoreData().sessionId == null) && (token == null)) {
+    if ((ParseCoreData().sessionId == null) && (sessionToken == null)) {
       return null;
     }
 
     final Map<String, String> headers = <String, String>{};
-    if (token != null) {
-      headers[keyHeaderSessionToken] = token;
+    if (sessionToken != null) {
+      headers[keyHeaderSessionToken] = sessionToken;
     }
 
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUserName');
       final Response response = await _client.get(url, headers: headers);
-      return await _handleResponse(_getEmptyUser(), response,
-          ParseApiRQ.currentUser, _debug, _getEmptyUser().parseClassName);
+      return await _handleResponse(this, response,
+          ParseApiRQ.currentUser, _debug, this.parseClassName);
     } on Exception catch (e) {
       return handleException(
-          e, ParseApiRQ.currentUser, _debug, _getEmptyUser().parseClassName);
+          e, ParseApiRQ.currentUser, _debug, parseClassName);
     }
   }
 
@@ -141,9 +153,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
       final Uri url = getSanitisedUri(_client, '$path');
       final String body = json.encode(bodyData);
       _saveChanges();
+      final String installationId = await _getInstallationId();
       final Response response = await _client.post(url,
           headers: <String, String>{
             keyHeaderRevocableSession: '1',
+            if (installationId != null) keyHeaderInstallationId: installationId,
           },
           body: body);
 
@@ -185,10 +199,12 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
       final Uuid uuid = Uuid();
+      final String installationId = await _getInstallationId();
 
       final Response response = await _client.post(url,
           headers: <String, String>{
             keyHeaderRevocableSession: '1',
+            if (installationId != null) keyHeaderInstallationId: installationId,
           },
           body: jsonEncode(<String, dynamic>{
             'authData': <String, dynamic>{
@@ -215,9 +231,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
   Future<ParseResponse> _loginWith(String provider, Object authData) async {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
+      final String installationId = await _getInstallationId();
       final Response response = await _client.post(url,
           headers: <String, String>{
             keyHeaderRevocableSession: '1',
+            if (installationId != null) keyHeaderInstallationId: installationId,
           },
           body: jsonEncode(<String, dynamic>{
             'authData': <String, dynamic>{provider: authData}
@@ -236,12 +254,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
   Future<ParseResponse> logout({bool deleteLocalUserData = true}) async {
     final String sessionId = _client.data.sessionId;
 
-    _client.data.sessionId = null;
-    ParseCoreData().setSessionId(null);
+    forgetLocalSession();
 
     if (deleteLocalUserData == true) {
-      unpin(key: keyParseStoreUser);
-      _setObjectData(null);
+      await this.deleteLocalUserData();
     }
 
     try {
@@ -254,6 +270,17 @@ class ParseUser extends ParseObject implements ParseCloneable {
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.logout, _debug, parseClassName);
     }
+  }
+
+  void forgetLocalSession() async {
+    _client.data.sessionId = null;
+    ParseCoreData().setSessionId(null);
+  }
+
+  /// Delete the local user data.
+  Future<void> deleteLocalUserData() async {
+    await unpin(key: keyParseStoreUser);
+    _setObjectData(null);
   }
 
   /// Sends a verification email to the users email address
@@ -387,4 +414,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   static ParseUser _getEmptyUser() => ParseUser(null, null, null);
+
+  static Future<String> _getInstallationId() async {
+    final ParseInstallation parseInstallation =
+        await ParseInstallation.currentInstallation();
+    return parseInstallation?.installationId;
+  }
 }

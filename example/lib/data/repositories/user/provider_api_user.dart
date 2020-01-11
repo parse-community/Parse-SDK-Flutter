@@ -18,7 +18,9 @@ class UserProviderApi implements UserProviderContract {
 
   @override
   Future<ApiResponse> getCurrentUserFromServer() async {
-    return getApiResponse<User>(await ParseUser.getCurrentUserFromServer());
+    final ParseUser user = await ParseUser.currentUser();
+    return getApiResponse<User>(await ParseUser.getCurrentUserFromServer(
+        user?.get<String>(keyHeaderSessionToken)));
   }
 
   @override

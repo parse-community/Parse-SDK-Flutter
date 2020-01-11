@@ -9,7 +9,7 @@ class ParseInstallation extends ParseObject {
     _client = client ??
         ParseHTTPClient(
             sendSessionId:
-            autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
   }
 
@@ -130,11 +130,11 @@ class ParseInstallation extends ParseObject {
     final CoreStore coreStore = ParseCoreData().getStore();
 
     final String installationJson =
-    await coreStore.getString(keyParseStoreInstallation);
+        await coreStore.getString(keyParseStoreInstallation);
 
     if (installationJson != null) {
       final Map<String, dynamic> installationMap =
-      json.decode(installationJson);
+          json.decode(installationJson);
 
       if (installationMap != null) {
         return ParseInstallation()..fromJson(installationMap);
@@ -161,11 +161,16 @@ class ParseInstallation extends ParseObject {
     try {
       final String uri = '${_client.data.serverUrl}$keyEndPointInstallations';
       final String body = json.encode(toJson(forApiRQ: true));
+      final Map<String, String> headers = {
+        keyHeaderContentType: keyHeaderContentTypeJson
+      };
       if (_debug) {
         logRequest(ParseCoreData().appName, parseClassName,
             ParseApiRQ.create.toString(), uri, body);
       }
-      final Response result = await _client.post(uri, body: body);
+
+      final Response result =
+          await _client.post(uri, body: body, headers: headers);
 
       //Set the objectId on the object after it is created.
       //This allows you to perform operations on the object after creation

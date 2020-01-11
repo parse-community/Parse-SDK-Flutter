@@ -167,7 +167,7 @@ class QueryBuilder<T extends ParseObject> {
   /// Returns an object where the [String] column contains all
   void whereArrayContainsAll(String column, List<dynamic> value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry<String, dynamic>(column, value.toString()), '\$all'));
+        MapEntry<String, dynamic>(column, value), '\$all'));
   }
 
   /// Returns an object where the [String] column has a regEx performed on,
@@ -255,7 +255,7 @@ class QueryBuilder<T extends ParseObject> {
   // ignore: always_specify_types
   void whereMatchesQuery(String column, QueryBuilder query) {
     final String inQuery =
-    query._buildQueryRelational(query.object.parseClassName);
+        query._buildQueryRelational(query.object.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$inQuery\":$inQuery}'));
@@ -265,7 +265,7 @@ class QueryBuilder<T extends ParseObject> {
   // ignore: always_specify_types
   void whereDoesNotMatchQuery(String column, QueryBuilder query) {
     final String inQuery =
-    query._buildQueryRelational(query.object.parseClassName);
+        query._buildQueryRelational(query.object.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
