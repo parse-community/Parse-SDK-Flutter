@@ -13,7 +13,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```yml
 dependencies:  
-    parse_server_sdk: ^1.0.25
+    parse_server_sdk: ^1.0.26
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 

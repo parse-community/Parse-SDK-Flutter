@@ -1,6 +1,6 @@
 name: parse_server_sdk
 description: Flutter plugin for Parse Server, (https://parseplatform.org), (https://back4app.com)
-version: 1.0.25
+version: 1.0.26
 homepage: https://github.com/phillwiggins/flutter_parse_sdk
 author: PhillWiggins <phill.wiggins@gmail.com>
 
