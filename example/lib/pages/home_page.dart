@@ -24,7 +24,9 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     final List<dynamic> json = const JsonDecoder().convert(dietPlansToAdd);
     for (final Map<String, dynamic> element in json) {
-      final DietPlan dietPlan = DietPlan().fromJson(element);
+      final DietPlan dietPlan = DietPlan();
+      element.forEach(
+          (String k, dynamic v) => dietPlan.set<dynamic>(k, parseDecode(v)));
       randomDietPlans.add(dietPlan);
     }
   }

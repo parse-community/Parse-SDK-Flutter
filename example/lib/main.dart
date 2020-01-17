@@ -10,6 +10,7 @@ import 'package:flutter_plugin_example/data/repositories/diet_plan/repository_di
 import 'package:flutter_plugin_example/data/repositories/user/repository_user.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
+import 'package:flutter_plugin_example/pages/decision_page.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 void main() {
@@ -20,6 +21,7 @@ void main() {
 
 void _setTargetPlatformForDesktop() {
   TargetPlatform targetPlatform;
+
   if (Platform.isMacOS) {
     targetPlatform = TargetPlatform.iOS;
   } else if (Platform.isLinux || Platform.isWindows) {
@@ -55,7 +57,9 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text(text),
+          //child: Text(text),
+          child: DecisionPage(),
+          //child: HomePage(),
         ),
       ),
     );
@@ -94,22 +98,22 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> runTestQueries() async {
     // Basic repository example
-    /* await repositoryAddUser();
-    await repositoryAddItems();
+    //await repositoryAddUser();
+    // await repositoryAddItems();
     await repositoryGetAllItems();
-*/
+
     //Basic usage
-    /* await createItem();
-    await getAllItems();
-    await getAllItemsByName();
-    await getSingleItem();
-    await getConfigs();
-    await query();*/
-    await initUser();
-    /* await initInstallation();
-    await function();
-    await functionWithParameters();
-    await test();*/
+    //await createItem();
+    //await getAllItems();
+    //await getAllItemsByName();
+    //await getSingleItem();
+    //await getConfigs();
+    //await query();
+    //await initUser();
+    //await initInstallation();
+    //await function();
+    //await functionWithParameters();
+    //await test();
   }
 
   Future<void> initInstallation() async {
@@ -221,7 +225,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initUser() async {
     // All return type ParseUser except all
     ParseUser user =
-    ParseUser('RE9fU360lishjFKC5dLZS4Zwm', 'password', 'test@facebook.com');
+        ParseUser('RE9fU360lishjFKC5dLZS4Zwm', 'password', 'test@facebook.com');
 
     /// Sign-up
     /*ParseResponse response = await user.signUp();
@@ -255,7 +259,7 @@ class _MyAppState extends State<MyApp> {
 
     /// Update current user from server - Best done to verify user is still a valid user
     response = await ParseUser.getCurrentUserFromServer(
-        token: user?.get<String>(keyHeaderSessionToken));
+        user?.get<String>(keyHeaderSessionToken));
     if (response?.success ?? false) {
       user = response.result;
     }
@@ -353,7 +357,9 @@ class _MyAppState extends State<MyApp> {
 
     final List<dynamic> json = const JsonDecoder().convert(dietPlansToAdd);
     for (final Map<String, dynamic> element in json) {
-      final DietPlan dietPlan = DietPlan().fromJson(element);
+      final DietPlan dietPlan = DietPlan();
+      element.forEach(
+          (String k, dynamic v) => dietPlan.set<dynamic>(k, parseDecode(v)));
       dietPlans.add(dietPlan);
     }
 
@@ -376,7 +382,6 @@ class _MyAppState extends State<MyApp> {
     userRepo ??= UserRepository.init(await getDB());
   }
 
-
   /// Available options:
   /// SharedPreferences - Not secure but will work with older versions of SDK - CoreStoreSharedPrefsImpl
   /// Sembast - NoSQL DB - Has security - CoreStoreSembastImpl
@@ -387,10 +392,10 @@ class _MyAppState extends State<MyApp> {
 }
 
 const String dietPlansToAdd =
-    '[{"className":"Diet_Plans","Name":"Textbook","Description":"For an active lifestyle and a straight forward macro plan, we suggest this plan.","Fat":25,"Carbs":50,"Protein":25,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Body Builder","Description":"Default Body Builders Diet","Fat":20,"Carbs":40,"Protein":40,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Zone Diet","Description":"Popular with CrossFit users. Zone Diet targets similar macros.","Fat":30,"Carbs":40,"Protein":30,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Low Fat","Description":"Low fat diet.","Fat":15,"Carbs":60,"Protein":25,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Low Carb","Description":"Low Carb diet, main focus on quality fats and protein.","Fat":35,"Carbs":25,"Protein":40,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Paleo","Description":"Paleo diet.","Fat":60,"Carbs":25,"Protein":10,"Status":0},'
-    '{"className":"Diet_Plans","Name":"Ketogenic","Description":"High quality fats, low carbs.","Fat":65,"Carbs":5,"Protein":30,"Status":0}]';
+    '[{"className":"Diet_Plans","Name":"Textbook","Description":"For an active lifestyle and a straight forward macro plan, we suggest this plan.","Fat":25,"Carbs":50,"Protein":25,"Status":false},'
+    '{"className":"Diet_Plans","Name":"Body Builder","Description":"Default Body Builders Diet","Fat":20,"Carbs":40,"Protein":40,"Status":false},'
+    '{"className":"Diet_Plans","Name":"Zone Diet","Description":"Popular with CrossFit users. Zone Diet targets similar macros.","Fat":30,"Carbs":40,"Protein":30,"Status":false},'
+    '{"className":"Diet_Plans","Name":"Low Fat","Description":"Low fat diet.","Fat":15,"Carbs":60,"Protein":25,"Status":false},'
+    '{"className":"Diet_Plans","Name":"Low Carb","Description":"Low Carb diet, main focus on quality fats and protein.","Fat":35,"Carbs":25,"Protein":40,"Status":false},'
+    '{"className":"Diet_Plans","Name":"Paleo","Description":"Paleo diet.","Fat":60,"Carbs":25,"Protein":10,"Status":false},'
+    '{"className":"Diet_Plans","Name":"Ketogenic","Description":"High quality fats, low carbs.","Fat":65,"Carbs":5,"Protein":30,"Status":false}]';

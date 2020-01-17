@@ -27,14 +27,15 @@ class ParseSession extends ParseObject implements ParseCloneable {
 
   String get installationId => super.get<String>(keyVarInstallationId);
 
+  set installationId(String installationId) =>
+      set<String>(keyVarInstallationId, installationId);
+
+
   Future<ParseResponse> getCurrentSessionFromServer() async {
     try {
-      final Uri tempUri = Uri.parse(_client.data.serverUrl);
 
-      final Uri url = Uri(
-          scheme: tempUri.scheme,
-          host: tempUri.host,
-          path: '${tempUri.path}$keyEndPointSessions/me');
+      const String path = '$keyEndPointSessions/me';
+      final Uri url = getSanitisedUri(_client, path);
 
       final Response response = await _client.get(url);
 

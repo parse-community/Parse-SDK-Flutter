@@ -6,9 +6,28 @@
 pubspec.lock
 .example/lib/application_constants.dart
 
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Android related
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+
+**/ios/Flutter/flutter_export_environment.sh
+
 build/
 .idea
 example/ios/Frameworks/
 example/lib/ui/
+
+.flutter-plugins-dependencies
 
 .vscode/

@@ -93,7 +93,7 @@ class ParseACL {
       throw 'cannot getWriteAccess for null userId';
     }
     final _ACLPermissions _permissions = _permissionsById[userId];
-    return _permissions != null && _permissions.getReadPermission();
+    return _permissions != null && _permissions.getWritePermission();
   }
 
   Map<String, dynamic> toJson() {

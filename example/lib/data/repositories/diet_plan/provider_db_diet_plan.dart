@@ -10,16 +10,18 @@ import 'package:sembast/sembast.dart';
 class DietPlanProviderDB implements DietPlanProviderContract {
   DietPlanProviderDB(this._db, this._store);
 
-  final Store _store;
+  final StoreRef<String, Map<String, dynamic>> _store;
   final Database _db;
 
   @override
   Future<ApiResponse> add(DietPlan item) async {
     final Map<String, dynamic> values = convertItemToStorageMap(item);
-    final Record recordToAdd = Record(_store, values, item.objectId);
-    final Record recordFromDB = await _db.putRecord(recordToAdd);
+    await _store.record(item.objectId).put(_db, values);
+    final Map<String, dynamic> recordFromDB =
+        await _store.record(item.objectId).get(_db);
+
     return ApiResponse(
-        true, 200, <dynamic>[convertRecordToItem(record: recordFromDB)], null);
+        true, 200, <dynamic>[convertRecordToItem(values: recordFromDB)], null);
   }
 
   @override
@@ -48,10 +50,12 @@ class DietPlanProviderDB implements DietPlanProviderContract {
     final List<SortOrder> sortOrders = List<SortOrder>();
     sortOrders.add(SortOrder(keyName));
     final Finder finder = Finder(sortOrders: sortOrders);
-    final List<Record> records = await _store.findRecords(finder);
+    final List<RecordSnapshot<String, Map<String, dynamic>>> records =
+        await _store.find(_db, finder: finder);
 
     if (records.isNotEmpty) {
-      for (final Record record in records) {
+      for (final RecordSnapshot<String, Map<String, dynamic>> record
+          in records) {
         final DietPlan userFood = convertRecordToItem(record: record);
         foodItems.add(userFood);
       }
@@ -64,7 +68,10 @@ class DietPlanProviderDB implements DietPlanProviderContract {
 
   @override
   Future<ApiResponse> getById(String id) async {
-    final Record record = await _store.getRecord(id);
+    final Finder finder = Finder(filter: Filter.equals('objectId', id));
+
+    final RecordSnapshot<String, Map<String, dynamic>> record =
+        await _store.findFirst(_db, finder: finder);
     if (record != null) {
       final DietPlan userFood = convertRecordToItem(record: record);
       return ApiResponse(true, 200, <dynamic>[userFood], null);
@@ -81,9 +88,10 @@ class DietPlanProviderDB implements DietPlanProviderContract {
         filter:
             Filter.greaterThan(keyVarUpdatedAt, date.millisecondsSinceEpoch));
 
-    final List<Record> records = await _store.findRecords(finder);
+    final List<RecordSnapshot<String, Map<String, dynamic>>> records =
+        await _store.find(_db, finder: finder);
 
-    for (final Record record in records) {
+    for (final RecordSnapshot<String, Map<String, dynamic>> record in records) {
       final DietPlan convertedDietPlan = convertRecordToItem(record: record);
       foodItems.add(convertedDietPlan);
     }
@@ -97,7 +105,9 @@ class DietPlanProviderDB implements DietPlanProviderContract {
 
   @override
   Future<ApiResponse> remove(DietPlan item) async {
-    await _store.delete(item.objectId);
+    final Finder finder =
+        Finder(filter: Filter.equals('objectId', item.objectId));
+    _store.delete(_db, finder: finder);
     return ApiResponse(true, 200, null, null);
   }
 
@@ -123,14 +133,17 @@ class DietPlanProviderDB implements DietPlanProviderContract {
   @override
   Future<ApiResponse> update(DietPlan item) async {
     final Map<String, dynamic> values = convertItemToStorageMap(item);
-    final dynamic returnedItems = await _store.update(values, item.objectId);
+    final Finder finder =
+        Finder(filter: Filter.equals('objectId', item.objectId));
+    final int returnedCount =
+        await _store.update(_db, values, finder: finder);
 
-    if (returnedItems == null) {
+    if (returnedCount == 0) {
       return add(item);
     }
 
     return ApiResponse(
-        true, 200, <dynamic>[convertRecordToItem(values: returnedItems)], null);
+        true, 200, <dynamic>[item], null);
   }
 
   Map<String, dynamic> convertItemToStorageMap(DietPlan item) {
@@ -145,7 +158,9 @@ class DietPlanProviderDB implements DietPlanProviderContract {
     return values;
   }
 
-  DietPlan convertRecordToItem({Record record, Map<String, dynamic> values}) {
+  DietPlan convertRecordToItem(
+      {RecordSnapshot<String, Map<String, dynamic>> record,
+      Map<String, dynamic> values}) {
     try {
       values ??= record.value;
       final DietPlan item =
