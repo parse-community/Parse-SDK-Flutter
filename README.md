@@ -330,7 +330,7 @@ You’ll get the LiveQuery events through this subscription.
 The first time you call subscribe, we’ll try to open the WebSocket connection to the LiveQuery server for you.
 
 ```dart
-await liveQuery.subscribe(query);
+Subscription subscription = await liveQuery.client.subscribe(query);
 ```
 
 __Event Handling__
@@ -340,7 +340,7 @@ __Create event__
 When a new ParseObject is created and it fulfills the QueryBuilder you subscribe, you’ll get this event. 
 The object is the ParseObject which was created.
 ```dart
-liveQuery.on(LiveQueryEvent.create, (value) {
+subscription.on(LiveQueryEvent.create, (value) {
     print('*** CREATE ***: ${DateTime.now().toString()}\n $value ');
     print((value as ParseObject).objectId);
     print((value as ParseObject).updatedAt);
@@ -356,7 +356,7 @@ When an existing ParseObject which fulfills the QueryBuilder you subscribe is up
 QueryBuilder before and after changes), you’ll get this event. 
 The object is the ParseObject which was updated. Its content is the latest value of the ParseObject.
 ```dart
-liveQuery.on(LiveQueryEvent.update, (value) {
+subscription.on(LiveQueryEvent.update, (value) {
     print('*** UPDATE ***: ${DateTime.now().toString()}\n $value ');
     print((value as ParseObject).objectId);
     print((value as ParseObject).updatedAt);
@@ -372,7 +372,7 @@ When an existing ParseObject’s old value does not fulfill the QueryBuilder but
 you’ll get this event. The object is the ParseObject which enters the QueryBuilder. 
 Its content is the latest value of the ParseObject.
 ```dart
-liveQuery.on(LiveQueryEvent.enter, (value) {
+subscription.on(LiveQueryEvent.enter, (value) {
     print('*** ENTER ***: ${DateTime.now().toString()}\n $value ');
     print((value as ParseObject).objectId);
     print((value as ParseObject).updatedAt);
@@ -388,7 +388,7 @@ When an existing ParseObject’s old value fulfills the QueryBuilder but its new
 you’ll get this event. The object is the ParseObject which leaves the QueryBuilder. 
 Its content is the latest value of the ParseObject.
 ```dart
-liveQuery.on(LiveQueryEvent.leave, (value) {
+subscription.on(LiveQueryEvent.leave, (value) {
     print('*** LEAVE ***: ${DateTime.now().toString()}\n $value ');
     print((value as ParseObject).objectId);
     print((value as ParseObject).updatedAt);
@@ -403,7 +403,7 @@ __Delete event__
 When an existing ParseObject which fulfills the QueryBuilder is deleted, you’ll get this event. 
 The object is the ParseObject which is deleted
 ```dart
-liveQuery.on(LiveQueryEvent.delete, (value) {
+subscription.on(LiveQueryEvent.delete, (value) {
     print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
     print((value as ParseObject).objectId);
     print((value as ParseObject).updatedAt);
@@ -420,7 +420,7 @@ After that, you won’t get any events from the subscription object and will clo
 LiveQuery server.
 
 ```dart
-await liveQuery.unSubscribe();
+liveQuery.client.unSubscribe(subscription);
 ```
 
 ## Users
