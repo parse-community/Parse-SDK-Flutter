@@ -135,7 +135,7 @@ class Parse {
 
     _hasBeenInitialized = true;
 
-    return Parse();
+    return this;
   }
 
   bool hasParseBeenInitialized() => _hasBeenInitialized;
