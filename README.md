@@ -57,6 +57,13 @@ var dietPlan = ParseObject('DietPlan')
 	..set('Fat', 65);
 await dietPlan.save();
 ```
+Or update existing object by its objectId by calling:
+```dart
+var dietPlan = ParseObject('DietPlan')
+	..objectId = 'R5EonpUDWy'
+	..set('Fat', 70);
+await dietPlan.save();
+```
 Verify that the object has been successfully saved using
 ```dart
 var response = await dietPlan.save();
