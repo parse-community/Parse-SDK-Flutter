@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/widgets.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:connectivity/connectivity.dart';
 
 import '../../parse_server_sdk.dart';
 
@@ -31,10 +32,16 @@ class Subscription {
   }
 }
 
+enum LiveQueryClientEvent { CONNECTED, DISCONNECTED }
+
 class Client with WidgetsBindingObserver {
   factory Client() => _getInstance();
   Client._internal(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
+    _clientEventStreamController = StreamController<LiveQueryClientEvent>();
+    _clientEventStream =
+        _clientEventStreamController.stream.asBroadcastStream();
+
     _client = client ??
         ParseHTTPClient(
             sendSessionId:
@@ -68,6 +75,10 @@ class Client with WidgetsBindingObserver {
     return _instance;
   }
 
+  Stream<LiveQueryClientEvent> get getClientEventStream {
+    return _clientEventStream;
+  }
+
   WebSocket _webSocket;
   ParseHTTPClient _client;
   bool _debug;
@@ -76,6 +87,8 @@ class Client with WidgetsBindingObserver {
   String _liveQueryURL;
   bool _userDisconnected = false;
   bool _connecting = false;
+  StreamController<LiveQueryClientEvent> _clientEventStreamController;
+  Stream<LiveQueryClientEvent> _clientEventStream;
 
   final Map<int, Subscription> _requestSubScription = <int, Subscription>{};
 
@@ -175,6 +188,7 @@ class Client with WidgetsBindingObserver {
         if (_debug) {
           print('$_printConstLiveQuery: Socket opened');
         }
+        _clientEventStreamController.sink.add(LiveQueryClientEvent.CONNECTED);
       } else {
         if (_debug) {
           print('$_printConstLiveQuery: Error when connection client');
@@ -185,6 +199,8 @@ class Client with WidgetsBindingObserver {
       _channel.stream.listen((dynamic message) {
         _handleMessage(message);
       }, onDone: () {
+        _clientEventStreamController.sink
+            .add(LiveQueryClientEvent.DISCONNECTED);
         if (!_userDisconnected) {
           reconnect();
         }
@@ -192,6 +208,8 @@ class Client with WidgetsBindingObserver {
           print('$_printConstLiveQuery: Done');
         }
       }, onError: (Object error) {
+        _clientEventStreamController.sink
+            .add(LiveQueryClientEvent.DISCONNECTED);
         if (!_userDisconnected) {
           reconnect();
         }
@@ -203,6 +221,8 @@ class Client with WidgetsBindingObserver {
             ParseApiRQ.liveQuery, _debug, 'IOWebSocketChannel'));
       });
     } on Exception catch (e) {
+      _clientEventStreamController.sink.add(LiveQueryClientEvent.DISCONNECTED);
+      print('on Exception');
       if (_debug) {
         print('$_printConstLiveQuery: Error: ${e.toString()}');
       }
