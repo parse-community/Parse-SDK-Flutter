@@ -57,8 +57,10 @@ class Client with WidgetsBindingObserver {
     } else if (_liveQueryURL.contains('http')) {
       _liveQueryURL = _liveQueryURL.replaceAll('http', 'ws');
     }
-    Connectivity().onConnectivityChanged
+    Connectivity()
+        .onConnectivityChanged
         .listen((ConnectivityResult connectivityResult) {
+      _currentConnectivityResult = connectivityResult;
       print('onConnectivityChanged:$connectivityResult');
       if (connectivityResult != ConnectivityResult.none) {
         reconnect();
@@ -89,6 +91,7 @@ class Client with WidgetsBindingObserver {
   bool _connecting = false;
   StreamController<LiveQueryClientEvent> _clientEventStreamController;
   Stream<LiveQueryClientEvent> _clientEventStream;
+  ConnectivityResult _currentConnectivityResult;
 
   final Map<int, Subscription> _requestSubScription = <int, Subscription>{};
 
@@ -108,7 +111,7 @@ class Client with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     switch (state) {
-      case AppLifecycleState.resumed: 
+      case AppLifecycleState.resumed:
         reconnect();
         break;
       default:
@@ -173,8 +176,8 @@ class Client with WidgetsBindingObserver {
     return _requestIdCount++;
   }
 
-  Future<dynamic> _connect() async {
-    if (_connecting) {
+  Future<void> _connect() async {
+    if (_connecting || _currentConnectivityResult == ConnectivityResult.none) {
       print('already connecting');
       return Future<void>.value(null);
     }
@@ -184,6 +187,7 @@ class Client with WidgetsBindingObserver {
 
     try {
       _webSocket = await WebSocket.connect(_liveQueryURL);
+      _connecting = false;
       if (_webSocket != null && _webSocket.readyState == WebSocket.open) {
         if (_debug) {
           print('$_printConstLiveQuery: Socket opened');
@@ -220,11 +224,17 @@ class Client with WidgetsBindingObserver {
             ParseApiRQ.liveQuery, _debug, 'IOWebSocketChannel'));
       });
     } on Exception catch (e) {
+      _connecting = false;
       _clientEventStreamController.sink.add(LiveQueryClientEvent.DISCONNECTED);
       if (_debug) {
         print('$_printConstLiveQuery: Error: ${e.toString()}');
       }
+      if (!_userDisconnected &&
+          _currentConnectivityResult != ConnectivityResult.none) {
+        Future<dynamic>.delayed(const Duration(seconds: 2), () => reconnect());
+      }
       return handleException(e, ParseApiRQ.liveQuery, _debug, 'LiveQuery');
+//      return Future<void>.value(null);
     }
   }
 
@@ -299,7 +309,6 @@ class Client with WidgetsBindingObserver {
     final Map<String, dynamic> actionData = jsonDecode(message);
     Subscription subscription;
     if (actionData.containsKey('op') && actionData['op'] == 'connected') {
-      _connecting = false;
       print('ReSubScription:$_requestSubScription');
       _requestSubScription.values.toList().forEach((Subscription subcription) {
         _subscribeLiveQuery(subcription);
