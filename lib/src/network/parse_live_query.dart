@@ -176,7 +176,7 @@ class Client with WidgetsBindingObserver {
     return _requestIdCount++;
   }
 
-  Future<void> _connect() async {
+  Future<dynamic> _connect() async {
     if (_connecting || _currentConnectivityResult == ConnectivityResult.none) {
       print('already connecting');
       return Future<void>.value(null);
