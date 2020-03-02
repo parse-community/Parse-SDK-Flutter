@@ -221,7 +221,6 @@ class Client with WidgetsBindingObserver {
       });
     } on Exception catch (e) {
       _clientEventStreamController.sink.add(LiveQueryClientEvent.DISCONNECTED);
-      print('on Exception');
       if (_debug) {
         print('$_printConstLiveQuery: Error: ${e.toString()}');
       }
