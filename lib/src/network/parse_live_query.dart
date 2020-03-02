@@ -188,7 +188,6 @@ class Client with WidgetsBindingObserver {
         if (_debug) {
           print('$_printConstLiveQuery: Socket opened');
         }
-        _clientEventStreamController.sink.add(LiveQueryClientEvent.CONNECTED);
       } else {
         if (_debug) {
           print('$_printConstLiveQuery: Error when connection client');
@@ -306,6 +305,7 @@ class Client with WidgetsBindingObserver {
       _requestSubScription.values.toList().forEach((Subscription subcription) {
         _subscribeLiveQuery(subcription);
       });
+      _clientEventStreamController.sink.add(LiveQueryClientEvent.CONNECTED);
       return;
     }
     if (actionData.containsKey('requestId')) {
