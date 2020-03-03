@@ -52,7 +52,6 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
 
   LiveQueryReconnectingController(
       this._reconnect, this._eventStream, this.debug) {
-//    debug = true;
     Connectivity().onConnectivityChanged.listen((ConnectivityResult state) {
       if (!_isOnline && state != ConnectivityResult.none) _retryState = 0;
       _isOnline = state != ConnectivityResult.none;
@@ -139,16 +138,6 @@ class Client {
 
     reconnectingController = LiveQueryReconnectingController(
         () => reconnect(userInitialized: false), getClientEventStream, _debug);
-
-//    Connectivity()
-//        .onConnectivityChanged
-//        .listen((ConnectivityResult connectivityResult) {
-//      _currentConnectivityResult = connectivityResult;
-//      print('onConnectivityChanged:$connectivityResult');
-//      if (connectivityResult != ConnectivityResult.none) {
-//        reconnect();
-//      }
-//    });
   }
   static Client get instance => _getInstance();
   static Client _instance;
@@ -173,7 +162,6 @@ class Client {
   bool _connecting = false;
   StreamController<LiveQueryClientEvent> _clientEventStreamController;
   Stream<LiveQueryClientEvent> _clientEventStream;
-//  ConnectivityResult _currentConnectivityResult;
   LiveQueryReconnectingController reconnectingController;
 
   final Map<int, Subscription> _requestSubScription = <int, Subscription>{};
@@ -294,7 +282,6 @@ class Client {
         print('$_printConstLiveQuery: Error: ${e.toString()}');
       }
       return handleException(e, ParseApiRQ.liveQuery, _debug, 'LiveQuery');
-//      return Future<void>.value(null);
     }
   }
 
