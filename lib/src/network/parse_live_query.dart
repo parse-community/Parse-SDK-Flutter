@@ -158,7 +158,6 @@ class Client {
   bool _sendSessionId;
   WebSocketChannel _channel;
   String _liveQueryURL;
-  bool _userDisconnected = false;
   bool _connecting = false;
   StreamController<LiveQueryClientEvent> _clientEventStreamController;
   Stream<LiveQueryClientEvent> _clientEventStream;
@@ -196,7 +195,6 @@ class Client {
     _requestSubScription.values.toList().forEach((Subscription subcription) {
       subcription._enabled = false;
     });
-    _userDisconnected = _userDisconnected || userInitialized;
     _connecting = false;
     if (userInitialized)
       _clientEventStreamController.sink
