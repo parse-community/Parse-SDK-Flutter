@@ -202,6 +202,10 @@ class Client {
   }
 
   Future<Subscription> subscribe(QueryBuilder query) async {
+    if (_webSocket == null) {
+      await _clientEventStream.any((LiveQueryClientEvent event) =>
+          event == LiveQueryClientEvent.CONNECTED);
+    }
     final int requestId = _requestIdGenerator();
     final Subscription subscription = Subscription(query, requestId);
     _requestSubScription[requestId] = subscription;
