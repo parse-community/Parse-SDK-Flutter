@@ -5,6 +5,17 @@ class QueryBuilder<T extends ParseObject> {
   /// Class to create complex queries
   QueryBuilder(this.object) : super();
 
+  QueryBuilder.or(this.object, List<QueryBuilder<T>> list) {
+    String query = '"\$or":[';
+    for (int i = 0; i < list.length; ++i) {
+      if (i > 0) query += ',';
+      query += '{' + list[i].buildQueries(list[i].queries) + '}';
+    }
+    query += ']';
+    print(query);
+    queries.add(MapEntry<String, dynamic>(_NO_OPERATOR_NEEDED, query));
+  }
+
   static const String _NO_OPERATOR_NEEDED = 'NO_OP';
   static const String _SINGLE_QUERY = 'SINGLE_QUERY';
 
