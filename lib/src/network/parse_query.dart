@@ -17,6 +17,16 @@ class QueryBuilder<T extends ParseObject> {
     }
   }
 
+  QueryBuilder.copy(QueryBuilder<T> query) {
+    object = query.object;
+    queries = query.queries
+        .map((MapEntry<String, dynamic> entry) =>
+            MapEntry<String, dynamic>(entry.key, entry.value.toString()))
+        .toList();
+    query.limiters.forEach((String key, dynamic value) =>
+        limiters.putIfAbsent(key, () => value.toString()));
+  }
+
   static const String _NO_OPERATOR_NEEDED = 'NO_OP';
   static const String _SINGLE_QUERY = 'SINGLE_QUERY';
 
