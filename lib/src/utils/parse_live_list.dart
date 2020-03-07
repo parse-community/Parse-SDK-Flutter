@@ -202,7 +202,17 @@ class _ParseLiveListBuilderState<T extends ParseObject>
       setState(() {
         _liveList = value;
         _liveList.stream.listen((LiveListEvent<ParseObject> event) {
-          setState(() {});
+          if (event is LiveListAddEvent) {
+            if (_animatedListKey.currentState != null)
+              _animatedListKey.currentState.insertItem(event.index);
+          } else if (event is LiveListDeleteEvent) {
+            _animatedListKey.currentState.removeItem(
+                event.index,
+                (context, animation) => SizeTransition(
+                      sizeFactor: animation,
+                      child: const ListTile(),
+                    ));
+          } else if (event is LiveListUpdateEvent) {}
         });
       });
     });
@@ -210,6 +220,8 @@ class _ParseLiveListBuilderState<T extends ParseObject>
 
   final QueryBuilder<T> _query;
   ParseLiveList<T> _liveList;
+  final GlobalKey<AnimatedListState> _animatedListKey =
+      GlobalKey<AnimatedListState>();
 
   @override
   Widget build(BuildContext context) {
@@ -217,25 +229,55 @@ class _ParseLiveListBuilderState<T extends ParseObject>
         ? widget.listLoadingElement == null
             ? Container()
             : widget.listLoadingElement
-        : ListView.builder(
-            itemBuilder: (BuildContext context, int index) => FutureBuilder<T>(
-              key: ValueKey<String>(_liveList.idOf(index)),
-              future: _liveList.getAt(index),
-              builder:
-                  (BuildContext context, AsyncSnapshot<ParseObject> snapshot) {
-                print('$index: ${snapshot.connectionState}');
-                if (snapshot.hasData) {
-                  return ListTile(
-                    title: Text(
-                      snapshot.data.get("text"),
-                    ),
-                  );
-                }
-                return Text("loading");
-              },
-            ),
-            itemCount: _liveList.size,
-          );
+        : buildAniatedList();
+  }
+
+  Widget buildAniatedList() {
+    return AnimatedList(
+      key: _animatedListKey,
+      initialItemCount: _liveList.size,
+      itemBuilder: (context, index, animation) => SizeTransition(
+        key: ValueKey<String>(_liveList.idOf(index)),
+        sizeFactor: animation,
+        child: FutureBuilder<T>(
+          future: _liveList.getAt(index),
+          builder: (BuildContext context, AsyncSnapshot<ParseObject> snapshot) {
+            print('$index: ${snapshot.connectionState}');
+            if (snapshot.hasData) {
+              return ListTile(
+                title: Text(
+                  snapshot.data.get("text"),
+                ),
+              );
+            }
+            return const ListTile(
+              leading: CircularProgressIndicator(),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildList() {
+    return ListView.builder(
+      itemBuilder: (BuildContext context, int index) => FutureBuilder<T>(
+        key: ValueKey<String>(_liveList.idOf(index)),
+        future: _liveList.getAt(index),
+        builder: (BuildContext context, AsyncSnapshot<ParseObject> snapshot) {
+          print('$index: ${snapshot.connectionState}');
+          if (snapshot.hasData) {
+            return ListTile(
+              title: Text(
+                snapshot.data.get("text"),
+              ),
+            );
+          }
+          return Text("loading");
+        },
+      ),
+      itemCount: _liveList.size,
+    );
   }
 }
 
