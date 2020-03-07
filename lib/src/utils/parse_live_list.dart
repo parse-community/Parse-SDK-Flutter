@@ -65,7 +65,6 @@ class ParseLiveList<T extends ParseObject> {
   int get nextID => _nextID++;
 
   final QueryBuilder<T> _query;
-//  int _size;
 
   int get size {
     return _list.length;
@@ -76,8 +75,6 @@ class ParseLiveList<T extends ParseObject> {
 
   Future<void> _init() async {
     _eventStreamController = StreamController<LiveListEvent<T>>();
-//    final ParseResponse parseResponse = await _query.count();
-//    _size = parseResponse.count;
 
     final QueryBuilder<T> query = QueryBuilder<T>.copy(_query);
     if (query.limiters.containsKey('order')) {
@@ -96,7 +93,6 @@ class ParseLiveList<T extends ParseObject> {
           .map<ParseLiveListElement<T>>(
               (dynamic element) => ParseLiveListElement<T>(element))
           .toList();
-      _list.forEach((ParseLiveListElement<T> element) => print(element.object));
     }
 
     LiveQuery()
@@ -168,39 +164,12 @@ class ParseLiveList<T extends ParseObject> {
       } else {
         throw response.error;
       }
-//      final QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
-//        ..setAmountToSkip(i)
-//        ..setLimit(1);
-//      try {
-//        print('load $i');
-//        final ParseResponse response = await queryBuilder.query();
-//
-//        if (response.success) {
-////          print('load $i success: ${response.results.first}');
-//          _loadedElements[i].object = response.results.first;
-//        } else {
-//          print('load $i error');
-//          print(response.error);
-//        }
-//      } on Exception catch (e) {
-//        print('load $i exception');
-//        print(e);
-//      }
     }
     return _list[i].object;
   }
 
   String idOf(int index) {
     return _list[index].object.get<String>(keyVarObjectId);
-  }
-
-  void test() {
-    for (int j = 0; j < _list.length; ++j) {
-      for (int k = 0; k < _list.length; ++k) {
-        print(
-            '${_list[j].object.get<String>("text")} after ${_list[k].object.get<String>("text")}: ${after(_list[j].object, _list[k].object)}');
-      }
-    }
   }
 }
 
@@ -240,7 +209,7 @@ class _ParseLiveListBuilderState<T extends ParseObject>
   }
 
   final QueryBuilder<T> _query;
-  ParseLiveList _liveList;
+  ParseLiveList<T> _liveList;
 
   @override
   Widget build(BuildContext context) {
@@ -248,34 +217,24 @@ class _ParseLiveListBuilderState<T extends ParseObject>
         ? widget.listLoadingElement == null
             ? Container()
             : widget.listLoadingElement
-        : Row(
-            children: <Widget>[
-              FlatButton(
-                onPressed: _liveList.test,
-                child: Text("test"),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemBuilder: (context, index) => FutureBuilder(
-                    key: ValueKey<String>(_liveList.idOf(index)),
-                    future: _liveList.getAt(index),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<ParseObject> snapshot) {
-                      print('$index: ${snapshot.connectionState}');
-                      if (snapshot.hasData) {
-                        return ListTile(
-                          title: Text(
-                            snapshot.data.get("text"),
-                          ),
-                        );
-                      }
-                      return Text("loading");
-                    },
-                  ),
-                  itemCount: _liveList.size,
-                ),
-              ),
-            ],
+        : ListView.builder(
+            itemBuilder: (BuildContext context, int index) => FutureBuilder<T>(
+              key: ValueKey<String>(_liveList.idOf(index)),
+              future: _liveList.getAt(index),
+              builder:
+                  (BuildContext context, AsyncSnapshot<ParseObject> snapshot) {
+                print('$index: ${snapshot.connectionState}');
+                if (snapshot.hasData) {
+                  return ListTile(
+                    title: Text(
+                      snapshot.data.get("text"),
+                    ),
+                  );
+                }
+                return Text("loading");
+              },
+            ),
+            itemCount: _liveList.size,
           );
   }
 }
