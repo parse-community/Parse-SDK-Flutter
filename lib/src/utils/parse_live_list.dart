@@ -171,6 +171,11 @@ class ParseLiveList<T extends ParseObject> {
   String idOf(int index) {
     return _list[index].object.get<String>(keyVarObjectId);
   }
+
+  T getLoadedAt(int index) {
+    if (_list[index].loaded) return _list[index].object;
+    return null;
+  }
 }
 
 class ParseLiveListElement<T extends ParseObject> {
@@ -229,57 +234,174 @@ class _ParseLiveListBuilderState<T extends ParseObject>
         ? widget.listLoadingElement == null
             ? Container()
             : widget.listLoadingElement
-        : buildAniatedList();
+        : buildAnimatedList();
   }
 
-  Widget buildAniatedList() {
+  Widget buildAnimatedList() {
+//    return ReorderableListView
     return AnimatedList(
-      key: _animatedListKey,
-      initialItemCount: _liveList.size,
-      itemBuilder: (context, index, animation) => SizeTransition(
-        key: ValueKey<String>(_liveList.idOf(index)),
-        sizeFactor: animation,
-        child: FutureBuilder<T>(
-          future: _liveList.getAt(index),
-          builder: (BuildContext context, AsyncSnapshot<ParseObject> snapshot) {
-            print('$index: ${snapshot.connectionState}');
-            if (snapshot.hasData) {
-              return ListTile(
-                title: Text(
-                  snapshot.data.get("text"),
-                ),
-              );
-            }
-            return const ListTile(
-              leading: CircularProgressIndicator(),
-            );
-          },
-        ),
-      ),
-    );
+        key: _animatedListKey,
+        initialItemCount: _liveList.size,
+        itemBuilder: (context, index, animation) {
+          final T loadedData = _liveList.getLoadedAt(index);
+          return ListElement<T>(
+            key: ValueKey<String>(_liveList.idOf(index)),
+            future: _liveList.getAt(index),
+            loadedData: loadedData,
+            sizeFactor: animation,
+          );
+        });
   }
+//
+//  Widget buildList() {
+//    return ListView.builder(
+//      itemBuilder: (BuildContext context, int index) => FutureBuilder<T>(
+//        key: ValueKey<String>(_liveList.idOf(index)),
+//        future: _liveList.getAt(index),
+//        builder: (BuildContext context, AsyncSnapshot<ParseObject> snapshot) {
+//          print('$index: ${snapshot.connectionState}');
+//          if (snapshot.hasData) {
+//            return ListTile(
+//              title: Text(
+//                snapshot.data.get("text"),
+//              ),
+//            );
+//          }
+//          return Text("loading");
+//        },
+//      ),
+//      itemCount: _liveList.size,
+//    );
+//  }
+}
 
-  Widget buildList() {
-    return ListView.builder(
-      itemBuilder: (BuildContext context, int index) => FutureBuilder<T>(
-        key: ValueKey<String>(_liveList.idOf(index)),
-        future: _liveList.getAt(index),
-        builder: (BuildContext context, AsyncSnapshot<ParseObject> snapshot) {
-          print('$index: ${snapshot.connectionState}');
-          if (snapshot.hasData) {
-            return ListTile(
-              title: Text(
-                snapshot.data.get("text"),
-              ),
-            );
-          }
-          return Text("loading");
-        },
-      ),
-      itemCount: _liveList.size,
-    );
+class ListElement<T extends ParseObject> extends StatefulWidget {
+  ListElement(
+      {Key key, this.future, this.loadedData, @required this.sizeFactor})
+      : super(key: key);
+
+  final Future<T> future;
+  T loadedData;
+  final Animation<double> sizeFactor;
+
+  @override
+  _ListElementState<T> createState() {
+    return _ListElementState<T>(loadedData);
   }
 }
+
+class _ListElementState<T extends ParseObject> extends State<ListElement<T>> {
+  _ListElementState(this.loadedData);
+  T loadedData;
+//  final int random = Random().nextInt(6);
+
+  Widget buildChild(BuildContext context, AsyncSnapshot<T> snapshot) {
+    Widget child;
+    if (snapshot.hasData) {
+      loadedData = snapshot.data;
+      child = ListTile(
+        title: Text(
+          snapshot.data.get('text'),
+        ),
+      );
+    } else if (snapshot.hasError) {
+      child = const Text('something went wrong!');
+    } else {
+      child = const ListTile(
+        leading: CircularProgressIndicator(),
+      );
+      child = const Text('something went wrong!');
+    }
+
+    return AnimatedContainer(
+      child: SizeTransition(
+        child: child,
+        sizeFactor: widget.sizeFactor,
+      ),
+      duration: const Duration(seconds: 1),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (loadedData != null) {
+      return FutureBuilder<T>(
+        key: ValueKey<T>(loadedData),
+        initialData: loadedData,
+        builder: buildChild,
+      );
+    } else {
+      return FutureBuilder<T>(
+        key: ValueKey<Future<T>>(widget.future),
+        future: widget.future,
+        builder: buildChild,
+      );
+    }
+  }
+}
+
+//class SizeFadeTransition extends StatefulWidget {
+//  final Animation<double> animation;
+//  final Curve curve;
+//  final double sizeFraction;
+//  final Axis axis;
+//  final double axisAlignment;
+//  final Widget child;
+//  const SizeFadeTransition({
+//    Key key,
+//    @required this.animation,
+//    this.sizeFraction = 2 / 3,
+//    this.curve = Curves.linear,
+//    this.axis = Axis.vertical,
+//    this.axisAlignment = 0.0,
+//    this.child,
+//  })  : assert(animation != null),
+//        assert(axisAlignment != null),
+//        assert(axis != null),
+//        assert(curve != null),
+//        assert(sizeFraction != null),
+//        assert(sizeFraction >= 0.0 && sizeFraction <= 1.0),
+//        super(key: key);
+//
+//  @override
+//  _SizeFadeTransitionState createState() => _SizeFadeTransitionState();
+//}
+//
+//class _SizeFadeTransitionState extends State<SizeFadeTransition> {
+//  Animation size;
+//  Animation opacity;
+//
+//  @override
+//  void initState() {
+//    super.initState();
+//    didUpdateWidget(widget);
+//  }
+//
+//  @override
+//  void didUpdateWidget(SizeFadeTransition oldWidget) {
+//    super.didUpdateWidget(oldWidget);
+//
+//    final curve =
+//        CurvedAnimation(parent: widget.animation, curve: widget.curve);
+//    size = CurvedAnimation(
+//        curve: Interval(0.0, widget.sizeFraction), parent: curve);
+//    opacity = CurvedAnimation(
+//        curve: Interval(widget.sizeFraction, 1.0), parent: curve);
+//  }
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return SizeTransition(
+//      sizeFactor: size,
+//      axis: widget.axis,
+//      axisAlignment: widget.axisAlignment,
+//      child: FadeTransition(
+//        opacity: opacity,
+//        child: widget.child,
+//      ),
+//    );
+//  }
+//}
 
 //abstract class LiveListEvent<T extends ParseObject> {}
 //
