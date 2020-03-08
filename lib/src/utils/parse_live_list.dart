@@ -160,7 +160,7 @@ class ParseLiveList<T extends ParseObject> {
       final ParseResponse response = await queryBuilder.query();
       if (response.success) {
         _list[i] =
-            ParseLiveListElement<T>(response.results.first, loaded: false);
+            ParseLiveListElement<T>(response.results.first, loaded: true);
       } else {
         throw response.error;
       }
