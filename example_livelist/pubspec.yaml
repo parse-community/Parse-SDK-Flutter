@@ -1,13 +1,17 @@
 name: flutterpluginexample_livelist
 description: A simple example for using ParseLiveQuery.
 
+version: 1.0.0+1
+
 dependencies:
   flutter:
     sdk: flutter
-
-dev_dependencies:
   parse_server_sdk:
     path: ../
+
+  cupertino_icons: ^0.1.2
+
+dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^4.0.0
