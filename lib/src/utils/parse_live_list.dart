@@ -12,7 +12,6 @@ class ParseLiveList<T extends ParseObject> {
     final ParseLiveList<T> parseLiveList = ParseLiveList<T>._(_query);
 
     return parseLiveList._init().then((_) {
-      //TODO: Error-handling
       return parseLiveList;
     });
   }
@@ -68,9 +67,7 @@ class ParseLiveList<T extends ParseObject> {
   Stream<LiveListEvent<T>> get stream => _eventStreamController.stream;
   Subscription _subscription;
 
-  Future<void> _init() async {
-    _eventStreamController = StreamController<LiveListEvent<T>>();
-
+  Future<ParseResponse> _runQuery() async {
     final QueryBuilder<T> query = QueryBuilder<T>.copy(_query);
     if (query.limiters.containsKey('order')) {
       query.keysToReturn(
@@ -82,7 +79,13 @@ class ParseLiveList<T extends ParseObject> {
       query.keysToReturn(List<String>());
     }
 
-    final ParseResponse parseResponse = await query.query();
+    return await query.query();
+  }
+
+  Future<void> _init() async {
+    _eventStreamController = StreamController<LiveListEvent<T>>();
+
+    final ParseResponse parseResponse = await _runQuery();
     if (parseResponse.success) {
       _list = parseResponse.results
           .map<ParseLiveListElement<T>>(
@@ -101,28 +104,85 @@ class ParseLiveList<T extends ParseObject> {
       subscription.on(LiveQueryEvent.leave, _objectDeleted);
       subscription.on(LiveQueryEvent.delete, _objectDeleted);
     });
-    return size;
+
+    LiveQuery()
+        .client
+        .getClientEventStream
+        .listen((LiveQueryClientEvent event) async {
+      if (event == LiveQueryClientEvent.CONNECTED) {
+        ParseResponse parseResponse = await _runQuery();
+        if (parseResponse.success) {
+          List<T> newlist = parseResponse.results;
+
+          //update List
+          for (int i = 0; i < _list.length; i++) {
+            final ParseObject currentObject = _list[i].object;
+            final String currentObjectId =
+                currentObject.get<String>(keyVarObjectId);
+
+            bool stillInList = false;
+
+            for (int j = 0; j < newlist.length; j++) {
+              if (newlist[j].get<String>(keyVarObjectId) == currentObjectId) {
+                stillInList = true;
+                if (newlist[j]
+                    .get<DateTime>(keyVarUpdatedAt)
+                    .isAfter(currentObject.get<DateTime>(keyVarUpdatedAt))) {
+                  QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
+                    ..whereEqualTo(keyVarObjectId, currentObjectId);
+                  queryBuilder.query().then((ParseResponse result) {
+                    if (result.success) {
+                      _objectUpdated(result.results.first);
+                    }
+                  });
+                }
+                newlist.removeAt(j);
+                j--;
+                break;
+              }
+            }
+            if (!stillInList) {
+              _objectDeleted(currentObject);
+              i--;
+            }
+          }
+
+          for (int i = 0; i < newlist.length; i++) {
+            _objectAdded(newlist[i], loaded: false);
+          }
+
+//          _eventStreamController.sink.add(LiveListUpdateEvent<T>());
+        }
+      }
+    });
   }
 
-  void _objectAdded(T object) {
+  void _objectAdded(T object, {bool loaded = true}) {
     for (int i = 0; i < _list.length; i++) {
       if (after(object, _list[i].object) != true) {
-        _list.insert(i, ParseLiveListElement<T>(object, loaded: true));
+        _list.insert(i, ParseLiveListElement<T>(object, loaded: loaded));
         _eventStreamController.sink.add(LiveListAddEvent<T>(i, object));
         return;
       }
     }
-    _list.add(ParseLiveListElement<T>(object, loaded: true));
+    _list.add(ParseLiveListElement<T>(object, loaded: loaded));
     _eventStreamController.sink
         .add(LiveListAddEvent<T>(_list.length - 1, object));
   }
+
+  void _updateObject(T object) {}
 
   void _objectUpdated(T object) {
     for (int i = 0; i < _list.length; i++) {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
-        _list[i].object = object;
-        _eventStreamController.sink.add(LiveListUpdateEvent<T>(i, object));
+        if (after(_list[i].object, object) == null) {
+          _list[i].object = object;
+        } else {
+          _list.removeAt(i).dispose();
+          _eventStreamController.sink.add(LiveListDeleteEvent<T>(i, object));
+          _objectAdded(object);
+        }
         break;
       }
     }
@@ -281,13 +341,6 @@ class _ParseLiveListBuilderState<T extends ParseObject>
                       duration: widget.duration,
                       loadedData: () => event.object,
                     ));
-//                    SizeTransition(
-//                      sizeFactor: animation,
-//                      child: removedItemBuilder != null
-//                          ? removedItemBuilder(
-//                              context, event.index, event.object)
-//                          : ,
-//                    ));
           }
         });
       });
@@ -415,8 +468,4 @@ class LiveListAddEvent<T extends ParseObject> extends LiveListEvent<T> {
 
 class LiveListDeleteEvent<T extends ParseObject> extends LiveListEvent<T> {
   LiveListDeleteEvent(int index, T object) : super(index, object);
-}
-
-class LiveListUpdateEvent<T extends ParseObject> extends LiveListEvent<T> {
-  LiveListUpdateEvent(int index, T object) : super(index, object);
 }
