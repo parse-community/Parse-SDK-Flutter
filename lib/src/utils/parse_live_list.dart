@@ -173,14 +173,14 @@ class ParseLiveList<T extends ParseObject> {
     for (int i = 0; i < _list.length; i++) {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
-        if (after(_list[i].object, object) == null) {
-          _list[i].object = object;
-        } else {
-          _list.removeAt(i).dispose();
-          _eventStreamController.sink
-              .add(ParseLiveListDeleteEvent<T>(i, object));
-          _objectAdded(object);
-        }
+        //TODO: better soulution
+//        if (after(_list[i].object, object) == null) {
+//          _list[i].object = object;
+//        } else {
+        _list.removeAt(i).dispose();
+        _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(i, object));
+        _objectAdded(object);
+//        }
         break;
       }
     }
