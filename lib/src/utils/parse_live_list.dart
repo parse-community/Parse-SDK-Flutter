@@ -393,9 +393,7 @@ class _ParseLiveListWidgetState<T extends ParseObject>
   @override
   Widget build(BuildContext context) {
     return _liveList == null
-        ? widget.listLoadingElement == null
-            ? Container()
-            : widget.listLoadingElement
+        ? widget.listLoadingElement ?? Container()
         : buildAnimatedList();
   }
 
