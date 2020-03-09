@@ -17,14 +17,9 @@ class ParseLiveList<T extends ParseObject> {
     });
   }
 
-//  final List<ParseLiveListElement<T>> _loadedElements =
-//      List<ParseLiveListElement<T>>();
   List<ParseLiveListElement<T>> _list = List<ParseLiveListElement<T>>();
   StreamController<LiveListEvent<T>> _eventStreamController;
   int _nextID = 0;
-
-//  static Future get create<T extends ParseObject>() {
-//  }
 
   /// is object1 listed after object2?
   /// can return null
@@ -109,13 +104,6 @@ class ParseLiveList<T extends ParseObject> {
     return size;
   }
 
-//  int _findObjectIndex(T object) {
-//    for (int i = 0; i < _loadedElements.length; i++) {
-//      if (after(object, _loadedElements[i].object) != false) return i;
-//    }
-//    return _loadedElements.length;
-//  }
-
   void _objectAdded(T object) {
     for (int i = 0; i < _list.length; i++) {
       if (after(object, _list[i].object) != true) {
@@ -133,7 +121,7 @@ class ParseLiveList<T extends ParseObject> {
     for (int i = 0; i < _list.length; i++) {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
-        _list[i] = ParseLiveListElement<T>(object, loaded: true);
+        _list[i].object = object;
         _eventStreamController.sink.add(LiveListUpdateEvent<T>(i, object));
         break;
       }
@@ -144,14 +132,14 @@ class ParseLiveList<T extends ParseObject> {
     for (int i = 0; i < _list.length; i++) {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
-        _list.removeAt(i);
+        _list.removeAt(i).dispose();
         _eventStreamController.sink.add(LiveListDeleteEvent<T>(i, object));
         break;
       }
     }
   }
 
-  Future<T> getAt(final int i) async {
+  Stream<T> getAt(final int i) async* {
     if (!_list[i].loaded) {
       final QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
         ..whereEqualTo(
@@ -159,13 +147,15 @@ class ParseLiveList<T extends ParseObject> {
         ..setLimit(1);
       final ParseResponse response = await queryBuilder.query();
       if (response.success) {
-        _list[i] =
-            ParseLiveListElement<T>(response.results.first, loaded: true);
+        _list[i].object = response.results.first;
       } else {
         throw response.error;
       }
     }
-    return _list[i].object;
+//    just for testing
+//    await Future<void>.delayed(const Duration(seconds: 2));
+    yield _list[i].object;
+    yield* _list[i].stream;
   }
 
   String idOf(int index) {
@@ -179,30 +169,97 @@ class ParseLiveList<T extends ParseObject> {
 }
 
 class ParseLiveListElement<T extends ParseObject> {
-  ParseLiveListElement(this.object, {this.loaded = false});
+  ParseLiveListElement(this._object, {bool loaded = false}) {
+    if (_object != null) _loaded = loaded;
+  }
 
-  T object;
-  bool loaded;
+  final StreamController<T> _streamController = StreamController<T>.broadcast();
+  T _object;
+  bool _loaded = false;
+
+  Stream<T> get stream => _streamController?.stream;
+
+  T get object => _object;
+
+  set object(T value) {
+    _loaded = true;
+    _object = value;
+    _streamController?.add(object);
+  }
+
+  bool get loaded => _loaded;
+
+  void dispose() {
+    _streamController.close();
+  }
 }
 
+typedef Stream<T> StreamGetter<T extends ParseObject>();
+typedef T DataGetter<T extends ParseObject>();
+typedef Widget ChildBuilder<T extends ParseObject>(
+    BuildContext context, bool failed, T loadedData);
+typedef Widget RemovedItemBuilder<T extends ParseObject>(
+    BuildContext context, int index, T oldObject);
+
 class ParseLiveListBuilder<T extends ParseObject> extends StatefulWidget {
-  const ParseLiveListBuilder({
-    Key key,
-    @required this.query,
-    this.listLoadingElement,
-  }) : super(key: key);
+  const ParseLiveListBuilder(
+      {Key key,
+      @required this.query,
+      this.listLoadingElement,
+      this.duration = const Duration(milliseconds: 300),
+      this.scrollPhysics,
+      this.scrollController,
+      this.scrollDirection = Axis.vertical,
+      this.padding,
+      this.primary,
+      this.reverse = false,
+      this.childBuilder,
+      this.shrinkWrap = false,
+      this.removedItemBuilder})
+      : super(key: key);
 
   final QueryBuilder<T> query;
   final Widget listLoadingElement;
+  final Duration duration;
+  final ScrollPhysics scrollPhysics;
+  final ScrollController scrollController;
+
+  final Axis scrollDirection;
+  final EdgeInsetsGeometry padding;
+  final bool primary;
+  final bool reverse;
+  final bool shrinkWrap;
+
+  final ChildBuilder childBuilder;
+  final RemovedItemBuilder<T> removedItemBuilder;
 
   @override
   _ParseLiveListBuilderState<T> createState() =>
-      _ParseLiveListBuilderState<T>(query);
+      _ParseLiveListBuilderState<T>(query, removedItemBuilder);
+
+  static Widget defaultChildBuilder<T extends ParseObject>(
+      BuildContext context, bool failed, T loadedData) {
+    Widget child;
+    if (failed) {
+      child = const Text('something went wrong!');
+    } else if (loadedData != null) {
+      child = ListTile(
+        title: Text(
+          loadedData.get(keyVarObjectId),
+        ),
+      );
+    } else {
+      child = const ListTile(
+        leading: CircularProgressIndicator(),
+      );
+    }
+    return child;
+  }
 }
 
 class _ParseLiveListBuilderState<T extends ParseObject>
     extends State<ParseLiveListBuilder<T>> {
-  _ParseLiveListBuilderState(this._query) {
+  _ParseLiveListBuilderState(this._query, this.removedItemBuilder) {
     ParseLiveList.create(_query).then((ParseLiveList<T> value) {
       setState(() {
         _liveList = value;
@@ -213,11 +270,25 @@ class _ParseLiveListBuilderState<T extends ParseObject>
           } else if (event is LiveListDeleteEvent) {
             _animatedListKey.currentState.removeItem(
                 event.index,
-                (context, animation) => SizeTransition(
+                (BuildContext context, Animation<double> animation) =>
+                    ListElement<T>(
+                      key: ValueKey<String>(event.object?.get<String>(
+                          keyVarObjectId,
+                          defaultValue: 'removingItem')),
+                      childBuilder: widget.childBuilder ??
+                          ParseLiveListBuilder.defaultChildBuilder,
                       sizeFactor: animation,
-                      child: const ListTile(),
+                      duration: widget.duration,
+                      loadedData: () => event.object,
                     ));
-          } else if (event is LiveListUpdateEvent) {}
+//                    SizeTransition(
+//                      sizeFactor: animation,
+//                      child: removedItemBuilder != null
+//                          ? removedItemBuilder(
+//                              context, event.index, event.object)
+//                          : ,
+//                    ));
+          }
         });
       });
     });
@@ -227,6 +298,7 @@ class _ParseLiveListBuilderState<T extends ParseObject>
   ParseLiveList<T> _liveList;
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
+  final RemovedItemBuilder<T> removedItemBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -238,180 +310,94 @@ class _ParseLiveListBuilderState<T extends ParseObject>
   }
 
   Widget buildAnimatedList() {
-//    return ReorderableListView
     return AnimatedList(
         key: _animatedListKey,
+        physics: widget.scrollPhysics,
+        controller: widget.scrollController,
+        scrollDirection: widget.scrollDirection,
+        padding: widget.padding,
+        primary: widget.primary,
+        reverse: widget.reverse,
+        shrinkWrap: widget.shrinkWrap,
         initialItemCount: _liveList.size,
-        itemBuilder: (context, index, animation) {
-          final T loadedData = _liveList.getLoadedAt(index);
+        itemBuilder:
+            (BuildContext context, int index, Animation<double> animation) {
           return ListElement<T>(
             key: ValueKey<String>(_liveList.idOf(index)),
-            future: _liveList.getAt(index),
-            loadedData: loadedData,
+            stream: () => _liveList.getAt(index),
+            loadedData: () => _liveList.getLoadedAt(index),
             sizeFactor: animation,
+            duration: widget.duration,
+            childBuilder:
+                widget.childBuilder ?? ParseLiveListBuilder.defaultChildBuilder,
           );
         });
   }
-//
-//  Widget buildList() {
-//    return ListView.builder(
-//      itemBuilder: (BuildContext context, int index) => FutureBuilder<T>(
-//        key: ValueKey<String>(_liveList.idOf(index)),
-//        future: _liveList.getAt(index),
-//        builder: (BuildContext context, AsyncSnapshot<ParseObject> snapshot) {
-//          print('$index: ${snapshot.connectionState}');
-//          if (snapshot.hasData) {
-//            return ListTile(
-//              title: Text(
-//                snapshot.data.get("text"),
-//              ),
-//            );
-//          }
-//          return Text("loading");
-//        },
-//      ),
-//      itemCount: _liveList.size,
-//    );
-//  }
 }
 
 class ListElement<T extends ParseObject> extends StatefulWidget {
-  ListElement(
-      {Key key, this.future, this.loadedData, @required this.sizeFactor})
+  const ListElement(
+      {Key key,
+      this.stream,
+      this.loadedData,
+      @required this.sizeFactor,
+      @required this.duration,
+      @required this.childBuilder})
       : super(key: key);
 
-  final Future<T> future;
-  T loadedData;
+  final StreamGetter<T> stream;
+  final DataGetter<T> loadedData;
   final Animation<double> sizeFactor;
+  final Duration duration;
+  final ChildBuilder childBuilder;
 
   @override
   _ListElementState<T> createState() {
-    return _ListElementState<T>(loadedData);
+    return _ListElementState<T>(loadedData, stream);
   }
 }
 
-class _ListElementState<T extends ParseObject> extends State<ListElement<T>> {
-  _ListElementState(this.loadedData);
-  T loadedData;
-//  final int random = Random().nextInt(6);
-
-  Widget buildChild(BuildContext context, AsyncSnapshot<T> snapshot) {
-    Widget child;
-    if (snapshot.hasData) {
-      loadedData = snapshot.data;
-      child = ListTile(
-        title: Text(
-          snapshot.data.get('text'),
-        ),
-      );
-    } else if (snapshot.hasError) {
-      child = const Text('something went wrong!');
-    } else {
-      child = const ListTile(
-        leading: CircularProgressIndicator(),
-      );
-      child = const Text('something went wrong!');
+class _ListElementState<T extends ParseObject> extends State<ListElement<T>>
+    with SingleTickerProviderStateMixin {
+  _ListElementState(DataGetter<T> loadedDataGetter, StreamGetter<T> stream) {
+    loadedData = loadedDataGetter();
+    if (stream != null) {
+      _streamSubscription = stream().listen((T data) {
+        if (widget != null) {
+          setState(() {
+            loadedData = data;
+          });
+        } else {
+          loadedData = data;
+        }
+      });
     }
+  }
+  T loadedData;
+  bool failed = false;
+  StreamSubscription<T> _streamSubscription;
+  bool firstBuild = true;
 
-    return AnimatedContainer(
-      child: SizeTransition(
-        child: child,
-        sizeFactor: widget.sizeFactor,
-      ),
-      duration: const Duration(seconds: 1),
-    );
+  @override
+  void dispose() {
+    _streamSubscription?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (loadedData != null) {
-      return FutureBuilder<T>(
-        key: ValueKey<T>(loadedData),
-        initialData: loadedData,
-        builder: buildChild,
-      );
-    } else {
-      return FutureBuilder<T>(
-        key: ValueKey<Future<T>>(widget.future),
-        future: widget.future,
-        builder: buildChild,
-      );
-    }
+    final Widget result = SizeTransition(
+      sizeFactor: widget.sizeFactor,
+      child: AnimatedSize(
+        duration: widget.duration,
+        vsync: this,
+        child: widget.childBuilder(context, failed, loadedData),
+      ),
+    );
+    firstBuild = false;
+    return result;
   }
 }
-
-//class SizeFadeTransition extends StatefulWidget {
-//  final Animation<double> animation;
-//  final Curve curve;
-//  final double sizeFraction;
-//  final Axis axis;
-//  final double axisAlignment;
-//  final Widget child;
-//  const SizeFadeTransition({
-//    Key key,
-//    @required this.animation,
-//    this.sizeFraction = 2 / 3,
-//    this.curve = Curves.linear,
-//    this.axis = Axis.vertical,
-//    this.axisAlignment = 0.0,
-//    this.child,
-//  })  : assert(animation != null),
-//        assert(axisAlignment != null),
-//        assert(axis != null),
-//        assert(curve != null),
-//        assert(sizeFraction != null),
-//        assert(sizeFraction >= 0.0 && sizeFraction <= 1.0),
-//        super(key: key);
-//
-//  @override
-//  _SizeFadeTransitionState createState() => _SizeFadeTransitionState();
-//}
-//
-//class _SizeFadeTransitionState extends State<SizeFadeTransition> {
-//  Animation size;
-//  Animation opacity;
-//
-//  @override
-//  void initState() {
-//    super.initState();
-//    didUpdateWidget(widget);
-//  }
-//
-//  @override
-//  void didUpdateWidget(SizeFadeTransition oldWidget) {
-//    super.didUpdateWidget(oldWidget);
-//
-//    final curve =
-//        CurvedAnimation(parent: widget.animation, curve: widget.curve);
-//    size = CurvedAnimation(
-//        curve: Interval(0.0, widget.sizeFraction), parent: curve);
-//    opacity = CurvedAnimation(
-//        curve: Interval(widget.sizeFraction, 1.0), parent: curve);
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return SizeTransition(
-//      sizeFactor: size,
-//      axis: widget.axis,
-//      axisAlignment: widget.axisAlignment,
-//      child: FadeTransition(
-//        opacity: opacity,
-//        child: widget.child,
-//      ),
-//    );
-//  }
-//}
-
-//abstract class LiveListEvent<T extends ParseObject> {}
-//
-//class LiveListSizeEvent<T extends ParseObject> extends LiveListEvent<T> {
-//  LiveListSizeEvent(this._size);
-//
-//  final int _size;
-//
-//  int get size => _size;
-//}
 
 abstract class LiveListEvent<T extends ParseObject> {
   LiveListEvent(this._index, this._object); //, this._object);
