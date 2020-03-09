@@ -430,6 +430,66 @@ LiveQuery server.
 liveQuery.client.unSubscribe(subscription);
 ```
 
+## ParseLiveList
+ParseLiveList makes implementing a dynamic List as simple as possible.
+
+
+It ships with the ParseLiveList class itself, this class manages all elements of the list, sorts them,
+keeps itself up to date and Notifies you on changes.
+
+ParseLiveListWidget is a widget that handles all the communication with the ParseLiveList for you.
+Using ParseLiveListWidget you can create a dynamic List by just providing a QueryBuilder.
+
+```dart
+ParseLiveListWidget<ParseObject>(
+      query: query,
+    );
+```
+To customize the List Elements, you can provide a childBuilder.
+```dart
+ParseLiveListWidget<ParseObject>(
+  query: query,
+  reverse: false,
+  childBuilder:
+      (BuildContext context, bool failed, ParseObject loadedData) {
+    if (failed) {
+      return const Text('something went wrong!');
+    } else if (loadedData != null) {
+      return ListTile(
+        title: Text(
+          loadedData.get("text"),
+        ),
+      );
+    } else {
+      return const ListTile(
+        leading: CircularProgressIndicator(),
+      );
+    }
+  },
+);
+```
+Similar to the standard ListView, you can provide arguments like reverse or shrinkWrap.
+By providing the listLoadingElement, you can show the user something while the list is loading.
+```dart
+ParseLiveListWidget<ParseObject>(
+  query: query,
+  childBuilder: childBuilder,
+  listLoadingElement: Center(
+    child: CircularProgressIndicator(),
+  ),
+);
+```
+By providing the duration argument, you can change the animation speed.
+```dart
+ParseLiveListWidget<ParseObject>(
+  query: query,
+  childBuilder: childBuilder,
+  duration: Duration(seconds: 1),
+);
+```
+
+Note: To use this features you have to enable [Live Queries](#live-queries) first.
+
 ## Users
 You can create and control users just as normal using this SDK.
 
