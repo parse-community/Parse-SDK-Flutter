@@ -363,7 +363,8 @@ class _ParseLiveListWidgetState<T extends ParseObject>
         _liveList.stream.listen((ParseLiveListEvent<ParseObject> event) {
           if (event is ParseLiveListAddEvent) {
             if (_animatedListKey.currentState != null)
-              _animatedListKey.currentState.insertItem(event.index);
+              _animatedListKey.currentState
+                  .insertItem(event.index, duration: widget.duration);
           } else if (event is ParseLiveListDeleteEvent) {
             _animatedListKey.currentState.removeItem(
                 event.index,
@@ -377,7 +378,8 @@ class _ParseLiveListWidgetState<T extends ParseObject>
                       sizeFactor: animation,
                       duration: widget.duration,
                       loadedData: () => event.object,
-                    ));
+                    ),
+                duration: widget.duration);
           }
         });
       });
