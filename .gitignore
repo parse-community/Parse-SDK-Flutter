@@ -28,6 +28,9 @@ build/
 example/ios/Frameworks/
 example/lib/ui/
 
+example_livelist/ios/Frameworks/
+example_livelist/lib/ui/
+
 .flutter-plugins-dependencies
 
 .vscode/
