@@ -17,7 +17,7 @@ class ParseLiveList<T extends ParseObject> {
   }
 
   List<ParseLiveListElement<T>> _list = List<ParseLiveListElement<T>>();
-  StreamController<LiveListEvent<T>> _eventStreamController;
+  StreamController<ParseLiveListEvent<T>> _eventStreamController;
   int _nextID = 0;
 
   /// is object1 listed after object2?
@@ -64,8 +64,9 @@ class ParseLiveList<T extends ParseObject> {
     return _list.length;
   }
 
-  Stream<LiveListEvent<T>> get stream => _eventStreamController.stream;
-  Subscription _subscription;
+  Stream<ParseLiveListEvent<T>> get stream => _eventStreamController.stream;
+  Subscription _liveQuerySubscription;
+  StreamSubscription<LiveQueryClientEvent> _liveQueryClientEventSubscription;
 
   Future<ParseResponse> _runQuery() async {
     final QueryBuilder<T> query = QueryBuilder<T>.copy(_query);
@@ -83,7 +84,7 @@ class ParseLiveList<T extends ParseObject> {
   }
 
   Future<void> _init() async {
-    _eventStreamController = StreamController<LiveListEvent<T>>();
+    _eventStreamController = StreamController<ParseLiveListEvent<T>>();
 
     final ParseResponse parseResponse = await _runQuery();
     if (parseResponse.success) {
@@ -97,7 +98,7 @@ class ParseLiveList<T extends ParseObject> {
         .client
         .subscribe(QueryBuilder<T>.copy(_query))
         .then((Subscription subscription) {
-      _subscription = subscription;
+      _liveQuerySubscription = subscription;
       subscription.on(LiveQueryEvent.create, _objectAdded);
       subscription.on(LiveQueryEvent.update, _objectUpdated);
       subscription.on(LiveQueryEvent.enter, _objectAdded);
@@ -105,7 +106,7 @@ class ParseLiveList<T extends ParseObject> {
       subscription.on(LiveQueryEvent.delete, _objectDeleted);
     });
 
-    LiveQuery()
+    _liveQueryClientEventSubscription = LiveQuery()
         .client
         .getClientEventStream
         .listen((LiveQueryClientEvent event) async {
@@ -150,8 +151,6 @@ class ParseLiveList<T extends ParseObject> {
           for (int i = 0; i < newlist.length; i++) {
             _objectAdded(newlist[i], loaded: false);
           }
-
-//          _eventStreamController.sink.add(LiveListUpdateEvent<T>());
         }
       }
     });
@@ -161,16 +160,14 @@ class ParseLiveList<T extends ParseObject> {
     for (int i = 0; i < _list.length; i++) {
       if (after(object, _list[i].object) != true) {
         _list.insert(i, ParseLiveListElement<T>(object, loaded: loaded));
-        _eventStreamController.sink.add(LiveListAddEvent<T>(i, object));
+        _eventStreamController.sink.add(ParseLiveListAddEvent<T>(i, object));
         return;
       }
     }
     _list.add(ParseLiveListElement<T>(object, loaded: loaded));
     _eventStreamController.sink
-        .add(LiveListAddEvent<T>(_list.length - 1, object));
+        .add(ParseLiveListAddEvent<T>(_list.length - 1, object));
   }
-
-  void _updateObject(T object) {}
 
   void _objectUpdated(T object) {
     for (int i = 0; i < _list.length; i++) {
@@ -180,7 +177,8 @@ class ParseLiveList<T extends ParseObject> {
           _list[i].object = object;
         } else {
           _list.removeAt(i).dispose();
-          _eventStreamController.sink.add(LiveListDeleteEvent<T>(i, object));
+          _eventStreamController.sink
+              .add(ParseLiveListDeleteEvent<T>(i, object));
           _objectAdded(object);
         }
         break;
@@ -193,38 +191,57 @@ class ParseLiveList<T extends ParseObject> {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
         _list.removeAt(i).dispose();
-        _eventStreamController.sink.add(LiveListDeleteEvent<T>(i, object));
+        _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(i, object));
         break;
       }
     }
   }
 
-  Stream<T> getAt(final int i) async* {
-    if (!_list[i].loaded) {
-      final QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
-        ..whereEqualTo(
-            keyVarObjectId, _list[i].object.get<String>(keyVarObjectId))
-        ..setLimit(1);
-      final ParseResponse response = await queryBuilder.query();
-      if (response.success) {
-        _list[i].object = response.results.first;
-      } else {
-        throw response.error;
+  Stream<T> getAt(final int index) async* {
+    if (index < _list.length) {
+      if (!_list[index].loaded) {
+        final QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
+          ..whereEqualTo(
+              keyVarObjectId, _list[index].object.get<String>(keyVarObjectId))
+          ..setLimit(1);
+        final ParseResponse response = await queryBuilder.query();
+        if (response.success) {
+          _list[index].object = response.results.first;
+        } else {
+          throw response.error;
+        }
       }
-    }
 //    just for testing
 //    await Future<void>.delayed(const Duration(seconds: 2));
-    yield _list[i].object;
-    yield* _list[i].stream;
+      yield _list[index].object;
+      yield* _list[index].stream;
+    }
   }
 
   String idOf(int index) {
-    return _list[index].object.get<String>(keyVarObjectId);
+    if (index < _list.length) {
+      return _list[index].object.get<String>(keyVarObjectId);
+    }
+    return 'NotFound';
   }
 
   T getLoadedAt(int index) {
-    if (_list[index].loaded) return _list[index].object;
+    if (index < _list.length && _list[index].loaded) return _list[index].object;
     return null;
+  }
+
+  void dispose() {
+    if (_liveQuerySubscription != null) {
+      LiveQuery().client.unSubscribe(_liveQuerySubscription);
+      _liveQuerySubscription = null;
+    }
+    if (_liveQueryClientEventSubscription != null) {
+      _liveQueryClientEventSubscription.cancel();
+      _liveQueryClientEventSubscription = null;
+    }
+    while (_list.isNotEmpty) {
+      _list.removeLast().dispose();
+    }
   }
 }
 
@@ -254,6 +271,26 @@ class ParseLiveListElement<T extends ParseObject> {
   }
 }
 
+abstract class ParseLiveListEvent<T extends ParseObject> {
+  ParseLiveListEvent(this._index, this._object); //, this._object);
+
+  final int _index;
+  final T _object;
+
+  int get index => _index;
+  T get object => _object;
+}
+
+class ParseLiveListAddEvent<T extends ParseObject>
+    extends ParseLiveListEvent<T> {
+  ParseLiveListAddEvent(int index, T object) : super(index, object);
+}
+
+class ParseLiveListDeleteEvent<T extends ParseObject>
+    extends ParseLiveListEvent<T> {
+  ParseLiveListDeleteEvent(int index, T object) : super(index, object);
+}
+
 typedef Stream<T> StreamGetter<T extends ParseObject>();
 typedef T DataGetter<T extends ParseObject>();
 typedef Widget ChildBuilder<T extends ParseObject>(
@@ -261,8 +298,8 @@ typedef Widget ChildBuilder<T extends ParseObject>(
 typedef Widget RemovedItemBuilder<T extends ParseObject>(
     BuildContext context, int index, T oldObject);
 
-class ParseLiveListBuilder<T extends ParseObject> extends StatefulWidget {
-  const ParseLiveListBuilder(
+class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
+  const ParseLiveListWidget(
       {Key key,
       @required this.query,
       this.listLoadingElement,
@@ -294,8 +331,8 @@ class ParseLiveListBuilder<T extends ParseObject> extends StatefulWidget {
   final RemovedItemBuilder<T> removedItemBuilder;
 
   @override
-  _ParseLiveListBuilderState<T> createState() =>
-      _ParseLiveListBuilderState<T>(query, removedItemBuilder);
+  _ParseLiveListWidgetState<T> createState() =>
+      _ParseLiveListWidgetState<T>(query, removedItemBuilder);
 
   static Widget defaultChildBuilder<T extends ParseObject>(
       BuildContext context, bool failed, T loadedData) {
@@ -317,26 +354,26 @@ class ParseLiveListBuilder<T extends ParseObject> extends StatefulWidget {
   }
 }
 
-class _ParseLiveListBuilderState<T extends ParseObject>
-    extends State<ParseLiveListBuilder<T>> {
-  _ParseLiveListBuilderState(this._query, this.removedItemBuilder) {
+class _ParseLiveListWidgetState<T extends ParseObject>
+    extends State<ParseLiveListWidget<T>> {
+  _ParseLiveListWidgetState(this._query, this.removedItemBuilder) {
     ParseLiveList.create(_query).then((ParseLiveList<T> value) {
       setState(() {
         _liveList = value;
-        _liveList.stream.listen((LiveListEvent<ParseObject> event) {
-          if (event is LiveListAddEvent) {
+        _liveList.stream.listen((ParseLiveListEvent<ParseObject> event) {
+          if (event is ParseLiveListAddEvent) {
             if (_animatedListKey.currentState != null)
               _animatedListKey.currentState.insertItem(event.index);
-          } else if (event is LiveListDeleteEvent) {
+          } else if (event is ParseLiveListDeleteEvent) {
             _animatedListKey.currentState.removeItem(
                 event.index,
                 (BuildContext context, Animation<double> animation) =>
-                    ListElement<T>(
+                    ParseLiveListElementWidget<T>(
                       key: ValueKey<String>(event.object?.get<String>(
                           keyVarObjectId,
                           defaultValue: 'removingItem')),
                       childBuilder: widget.childBuilder ??
-                          ParseLiveListBuilder.defaultChildBuilder,
+                          ParseLiveListWidget.defaultChildBuilder,
                       sizeFactor: animation,
                       duration: widget.duration,
                       loadedData: () => event.object,
@@ -372,24 +409,31 @@ class _ParseLiveListBuilderState<T extends ParseObject>
         primary: widget.primary,
         reverse: widget.reverse,
         shrinkWrap: widget.shrinkWrap,
-        initialItemCount: _liveList.size,
+        initialItemCount: _liveList?.size,
         itemBuilder:
             (BuildContext context, int index, Animation<double> animation) {
-          return ListElement<T>(
-            key: ValueKey<String>(_liveList.idOf(index)),
-            stream: () => _liveList.getAt(index),
-            loadedData: () => _liveList.getLoadedAt(index),
+          return ParseLiveListElementWidget<T>(
+            key: ValueKey<String>(_liveList?.idOf(index) ?? '_NotFound'),
+            stream: () => _liveList?.getAt(index),
+            loadedData: () => _liveList?.getLoadedAt(index),
             sizeFactor: animation,
             duration: widget.duration,
             childBuilder:
-                widget.childBuilder ?? ParseLiveListBuilder.defaultChildBuilder,
+                widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
           );
         });
   }
+
+  @override
+  void dispose() {
+    _liveList.dispose();
+    _liveList = null;
+    super.dispose();
+  }
 }
 
-class ListElement<T extends ParseObject> extends StatefulWidget {
-  const ListElement(
+class ParseLiveListElementWidget<T extends ParseObject> extends StatefulWidget {
+  const ParseLiveListElementWidget(
       {Key key,
       this.stream,
       this.loadedData,
@@ -405,14 +449,16 @@ class ListElement<T extends ParseObject> extends StatefulWidget {
   final ChildBuilder childBuilder;
 
   @override
-  _ListElementState<T> createState() {
-    return _ListElementState<T>(loadedData, stream);
+  _ParseLiveListElementWidgetState<T> createState() {
+    return _ParseLiveListElementWidgetState<T>(loadedData, stream);
   }
 }
 
-class _ListElementState<T extends ParseObject> extends State<ListElement<T>>
+class _ParseLiveListElementWidgetState<T extends ParseObject>
+    extends State<ParseLiveListElementWidget<T>>
     with SingleTickerProviderStateMixin {
-  _ListElementState(DataGetter<T> loadedDataGetter, StreamGetter<T> stream) {
+  _ParseLiveListElementWidgetState(
+      DataGetter<T> loadedDataGetter, StreamGetter<T> stream) {
     loadedData = loadedDataGetter();
     if (stream != null) {
       _streamSubscription = stream().listen((T data) {
@@ -434,6 +480,7 @@ class _ListElementState<T extends ParseObject> extends State<ListElement<T>>
   @override
   void dispose() {
     _streamSubscription?.cancel();
+    _streamSubscription = null;
     super.dispose();
   }
 
@@ -450,22 +497,4 @@ class _ListElementState<T extends ParseObject> extends State<ListElement<T>>
     firstBuild = false;
     return result;
   }
-}
-
-abstract class LiveListEvent<T extends ParseObject> {
-  LiveListEvent(this._index, this._object); //, this._object);
-
-  final int _index;
-  final T _object;
-
-  int get index => _index;
-  T get object => _object;
-}
-
-class LiveListAddEvent<T extends ParseObject> extends LiveListEvent<T> {
-  LiveListAddEvent(int index, T object) : super(index, object);
-}
-
-class LiveListDeleteEvent<T extends ParseObject> extends LiveListEvent<T> {
-  LiveListDeleteEvent(int index, T object) : super(index, object);
 }
