@@ -207,9 +207,10 @@ class ParseLiveList<T extends ParseObject> {
               keyVarObjectId, _list[index].object.get<String>(keyVarObjectId))
           ..setLimit(1);
         final ParseResponse response = await queryBuilder.query();
-        if (response.success) {
+        if (response.success && response.results != null) {
           _list[index].object = response.results.first;
         } else {
+          _list[index].object = null;
           throw response.error;
         }
       }
@@ -293,10 +294,20 @@ class ParseLiveListDeleteEvent<T extends ParseObject>
   ParseLiveListDeleteEvent(int index, T object) : super(index, object);
 }
 
-typedef Stream<T> StreamGetter<T extends ParseObject>();
-typedef T DataGetter<T extends ParseObject>();
-typedef Widget ChildBuilder<T extends ParseObject>(
-    BuildContext context, bool failed, T loadedData);
+typedef StreamGetter<T extends ParseObject> = Stream<T> Function();
+typedef DataGetter<T extends ParseObject> = T Function();
+typedef ChildBuilder<T extends ParseObject> = Widget Function(
+    BuildContext context, ParseLiveListElementSnapshot<T> snapshot);
+
+class ParseLiveListElementSnapshot<T extends ParseObject> {
+  ParseLiveListElementSnapshot({this.loadedData, this.error});
+
+  final T loadedData;
+  final ParseError error;
+
+  bool get hasData => loadedData != null;
+  bool get failed => error != null;
+}
 
 class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
   const ParseLiveListWidget(
@@ -459,21 +470,37 @@ class _ParseLiveListElementWidgetState<T extends ParseObject>
     with SingleTickerProviderStateMixin {
   _ParseLiveListElementWidgetState(
       DataGetter<T> loadedDataGetter, StreamGetter<T> stream) {
-    loadedData = loadedDataGetter();
+//    loadedData = loadedDataGetter();
+    _snapshot = ParseLiveListElementSnapshot<T>(loadedData: loadedDataGetter());
     if (stream != null) {
-      _streamSubscription = stream().listen((T data) {
-        if (widget != null) {
-          setState(() {
-            loadedData = data;
-          });
-        } else {
-          loadedData = data;
-        }
-      });
+      _streamSubscription = stream().listen(
+        (T data) {
+          if (widget != null) {
+            setState(() {
+              _snapshot = ParseLiveListElementSnapshot<T>(loadedData: data);
+            });
+          } else {
+            _snapshot = ParseLiveListElementSnapshot<T>(loadedData: data);
+          }
+        },
+        onError: (Object error) {
+          if (error is ParseError) {
+            if (widget != null) {
+              setState(() {
+                _snapshot = ParseLiveListElementSnapshot<T>(error: error);
+              });
+            } else {
+              _snapshot = ParseLiveListElementSnapshot<T>(error: error);
+            }
+          }
+        },
+        cancelOnError: false,
+      );
     }
   }
-  T loadedData;
-  bool failed = false;
+
+  ParseLiveListElementSnapshot<T> _snapshot;
+
   StreamSubscription<T> _streamSubscription;
 
   @override
@@ -490,7 +517,7 @@ class _ParseLiveListElementWidgetState<T extends ParseObject>
       child: AnimatedSize(
         duration: widget.duration,
         vsync: this,
-        child: widget.childBuilder(context, failed, loadedData),
+        child: widget.childBuilder(context, _snapshot),
       ),
     );
     return result;

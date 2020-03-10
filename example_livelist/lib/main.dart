@@ -80,23 +80,24 @@ class _MyAppState extends State<MyApp> {
           child: ParseLiveListWidget<ParseObject>(
               query: _queryBuilder,
               duration: const Duration(seconds: 1),
-              childBuilder:
-                  (BuildContext context, bool failed, ParseObject loadedData) {
-                if (failed) {
+              childBuilder: (BuildContext context,
+                  ParseLiveListElementSnapshot<ParseObject> snapshot) {
+                if (snapshot.failed) {
                   return const Text('something went wrong!');
-                } else if (loadedData != null) {
+                } else if (snapshot.hasData) {
                   return ListTile(
                     title: Row(
                       children: <Widget>[
                         Flexible(
-                          child: Text(loadedData.get<int>('order').toString()),
+                          child: Text(
+                              snapshot.loadedData.get<int>('order').toString()),
                           flex: 1,
                         ),
                         Flexible(
                           child: Container(
                             alignment: Alignment.center,
                             child: Text(
-                              loadedData.get<String>('text'),
+                              snapshot.loadedData.get<String>('text'),
                             ),
                           ),
                           flex: 10,
@@ -104,7 +105,7 @@ class _MyAppState extends State<MyApp> {
                       ],
                     ),
                     onLongPress: () {
-                      objectFormKey.currentState.setObject(loadedData);
+                      objectFormKey.currentState.setObject(snapshot.loadedData);
                     },
                   );
                 } else {
