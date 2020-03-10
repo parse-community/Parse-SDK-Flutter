@@ -475,7 +475,6 @@ class _ParseLiveListElementWidgetState<T extends ParseObject>
   T loadedData;
   bool failed = false;
   StreamSubscription<T> _streamSubscription;
-  bool firstBuild = true;
 
   @override
   void dispose() {
@@ -494,7 +493,6 @@ class _ParseLiveListElementWidgetState<T extends ParseObject>
         child: widget.childBuilder(context, failed, loadedData),
       ),
     );
-    firstBuild = false;
     return result;
   }
 }
