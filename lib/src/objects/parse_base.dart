@@ -181,6 +181,10 @@ abstract class ParseBase {
     await ParseCoreData().getStore().setString(key, objectJson);
   }
 
+  void clearUnsavedChanges() {
+    _unsavedChanges.clear();
+  }
+
   /// Sets type [T] from objectData
   ///
   /// To set an int, call setType<int> and an int will be saved
