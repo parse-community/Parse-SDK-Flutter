@@ -23,8 +23,8 @@ class _MyAppState extends State<MyApp> {
         initFailed = !success;
         if (success)
           _queryBuilder = QueryBuilder<ParseObject>(ParseObject('Test'))
-            ..orderByAscending('order');
-        ;
+            ..orderByAscending('order')
+            ..whereNotEqualTo('show', false);
       });
     }).catchError((dynamic _) {
       setState(() {
@@ -179,6 +179,7 @@ class _ObjectFormState extends State<ObjectForm> {
                     setState(() {
                       _formKey.currentState.save();
                       final ParseObject object = _currentObject;
+                      //Delay to highlight the animation.
                       Future<void>.delayed(const Duration(seconds: 1))
                           .then((_) {
                         object.save();

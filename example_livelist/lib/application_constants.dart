@@ -1,6 +1,6 @@
 const String keyApplicationName = '';
 const String keyParseApplicationId = '';
-const String keyParseMasterKey = '';
+const String keyParseClientKey = '';
 const String keyParseServerUrl = '';
 const String keyParseLiveServerUrl = '';
 const bool keyDebug = true;
