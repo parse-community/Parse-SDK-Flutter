@@ -208,6 +208,10 @@ class ParseObject extends ParseBase implements ParseCloneable {
     _savingChanges.clear();
   }
 
+  void clearUnsavedChanges() {
+    _unsavedChanges.clear();
+  }
+
   dynamic _getRequestJson(String method) {
     final Uri tempUri = Uri.parse(_client.data.serverUrl);
     final String parsePath = tempUri.path;
