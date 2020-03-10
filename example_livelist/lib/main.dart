@@ -23,7 +23,8 @@ class _MyAppState extends State<MyApp> {
         initFailed = !success;
         if (success)
           _queryBuilder = QueryBuilder<ParseObject>(ParseObject('Test'))
-            ..orderByAscending('order');
+            ..orderByAscending('order')
+            ..whereNotEqualTo('show', false);
       });
     }).catchError((dynamic _) {
       setState(() {
