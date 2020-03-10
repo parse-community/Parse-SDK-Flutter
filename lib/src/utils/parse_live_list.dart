@@ -160,27 +160,28 @@ class ParseLiveList<T extends ParseObject> {
     for (int i = 0; i < _list.length; i++) {
       if (after(object, _list[i].object) != true) {
         _list.insert(i, ParseLiveListElement<T>(object, loaded: loaded));
-        _eventStreamController.sink.add(ParseLiveListAddEvent<T>(i, object));
+        _eventStreamController.sink.add(ParseLiveListAddEvent<T>(
+            i, object?.clone(object?.toJson(full: true))));
         return;
       }
     }
     _list.add(ParseLiveListElement<T>(object, loaded: loaded));
-    _eventStreamController.sink
-        .add(ParseLiveListAddEvent<T>(_list.length - 1, object));
+    _eventStreamController.sink.add(ParseLiveListAddEvent<T>(
+        _list.length - 1, object?.clone(object?.toJson(full: true))));
   }
 
   void _objectUpdated(T object) {
     for (int i = 0; i < _list.length; i++) {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
-        //TODO: better soulution
-//        if (after(_list[i].object, object) == null) {
-//          _list[i].object = object;
-//        } else {
-        _list.removeAt(i).dispose();
-        _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(i, object));
-        _objectAdded(object);
-//        }
+        if (after(_list[i].object, object) == null) {
+          _list[i].object = object;
+        } else {
+          _list.removeAt(i).dispose();
+          _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(
+              i, object?.clone(object?.toJson(full: true))));
+          _objectAdded(object);
+        }
         break;
       }
     }
@@ -191,7 +192,8 @@ class ParseLiveList<T extends ParseObject> {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
         _list.removeAt(i).dispose();
-        _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(i, object));
+        _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(
+            i, object?.clone(object?.toJson(full: true))));
         break;
       }
     }
@@ -256,12 +258,12 @@ class ParseLiveListElement<T extends ParseObject> {
 
   Stream<T> get stream => _streamController?.stream;
 
-  T get object => _object;
+  T get object => _object?.clone(_object?.toJson(full: true));
 
   set object(T value) {
     _loaded = true;
     _object = value;
-    _streamController?.add(object);
+    _streamController?.add(_object?.clone(_object?.toJson(full: true)));
   }
 
   bool get loaded => _loaded;
