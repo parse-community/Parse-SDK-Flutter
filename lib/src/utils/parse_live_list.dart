@@ -297,8 +297,6 @@ typedef Stream<T> StreamGetter<T extends ParseObject>();
 typedef T DataGetter<T extends ParseObject>();
 typedef Widget ChildBuilder<T extends ParseObject>(
     BuildContext context, bool failed, T loadedData);
-typedef Widget RemovedItemBuilder<T extends ParseObject>(
-    BuildContext context, int index, T oldObject);
 
 class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
   const ParseLiveListWidget(
@@ -329,8 +327,8 @@ class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
   final bool reverse;
   final bool shrinkWrap;
 
-  final ChildBuilder childBuilder;
-  final RemovedItemBuilder<T> removedItemBuilder;
+  final ChildBuilder<T> childBuilder;
+  final ChildBuilder<T> removedItemBuilder;
 
   @override
   _ParseLiveListWidgetState<T> createState() =>
@@ -392,7 +390,7 @@ class _ParseLiveListWidgetState<T extends ParseObject>
   ParseLiveList<T> _liveList;
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
-  final RemovedItemBuilder<T> removedItemBuilder;
+  final ChildBuilder<T> removedItemBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -448,7 +446,7 @@ class ParseLiveListElementWidget<T extends ParseObject> extends StatefulWidget {
   final DataGetter<T> loadedData;
   final Animation<double> sizeFactor;
   final Duration duration;
-  final ChildBuilder childBuilder;
+  final ChildBuilder<T> childBuilder;
 
   @override
   _ParseLiveListElementWidgetState<T> createState() {
