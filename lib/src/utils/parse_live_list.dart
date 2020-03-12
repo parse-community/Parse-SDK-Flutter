@@ -346,14 +346,14 @@ class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
       _ParseLiveListWidgetState<T>(query, removedItemBuilder);
 
   static Widget defaultChildBuilder<T extends ParseObject>(
-      BuildContext context, bool failed, T loadedData) {
+      BuildContext context, ParseLiveListElementSnapshot<T> snapshot) {
     Widget child;
-    if (failed) {
+    if (snapshot.failed) {
       child = const Text('something went wrong!');
-    } else if (loadedData != null) {
+    } else if (snapshot.hasData) {
       child = ListTile(
         title: Text(
-          loadedData.get(keyVarObjectId),
+          snapshot.loadedData.get(keyVarObjectId),
         ),
       );
     } else {
