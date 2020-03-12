@@ -89,9 +89,9 @@ class ParseLiveList<T extends ParseObject> {
     final ParseResponse parseResponse = await _runQuery();
     if (parseResponse.success) {
       _list = parseResponse.results
-          .map<ParseLiveListElement<T>>(
+          ?.map<ParseLiveListElement<T>>(
               (dynamic element) => ParseLiveListElement<T>(element))
-          .toList();
+          ?.toList() ?? List<ParseLiveListElement<T>>();
     }
 
     LiveQuery()
@@ -111,9 +111,9 @@ class ParseLiveList<T extends ParseObject> {
         .getClientEventStream
         .listen((LiveQueryClientEvent event) async {
       if (event == LiveQueryClientEvent.CONNECTED) {
-        ParseResponse parseResponse = await _runQuery();
+        final ParseResponse parseResponse = await _runQuery();
         if (parseResponse.success) {
-          List<T> newlist = parseResponse.results;
+          final List<T> newList = parseResponse.results ?? List<T>();
 
           //update List
           for (int i = 0; i < _list.length; i++) {
@@ -123,21 +123,21 @@ class ParseLiveList<T extends ParseObject> {
 
             bool stillInList = false;
 
-            for (int j = 0; j < newlist.length; j++) {
-              if (newlist[j].get<String>(keyVarObjectId) == currentObjectId) {
+            for (int j = 0; j < newList.length; j++) {
+              if (newList[j].get<String>(keyVarObjectId) == currentObjectId) {
                 stillInList = true;
-                if (newlist[j]
+                if (newList[j]
                     .get<DateTime>(keyVarUpdatedAt)
                     .isAfter(currentObject.get<DateTime>(keyVarUpdatedAt))) {
-                  QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
+                  final QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
                     ..whereEqualTo(keyVarObjectId, currentObjectId);
                   queryBuilder.query().then((ParseResponse result) {
-                    if (result.success) {
+                    if (result.success && result.results != null) {
                       _objectUpdated(result.results.first);
                     }
                   });
                 }
-                newlist.removeAt(j);
+                newList.removeAt(j);
                 j--;
                 break;
               }
@@ -148,8 +148,8 @@ class ParseLiveList<T extends ParseObject> {
             }
           }
 
-          for (int i = 0; i < newlist.length; i++) {
-            _objectAdded(newlist[i], loaded: false);
+          for (int i = 0; i < newList.length; i++) {
+            _objectAdded(newList[i], loaded: false);
           }
         }
       }
@@ -207,8 +207,8 @@ class ParseLiveList<T extends ParseObject> {
               keyVarObjectId, _list[index].object.get<String>(keyVarObjectId))
           ..setLimit(1);
         final ParseResponse response = await queryBuilder.query();
-        if (response.success && response.results != null) {
-          _list[index].object = response.results.first;
+        if (response.success) {
+          _list[index].object = response.results?.first;
         } else {
           _list[index].object = null;
           throw response.error;
