@@ -52,12 +52,10 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
 
   LiveQueryReconnectingController(
       this._reconnect, this._eventStream, this.debug) {
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult state) {
-      if (!_isOnline && state != ConnectivityResult.none) _retryState = 0;
-      _isOnline = state != ConnectivityResult.none;
-      if (debug) print('$DEBUG_TAG: $state');
-      _setReconnect();
-    });
+
+    Connectivity().checkConnectivity().then(_connectivityChanged);
+    Connectivity().onConnectivityChanged.listen(_connectivityChanged);
+
     _eventStream.listen((LiveQueryClientEvent event) {
       switch (event) {
         case LiveQueryClientEvent.CONNECTED:
@@ -83,6 +81,13 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
   }
 
+  void _connectivityChanged(ConnectivityResult state){
+    if (!_isOnline && state != ConnectivityResult.none) _retryState = 0;
+    _isOnline = state != ConnectivityResult.none;
+    if (debug) print('$DEBUG_TAG: $state');
+    _setReconnect();
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
@@ -102,9 +107,9 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
         retryInterval[_retryState] >= 0) {
       _currentTimer =
           Timer(Duration(milliseconds: retryInterval[_retryState]), () {
-        _currentTimer = null;
-        _reconnect();
-      });
+            _currentTimer = null;
+            _reconnect();
+          });
       if (debug)
         print('$DEBUG_TAG: Retrytimer set to ${retryInterval[_retryState]}ms');
       if (_retryState < retryInterval.length - 1) _retryState++;
@@ -123,7 +128,7 @@ class Client {
     _client = client ??
         ParseHTTPClient(
             sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            autoSendSessionId ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
@@ -137,7 +142,7 @@ class Client {
     }
 
     reconnectingController = LiveQueryReconnectingController(
-        () => reconnect(userInitialized: false), getClientEventStream, _debug);
+            () => reconnect(userInitialized: false), getClientEventStream, _debug);
   }
   static Client get instance => _getInstance();
   static Client _instance;
@@ -204,7 +209,7 @@ class Client {
   Future<Subscription> subscribe(QueryBuilder query) async {
     if (_webSocket == null) {
       await _clientEventStream.any((LiveQueryClientEvent event) =>
-          event == LiveQueryClientEvent.CONNECTED);
+      event == LiveQueryClientEvent.CONNECTED);
     }
     final int requestId = _requestIdGenerator();
     final Subscription subscription = Subscription(query, requestId);
@@ -394,7 +399,7 @@ class LiveQuery {
     _client = client ??
         ParseHTTPClient(
             sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            autoSendSessionId ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
