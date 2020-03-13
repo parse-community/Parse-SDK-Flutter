@@ -13,9 +13,12 @@ enum LiveQueryEvent { create, enter, update, leave, delete, error }
 
 const String _printConstLiveQuery = 'LiveQuery: ';
 
-class Subscription {
-  Subscription(this.query, this.requestId);
-  QueryBuilder query;
+class Subscription<T extends ParseObject> {
+  Subscription(this.query, this.requestId, {T copyObject}) {
+    _copyObject = copyObject;
+  }
+  QueryBuilder<T> query;
+  T _copyObject;
   int requestId;
   bool _enabled = false;
   final List<String> _liveQueryEvent = <String>[
@@ -29,6 +32,10 @@ class Subscription {
   Map<String, Function> eventCallbacks = <String, Function>{};
   void on(LiveQueryEvent op, Function callback) {
     eventCallbacks[_liveQueryEvent[op.index]] = callback;
+  }
+
+  T get copyObject {
+    return _copyObject;
   }
 }
 
@@ -52,7 +59,6 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
 
   LiveQueryReconnectingController(
       this._reconnect, this._eventStream, this.debug) {
-
     Connectivity().checkConnectivity().then(_connectivityChanged);
     Connectivity().onConnectivityChanged.listen(_connectivityChanged);
 
@@ -81,7 +87,7 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
   }
 
-  void _connectivityChanged(ConnectivityResult state){
+  void _connectivityChanged(ConnectivityResult state) {
     if (!_isOnline && state != ConnectivityResult.none) _retryState = 0;
     _isOnline = state != ConnectivityResult.none;
     if (debug) print('$DEBUG_TAG: $state');
@@ -107,9 +113,9 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
         retryInterval[_retryState] >= 0) {
       _currentTimer =
           Timer(Duration(milliseconds: retryInterval[_retryState]), () {
-            _currentTimer = null;
-            _reconnect();
-          });
+        _currentTimer = null;
+        _reconnect();
+      });
       if (debug)
         print('$DEBUG_TAG: Retrytimer set to ${retryInterval[_retryState]}ms');
       if (_retryState < retryInterval.length - 1) _retryState++;
@@ -128,7 +134,7 @@ class Client {
     _client = client ??
         ParseHTTPClient(
             sendSessionId:
-            autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
@@ -142,7 +148,7 @@ class Client {
     }
 
     reconnectingController = LiveQueryReconnectingController(
-            () => reconnect(userInitialized: false), getClientEventStream, _debug);
+        () => reconnect(userInitialized: false), getClientEventStream, _debug);
   }
   static Client get instance => _getInstance();
   static Client _instance;
@@ -206,13 +212,16 @@ class Client {
           .add(LiveQueryClientEvent.USER_DISCONNECTED);
   }
 
-  Future<Subscription> subscribe(QueryBuilder query) async {
+  Future<Subscription<T>> subscribe<T extends ParseObject>(
+      QueryBuilder<T> query,
+      {T copyObject}) async {
     if (_webSocket == null) {
       await _clientEventStream.any((LiveQueryClientEvent event) =>
-      event == LiveQueryClientEvent.CONNECTED);
+          event == LiveQueryClientEvent.CONNECTED);
     }
     final int requestId = _requestIdGenerator();
-    final Subscription subscription = Subscription(query, requestId);
+    final Subscription<T> subscription =
+        Subscription<T>(query, requestId, copyObject: copyObject);
     _requestSubScription[requestId] = subscription;
     //After a client connects to the LiveQuery server,
     //it can send a subscribe message to subscribe a ParseQuery.
@@ -220,7 +229,7 @@ class Client {
     return subscription;
   }
 
-  void unSubscribe(Subscription subscription) {
+  void unSubscribe<T extends ParseObject>(Subscription<T> subscription) {
     //Mount message for Unsubscribe
     final Map<String, dynamic> unsubscribeMessage = <String, dynamic>{
       'op': 'unsubscribe',
@@ -382,10 +391,12 @@ class Client {
         final String className = map['className'];
         if (className == '_User') {
           subscription.eventCallbacks[actionData['op']](
-              ParseUser(null, null, null).fromJson(map));
+              (subscription.copyObject ?? ParseUser(null, null, null))
+                  .fromJson(map));
         } else {
           subscription.eventCallbacks[actionData['op']](
-              ParseObject(className).fromJson(map));
+              (subscription.copyObject ?? ParseObject(className))
+                  .fromJson(map));
         }
       } else {
         subscription.eventCallbacks[actionData['op']](actionData);
@@ -399,7 +410,7 @@ class LiveQuery {
     _client = client ??
         ParseHTTPClient(
             sendSessionId:
-            autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
 
     _debug = isDebugEnabled(objectLevelDebug: debug);

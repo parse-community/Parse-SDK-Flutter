@@ -80,7 +80,7 @@ class ParseLiveList<T extends ParseObject> {
       query.keysToReturn(List<String>());
     }
 
-    return await query.query();
+    return await query.query<T>();
   }
 
   Future<void> _init() async {
@@ -96,8 +96,9 @@ class ParseLiveList<T extends ParseObject> {
 
     LiveQuery()
         .client
-        .subscribe(QueryBuilder<T>.copy(_query))
-        .then((Subscription subscription) {
+        .subscribe<T>(QueryBuilder<T>.copy(_query),
+            copyObject: _query.object.clone(_query.object.toJson()))
+        .then((Subscription<T> subscription) {
       _liveQuerySubscription = subscription;
       subscription.on(LiveQueryEvent.create, _objectAdded);
       subscription.on(LiveQueryEvent.update, _objectUpdated);
@@ -131,7 +132,7 @@ class ParseLiveList<T extends ParseObject> {
                     .isAfter(currentObject.get<DateTime>(keyVarUpdatedAt))) {
                   final QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
                     ..whereEqualTo(keyVarObjectId, currentObjectId);
-                  queryBuilder.query().then((ParseResponse result) {
+                  queryBuilder.query<T>().then((ParseResponse result) {
                     if (result.success && result.results != null) {
                       _objectUpdated(result.results.first);
                     }
@@ -206,7 +207,7 @@ class ParseLiveList<T extends ParseObject> {
           ..whereEqualTo(
               keyVarObjectId, _list[index].object.get<String>(keyVarObjectId))
           ..setLimit(1);
-        final ParseResponse response = await queryBuilder.query();
+        final ParseResponse response = await queryBuilder.query<T>();
         if (response.success) {
           _list[index].object = response.results?.first;
         } else {
@@ -346,14 +347,14 @@ class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
       _ParseLiveListWidgetState<T>(query, removedItemBuilder);
 
   static Widget defaultChildBuilder<T extends ParseObject>(
-      BuildContext context, bool failed, T loadedData) {
+      BuildContext context, ParseLiveListElementSnapshot<T> snapshot) {
     Widget child;
-    if (failed) {
+    if (snapshot.failed) {
       child = const Text('something went wrong!');
-    } else if (loadedData != null) {
+    } else if (snapshot.hasData) {
       child = ListTile(
         title: Text(
-          loadedData.get(keyVarObjectId),
+          snapshot.loadedData.get(keyVarObjectId),
         ),
       );
     } else {
