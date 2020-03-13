@@ -296,13 +296,14 @@ class QueryBuilder<T extends ParseObject> {
   /// Finishes the query and calls the server
   ///
   /// Make sure to call this after defining your queries
-  Future<ParseResponse> query() async {
-    return object.query(buildQuery());
+  Future<ParseResponse> query<T extends ParseObject>() async {
+    return object.query<T>(buildQuery());
   }
 
-  Future<ParseResponse> distinct(String className) async {
+  Future<ParseResponse> distinct<T extends ParseObject>(
+      String className) async {
     final String queryString = 'distinct=$className';
-    return object.distinct(queryString);
+    return object.distinct<T>(queryString);
   }
 
   ///Counts the number of objects that match this query
