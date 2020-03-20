@@ -17,7 +17,7 @@ dependencies:
   connectivity: ^0.4.6+2
 
   #Database
-  sembast: ^2.1.2+3
+  sembast: ^2.3.0
   xxtea: ^2.0.2
   shared_preferences: ^0.5.6
 
