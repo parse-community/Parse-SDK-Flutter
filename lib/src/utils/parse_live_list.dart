@@ -65,7 +65,7 @@ class ParseLiveList<T extends ParseObject> {
   }
 
   Stream<ParseLiveListEvent<T>> get stream => _eventStreamController.stream;
-  Subscription _liveQuerySubscription;
+  Subscription<T> _liveQuerySubscription;
   StreamSubscription<LiveQueryClientEvent> _liveQueryClientEventSubscription;
 
   Future<ParseResponse> _runQuery() async {
@@ -89,9 +89,10 @@ class ParseLiveList<T extends ParseObject> {
     final ParseResponse parseResponse = await _runQuery();
     if (parseResponse.success) {
       _list = parseResponse.results
-          ?.map<ParseLiveListElement<T>>(
-              (dynamic element) => ParseLiveListElement<T>(element))
-          ?.toList() ?? List<ParseLiveListElement<T>>();
+              ?.map<ParseLiveListElement<T>>(
+                  (dynamic element) => ParseLiveListElement<T>(element))
+              ?.toList() ??
+          List<ParseLiveListElement<T>>();
     }
 
     LiveQuery()
@@ -130,8 +131,9 @@ class ParseLiveList<T extends ParseObject> {
                 if (newList[j]
                     .get<DateTime>(keyVarUpdatedAt)
                     .isAfter(currentObject.get<DateTime>(keyVarUpdatedAt))) {
-                  final QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
-                    ..whereEqualTo(keyVarObjectId, currentObjectId);
+                  final QueryBuilder<T> queryBuilder =
+                      QueryBuilder<T>.copy(_query)
+                        ..whereEqualTo(keyVarObjectId, currentObjectId);
                   queryBuilder.query<T>().then((ParseResponse result) {
                     if (result.success && result.results != null) {
                       _objectUpdated(result.results.first);
