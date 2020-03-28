@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../parse_server_sdk.dart';
 
+// ignore_for_file: invalid_use_of_protected_member
 class ParseLiveList<T extends ParseObject> {
   ParseLiveList._(this._query);
 
@@ -38,19 +39,37 @@ class ParseLiveList<T extends ParseObject> {
       final dynamic val1 = object1.get<dynamic>(key);
       final dynamic val2 = object2.get<dynamic>(key);
 
-      if (val1 == null && val2 == null) break;
-      if (val1 == null) return reverse;
-      if (val2 == null) return !reverse;
+      if (val1 == null && val2 == null) {
+        break;
+      }
+      if (val1 == null) {
+        return reverse;
+      }
+      if (val2 == null) {
+        return !reverse;
+      }
 
       if (val1 is num && val2 is num) {
-        if ((val1 as num) < (val2 as num)) return reverse;
-        if ((val1 as num) > (val2 as num)) return !reverse;
+        if (val1 < val2) {
+          return reverse;
+        }
+        if (val1 > val2) {
+          return !reverse;
+        }
       } else if (val1 is String && val2 is String) {
-        if (val1.toString().compareTo(val2) < 0) return reverse;
-        if (val1.toString().compareTo(val2) > 0) return !reverse;
+        if (val1.toString().compareTo(val2) < 0) {
+          return reverse;
+        }
+        if (val1.toString().compareTo(val2) > 0) {
+          return !reverse;
+        }
       } else if (val1 is DateTime && val2 is DateTime) {
-        if ((val1 as DateTime).isAfter(val2)) return !reverse;
-        if ((val1 as DateTime).isBefore(val2)) return reverse;
+        if (val1.isAfter(val2)) {
+          return !reverse;
+        }
+        if (val1.isBefore(val2)) {
+          return reverse;
+        }
       }
     }
     return null;
@@ -73,7 +92,9 @@ class ParseLiveList<T extends ParseObject> {
     if (query.limiters.containsKey('order')) {
       query.keysToReturn(
           query.limiters['order'].toString().split(',').map((String string) {
-        if (string.startsWith('-')) return string.substring(1);
+            if (string.startsWith('-')) {
+              return string.substring(1);
+            }
         return string;
       }).toList());
     } else {
@@ -182,7 +203,10 @@ class ParseLiveList<T extends ParseObject> {
         } else {
           _list.removeAt(i).dispose();
           _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(
-              i, object?.clone(object?.toJson(full: true))));
+            // ignore: invalid_use_of_protected_member
+              i,
+              object?.clone(object?.toJson(full: true))));
+          // ignore: invalid_use_of_protected_member
           _objectAdded(object?.clone(object?.toJson(full: true)));
         }
         break;
@@ -232,7 +256,9 @@ class ParseLiveList<T extends ParseObject> {
   }
 
   T getLoadedAt(int index) {
-    if (index < _list.length && _list[index].loaded) return _list[index].object;
+    if (index < _list.length && _list[index].loaded) {
+      return _list[index].object;
+    }
     return null;
   }
 
@@ -253,7 +279,9 @@ class ParseLiveList<T extends ParseObject> {
 
 class ParseLiveListElement<T extends ParseObject> {
   ParseLiveListElement(this._object, {bool loaded = false}) {
-    if (_object != null) _loaded = loaded;
+    if (_object != null) {
+      _loaded = loaded;
+    }
   }
 
   final StreamController<T> _streamController = StreamController<T>.broadcast();
@@ -262,11 +290,13 @@ class ParseLiveListElement<T extends ParseObject> {
 
   Stream<T> get stream => _streamController?.stream;
 
+  // ignore: invalid_use_of_protected_member
   T get object => _object?.clone(_object?.toJson(full: true));
 
   set object(T value) {
     _loaded = true;
     _object = value;
+    // ignore: invalid_use_of_protected_member
     _streamController?.add(_object?.clone(_object?.toJson(full: true)));
   }
 
@@ -284,6 +314,7 @@ abstract class ParseLiveListEvent<T extends ParseObject> {
   final T _object;
 
   int get index => _index;
+
   T get object => _object;
 }
 
@@ -309,6 +340,7 @@ class ParseLiveListElementSnapshot<T extends ParseObject> {
   final ParseError error;
 
   bool get hasData => loadedData != null;
+
   bool get failed => error != null;
 }
 

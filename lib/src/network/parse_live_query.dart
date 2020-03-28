@@ -17,6 +17,7 @@ class Subscription<T extends ParseObject> {
   Subscription(this.query, this.requestId, {T copyObject}) {
     _copyObject = copyObject;
   }
+
   QueryBuilder<T> query;
   T _copyObject;
   int requestId;
@@ -30,6 +31,7 @@ class Subscription<T extends ParseObject> {
     'error'
   ];
   Map<String, Function> eventCallbacks = <String, Function>{};
+
   void on(LiveQueryEvent op, Function callback) {
     eventCallbacks[_liveQueryEvent[op.index]] = callback;
   }
@@ -42,21 +44,6 @@ class Subscription<T extends ParseObject> {
 enum LiveQueryClientEvent { CONNECTED, DISCONNECTED, USER_DISCONNECTED }
 
 class LiveQueryReconnectingController with WidgetsBindingObserver {
-  // -1 means "do not try to reconnect",
-  static const List<int> retryInterval = [0, 500, 1000, 2000, 5000, 10000];
-  static const String DEBUG_TAG = 'LiveQueryReconnectingController';
-
-  final Function _reconnect;
-  final Stream<LiveQueryClientEvent> _eventStream;
-  final bool debug;
-
-  int _retryState = 0;
-  bool _isOnline = false;
-  bool _isConnected = false;
-  bool _userDisconnected = false;
-
-  Timer _currentTimer;
-
   LiveQueryReconnectingController(
       this._reconnect, this._eventStream, this.debug) {
     Connectivity().checkConnectivity().then(_connectivityChanged);
@@ -82,15 +69,36 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
           break;
       }
 
-      if (debug) print('$DEBUG_TAG: $event');
+      if (debug) {
+        print('$DEBUG_TAG: $event');
+      }
     });
     WidgetsBinding.instance.addObserver(this);
   }
 
+  // -1 means "do not try to reconnect",
+  static const List<int> retryInterval = <int>[0, 500, 1000, 2000, 5000, 10000];
+  static const String DEBUG_TAG = 'LiveQueryReconnectingController';
+
+  final Function _reconnect;
+  final Stream<LiveQueryClientEvent> _eventStream;
+  final bool debug;
+
+  int _retryState = 0;
+  bool _isOnline = false;
+  bool _isConnected = false;
+  bool _userDisconnected = false;
+
+  Timer _currentTimer;
+
   void _connectivityChanged(ConnectivityResult state) {
-    if (!_isOnline && state != ConnectivityResult.none) _retryState = 0;
+    if (!_isOnline && state != ConnectivityResult.none) {
+      _retryState = 0;
+    }
     _isOnline = state != ConnectivityResult.none;
-    if (debug) print('$DEBUG_TAG: $state');
+    if (debug) {
+      print('$DEBUG_TAG: $state');
+    }
     _setReconnect();
   }
 
@@ -118,13 +126,16 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
       });
       if (debug)
         print('$DEBUG_TAG: Retrytimer set to ${retryInterval[_retryState]}ms');
-      if (_retryState < retryInterval.length - 1) _retryState++;
+      if (_retryState < retryInterval.length - 1) {
+        _retryState++;
+      }
     }
   }
 }
 
 class Client {
   factory Client() => _getInstance();
+
   Client._internal(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
     _clientEventStreamController = StreamController<LiveQueryClientEvent>();
@@ -150,8 +161,10 @@ class Client {
     reconnectingController = LiveQueryReconnectingController(
         () => reconnect(userInitialized: false), getClientEventStream, _debug);
   }
+
   static Client get instance => _getInstance();
   static Client _instance;
+
   static Client _getInstance(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
     _instance ??= Client._internal(
@@ -174,6 +187,7 @@ class Client {
   Stream<LiveQueryClientEvent> _clientEventStream;
   LiveQueryReconnectingController reconnectingController;
 
+  // ignore: always_specify_types
   final Map<int, Subscription> _requestSubScription = <int, Subscription>{};
 
   Future<void> reconnect({bool userInitialized = false}) async {
@@ -203,8 +217,9 @@ class Client {
       await _channel.sink.close();
       _channel = null;
     }
-    _requestSubScription.values.toList().forEach((Subscription subcription) {
-      subcription._enabled = false;
+    // ignore: always_specify_types
+    _requestSubScription.values.toList().forEach((Subscription subscription) {
+      subscription._enabled = false;
     });
     _connecting = false;
     if (userInitialized)
@@ -327,12 +342,14 @@ class Client {
     _channel.sink.add(jsonEncode(connectMessage));
   }
 
+  // ignore: always_specify_types
   void _subscribeLiveQuery(Subscription subscription) {
     if (subscription._enabled) {
       return;
     }
     subscription._enabled = true;
-    QueryBuilder query = subscription.query;
+    // ignore: always_specify_types
+    final QueryBuilder query = subscription.query;
     final List<String> keysToReturn = query.limiters['keys']?.split(',');
     query.limiters.clear(); //Remove limits in LiveQuery
     final String _where = query.buildQuery().replaceAll('where=', '');
@@ -370,9 +387,11 @@ class Client {
     }
 
     final Map<String, dynamic> actionData = jsonDecode(message);
+    // ignore: always_specify_types
     Subscription subscription;
     if (actionData.containsKey('op') && actionData['op'] == 'connected') {
       print('ReSubScription:$_requestSubScription');
+      // ignore: always_specify_types
       _requestSubScription.values.toList().forEach((Subscription subcription) {
         _subscribeLiveQuery(subcription);
       });
@@ -423,11 +442,14 @@ class LiveQuery {
   ParseHTTPClient _client;
   bool _debug;
   bool _sendSessionId;
+
+  // ignore: always_specify_types
   Subscription _latestSubscription;
   Client client;
 
   // ignore: always_specify_types
   @deprecated
+  // ignore: always_specify_types
   Future<dynamic> subscribe(QueryBuilder query) async {
     _latestSubscription = await client.subscribe(query);
     return _latestSubscription;

@@ -9,7 +9,9 @@ class QueryBuilder<T extends ParseObject> {
     if (list != null) {
       String query = '"\$or":[';
       for (int i = 0; i < list.length; ++i) {
-        if (i > 0) query += ',';
+        if (i > 0) {
+          query += ',';
+        }
         query += '{' + list[i].buildQueries(list[i].queries) + '}';
       }
       query += ']';

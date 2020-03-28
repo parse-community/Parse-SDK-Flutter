@@ -228,9 +228,11 @@ class ParseMergeTool {
 
   // service for AddUnique method
   dynamic _applyToValueAddUnique(dynamic oldValue, dynamic newValue) {
+    // ignore: always_specify_types
     for (var objectToAdd in newValue) {
       if (objectToAdd is ParseObject && objectToAdd.objectId != null) {
         int index = 0;
+        // ignore: always_specify_types
         for (var objc in oldValue) {
           if (objc is ParseObject && objc.objectId == objectToAdd.objectId) {
             oldValue[index] = objectToAdd;
