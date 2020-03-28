@@ -131,7 +131,7 @@ void main() {
 
     // When
     DateTime dateTime = DateTime.now();
-    dateTime = dateTime.subtract(Duration(hours: 1));
+    dateTime = dateTime.subtract(const Duration(hours: 1));
     final ApiResponse updateResponse = await repository.getNewerThan(dateTime);
     final List<DietPlan> actual = updateResponse.results;
 

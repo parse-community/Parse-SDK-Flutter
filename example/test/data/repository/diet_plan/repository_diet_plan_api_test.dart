@@ -100,9 +100,10 @@ void main() {
       // When
       final ApiResponse baseResponse = await repository.add(dummy);
       final ApiResponse responseWithResult = await repository
-          .getNewerThan(DateTime.now().subtract(Duration(days: 1)));
+          .getNewerThan(DateTime.now().subtract(const Duration(days: 1)));
       final ApiResponse responseWithoutResult =
-          await repository.getNewerThan(DateTime.now().add(Duration(days: 1)));
+      await repository.getNewerThan(
+          DateTime.now().add(const Duration(days: 1)));
 
       // CLEAR FROM DB
       await deleteFromApi(baseResponse.results);

@@ -28,6 +28,8 @@ build/
 example/ios/Frameworks/
 example/lib/ui/
 
+example_livelist/lib/application_constants.dart
+
 .flutter-plugins-dependencies
 
 .vscode/

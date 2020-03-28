@@ -13,7 +13,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```yml
 dependencies:  
-    parse_server_sdk: ^1.0.25
+    parse_server_sdk: ^1.0.26
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -55,6 +55,13 @@ You can create custom objects by calling:
 var dietPlan = ParseObject('DietPlan')
 	..set('Name', 'Ketogenic')
 	..set('Fat', 65);
+await dietPlan.save();
+```
+Or update existing object by its objectId by calling:
+```dart
+var dietPlan = ParseObject('DietPlan')
+	..objectId = 'R5EonpUDWy'
+	..set('Fat', 70);
 await dietPlan.save();
 ```
 Verify that the object has been successfully saved using
@@ -422,6 +429,66 @@ LiveQuery server.
 ```dart
 liveQuery.client.unSubscribe(subscription);
 ```
+
+## ParseLiveList
+ParseLiveList makes implementing a dynamic List as simple as possible.
+
+
+It ships with the ParseLiveList class itself, this class manages all elements of the list, sorts them,
+keeps itself up to date and Notifies you on changes.
+
+ParseLiveListWidget is a widget that handles all the communication with the ParseLiveList for you.
+Using ParseLiveListWidget you can create a dynamic List by just providing a QueryBuilder.
+
+```dart
+ParseLiveListWidget<ParseObject>(
+      query: query,
+    );
+```
+To customize the List Elements, you can provide a childBuilder.
+```dart
+ParseLiveListWidget<ParseObject>(
+  query: query,
+  reverse: false,
+  childBuilder:
+      (BuildContext context, bool failed, ParseObject loadedData) {
+    if (failed) {
+      return const Text('something went wrong!');
+    } else if (loadedData != null) {
+      return ListTile(
+        title: Text(
+          loadedData.get("text"),
+        ),
+      );
+    } else {
+      return const ListTile(
+        leading: CircularProgressIndicator(),
+      );
+    }
+  },
+);
+```
+Similar to the standard ListView, you can provide arguments like reverse or shrinkWrap.
+By providing the listLoadingElement, you can show the user something while the list is loading.
+```dart
+ParseLiveListWidget<ParseObject>(
+  query: query,
+  childBuilder: childBuilder,
+  listLoadingElement: Center(
+    child: CircularProgressIndicator(),
+  ),
+);
+```
+By providing the duration argument, you can change the animation speed.
+```dart
+ParseLiveListWidget<ParseObject>(
+  query: query,
+  childBuilder: childBuilder,
+  duration: Duration(seconds: 1),
+);
+```
+
+Note: To use this features you have to enable [Live Queries](#live-queries) first.
 
 ## Users
 You can create and control users just as normal using this SDK.

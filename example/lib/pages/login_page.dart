@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _showCircularProgress() {
     if (_isLoading) {
-      return Center(child: const CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
     return Container(
       height: 0.0,
@@ -179,9 +179,9 @@ class _LoginPageState extends State<LoginPage> {
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             hintText: 'Email',
-            icon: const Icon(
+            icon: Icon(
               Icons.mail,
               color: Colors.grey,
             )),
@@ -199,9 +199,9 @@ class _LoginPageState extends State<LoginPage> {
         maxLines: 1,
         obscureText: true,
         autofocus: false,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             hintText: 'Password',
-            icon: const Icon(
+            icon: Icon(
               Icons.lock,
               color: Colors.grey,
             )),

@@ -161,7 +161,7 @@ class ParseInstallation extends ParseObject {
     try {
       final String uri = '${_client.data.serverUrl}$keyEndPointInstallations';
       final String body = json.encode(toJson(forApiRQ: true));
-      final Map<String, String> headers = {
+      final Map<String, String> headers = <String, String>{
         keyHeaderContentType: keyHeaderContentTypeJson
       };
       if (_debug) {

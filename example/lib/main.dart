@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> initData() async {
     // Initialize repository
     await initRepository();
-    final CoreStore coreStore = await initCoreStore();
+    await initCoreStore();
 
     // Initialize parse
     await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
@@ -233,7 +233,7 @@ class _MyAppState extends State<MyApp> {
       user = response.result;
     }*/
 
-    ParseUser user1 = await ParseUser.currentUser();
+    final ParseUser user1 = await ParseUser.currentUser();
     user1.authData;
 
     /// Login

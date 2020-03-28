@@ -5,6 +5,30 @@ class QueryBuilder<T extends ParseObject> {
   /// Class to create complex queries
   QueryBuilder(this.object) : super();
 
+  QueryBuilder.or(this.object, List<QueryBuilder<T>> list) {
+    if (list != null) {
+      String query = '"\$or":[';
+      for (int i = 0; i < list.length; ++i) {
+        if (i > 0) {
+          query += ',';
+        }
+        query += '{' + list[i].buildQueries(list[i].queries) + '}';
+      }
+      query += ']';
+      queries.add(MapEntry<String, dynamic>(_NO_OPERATOR_NEEDED, query));
+    }
+  }
+
+  QueryBuilder.copy(QueryBuilder<T> query) {
+    object = query.object;
+    queries = query.queries
+        .map((MapEntry<String, dynamic> entry) =>
+            MapEntry<String, dynamic>(entry.key, entry.value.toString()))
+        .toList();
+    query.limiters.forEach((String key, dynamic value) =>
+        limiters.putIfAbsent(key, () => value.toString()));
+  }
+
   static const String _NO_OPERATOR_NEEDED = 'NO_OP';
   static const String _SINGLE_QUERY = 'SINGLE_QUERY';
 
@@ -274,13 +298,14 @@ class QueryBuilder<T extends ParseObject> {
   /// Finishes the query and calls the server
   ///
   /// Make sure to call this after defining your queries
-  Future<ParseResponse> query() async {
-    return object.query(buildQuery());
+  Future<ParseResponse> query<T extends ParseObject>() async {
+    return object.query<T>(buildQuery());
   }
 
-  Future<ParseResponse> distinct(String className) async {
+  Future<ParseResponse> distinct<T extends ParseObject>(
+      String className) async {
     final String queryString = 'distinct=$className';
-    return object.distinct(queryString);
+    return object.distinct<T>(queryString);
   }
 
   ///Counts the number of objects that match this query

@@ -52,6 +52,10 @@ dynamic parseEncode(dynamic value, {bool full}) {
     }
   }
 
+  if (value is ParseACL) {
+    return value.toJson();
+  }
+
   return value;
 }
 
