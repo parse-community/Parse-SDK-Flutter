@@ -183,7 +183,7 @@ class ParseLiveList<T extends ParseObject> {
           _list.removeAt(i).dispose();
           _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(
               i, object?.clone(object?.toJson(full: true))));
-          _objectAdded(object);
+          _objectAdded(object?.clone(object?.toJson(full: true)));
         }
         break;
       }
