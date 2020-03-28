@@ -1,4 +1,9 @@
+## 1.0.27
+
 ## 1.0.26
+LiveList
+Bug fixes
+Sembast update
 
 ## 1.0.25
 Update dependencies

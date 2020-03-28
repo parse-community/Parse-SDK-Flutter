@@ -41,7 +41,6 @@ class Subscription<T extends ParseObject> {
 enum LiveQueryClientEvent { CONNECTED, DISCONNECTED, USER_DISCONNECTED }
 
 class LiveQueryReconnectingController with WidgetsBindingObserver {
-
   LiveQueryReconnectingController(
       this._reconnect, this._eventStream, this.debug) {
     _connectivityChanged(ConnectivityResult.wifi);
@@ -179,7 +178,6 @@ class Client {
   StreamController<LiveQueryClientEvent> _clientEventStreamController;
   Stream<LiveQueryClientEvent> _clientEventStream;
   LiveQueryReconnectingController reconnectingController;
-
 
   final Map<int, Subscription> _requestSubScription = <int, Subscription>{};
 
@@ -341,7 +339,6 @@ class Client {
     _webSocket.send(jsonEncode(connectMessage));
 //    _channel.sink.add(jsonEncode(connectMessage));
   }
-
 
   void _subscribeLiveQuery(Subscription subscription) {
     if (subscription._enabled) {

@@ -118,11 +118,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUserName');
       final Response response = await _client.get(url, headers: headers);
-      return await _handleResponse(this, response,
-          ParseApiRQ.currentUser, _debug, parseClassName);
+      return await _handleResponse(
+          this, response, ParseApiRQ.currentUser, _debug, parseClassName);
     } on Exception catch (e) {
-      return handleException(
-          e, ParseApiRQ.currentUser, _debug, parseClassName);
+      return handleException(e, ParseApiRQ.currentUser, _debug, parseClassName);
     }
   }
 
