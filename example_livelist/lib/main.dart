@@ -60,13 +60,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<bool> initData() async {
-    await Parse().initialize(
-      keyParseApplicationId,
-      keyParseServerUrl,
-      clientKey: keyParseClientKey,
-      debug: true,
-      liveQueryUrl: keyParseLiveServerUrl,
-    );
+    await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
+        clientKey: keyParseClientKey,
+        debug: keyDebug,
+        liveQueryUrl: keyParseLiveServerUrl);
 
     return (await Parse().healthCheck()).success;
   }
