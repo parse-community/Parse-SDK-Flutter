@@ -83,6 +83,30 @@ class ParseLiveList<T extends ParseObject> {
     return _list.length;
   }
 
+  List<String> get includes =>
+      _query.limiters['include']?.toString()?.split(',') ?? <String>[];
+
+  List<List<String>> get validIncludePaths {
+    final List<List<String>> includePaths = includes
+        .map<List<String>>((String value) => value?.split('.'))
+        .toList();
+    includePaths
+        .sort((List<String> a, List<String> b) => a.length.compareTo(b.length));
+    return includePaths
+        // ignore: unnecessary_parenthesis
+        .where((List<String> element) => (element.length == 1 ||
+            includePaths.any((List<String> otherElement) {
+              if (element.length - 1 == otherElement.length) {
+                for (int i = 0; i < element.length - 1; i++) {
+                  if (element[i] != otherElement[i]) return false;
+                }
+                return true;
+              }
+              return false;
+            })))
+        .toList();
+  }
+
   Stream<ParseLiveListEvent<T>> get stream => _eventStreamController.stream;
   Subscription<T> _liveQuerySubscription;
   StreamSubscription<LiveQueryClientEvent> _liveQueryClientEventSubscription;
@@ -92,9 +116,9 @@ class ParseLiveList<T extends ParseObject> {
     if (query.limiters.containsKey('order')) {
       query.keysToReturn(
           query.limiters['order'].toString().split(',').map((String string) {
-            if (string.startsWith('-')) {
-              return string.substring(1);
-            }
+        if (string.startsWith('-')) {
+          return string.substring(1);
+        }
         return string;
       }).toList());
     } else {
@@ -180,7 +204,43 @@ class ParseLiveList<T extends ParseObject> {
     });
   }
 
-  void _objectAdded(T object, {bool loaded = true}) {
+  // TODO(any): include sub-includes & use already available data.
+  Future<T> _loadIncludes<T extends ParseObject>(T object,
+      {T oldObject}) async {
+    if (object == null) return null;
+    object = object.clone(object.toJson(full: true));
+    final List<List<String>> includes = validIncludePaths;
+    final List<String> TLIncludes = includes
+        .where((element) => element.length == 1)
+        .map((e) => e[0])
+        .toList();
+    final Map<String, Future<MapEntry<String, ParseResponse>>> loadedObjects =
+        <String, Future<MapEntry<String, ParseResponse>>>{};
+    for (String key in TLIncludes) {
+      if (object.containsKey(key)) {
+        final QueryBuilder<ParseObject> queryBuilder =
+            QueryBuilder<ParseObject>(object.get<ParseObject>(key));
+        queryBuilder.whereEqualTo(
+            keyVarObjectId, object.get<ParseObject>(key).objectId);
+
+        loadedObjects.putIfAbsent(
+            key,
+            () => queryBuilder.query().then((ParseResponse value) =>
+                MapEntry<String, ParseResponse>(key, value)));
+      }
+    }
+    final List<MapEntry<String, ParseResponse>> responses =
+        await Future.wait<MapEntry<String, ParseResponse>>(
+            loadedObjects.values);
+    for (MapEntry<String, ParseResponse> entry in responses) {
+      if (entry.value.success && entry.value.results.length == 1)
+        object.getObjectData()[entry.key] = entry.value.results[0];
+    }
+    return object;
+  }
+
+  Future<void> _objectAdded(T object, {bool loaded = true}) async {
+    object = await _loadIncludes<T>(object);
     for (int i = 0; i < _list.length; i++) {
       if (after(object, _list[i].object) != true) {
         _list.insert(i, ParseLiveListElement<T>(object, loaded: loaded));
@@ -194,7 +254,9 @@ class ParseLiveList<T extends ParseObject> {
         _list.length - 1, object?.clone(object?.toJson(full: true))));
   }
 
-  void _objectUpdated(T object) {
+  Future<void> _objectUpdated(T object) async {
+    print(object);
+    object = await _loadIncludes<T>(object);
     for (int i = 0; i < _list.length; i++) {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
@@ -203,7 +265,7 @@ class ParseLiveList<T extends ParseObject> {
         } else {
           _list.removeAt(i).dispose();
           _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(
-            // ignore: invalid_use_of_protected_member
+              // ignore: invalid_use_of_protected_member
               i,
               object?.clone(object?.toJson(full: true))));
           // ignore: invalid_use_of_protected_member
