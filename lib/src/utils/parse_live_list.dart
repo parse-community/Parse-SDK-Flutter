@@ -204,7 +204,7 @@ class ParseLiveList<T extends ParseObject> {
     });
   }
 
-  // TODO(any): include sub-includes & use already available data.
+  // TODO(any): use already available data.
   Future<T> _loadIncludes<T extends ParseObject>(T object,
       {T oldObject}) async {
     if (object == null) return null;
@@ -222,7 +222,18 @@ class ParseLiveList<T extends ParseObject> {
             QueryBuilder<ParseObject>(object.get<ParseObject>(key));
         queryBuilder.whereEqualTo(
             keyVarObjectId, object.get<ParseObject>(key).objectId);
-
+        queryBuilder.includeObject(includes
+            .where((List<String> path) => path.length > 1 && path[0] == key)
+            .map<String>((List<String> path) {
+          String val = '';
+          for (int i = 1; i < path.length; i++) {
+            if (i > 1) {
+              val += '.';
+            }
+            val += path[i];
+          }
+          return val;
+        }).toList());
         loadedObjects.putIfAbsent(
             key,
             () => queryBuilder.query().then((ParseResponse value) =>
@@ -265,10 +276,7 @@ class ParseLiveList<T extends ParseObject> {
         } else {
           _list.removeAt(i).dispose();
           _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(
-              // ignore: invalid_use_of_protected_member
-              i,
-              object?.clone(object?.toJson(full: true))));
-          // ignore: invalid_use_of_protected_member
+              i, object?.clone(object?.toJson(full: true))));
           _objectAdded(object?.clone(object?.toJson(full: true)));
         }
         break;
