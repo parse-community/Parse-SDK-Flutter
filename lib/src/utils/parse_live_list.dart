@@ -317,6 +317,15 @@ class ParseLiveList<T extends ParseObject> {
     return 'NotFound';
   }
 
+  String getIdentifier(int index) {
+    if (index < _list.length) {
+      return _list[index].object.get<String>(keyVarObjectId) +
+              _list[index].object.get<DateTime>(keyVarUpdatedAt)?.toString() ??
+          '';
+    }
+    return 'NotFound';
+  }
+
   T getLoadedAt(int index) {
     if (index < _list.length && _list[index].loaded) {
       return _list[index].object;
@@ -521,7 +530,8 @@ class _ParseLiveListWidgetState<T extends ParseObject>
         itemBuilder:
             (BuildContext context, int index, Animation<double> animation) {
           return ParseLiveListElementWidget<T>(
-            key: ValueKey<String>(_liveList?.idOf(index) ?? '_NotFound'),
+            key: ValueKey<String>(
+                _liveList?.getIdentifier(index) ?? '_NotFound'),
             stream: () => _liveList?.getAt(index),
             loadedData: () => _liveList?.getLoadedAt(index),
             sizeFactor: animation,
