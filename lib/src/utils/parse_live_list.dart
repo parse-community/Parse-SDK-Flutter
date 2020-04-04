@@ -86,27 +86,6 @@ class ParseLiveList<T extends ParseObject> {
   List<String> get includes =>
       _query.limiters['include']?.toString()?.split(',') ?? <String>[];
 
-//  List<List<String>> get validIncludePaths {
-//    final List<List<String>> includePaths = includes
-//        .map<List<String>>((String value) => value?.split('.'))
-//        .toList();
-//    includePaths
-//        .sort((List<String> a, List<String> b) => a.length.compareTo(b.length));
-//    return includePaths
-//        // ignore: unnecessary_parenthesis
-//        .where((List<String> element) => (element.length == 1 ||
-//            includePaths.any((List<String> otherElement) {
-//              if (element.length - 1 == otherElement.length) {
-//                for (int i = 0; i < element.length - 1; i++) {
-//                  if (element[i] != otherElement[i]) return false;
-//                }
-//                return true;
-//              }
-//              return false;
-//            })))
-//        .toList();
-//  }
-
   Map<String, dynamic> get _includePaths {
     final Map<String, dynamic> includesMap = <String, dynamic>{};
 
@@ -238,7 +217,6 @@ class ParseLiveList<T extends ParseObject> {
             if (!includedObject.containsKey(keyVarUpdatedAt) ||
                 includedObject.objectId !=
                     object.get<ParseObject>(key).objectId) {
-              print('fetch1 $key');
               //fetch from web including sub objects
               //same as down there
               final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
@@ -248,7 +226,6 @@ class ParseLiveList<T extends ParseObject> {
               loadingNodes.add(queryBuilder
                   .query()
                   .then<void>((ParseResponse parseResponse) {
-                print('fetched1 $key');
                 if (parseResponse.success &&
                     parseResponse.results.length == 1) {
                   object.getObjectData()[key] = parseResponse.results[0];
@@ -256,7 +233,6 @@ class ParseLiveList<T extends ParseObject> {
               }));
               continue;
             } else {
-              print('recycled $key');
               object.getObjectData()[key] = includedObject;
               //recursion
               loadingNodes
@@ -264,7 +240,6 @@ class ParseLiveList<T extends ParseObject> {
               continue;
             }
           } else {
-            print('fetch2 $key');
             //fetch from web including sub objects
             //same as up there
             final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
@@ -273,7 +248,6 @@ class ParseLiveList<T extends ParseObject> {
               ..includeObject(_toIncludeStringList(paths[key]));
             loadingNodes.add(
                 queryBuilder.query().then<void>((ParseResponse parseResponse) {
-              print('fetched2 $key');
               if (parseResponse.success && parseResponse.results.length == 1) {
                 object.getObjectData()[key] = parseResponse.results[0];
               }
@@ -281,7 +255,6 @@ class ParseLiveList<T extends ParseObject> {
             continue;
           }
         } else {
-          print('recycled $key');
           //recursion
           loadingNodes.add(_loadIncludes(includedObject,
               oldObject: oldObject?.get(key), paths: paths[key]));
@@ -293,46 +266,6 @@ class ParseLiveList<T extends ParseObject> {
       }
     }
     await Future.wait(loadingNodes);
-
-//    final List<List<String>> includes = validIncludePaths;
-//    final List<String> TLIncludes = includes
-//        .where((element) => element.length == 1)
-//        .map((e) => e[0])
-//        .toList();
-//    final Map<String, Future<MapEntry<String, ParseResponse>>> loadedObjects =
-//        <String, Future<MapEntry<String, ParseResponse>>>{};
-//    for (String key in TLIncludes) {
-//      if (object.containsKey(key)) {
-//        final QueryBuilder<ParseObject> queryBuilder =
-//            QueryBuilder<ParseObject>(object.get<ParseObject>(key));
-//        queryBuilder.whereEqualTo(
-//            keyVarObjectId, object.get<ParseObject>(key).objectId);
-//        queryBuilder.includeObject(includes
-//            .where((List<String> path) => path.length > 1 && path[0] == key)
-//            .map<String>((List<String> path) {
-//          String val = '';
-//          for (int i = 1; i < path.length; i++) {
-//            if (i > 1) {
-//              val += '.';
-//            }
-//            val += path[i];
-//          }
-//          return val;
-//        }).toList());
-//        loadedObjects.putIfAbsent(
-//            key,
-//            () => queryBuilder.query().then((ParseResponse value) =>
-//                MapEntry<String, ParseResponse>(key, value)));
-//      }
-//    }
-//    final List<MapEntry<String, ParseResponse>> responses =
-//        await Future.wait<MapEntry<String, ParseResponse>>(
-//            loadedObjects.values);
-//    for (MapEntry<String, ParseResponse> entry in responses) {
-//      if (entry.value.success && entry.value.results.length == 1)
-//        object.getObjectData()[entry.key] = entry.value.results[0];
-//    }
-//    return object;
   }
 
   List<String> _toIncludeStringList(Map<String, dynamic> includes) {
@@ -365,7 +298,6 @@ class ParseLiveList<T extends ParseObject> {
   }
 
   Future<void> _objectUpdated(T object) async {
-    print(object);
     for (int i = 0; i < _list.length; i++) {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
@@ -487,7 +419,7 @@ class ParseLiveListElement<T extends ParseObject> {
 }
 
 abstract class ParseLiveListEvent<T extends ParseObject> {
-  ParseLiveListEvent(this._index, this._object); //, this._object);
+  ParseLiveListEvent(this._index, this._object);
 
   final int _index;
   final T _object;
@@ -685,7 +617,6 @@ class _ParseLiveListElementWidgetState<T extends ParseObject>
     with SingleTickerProviderStateMixin {
   _ParseLiveListElementWidgetState(
       DataGetter<T> loadedDataGetter, StreamGetter<T> stream) {
-//    loadedData = loadedDataGetter();
     _snapshot = ParseLiveListElementSnapshot<T>(loadedData: loadedDataGetter());
     if (stream != null) {
       _streamSubscription = stream().listen(
