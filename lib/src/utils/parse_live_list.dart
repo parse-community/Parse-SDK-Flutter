@@ -86,25 +86,40 @@ class ParseLiveList<T extends ParseObject> {
   List<String> get includes =>
       _query.limiters['include']?.toString()?.split(',') ?? <String>[];
 
-  List<List<String>> get validIncludePaths {
-    final List<List<String>> includePaths = includes
-        .map<List<String>>((String value) => value?.split('.'))
-        .toList();
-    includePaths
-        .sort((List<String> a, List<String> b) => a.length.compareTo(b.length));
-    return includePaths
-        // ignore: unnecessary_parenthesis
-        .where((List<String> element) => (element.length == 1 ||
-            includePaths.any((List<String> otherElement) {
-              if (element.length - 1 == otherElement.length) {
-                for (int i = 0; i < element.length - 1; i++) {
-                  if (element[i] != otherElement[i]) return false;
-                }
-                return true;
-              }
-              return false;
-            })))
-        .toList();
+//  List<List<String>> get validIncludePaths {
+//    final List<List<String>> includePaths = includes
+//        .map<List<String>>((String value) => value?.split('.'))
+//        .toList();
+//    includePaths
+//        .sort((List<String> a, List<String> b) => a.length.compareTo(b.length));
+//    return includePaths
+//        // ignore: unnecessary_parenthesis
+//        .where((List<String> element) => (element.length == 1 ||
+//            includePaths.any((List<String> otherElement) {
+//              if (element.length - 1 == otherElement.length) {
+//                for (int i = 0; i < element.length - 1; i++) {
+//                  if (element[i] != otherElement[i]) return false;
+//                }
+//                return true;
+//              }
+//              return false;
+//            })))
+//        .toList();
+//  }
+
+  Map<String, dynamic> get _includePaths {
+    final Map<String, dynamic> includesMap = <String, dynamic>{};
+
+    for (String includeString in includes) {
+      final List<String> pathParts = includeString.split('.');
+      Map<String, dynamic> root = includesMap;
+      for (String pathPart in pathParts) {
+        root.putIfAbsent(pathPart, () => <String, dynamic>{});
+        root = root[pathPart];
+      }
+    }
+
+    return includesMap;
   }
 
   Stream<ParseLiveListEvent<T>> get stream => _eventStreamController.stream;
@@ -204,54 +219,138 @@ class ParseLiveList<T extends ParseObject> {
     });
   }
 
-  // TODO(any): use already available data.
-  Future<T> _loadIncludes<T extends ParseObject>(T object,
-      {T oldObject}) async {
-    if (object == null) return null;
-    object = object.clone(object.toJson(full: true));
-    final List<List<String>> includes = validIncludePaths;
-    final List<String> TLIncludes = includes
-        .where((element) => element.length == 1)
-        .map((e) => e[0])
-        .toList();
-    final Map<String, Future<MapEntry<String, ParseResponse>>> loadedObjects =
-        <String, Future<MapEntry<String, ParseResponse>>>{};
-    for (String key in TLIncludes) {
+  Future<void> _loadIncludes(ParseObject object,
+      {ParseObject oldObject, Map<String, dynamic> paths}) async {
+    paths ??= _includePaths;
+    if (object == null || paths.isEmpty) return;
+
+    final List<Future<void>> loadingNodes = <Future<void>>[];
+
+    for (String key in paths.keys) {
       if (object.containsKey(key)) {
-        final QueryBuilder<ParseObject> queryBuilder =
-            QueryBuilder<ParseObject>(object.get<ParseObject>(key));
-        queryBuilder.whereEqualTo(
-            keyVarObjectId, object.get<ParseObject>(key).objectId);
-        queryBuilder.includeObject(includes
-            .where((List<String> path) => path.length > 1 && path[0] == key)
-            .map<String>((List<String> path) {
-          String val = '';
-          for (int i = 1; i < path.length; i++) {
-            if (i > 1) {
-              val += '.';
+        ParseObject includedObject = object.get<ParseObject>(key);
+        //If the object is not fetched
+        if (!includedObject.containsKey(keyVarUpdatedAt)) {
+          //See if oldObject contains key
+          if (oldObject != null && oldObject.containsKey(key)) {
+            includedObject = oldObject.get<ParseObject>(key);
+            //If the object is not fetched || the ids don't match / the pointer changed
+            if (!includedObject.containsKey(keyVarUpdatedAt) ||
+                includedObject.objectId !=
+                    object.get<ParseObject>(key).objectId) {
+              print('fetch1 $key');
+              //fetch from web including sub objects
+              //same as down there
+              final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
+                  ParseObject>(ParseObject(includedObject.parseClassName))
+                ..whereEqualTo(keyVarObjectId, includedObject.objectId)
+                ..includeObject(_toIncludeStringList(paths[key]));
+              loadingNodes.add(queryBuilder
+                  .query()
+                  .then<void>((ParseResponse parseResponse) {
+                print('fetched1 $key');
+                if (parseResponse.success &&
+                    parseResponse.results.length == 1) {
+                  object.getObjectData()[key] = parseResponse.results[0];
+                }
+              }));
+              continue;
+            } else {
+              print('recycled $key');
+              object.getObjectData()[key] = includedObject;
+              //recursion
+              loadingNodes
+                  .add(_loadIncludes(includedObject, paths: paths[key]));
+              continue;
             }
-            val += path[i];
+          } else {
+            print('fetch2 $key');
+            //fetch from web including sub objects
+            //same as up there
+            final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
+                ParseObject>(ParseObject(includedObject.parseClassName))
+              ..whereEqualTo(keyVarObjectId, includedObject.objectId)
+              ..includeObject(_toIncludeStringList(paths[key]));
+            loadingNodes.add(
+                queryBuilder.query().then<void>((ParseResponse parseResponse) {
+              print('fetched2 $key');
+              if (parseResponse.success && parseResponse.results.length == 1) {
+                object.getObjectData()[key] = parseResponse.results[0];
+              }
+            }));
+            continue;
           }
-          return val;
-        }).toList());
-        loadedObjects.putIfAbsent(
-            key,
-            () => queryBuilder.query().then((ParseResponse value) =>
-                MapEntry<String, ParseResponse>(key, value)));
+        } else {
+          print('recycled $key');
+          //recursion
+          loadingNodes.add(_loadIncludes(includedObject,
+              oldObject: oldObject?.get(key), paths: paths[key]));
+          continue;
+        }
+      } else {
+        //All fine for this key
+        continue;
       }
     }
-    final List<MapEntry<String, ParseResponse>> responses =
-        await Future.wait<MapEntry<String, ParseResponse>>(
-            loadedObjects.values);
-    for (MapEntry<String, ParseResponse> entry in responses) {
-      if (entry.value.success && entry.value.results.length == 1)
-        object.getObjectData()[entry.key] = entry.value.results[0];
-    }
-    return object;
+    await Future.wait(loadingNodes);
+
+//    final List<List<String>> includes = validIncludePaths;
+//    final List<String> TLIncludes = includes
+//        .where((element) => element.length == 1)
+//        .map((e) => e[0])
+//        .toList();
+//    final Map<String, Future<MapEntry<String, ParseResponse>>> loadedObjects =
+//        <String, Future<MapEntry<String, ParseResponse>>>{};
+//    for (String key in TLIncludes) {
+//      if (object.containsKey(key)) {
+//        final QueryBuilder<ParseObject> queryBuilder =
+//            QueryBuilder<ParseObject>(object.get<ParseObject>(key));
+//        queryBuilder.whereEqualTo(
+//            keyVarObjectId, object.get<ParseObject>(key).objectId);
+//        queryBuilder.includeObject(includes
+//            .where((List<String> path) => path.length > 1 && path[0] == key)
+//            .map<String>((List<String> path) {
+//          String val = '';
+//          for (int i = 1; i < path.length; i++) {
+//            if (i > 1) {
+//              val += '.';
+//            }
+//            val += path[i];
+//          }
+//          return val;
+//        }).toList());
+//        loadedObjects.putIfAbsent(
+//            key,
+//            () => queryBuilder.query().then((ParseResponse value) =>
+//                MapEntry<String, ParseResponse>(key, value)));
+//      }
+//    }
+//    final List<MapEntry<String, ParseResponse>> responses =
+//        await Future.wait<MapEntry<String, ParseResponse>>(
+//            loadedObjects.values);
+//    for (MapEntry<String, ParseResponse> entry in responses) {
+//      if (entry.value.success && entry.value.results.length == 1)
+//        object.getObjectData()[entry.key] = entry.value.results[0];
+//    }
+//    return object;
   }
 
-  Future<void> _objectAdded(T object, {bool loaded = true}) async {
-    object = await _loadIncludes<T>(object);
+  List<String> _toIncludeStringList(Map<String, dynamic> includes) {
+    final List<String> includeList = <String>[];
+    for (String key in includes.keys) {
+      includeList.add(key);
+      // ignore: avoid_as
+      if ((includes[key] as Map<String, dynamic>).isNotEmpty) {
+        includeList
+            .addAll(_toIncludeStringList(includes[key]).map((e) => '$key.$e'));
+      }
+    }
+    return includeList;
+  }
+
+  Future<void> _objectAdded(T object,
+      {bool loaded = true, bool fetchedIncludes = false}) async {
+    if (!fetchedIncludes) await _loadIncludes(object);
     for (int i = 0; i < _list.length; i++) {
       if (after(object, _list[i].object) != true) {
         _list.insert(i, ParseLiveListElement<T>(object, loaded: loaded));
@@ -267,17 +366,18 @@ class ParseLiveList<T extends ParseObject> {
 
   Future<void> _objectUpdated(T object) async {
     print(object);
-    object = await _loadIncludes<T>(object);
     for (int i = 0; i < _list.length; i++) {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
+        await _loadIncludes(object, oldObject: _list[i].object);
         if (after(_list[i].object, object) == null) {
-          _list[i].object = object;
+          _list[i].object = object?.clone(object?.toJson(full: true));
         } else {
           _list.removeAt(i).dispose();
           _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(
               i, object?.clone(object?.toJson(full: true))));
-          _objectAdded(object?.clone(object?.toJson(full: true)));
+          _objectAdded(object?.clone(object?.toJson(full: true)),
+              fetchedIncludes: true);
         }
         break;
       }
