@@ -83,6 +83,24 @@ class ParseLiveList<T extends ParseObject> {
     return _list.length;
   }
 
+  List<String> get includes =>
+      _query.limiters['include']?.toString()?.split(',') ?? <String>[];
+
+  Map<String, dynamic> get _includePaths {
+    final Map<String, dynamic> includesMap = <String, dynamic>{};
+
+    for (String includeString in includes) {
+      final List<String> pathParts = includeString.split('.');
+      Map<String, dynamic> root = includesMap;
+      for (String pathPart in pathParts) {
+        root.putIfAbsent(pathPart, () => <String, dynamic>{});
+        root = root[pathPart];
+      }
+    }
+
+    return includesMap;
+  }
+
   Stream<ParseLiveListEvent<T>> get stream => _eventStreamController.stream;
   Subscription<T> _liveQuerySubscription;
   StreamSubscription<LiveQueryClientEvent> _liveQueryClientEventSubscription;
@@ -92,9 +110,9 @@ class ParseLiveList<T extends ParseObject> {
     if (query.limiters.containsKey('order')) {
       query.keysToReturn(
           query.limiters['order'].toString().split(',').map((String string) {
-            if (string.startsWith('-')) {
-              return string.substring(1);
-            }
+        if (string.startsWith('-')) {
+          return string.substring(1);
+        }
         return string;
       }).toList());
     } else {
@@ -180,7 +198,92 @@ class ParseLiveList<T extends ParseObject> {
     });
   }
 
-  void _objectAdded(T object, {bool loaded = true}) {
+  Future<void> _loadIncludes(ParseObject object,
+      {ParseObject oldObject, Map<String, dynamic> paths}) async {
+    paths ??= _includePaths;
+    if (object == null || paths.isEmpty) return;
+
+    final List<Future<void>> loadingNodes = <Future<void>>[];
+
+    for (String key in paths.keys) {
+      if (object.containsKey(key)) {
+        ParseObject includedObject = object.get<ParseObject>(key);
+        //If the object is not fetched
+        if (!includedObject.containsKey(keyVarUpdatedAt)) {
+          //See if oldObject contains key
+          if (oldObject != null && oldObject.containsKey(key)) {
+            includedObject = oldObject.get<ParseObject>(key);
+            //If the object is not fetched || the ids don't match / the pointer changed
+            if (!includedObject.containsKey(keyVarUpdatedAt) ||
+                includedObject.objectId !=
+                    object.get<ParseObject>(key).objectId) {
+              //fetch from web including sub objects
+              //same as down there
+              final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
+                  ParseObject>(ParseObject(includedObject.parseClassName))
+                ..whereEqualTo(keyVarObjectId, includedObject.objectId)
+                ..includeObject(_toIncludeStringList(paths[key]));
+              loadingNodes.add(queryBuilder
+                  .query()
+                  .then<void>((ParseResponse parseResponse) {
+                if (parseResponse.success &&
+                    parseResponse.results.length == 1) {
+                  object.getObjectData()[key] = parseResponse.results[0];
+                }
+              }));
+              continue;
+            } else {
+              object.getObjectData()[key] = includedObject;
+              //recursion
+              loadingNodes
+                  .add(_loadIncludes(includedObject, paths: paths[key]));
+              continue;
+            }
+          } else {
+            //fetch from web including sub objects
+            //same as up there
+            final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
+                ParseObject>(ParseObject(includedObject.parseClassName))
+              ..whereEqualTo(keyVarObjectId, includedObject.objectId)
+              ..includeObject(_toIncludeStringList(paths[key]));
+            loadingNodes.add(
+                queryBuilder.query().then<void>((ParseResponse parseResponse) {
+              if (parseResponse.success && parseResponse.results.length == 1) {
+                object.getObjectData()[key] = parseResponse.results[0];
+              }
+            }));
+            continue;
+          }
+        } else {
+          //recursion
+          loadingNodes.add(_loadIncludes(includedObject,
+              oldObject: oldObject?.get(key), paths: paths[key]));
+          continue;
+        }
+      } else {
+        //All fine for this key
+        continue;
+      }
+    }
+    await Future.wait(loadingNodes);
+  }
+
+  List<String> _toIncludeStringList(Map<String, dynamic> includes) {
+    final List<String> includeList = <String>[];
+    for (String key in includes.keys) {
+      includeList.add(key);
+      // ignore: avoid_as
+      if ((includes[key] as Map<String, dynamic>).isNotEmpty) {
+        includeList
+            .addAll(_toIncludeStringList(includes[key]).map((e) => '$key.$e'));
+      }
+    }
+    return includeList;
+  }
+
+  Future<void> _objectAdded(T object,
+      {bool loaded = true, bool fetchedIncludes = false}) async {
+    if (!fetchedIncludes) await _loadIncludes(object);
     for (int i = 0; i < _list.length; i++) {
       if (after(object, _list[i].object) != true) {
         _list.insert(i, ParseLiveListElement<T>(object, loaded: loaded));
@@ -194,20 +297,19 @@ class ParseLiveList<T extends ParseObject> {
         _list.length - 1, object?.clone(object?.toJson(full: true))));
   }
 
-  void _objectUpdated(T object) {
+  Future<void> _objectUpdated(T object) async {
     for (int i = 0; i < _list.length; i++) {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
+        await _loadIncludes(object, oldObject: _list[i].object);
         if (after(_list[i].object, object) == null) {
-          _list[i].object = object;
+          _list[i].object = object?.clone(object?.toJson(full: true));
         } else {
           _list.removeAt(i).dispose();
           _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(
-            // ignore: invalid_use_of_protected_member
-              i,
-              object?.clone(object?.toJson(full: true))));
-          // ignore: invalid_use_of_protected_member
-          _objectAdded(object?.clone(object?.toJson(full: true)));
+              i, object?.clone(object?.toJson(full: true))));
+          _objectAdded(object?.clone(object?.toJson(full: true)),
+              fetchedIncludes: true);
         }
         break;
       }
@@ -251,6 +353,15 @@ class ParseLiveList<T extends ParseObject> {
   String idOf(int index) {
     if (index < _list.length) {
       return _list[index].object.get<String>(keyVarObjectId);
+    }
+    return 'NotFound';
+  }
+
+  String getIdentifier(int index) {
+    if (index < _list.length) {
+      return _list[index].object.get<String>(keyVarObjectId) +
+              _list[index].object.get<DateTime>(keyVarUpdatedAt)?.toString() ??
+          '';
     }
     return 'NotFound';
   }
@@ -308,7 +419,7 @@ class ParseLiveListElement<T extends ParseObject> {
 }
 
 abstract class ParseLiveListEvent<T extends ParseObject> {
-  ParseLiveListEvent(this._index, this._object); //, this._object);
+  ParseLiveListEvent(this._index, this._object);
 
   final int _index;
   final T _object;
@@ -459,7 +570,8 @@ class _ParseLiveListWidgetState<T extends ParseObject>
         itemBuilder:
             (BuildContext context, int index, Animation<double> animation) {
           return ParseLiveListElementWidget<T>(
-            key: ValueKey<String>(_liveList?.idOf(index) ?? '_NotFound'),
+            key: ValueKey<String>(
+                _liveList?.getIdentifier(index) ?? '_NotFound'),
             stream: () => _liveList?.getAt(index),
             loadedData: () => _liveList?.getLoadedAt(index),
             sizeFactor: animation,
@@ -505,7 +617,6 @@ class _ParseLiveListElementWidgetState<T extends ParseObject>
     with SingleTickerProviderStateMixin {
   _ParseLiveListElementWidgetState(
       DataGetter<T> loadedDataGetter, StreamGetter<T> stream) {
-//    loadedData = loadedDataGetter();
     _snapshot = ParseLiveListElementSnapshot<T>(loadedData: loadedDataGetter());
     if (stream != null) {
       _streamSubscription = stream().listen(
