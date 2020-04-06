@@ -433,7 +433,7 @@ liveQuery.client.unSubscribe(subscription);
 ## ParseLiveList
 ParseLiveList makes implementing a dynamic List as simple as possible.
 
-
+#### General Use
 It ships with the ParseLiveList class itself, this class manages all elements of the list, sorts them,
 keeps itself up to date and Notifies you on changes.
 
@@ -487,8 +487,19 @@ ParseLiveListWidget<ParseObject>(
   duration: Duration(seconds: 1),
 );
 ```
+### included Sub-Objects
+By default, ParseLiveQuery will provide you with all the objects you included in your Query like this:
+```dart
+queryBuilder.includeObject(/*List of all the included sub-objects*/);
+```
+ParseLiveList will not listen for updates on this objects by default.
+To activate listening for updates on all included objects, add `listenOnAllSubItems: true` to your ParseLiveListWidgets constructor.
+If you want ParseLiveList to listen for updates on only some sub-objects, use `listeningIncludes: const <String>[/*all the included sub-objects*/]` instead.
+Just as QueryBuilder, ParseLiveList supports nested sub-objects too.
 
-Note: To use this features you have to enable [Live Queries](#live-queries) first.
+**NOTE:** Currently ParseLiveList wont update your sub-objects after your client reconnects to the web.
+
+**NOTE:** To use this features you have to enable [Live Queries](#live-queries) first.
 
 ## Users
 You can create and control users just as normal using this SDK.
