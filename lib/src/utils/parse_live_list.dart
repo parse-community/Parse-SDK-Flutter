@@ -250,7 +250,7 @@ class ParseLiveList<T extends ParseObject> {
             if (!includedObject.containsKey(keyVarUpdatedAt) ||
                 includedObject.objectId !=
                     object.get<ParseObject>(key).objectId) {
-              includedObject = object.get<ParseObject>(key
+              includedObject = object.get<ParseObject>(key);
               //fetch from web including sub objects
               //same as down there
               final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
