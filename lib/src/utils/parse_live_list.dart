@@ -6,11 +6,19 @@ import '../../parse_server_sdk.dart';
 
 // ignore_for_file: invalid_use_of_protected_member
 class ParseLiveList<T extends ParseObject> {
-  ParseLiveList._(this._query);
+  ParseLiveList._(this._query, this._listeningIncludes);
 
   static Future<ParseLiveList<T>> create<T extends ParseObject>(
-      QueryBuilder<T> _query) {
-    final ParseLiveList<T> parseLiveList = ParseLiveList<T>._(_query);
+      QueryBuilder<T> _query,
+      {bool listenOnAllSubItems,
+      List<String> listeningIncludes}) {
+    final ParseLiveList<T> parseLiveList = ParseLiveList<T>._(
+        _query,
+        listenOnAllSubItems == true
+            ? _toIncludeMap(
+                _query.limiters['include']?.toString()?.split(',') ??
+                    <String>[])
+            : _toIncludeMap(listeningIncludes ?? <String>[]));
 
     return parseLiveList._init().then((_) {
       return parseLiveList;
@@ -78,6 +86,8 @@ class ParseLiveList<T extends ParseObject> {
   int get nextID => _nextID++;
 
   final QueryBuilder<T> _query;
+  //The included Items, where LiveList should look for updates.
+  final Map<String, dynamic> _listeningIncludes;
 
   int get size {
     return _list.length;
@@ -87,6 +97,10 @@ class ParseLiveList<T extends ParseObject> {
       _query.limiters['include']?.toString()?.split(',') ?? <String>[];
 
   Map<String, dynamic> get _includePaths {
+    return _toIncludeMap(includes);
+  }
+
+  static Map<String, dynamic> _toIncludeMap(List<String> includes) {
     final Map<String, dynamic> includesMap = <String, dynamic>{};
 
     for (String includeString in includes) {
@@ -104,6 +118,7 @@ class ParseLiveList<T extends ParseObject> {
   Stream<ParseLiveListEvent<T>> get stream => _eventStreamController.stream;
   Subscription<T> _liveQuerySubscription;
   StreamSubscription<LiveQueryClientEvent> _liveQueryClientEventSubscription;
+  final Future<void> _updateQueue = Future<void>.value();
 
   Future<ParseResponse> _runQuery() async {
     final QueryBuilder<T> query = QueryBuilder<T>.copy(_query);
@@ -128,8 +143,9 @@ class ParseLiveList<T extends ParseObject> {
     final ParseResponse parseResponse = await _runQuery();
     if (parseResponse.success) {
       _list = parseResponse.results
-              ?.map<ParseLiveListElement<T>>(
-                  (dynamic element) => ParseLiveListElement<T>(element))
+              ?.map<ParseLiveListElement<T>>((dynamic element) =>
+                  ParseLiveListElement<T>(element,
+                      updatedSubItems: _listeningIncludes))
               ?.toList() ??
           List<ParseLiveListElement<T>>();
     }
@@ -140,11 +156,29 @@ class ParseLiveList<T extends ParseObject> {
             copyObject: _query.object.clone(_query.object.toJson()))
         .then((Subscription<T> subscription) {
       _liveQuerySubscription = subscription;
-      subscription.on(LiveQueryEvent.create, _objectAdded);
-      subscription.on(LiveQueryEvent.update, _objectUpdated);
-      subscription.on(LiveQueryEvent.enter, _objectAdded);
-      subscription.on(LiveQueryEvent.leave, _objectDeleted);
-      subscription.on(LiveQueryEvent.delete, _objectDeleted);
+
+      //This should synchronize the events. Not sure if it is necessary, but it should help preventing unexpected results.
+      subscription.on(LiveQueryEvent.create,
+          (T object) => _updateQueue.whenComplete(() => _objectAdded(object)));
+      subscription.on(
+          LiveQueryEvent.update,
+          (T object) =>
+              _updateQueue.whenComplete(() => _objectUpdated(object)));
+      subscription.on(LiveQueryEvent.enter,
+          (T object) => _updateQueue.whenComplete(() => _objectAdded(object)));
+      subscription.on(
+          LiveQueryEvent.leave,
+          (T object) =>
+              _updateQueue.whenComplete(() => _objectDeleted(object)));
+      subscription.on(
+          LiveQueryEvent.delete,
+          (T object) =>
+              _updateQueue.whenComplete(() => _objectDeleted(object)));
+//      subscription.on(LiveQueryEvent.create, _objectAdded);
+//      subscription.on(LiveQueryEvent.update, _objectUpdated);
+//      subscription.on(LiveQueryEvent.enter, _objectAdded);
+//      subscription.on(LiveQueryEvent.leave, _objectDeleted);
+//      subscription.on(LiveQueryEvent.delete, _objectDeleted);
     });
 
     _liveQueryClientEventSubscription = LiveQuery()
@@ -198,10 +232,9 @@ class ParseLiveList<T extends ParseObject> {
     });
   }
 
-  Future<void> _loadIncludes(ParseObject object,
+  static Future<void> _loadIncludes(ParseObject object,
       {ParseObject oldObject, Map<String, dynamic> paths}) async {
-    paths ??= _includePaths;
-    if (object == null || paths.isEmpty) return;
+    if (object == null || paths == null || paths.isEmpty) return;
 
     final List<Future<void>> loadingNodes = <Future<void>>[];
 
@@ -217,6 +250,7 @@ class ParseLiveList<T extends ParseObject> {
             if (!includedObject.containsKey(keyVarUpdatedAt) ||
                 includedObject.objectId !=
                     object.get<ParseObject>(key).objectId) {
+              includedObject = object.get<ParseObject>(key);
               //fetch from web including sub objects
               //same as down there
               final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
@@ -268,7 +302,7 @@ class ParseLiveList<T extends ParseObject> {
     await Future.wait(loadingNodes);
   }
 
-  List<String> _toIncludeStringList(Map<String, dynamic> includes) {
+  static List<String> _toIncludeStringList(Map<String, dynamic> includes) {
     final List<String> includeList = <String>[];
     for (String key in includes.keys) {
       includeList.add(key);
@@ -283,16 +317,24 @@ class ParseLiveList<T extends ParseObject> {
 
   Future<void> _objectAdded(T object,
       {bool loaded = true, bool fetchedIncludes = false}) async {
-    if (!fetchedIncludes) await _loadIncludes(object);
+    //This line seems unnecessary, but without this, weird things happen.
+    //(Hide first element, hide second, view first, view second => second is displayed twice)
+    object = object?.clone(object?.toJson(full: true));
+
+    if (!fetchedIncludes) await _loadIncludes(object, paths: _includePaths);
     for (int i = 0; i < _list.length; i++) {
       if (after(object, _list[i].object) != true) {
-        _list.insert(i, ParseLiveListElement<T>(object, loaded: loaded));
+        _list.insert(
+            i,
+            ParseLiveListElement<T>(object,
+                loaded: loaded, updatedSubItems: _listeningIncludes));
         _eventStreamController.sink.add(ParseLiveListAddEvent<T>(
             i, object?.clone(object?.toJson(full: true))));
         return;
       }
     }
-    _list.add(ParseLiveListElement<T>(object, loaded: loaded));
+    _list.add(ParseLiveListElement<T>(object,
+        loaded: loaded, updatedSubItems: _listeningIncludes));
     _eventStreamController.sink.add(ParseLiveListAddEvent<T>(
         _list.length - 1, object?.clone(object?.toJson(full: true))));
   }
@@ -301,7 +343,8 @@ class ParseLiveList<T extends ParseObject> {
     for (int i = 0; i < _list.length; i++) {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
-        await _loadIncludes(object, oldObject: _list[i].object);
+        await _loadIncludes(object,
+            oldObject: _list[i].object, paths: _includePaths);
         if (after(_list[i].object, object) == null) {
           _list[i].object = object?.clone(object?.toJson(full: true));
         } else {
@@ -316,10 +359,12 @@ class ParseLiveList<T extends ParseObject> {
     }
   }
 
-  void _objectDeleted(T object) {
+  Future<void> _objectDeleted(T object) async {
     for (int i = 0; i < _list.length; i++) {
       if (_list[i].object.get<String>(keyVarObjectId) ==
           object.get<String>(keyVarObjectId)) {
+        await _loadIncludes(object,
+            oldObject: _list[i].object, paths: _includePaths);
         _list.removeAt(i).dispose();
         _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(
             i, object?.clone(object?.toJson(full: true))));
@@ -389,24 +434,122 @@ class ParseLiveList<T extends ParseObject> {
 }
 
 class ParseLiveListElement<T extends ParseObject> {
-  ParseLiveListElement(this._object, {bool loaded = false}) {
+  ParseLiveListElement(this._object,
+      {bool loaded = false, Map<String, dynamic> updatedSubItems}) {
     if (_object != null) {
       _loaded = loaded;
+    }
+    _updatedSubItems =
+        _toSubscriptionMap(updatedSubItems ?? Map<String, dynamic>());
+    if (_updatedSubItems.isNotEmpty) {
+      _liveQuery = LiveQuery();
+      _subscribe();
     }
   }
 
   final StreamController<T> _streamController = StreamController<T>.broadcast();
   T _object;
   bool _loaded = false;
+  Map<MapEntry<String, Subscription<ParseObject>>, dynamic> _updatedSubItems;
+  LiveQuery _liveQuery;
+  final Future<void> _subscriptionQueue = Future<void>.value();
 
   Stream<T> get stream => _streamController?.stream;
 
   // ignore: invalid_use_of_protected_member
   T get object => _object?.clone(_object?.toJson(full: true));
 
+  Map<MapEntry<String, Subscription<ParseObject>>, dynamic> _toSubscriptionMap(
+      Map<String, dynamic> map) {
+    Map<MapEntry<String, Subscription<ParseObject>>, dynamic> result =
+        Map<MapEntry<String, Subscription<ParseObject>>, dynamic>();
+    for (String key in map.keys) {
+      result.putIfAbsent(MapEntry<String, Subscription<ParseObject>>(key, null),
+          () => _toSubscriptionMap(map[key]));
+    }
+    return result;
+  }
+
+  Map<String, dynamic> _toKeyMap(
+      Map<MapEntry<String, Subscription<ParseObject>>, dynamic> map) {
+    final Map<String, dynamic> result = Map<String, dynamic>();
+    for (MapEntry<String, Subscription<ParseObject>> key in map.keys) {
+      result.putIfAbsent(key.key, () => _toKeyMap(map[key]));
+    }
+    return result;
+  }
+
+  void _subscribe() {
+    _subscriptionQueue.whenComplete(() async {
+      if (_updatedSubItems.isNotEmpty && _object != null) {
+        final List<Future<void>> tasks = <Future<void>>[];
+        for (MapEntry<String, Subscription<ParseObject>> key
+            in _updatedSubItems.keys) {
+          tasks.add(_subscribeSubItem(_object, key,
+              _object.get<ParseObject>(key.key), _updatedSubItems[key]));
+        }
+        await Future.wait(tasks);
+      }
+    });
+  }
+
+  void _unsubscribe(
+      Map<MapEntry<String, Subscription<ParseObject>>, dynamic> subscriptions) {
+    for (MapEntry<String, Subscription<ParseObject>> key
+        in subscriptions.keys) {
+      if (_liveQuery != null && key.value != null)
+        _liveQuery.client.unSubscribe(key.value);
+      _unsubscribe(subscriptions[key]);
+    }
+  }
+
+  Future<void> _subscribeSubItem(
+      ParseObject parentObject,
+      MapEntry<String, Subscription<ParseObject>> currentKey,
+      ParseObject subObject,
+      Map<MapEntry<String, Subscription<ParseObject>>, dynamic> path) async {
+    if (_liveQuery != null && subObject != null) {
+      final List<Future<void>> tasks = <Future<void>>[];
+      for (MapEntry<String, Subscription<ParseObject>> key in path.keys) {
+        tasks.add(_subscribeSubItem(
+            subObject, key, subObject.get<ParseObject>(key.key), path[key]));
+      }
+      final QueryBuilder<ParseObject> queryBuilder =
+          QueryBuilder<ParseObject>(subObject)
+            ..whereEqualTo(keyVarObjectId, subObject.objectId);
+
+      tasks.add(_liveQuery.client
+          .subscribe(queryBuilder)
+          .then((Subscription<ParseObject> subscription) {
+        subscription.on(LiveQueryEvent.update, (ParseObject newObject) async {
+          _subscriptionQueue.whenComplete(() async {
+            await ParseLiveList._loadIncludes(newObject,
+                oldObject: subObject, paths: _toKeyMap(path));
+            parentObject.getObjectData()[currentKey.key] = newObject;
+            if (!_streamController.isClosed) {
+              _streamController
+                  ?.add(_object?.clone(_object?.toJson(full: true)));
+              //Resubscribe subitems
+              _unsubscribe(path);
+              for (MapEntry<String, Subscription<ParseObject>> key
+                  in path.keys) {
+                tasks.add(_subscribeSubItem(subObject, key,
+                    subObject.get<ParseObject>(key.key), path[key]));
+              }
+            }
+            await Future.wait(tasks);
+          });
+        });
+      }));
+      await Future.wait(tasks);
+    }
+  }
+
   set object(T value) {
     _loaded = true;
     _object = value;
+    _unsubscribe(_updatedSubItems);
+    _subscribe();
     // ignore: invalid_use_of_protected_member
     _streamController?.add(_object?.clone(_object?.toJson(full: true)));
   }
@@ -414,6 +557,7 @@ class ParseLiveListElement<T extends ParseObject> {
   bool get loaded => _loaded;
 
   void dispose() {
+    _unsubscribe(_updatedSubItems);
     _streamController.close();
   }
 }
@@ -456,21 +600,23 @@ class ParseLiveListElementSnapshot<T extends ParseObject> {
 }
 
 class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
-  const ParseLiveListWidget(
-      {Key key,
-      @required this.query,
-      this.listLoadingElement,
-      this.duration = const Duration(milliseconds: 300),
-      this.scrollPhysics,
-      this.scrollController,
-      this.scrollDirection = Axis.vertical,
-      this.padding,
-      this.primary,
-      this.reverse = false,
-      this.childBuilder,
-      this.shrinkWrap = false,
-      this.removedItemBuilder})
-      : super(key: key);
+  const ParseLiveListWidget({
+    Key key,
+    @required this.query,
+    this.listLoadingElement,
+    this.duration = const Duration(milliseconds: 300),
+    this.scrollPhysics,
+    this.scrollController,
+    this.scrollDirection = Axis.vertical,
+    this.padding,
+    this.primary,
+    this.reverse = false,
+    this.childBuilder,
+    this.shrinkWrap = false,
+    this.removedItemBuilder,
+    this.listenOnAllSubItems,
+    this.listeningIncludes,
+  }) : super(key: key);
 
   final QueryBuilder<T> query;
   final Widget listLoadingElement;
@@ -487,9 +633,16 @@ class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
   final ChildBuilder<T> childBuilder;
   final ChildBuilder<T> removedItemBuilder;
 
+  final bool listenOnAllSubItems;
+  final List<String> listeningIncludes;
+
   @override
-  _ParseLiveListWidgetState<T> createState() =>
-      _ParseLiveListWidgetState<T>(query, removedItemBuilder);
+  _ParseLiveListWidgetState<T> createState() => _ParseLiveListWidgetState<T>(
+        query: query,
+        removedItemBuilder: removedItemBuilder,
+        listenOnAllSubItems: listenOnAllSubItems,
+        listeningIncludes: listeningIncludes,
+      );
 
   static Widget defaultChildBuilder<T extends ParseObject>(
       BuildContext context, ParseLiveListElementSnapshot<T> snapshot) {
@@ -513,8 +666,16 @@ class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
 
 class _ParseLiveListWidgetState<T extends ParseObject>
     extends State<ParseLiveListWidget<T>> {
-  _ParseLiveListWidgetState(this._query, this.removedItemBuilder) {
-    ParseLiveList.create(_query).then((ParseLiveList<T> value) {
+  _ParseLiveListWidgetState(
+      {@required this.query,
+      @required this.removedItemBuilder,
+      bool listenOnAllSubItems,
+      List<String> listeningIncludes}) {
+    ParseLiveList.create(
+      query,
+      listenOnAllSubItems: listenOnAllSubItems,
+      listeningIncludes: listeningIncludes,
+    ).then((ParseLiveList<T> value) {
       setState(() {
         _liveList = value;
         _liveList.stream.listen((ParseLiveListEvent<ParseObject> event) {
@@ -543,7 +704,7 @@ class _ParseLiveListWidgetState<T extends ParseObject>
     });
   }
 
-  final QueryBuilder<T> _query;
+  final QueryBuilder<T> query;
   ParseLiveList<T> _liveList;
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
