@@ -497,8 +497,6 @@ To activate listening for updates on all included objects, add `listenOnAllSubIt
 If you want ParseLiveList to listen for updates on only some sub-objects, use `listeningIncludes: const <String>[/*all the included sub-objects*/]` instead.
 Just as QueryBuilder, ParseLiveList supports nested sub-objects too.
 
-**NOTE:** Currently ParseLiveList wont update your sub-objects after your client reconnects to the web.
-
 **NOTE:** To use this features you have to enable [Live Queries](#live-queries) first.
 
 ## Users
