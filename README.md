@@ -451,13 +451,13 @@ ParseLiveListWidget<ParseObject>(
   query: query,
   reverse: false,
   childBuilder:
-      (BuildContext context, bool failed, ParseObject loadedData) {
-    if (failed) {
+      (BuildContext context, ParseLiveListElementSnapshot<ParseObject> snapshot) {
+    if (snapshot.failed) {
       return const Text('something went wrong!');
-    } else if (loadedData != null) {
+    } else if (snapshot.hasData) {
       return ListTile(
         title: Text(
-          loadedData.get("text"),
+          snapshot.loadedData.get("text"),
         ),
       );
     } else {
