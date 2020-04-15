@@ -4,6 +4,6 @@ part of flutter_parse_sdk;
 ParseResponse buildParseResponseWithException(Exception exception) {
   final ParseResponse response = ParseResponse();
   response.error =
-      ParseError(message: exception.toString(), isTypeOfException: true);
+      ParseError(message: exception.toString(), exception: exception);
   return response;
 }
