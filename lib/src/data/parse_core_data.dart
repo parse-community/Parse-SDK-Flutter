@@ -23,7 +23,9 @@ class ParseCoreData {
       String sessionId,
       bool autoSendSessionId,
       SecurityContext securityContext,
-      CoreStore store}) async {
+      CoreStore store,
+      Map<String, ParseObjectConstructor> registeredSubClassMap,
+      ParseUserConstructor parseUserConstructor}) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
     _instance.storage ??=
@@ -54,7 +56,10 @@ class ParseCoreData {
       _instance.securityContext = securityContext;
     }
 
-    _instance._subClassHandler = ParseSubClassHandler();
+    _instance._subClassHandler = ParseSubClassHandler(
+      registeredSubClassMap: registeredSubClassMap,
+      parseUserConstructor: parseUserConstructor,
+    );
   }
 
   String appName;
@@ -70,7 +75,8 @@ class ParseCoreData {
   CoreStore storage;
   ParseSubClassHandler _subClassHandler;
 
-  void registerSubClass(String className, ObjectConstructor objectConstructor) {
+  void registerSubClass(
+      String className, ParseObjectConstructor objectConstructor) {
     _subClassHandler.registerSubClass(className, objectConstructor);
   }
 

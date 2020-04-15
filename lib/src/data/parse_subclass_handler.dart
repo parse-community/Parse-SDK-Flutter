@@ -1,16 +1,23 @@
 part of flutter_parse_sdk;
 
-typedef ObjectConstructor = ParseObject Function();
+typedef ParseObjectConstructor = ParseObject Function();
 typedef ParseUserConstructor = ParseUser Function(
     String username, String password, String emailAddress,
     {String sessionToken, bool debug, ParseHTTPClient client});
 
 class ParseSubClassHandler {
-  final Map<String, ObjectConstructor> _subClassMap =
-      Map<String, ObjectConstructor>();
+
+  ParseSubClassHandler({Map<String, ParseObjectConstructor> registeredSubClassMap,
+    ParseUserConstructor parseUserConstructor}){
+    _subClassMap = registeredSubClassMap ?? Map<String, ParseObjectConstructor>();
+    _parseUserConstructor = parseUserConstructor;
+  }
+
+  Map<String, ParseObjectConstructor> _subClassMap;
   ParseUserConstructor _parseUserConstructor;
 
-  void registerSubClass(String className, ObjectConstructor objectConstructor) {
+  void registerSubClass(
+      String className, ParseObjectConstructor objectConstructor) {
     if (className != keyClassUser &&
         className != keyClassInstallation &&
         className != keyClassSession)
