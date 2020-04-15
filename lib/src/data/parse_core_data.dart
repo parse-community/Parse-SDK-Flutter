@@ -53,6 +53,8 @@ class ParseCoreData {
     if (securityContext != null) {
       _instance.securityContext = securityContext;
     }
+
+    _instance._subClassHandler = ParseSubClassHandler();
   }
 
   String appName;
@@ -66,6 +68,15 @@ class ParseCoreData {
   SecurityContext securityContext;
   bool debug;
   CoreStore storage;
+  ParseSubClassHandler _subClassHandler;
+
+  void registerSubClass(String className, ObjectConstructor objectConstructor) {
+    _subClassHandler.registerSubClass(className, objectConstructor);
+  }
+
+  ParseObject createObject(String classname) {
+    return _subClassHandler.createObject(classname);
+  }
 
   /// Sets the current sessionId.
   ///

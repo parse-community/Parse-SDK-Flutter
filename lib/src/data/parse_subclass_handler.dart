@@ -1,11 +1,18 @@
 part of flutter_parse_sdk;
 
-class ParseSubClassHandler {
-  final Map<String, ParseObject> _subClassMap = Map<String, ParseObject>();
+typedef ObjectConstructor = ParseObject Function();
 
-  void registerSubClass(String className, ParseObject cloneObject) {
-    _subClassMap.putIfAbsent(className, () => cloneObject);
+class ParseSubClassHandler {
+  final Map<String, ObjectConstructor> _subClassMap =
+      Map<String, ObjectConstructor>();
+
+  void registerSubClass(String className, ObjectConstructor objectConstructor) {
+    _subClassMap.putIfAbsent(className, () => objectConstructor);
   }
 
-  void
+  ParseObject createObject(String classname) {
+    if (_subClassMap.containsKey(classname)) return _subClassMap[classname]();
+    if (classname == '_User') return ParseUser._getEmptyUser();
+    return ParseObject(classname);
+  }
 }
