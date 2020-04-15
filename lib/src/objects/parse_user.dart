@@ -76,7 +76,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   static ParseUser createUser(
       [String username, String password, String emailAddress]) {
-    return ParseUser(username, password, emailAddress);
+    return ParseCoreData.instance
+        .createParseUser(username, password, emailAddress);
   }
 
   /// Gets the current user from the server
@@ -412,7 +413,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
-  static ParseUser _getEmptyUser() => ParseUser(null, null, null);
+  static ParseUser _getEmptyUser() =>
+      ParseCoreData.instance.createParseUser(null, null, null);
 
   static Future<String> _getInstallationId() async {
     final ParseInstallation parseInstallation =

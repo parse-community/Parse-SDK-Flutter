@@ -22,8 +22,8 @@ class ParseCoreData {
       String clientKey,
       String sessionId,
       bool autoSendSessionId,
-        SecurityContext securityContext,
-        CoreStore store}) async {
+      SecurityContext securityContext,
+      CoreStore store}) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
     _instance.storage ??=
@@ -74,8 +74,19 @@ class ParseCoreData {
     _subClassHandler.registerSubClass(className, objectConstructor);
   }
 
+  void registerUserSubClass(ParseUserConstructor parseUserConstructor) {
+    _subClassHandler.registerUserSubClass(parseUserConstructor);
+  }
+
   ParseObject createObject(String classname) {
     return _subClassHandler.createObject(classname);
+  }
+
+  ParseUser createParseUser(
+      String username, String password, String emailAddress,
+      {String sessionToken, bool debug, ParseHTTPClient client}) {
+    return _subClassHandler.createParseUser(username, password, emailAddress,
+        sessionToken: sessionToken, debug: debug, client: client);
   }
 
   /// Sets the current sessionId.
