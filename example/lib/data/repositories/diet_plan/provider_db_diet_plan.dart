@@ -171,6 +171,6 @@ class DietPlanProviderDB implements DietPlanProviderContract {
     }
   }
 
-  static ApiError error = ApiError(1, 'No records found', false, '');
+  static ApiError error = ApiError(1, 'No records found', null, '');
   ApiResponse errorResponse = ApiResponse(false, 1, null, error);
 }
