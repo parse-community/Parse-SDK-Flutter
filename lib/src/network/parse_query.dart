@@ -5,6 +5,9 @@ class QueryBuilder<T extends ParseObject> {
   /// Class to create complex queries
   QueryBuilder(this.object) : super();
 
+  QueryBuilder.name(String classname)
+      : this(ParseCoreData.instance.createObject(classname));
+
   QueryBuilder.or(this.object, List<QueryBuilder<T>> list) {
     if (list != null) {
       String query = '"\$or":[';
