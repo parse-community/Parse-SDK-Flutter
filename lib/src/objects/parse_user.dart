@@ -328,6 +328,19 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
+  @override
+  Future<ParseResponse> update() async {
+    if (objectId == null) {
+      return await signUp();
+    } else {
+      final ParseResponse response = await super.update();
+      if (response.success) {
+        await _onResponseSuccess();
+      }
+      return response;
+    }
+  }
+
   Future<void> _onResponseSuccess() async {
     await saveInStorage(keyParseStoreUser);
   }
