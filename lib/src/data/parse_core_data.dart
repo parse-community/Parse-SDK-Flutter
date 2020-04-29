@@ -22,8 +22,10 @@ class ParseCoreData {
       String clientKey,
       String sessionId,
       bool autoSendSessionId,
-        SecurityContext securityContext,
-        CoreStore store}) async {
+      SecurityContext securityContext,
+      CoreStore store,
+      Map<String, ParseObjectConstructor> registeredSubClassMap,
+      ParseUserConstructor parseUserConstructor}) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
     _instance.storage ??=
@@ -53,6 +55,11 @@ class ParseCoreData {
     if (securityContext != null) {
       _instance.securityContext = securityContext;
     }
+
+    _instance._subClassHandler = ParseSubClassHandler(
+      registeredSubClassMap: registeredSubClassMap,
+      parseUserConstructor: parseUserConstructor,
+    );
   }
 
   String appName;
@@ -66,6 +73,27 @@ class ParseCoreData {
   SecurityContext securityContext;
   bool debug;
   CoreStore storage;
+  ParseSubClassHandler _subClassHandler;
+
+  void registerSubClass(
+      String className, ParseObjectConstructor objectConstructor) {
+    _subClassHandler.registerSubClass(className, objectConstructor);
+  }
+
+  void registerUserSubClass(ParseUserConstructor parseUserConstructor) {
+    _subClassHandler.registerUserSubClass(parseUserConstructor);
+  }
+
+  ParseObject createObject(String classname) {
+    return _subClassHandler.createObject(classname);
+  }
+
+  ParseUser createParseUser(
+      String username, String password, String emailAddress,
+      {String sessionToken, bool debug, ParseHTTPClient client}) {
+    return _subClassHandler.createParseUser(username, password, emailAddress,
+        sessionToken: sessionToken, debug: debug, client: client);
+  }
 
   /// Sets the current sessionId.
   ///

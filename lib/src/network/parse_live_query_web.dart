@@ -406,13 +406,15 @@ class Client {
       if (actionData.containsKey('object')) {
         final Map<String, dynamic> map = actionData['object'];
         final String className = map['className'];
-        if (className == '_User') {
+        if (className == keyClassUser) {
           subscription.eventCallbacks[actionData['op']](
-              (subscription.copyObject ?? ParseUser(null, null, null))
+              (subscription.copyObject ??
+                      ParseCoreData.instance.createParseUser(null, null, null))
                   .fromJson(map));
         } else {
           subscription.eventCallbacks[actionData['op']](
-              (subscription.copyObject ?? ParseObject(className))
+              (subscription.copyObject ??
+                      ParseCoreData.instance.createObject(className))
                   .fromJson(map));
         }
       } else {

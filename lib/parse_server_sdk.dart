@@ -23,6 +23,7 @@ export 'src/network/parse_live_query.dart'
 if (dart.library.js) 'src/network/parse_live_query_web.dart';
 export 'src/utils/parse_live_list.dart';
 
+part 'package:parse_server_sdk/src/data/parse_subclass_handler.dart';
 part 'package:parse_server_sdk/src/objects/response/parse_error_response.dart';
 
 part 'package:parse_server_sdk/src/objects/response/parse_exception_response.dart';
@@ -111,28 +112,38 @@ class Parse {
   //        debug: true,
   //        liveQuery: true);
   // ```
-  Future<Parse> initialize(String appId, String serverUrl,
-      {bool debug = false,
-      String appName = '',
-      String liveQueryUrl,
-      String clientKey,
-      String masterKey,
-      String sessionId,
-      bool autoSendSessionId,
-        SecurityContext securityContext,
-        CoreStore coreStore}) async {
+  Future<Parse> initialize(
+    String appId,
+    String serverUrl, {
+    bool debug = false,
+    String appName = '',
+    String liveQueryUrl,
+    String clientKey,
+    String masterKey,
+    String sessionId,
+    bool autoSendSessionId,
+    SecurityContext securityContext,
+    CoreStore coreStore,
+    Map<String, ParseObjectConstructor> registeredSubClassMap,
+    ParseUserConstructor parseUserConstructor,
+  }) async {
     final String url = removeTrailingSlash(serverUrl);
 
-    await ParseCoreData.init(appId, url,
-        debug: debug,
-        appName: appName,
-        liveQueryUrl: liveQueryUrl,
-        masterKey: masterKey,
-        clientKey: clientKey,
-        sessionId: sessionId,
-        autoSendSessionId: autoSendSessionId,
-        securityContext: securityContext,
-        store: coreStore);
+    await ParseCoreData.init(
+      appId,
+      url,
+      debug: debug,
+      appName: appName,
+      liveQueryUrl: liveQueryUrl,
+      masterKey: masterKey,
+      clientKey: clientKey,
+      sessionId: sessionId,
+      autoSendSessionId: autoSendSessionId,
+      securityContext: securityContext,
+      store: coreStore,
+      registeredSubClassMap: registeredSubClassMap,
+      parseUserConstructor: parseUserConstructor,
+    );
 
     _hasBeenInitialized = true;
 
