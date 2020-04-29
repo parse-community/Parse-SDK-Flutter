@@ -135,7 +135,7 @@ Additionally you can register `SubClasses` after the initialization of the SDK.
 ParseCoreData().registerSubClass('Diet_Plans', () => DietPlan());
 ParseCoreData().registerUserSubClass((username, password, emailAddress, {client, debug, sessionToken}) => CustomParseUser(username, password, emailAddress));
 ```
-Providing a `ParseObject` as described above should still work, even if you have registered a different `SubClass.
+Providing a `ParseObject` as described above should still work, even if you have registered a different `SubClass`.
 
 ## Add new values to objects
 To add a variable to an object call and retrieve it, call
