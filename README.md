@@ -119,6 +119,24 @@ class DietPlan extends ParseObject implements ParseCloneable {
   
 ```
 
+When receiving an `ParseObject` from the SDK, you can often provide an instance of your custom object as an copy object.
+To always use your custom object class, you can register your subclass at the initialization of the SDK.
+```dart
+Parse().initialize(
+   ...,
+   registeredSubClassMap: <String, ParseObjectConstructor>{
+     'Diet_Plans': () => DietPlan(),
+   },
+   parseUserConstructor: (username, password, emailAddress, {client, debug, sessionToken}) => CustomParseUser(username, password, emailAddress),
+);
+```
+Additionally you can register `SubClasses` after the initialization of the SDK.
+```dart
+ParseCoreData().registerSubClass('Diet_Plans', () => DietPlan());
+ParseCoreData().registerUserSubClass((username, password, emailAddress, {client, debug, sessionToken}) => CustomParseUser(username, password, emailAddress));
+```
+Providing a `ParseObject` as described above should still work, even if you have registered a different `SubClass.
+
 ## Add new values to objects
 To add a variable to an object call and retrieve it, call
 
