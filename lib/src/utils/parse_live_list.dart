@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk/src/network/parse_live_query.dart';
 
 import '../../parse_server_sdk.dart';
 
@@ -441,6 +442,51 @@ class ParseLiveList<T extends ParseObject> {
     while (_list.isNotEmpty) {
       _list.removeLast().dispose();
     }
+  }
+}
+
+class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
+  ParseLiveElement(T object, {bool loaded = false, List<String> includeObject})
+      : super(object,
+            loaded: loaded,
+            updatedSubItems:
+                ParseLiveList._toIncludeMap(includeObject ?? <String>[])) {
+    _init(object, loaded: loaded, includeObject: includeObject);
+  }
+
+  Subscription<T> _subscription;
+  Map<String, dynamic> _includes;
+
+  Future<void> _init(T object,
+      {bool loaded = false, List<String> includeObject}) async {
+    _includes = ParseLiveList._toIncludeMap(includeObject ?? <String>[]);
+
+    QueryBuilder<T> queryBuilder = QueryBuilder<T>(object)
+      ..includeObject(includeObject)
+      ..whereEqualTo(keyVarObjectId, object.objectId);
+    if (!loaded) {
+      ParseResponse parseResponse = await queryBuilder.query();
+      if (parseResponse.success) {
+        super.object = parseResponse.result.first;
+      }
+    }
+
+    _subscription = await LiveQuery()
+        .client
+        .subscribe<T>(queryBuilder, copyObject: object.clone(null));
+
+    _subscription.on(LiveQueryEvent.update, (T newObject) async {
+      _subscriptionQueue.whenComplete(() async {
+        await ParseLiveList._loadIncludes(newObject,
+            oldObject: super.object, paths: _includes);
+        super.object = newObject;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
 
