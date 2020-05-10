@@ -451,21 +451,21 @@ class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
             loaded: loaded,
             updatedSubItems:
                 ParseLiveList._toIncludeMap(includeObject ?? <String>[])) {
+    _includes = ParseLiveList._toIncludeMap(includeObject ?? <String>[]);
+    queryBuilder = QueryBuilder<T>(object)
+      ..includeObject(includeObject)
+      ..whereEqualTo(keyVarObjectId, object.objectId);
     _init(object, loaded: loaded, includeObject: includeObject);
   }
 
   Subscription<T> _subscription;
   Map<String, dynamic> _includes;
+  QueryBuilder<T> queryBuilder;
 
   Future<void> _init(T object,
       {bool loaded = false, List<String> includeObject}) async {
-    _includes = ParseLiveList._toIncludeMap(includeObject ?? <String>[]);
-
-    QueryBuilder<T> queryBuilder = QueryBuilder<T>(object)
-      ..includeObject(includeObject)
-      ..whereEqualTo(keyVarObjectId, object.objectId);
     if (!loaded) {
-      ParseResponse parseResponse = await queryBuilder.query();
+      final ParseResponse parseResponse = await queryBuilder.query();
       if (parseResponse.success) {
         super.object = parseResponse.result.first;
       }
@@ -482,10 +482,31 @@ class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
         super.object = newObject;
       });
     });
+
+    LiveQuery()
+        .client
+        .getClientEventStream
+        .listen((LiveQueryClientEvent event) {
+      _subscriptionQueue.whenComplete(() async {
+        // ignore: missing_enum_constant_in_switch
+        switch (event) {
+          case LiveQueryClientEvent.CONNECTED:
+            final ParseResponse parseResponse = await queryBuilder.query();
+            if (parseResponse.success) {
+              super.object = parseResponse.result.first;
+            }
+            break;
+        }
+      });
+    });
   }
 
   @override
   void dispose() {
+    if (_subscription != null) {
+      LiveQuery().client.unSubscribe(_subscription);
+      _subscription = null;
+    }
     super.dispose();
   }
 }
