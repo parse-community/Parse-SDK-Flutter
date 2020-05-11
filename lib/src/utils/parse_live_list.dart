@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:parse_server_sdk/src/network/parse_live_query.dart';
 
 import '../../parse_server_sdk.dart';
 
