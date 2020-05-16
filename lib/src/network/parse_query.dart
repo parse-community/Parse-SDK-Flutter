@@ -298,6 +298,16 @@ class QueryBuilder<T extends ParseObject> {
         _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
   }
 
+    void whereMatchesKeyInQuery(
+      String column, String keyInQuery, QueryBuilder query) {
+    final String inQuery =
+        query._buildQueryRelational(query.object.parseClassName);
+
+    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
+        '\"$column\":{\"\$select\":$inQuery},"key":"$keyInQuery\"'));
+  }
+
+
   /// Finishes the query and calls the server
   ///
   /// Make sure to call this after defining your queries
