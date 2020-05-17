@@ -451,7 +451,7 @@ class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
             updatedSubItems:
                 ParseLiveList._toIncludeMap(includeObject ?? <String>[])) {
     _includes = ParseLiveList._toIncludeMap(includeObject ?? <String>[]);
-    queryBuilder = QueryBuilder<T>(object)
+    queryBuilder = QueryBuilder<T>(object.clone(null))
       ..includeObject(includeObject)
       ..whereEqualTo(keyVarObjectId, object.objectId);
     _init(object, loaded: loaded, includeObject: includeObject);
@@ -470,16 +470,14 @@ class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
       }
     }
 
-    _subscription = await LiveQuery()
-        .client
-        .subscribe<T>(queryBuilder, copyObject: object.clone(null));
+    _subscription = await LiveQuery().client.subscribe<T>(
+        QueryBuilder<T>.copy(queryBuilder),
+        copyObject: object.clone(null));
 
     _subscription.on(LiveQueryEvent.update, (T newObject) async {
-      _subscriptionQueue.whenComplete(() async {
-        await ParseLiveList._loadIncludes(newObject,
-            oldObject: super.object, paths: _includes);
-        super.object = newObject;
-      });
+      await ParseLiveList._loadIncludes(newObject,
+          oldObject: super.object, paths: _includes);
+      super.object = newObject;
     });
 
     LiveQuery()
