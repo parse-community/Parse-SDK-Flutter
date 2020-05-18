@@ -153,6 +153,8 @@ class ParseInstallation extends ParseObject {
     final ParseInstallation installation = ParseInstallation();
     installation._installationId = _currentInstallationId;
     await installation._updateInstallation();
+    await ParseCoreData().getStore().setString(keyParseStoreInstallation,
+        json.encode(installation.toJson(full: true)));
     return installation;
   }
 
