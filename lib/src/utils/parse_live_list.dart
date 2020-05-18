@@ -444,6 +444,70 @@ class ParseLiveList<T extends ParseObject> {
   }
 }
 
+class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
+  ParseLiveElement(T object, {bool loaded = false, List<String> includeObject})
+      : super(object,
+            loaded: loaded,
+            updatedSubItems:
+                ParseLiveList._toIncludeMap(includeObject ?? <String>[])) {
+    _includes = ParseLiveList._toIncludeMap(includeObject ?? <String>[]);
+    queryBuilder = QueryBuilder<T>(object.clone(null))
+      ..includeObject(includeObject)
+      ..whereEqualTo(keyVarObjectId, object.objectId);
+    _init(object, loaded: loaded, includeObject: includeObject);
+  }
+
+  Subscription<T> _subscription;
+  Map<String, dynamic> _includes;
+  QueryBuilder<T> queryBuilder;
+
+  Future<void> _init(T object,
+      {bool loaded = false, List<String> includeObject}) async {
+    if (!loaded) {
+      final ParseResponse parseResponse = await queryBuilder.query();
+      if (parseResponse.success) {
+        super.object = parseResponse.result.first;
+      }
+    }
+
+    _subscription = await LiveQuery().client.subscribe<T>(
+        QueryBuilder<T>.copy(queryBuilder),
+        copyObject: object.clone(null));
+
+    _subscription.on(LiveQueryEvent.update, (T newObject) async {
+      await ParseLiveList._loadIncludes(newObject,
+          oldObject: super.object, paths: _includes);
+      super.object = newObject;
+    });
+
+    LiveQuery()
+        .client
+        .getClientEventStream
+        .listen((LiveQueryClientEvent event) {
+      _subscriptionQueue.whenComplete(() async {
+        // ignore: missing_enum_constant_in_switch
+        switch (event) {
+          case LiveQueryClientEvent.CONNECTED:
+            final ParseResponse parseResponse = await queryBuilder.query();
+            if (parseResponse.success) {
+              super.object = parseResponse.result.first;
+            }
+            break;
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    if (_subscription != null) {
+      LiveQuery().client.unSubscribe(_subscription);
+      _subscription = null;
+    }
+    super.dispose();
+  }
+}
+
 class ParseLiveListElement<T extends ParseObject> {
   ParseLiveListElement(this._object,
       {bool loaded = false, Map<String, dynamic> updatedSubItems}) {
