@@ -247,6 +247,26 @@ if (response.success) {
 }
 ```
 
+if you want to find objects that match one of several queries, you can use __QueryBuilder.or__ method to construct a query that is an OR of the queries passed in. For instance if you want to find players who either have a lot of wins or a few wins, you can do:
+```dart
+ParseObject playerObject = ParseObject("Player");
+
+QueryBuilder<ParseObject> lotsOfWins =
+    QueryBuilder<ParseObject>(playerObject))
+      ..whereGreaterThan('wins', 50);
+
+QueryBuilder<ParseObject> fewWins =
+    QueryBuilder<ParseObject>(playerObject)
+      ..whereLessThan('wins', 5);
+
+QueryBuilder<ParseObject> mainQuery = QueryBuilder.or(
+      playerObject,
+      [lotsOfWins, fewWins],
+    );
+
+var apiResponse = await mainQuery.query();
+```
+
 The features available are:-
  * Equals
  * Contains
@@ -263,6 +283,10 @@ The features available are:-
  * WithinKilometers
  * WithinRadians
  * WithinGeoBox
+ * MatchesQuery
+ * DoesNotMatchQuery
+ * MatchesKeyInQuery
+ * DoesNotMatchKeyInQuery
  * Regex
  * Order
  * Limit
@@ -304,6 +328,47 @@ QueryBuilder<ParseObject> queryComment =
       ..whereDoesNotMatchQuery('post', queryPost);
 
 var apiResponse = await queryComment.query();
+```
+
+You can use the __whereMatchesKeyInQuery__ method to get objects where a key matches the value of a key in a set of objects resulting from another query. For example, if you have a class containing sports teams and you store a user’s hometown in the user class, you can issue one query to find the list of users whose hometown teams have winning records. The query would look like::
+
+```dart
+QueryBuilder<ParseObject> teamQuery =
+    QueryBuilder<ParseObject>(ParseObject('Team'))
+      ..whereGreaterThan('winPct', 0.5);
+
+QueryBuilder<ParseUser> userQuery =
+    QueryBuilder<ParseUser>ParseUser.forQuery())
+      ..whereMatchesKeyInQuery('hometown', 'city', teamQuery);
+
+var apiResponse = await userQuery.query();
+```
+
+Conversely, to get objects where a key does not match the value of a key in a set of objects resulting from another query, use __whereDoesNotMatchKeyInQuery__. For example, to find users whose hometown teams have losing records:
+
+```dart
+QueryBuilder<ParseObject> teamQuery =
+    QueryBuilder<ParseObject>(ParseObject('Team'))
+      ..whereGreaterThan('winPct', 0.5);
+
+QueryBuilder<ParseUser> losingUserQuery =
+    QueryBuilder<ParseUser>ParseUser.forQuery())
+      ..whereDoesNotMatchKeyInQuery('hometown', 'city', teamQuery);
+
+var apiResponse = await losingUserQuery.query();
+```
+
+To filter rows based on objectId’s from pointers in a second table, you can use dot notation:
+```dart
+QueryBuilder<ParseObject> rolesOfTypeX =
+    QueryBuilder<ParseObject>(ParseObject('Role'))
+      ..whereEqualTo('type', 'x');
+
+QueryBuilder<ParseObject> groupsWithRoleX =
+    QueryBuilder<ParseObject>(ParseObject('Group')))
+      ..whereMatchesKeyInQuery('objectId', 'belongsTo.objectId', rolesOfTypeX);
+
+var apiResponse = await groupsWithRoleX.query();
 ```
 
 ## Counting Objects

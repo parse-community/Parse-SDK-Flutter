@@ -298,8 +298,7 @@ class QueryBuilder<T extends ParseObject> {
         _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
   }
 
-  //Add a constraint to the query that requires a particular key's value matches a value for a key in the results of another ParseQuery.
-  // Add a constraint to the query that requires a particular key's value match another QueryBuilder
+  // Add a constraint to the query that requires a particular key's value matches a value for a key in the results of another ParseQuery.
   // ignore: always_specify_types
   void whereMatchesKeyInQuery(
       String column, String keyInQuery, QueryBuilder query) {
@@ -320,8 +319,7 @@ class QueryBuilder<T extends ParseObject> {
         _SINGLE_QUERY, '\"$column\":{\"\$select\":$inQuery}'));
   }
 
-  //Add a constraint to the query that requires a particular key's value does not match any value for a key in the results of another ParseQuery
-  // Add a constraint to the query that requires a particular key's value match another QueryBuilder
+  // Add a constraint to the query that requires a particular key's value does not match any value for a key in the results of another ParseQuery
   // ignore: always_specify_types
   void whereDoesNotMatchKeyInQuery(
       String column, String keyInQuery, QueryBuilder query) {
