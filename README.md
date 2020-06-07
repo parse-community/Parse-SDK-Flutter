@@ -658,6 +658,24 @@ Other user features are:-
       }
 ```
 
+For Google and the example below, we used the library provided at https://pub.dev/packages/google_sign_in
+
+```
+class OAuthLogin {
+  final GoogleSignIn _googleSignIn = GoogleSignIn( scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly'] );
+  
+  sigInGoogle() async {
+    GoogleSignInAccount account = await _googleSignIn.signIn();
+    GoogleSignInAuthentication authentication = await account.authentication;
+    await ParseUser.loginWith(
+        'google',
+        google(_googleSignIn.currentUser.id, 
+               authentication.accessToken, 
+               authentication.idToken));
+  }
+}
+```
+
 ## Security for Objects - ParseACL
 For any object, you can specify which users are allowed to read the object, and which users are allowed to modify an object.
 To support this type of security, each object has an access control list, implemented by the __ParseACL__ class.
