@@ -9,7 +9,7 @@ class CoreStoreSembastImp implements CoreStore {
   static Future<CoreStore> getInstance(
       {DatabaseFactory factory, String password = 'flutter_sdk'}) async {
     if (_instance == null) {
-      factory ??= databaseFactoryIo;
+      factory ??= kIsWeb ? databaseFactoryWeb : databaseFactoryIo;
       final SembastCodec codec = getXXTeaSembastCodec(password: password);
       String dbDirectory = '';
       if (!kIsWeb && (Platform.isIOS || Platform.isAndroid || Platform.isMacOS))
