@@ -68,7 +68,9 @@ class ParseInstallation extends ParseObject {
   /// Updates the installation with current device data
   Future<void> _updateInstallation() async {
     //Device type
-    if (Platform.isAndroid) {
+    if (kIsWeb) {
+      set<String>(keyDeviceType, 'web');
+    } else if (Platform.isAndroid) {
       set<String>(keyDeviceType, 'android');
     } else if (Platform.isIOS) {
       set<String>(keyDeviceType, 'ios');
