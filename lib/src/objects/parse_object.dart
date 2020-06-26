@@ -224,7 +224,11 @@ class ParseObject extends ParseBase implements ParseCloneable {
   bool _canbeSerialized(List<dynamic> aftersaving, {dynamic value}) {
     if (value != null) {
       if (value is ParseObject) {
-        if (value.objectId == null && !aftersaving.contains(value)) {
+        if (value is ParseFile) {
+          if (!value.saved && !aftersaving.contains(value)) {
+            return false;
+          }
+        } else if (value.objectId == null && !aftersaving.contains(value)) {
           return false;
         }
       } else if (value is Map) {
@@ -270,7 +274,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     } else if (object is ParseACL) {
       // TODO(yulingtianxia): handle ACL
     } else if (object is ParseFile) {
-      if (object.url == null) {
+      if (!object.saved) {
         uniqueFiles.add(object);
       }
     } else if (object is ParseObject) {
