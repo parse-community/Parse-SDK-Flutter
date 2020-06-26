@@ -53,7 +53,7 @@ It's possible to add other parameters to work with your instance of Parse Server
 #### Early Web support
 Currently this requires adding `X-Parse-Installation-Id` as an allowed header to parse-server.
 When running directly via docker, set the env var `PARSE_SERVER_ALLOW_HEADERS=X-Parse-Installation-Id`.
-When running via express, set [ParseServerOptions](https://parseplatform.org/parse-server/api/master/ParseServerOptions.html) `allowHeader: ['X-Parse-Installation-Id']`.
+When running via express, set [ParseServerOptions](https://parseplatform.org/parse-server/api/master/ParseServerOptions.html) `allowHeaders: ['X-Parse-Installation-Id']`.
 
 Be aware that for web ParseInstallation does include app name, version or package identifier.
 
