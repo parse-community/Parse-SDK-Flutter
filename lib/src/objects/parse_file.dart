@@ -5,11 +5,12 @@ class ParseFile extends ParseObject {
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFile(this.file,
-      {String name,
+      {this.byteFile,
+      String name,
       String url,
       bool debug,
       ParseHTTPClient client,
-        bool autoSendSessionId})
+      bool autoSendSessionId})
       : super('ParseFile', debug: debug, autoSendSessionId: autoSendSessionId) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _client = client ??
@@ -18,16 +19,21 @@ class ParseFile extends ParseObject {
                 autoSendSessionId ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
 
-    if (file != null) {
-      name = path.basename(file.path);
+    if (kIsWeb) {
       _path = '/files/$name';
     } else {
-      name = name;
-      url = url;
+      if (file != null) {
+        name = path.basename(file.path);
+        _path = '/files/$name';
+      } else {
+        name = name;
+        url = url;
+      }
     }
   }
 
   File file;
+  final List<int> byteFile;
 
   String get name => super.get<String>(keyVarName);
   set name(String name) => set<String>(keyVarName, name);
@@ -101,13 +107,20 @@ class ParseFile extends ParseObject {
           parseClassName);
     }
 
-    final String ext = path.extension(file.path).replaceAll('.', '');
+    final String ext =
+        path.extension(kIsWeb ? _path : file.path).replaceAll('.', '');
+
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader: getContentType(ext)
     };
     try {
       final String uri = _client.data.serverUrl + '$_path';
-      final List<int> body = await file.readAsBytes();
+      List<int> body;
+      if (!kIsWeb) {
+        body = await file.readAsBytes();
+      } else {
+        body = byteFile;
+      }
       final Response response =
           await _client.post(uri, headers: headers, body: body);
       if (response.statusCode == 201) {
