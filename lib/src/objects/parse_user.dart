@@ -118,11 +118,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUserName');
       final Response response = await _client.get(url, headers: headers);
-      return await _handleResponse(this, response,
-          ParseApiRQ.currentUser, _debug, parseClassName);
+      return await _handleResponse(
+          this, response, ParseApiRQ.currentUser, _debug, parseClassName);
     } on Exception catch (e) {
-      return handleException(
-          e, ParseApiRQ.currentUser, _debug, parseClassName);
+      return handleException(e, ParseApiRQ.currentUser, _debug, parseClassName);
     }
   }
 
@@ -153,7 +152,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
       final Uri url = getSanitisedUri(_client, '$path');
       final String body = json.encode(bodyData);
       _saveChanges();
-      final String installationId = await _getInstallationId();
+      String installationId;
+      if (!kIsWeb) {
+        installationId = await _getInstallationId();
+      }
       final Response response = await _client.post(url,
           headers: <String, String>{
             keyHeaderRevocableSession: '1',
