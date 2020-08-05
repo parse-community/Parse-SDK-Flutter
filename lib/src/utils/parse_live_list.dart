@@ -6,19 +6,23 @@ import '../../parse_server_sdk.dart';
 
 // ignore_for_file: invalid_use_of_protected_member
 class ParseLiveList<T extends ParseObject> {
-  ParseLiveList._(this._query, this._listeningIncludes);
+  ParseLiveList._(this._query, this._listeningIncludes, this._lazyLoading) {
+    _debug = isDebugEnabled();
+  }
 
   static Future<ParseLiveList<T>> create<T extends ParseObject>(
       QueryBuilder<T> _query,
       {bool listenOnAllSubItems,
-      List<String> listeningIncludes}) {
+      List<String> listeningIncludes,
+      bool lazyLoading = true}) {
     final ParseLiveList<T> parseLiveList = ParseLiveList<T>._(
         _query,
         listenOnAllSubItems == true
             ? _toIncludeMap(
                 _query.limiters['include']?.toString()?.split(',') ??
                     <String>[])
-            : _toIncludeMap(listeningIncludes ?? <String>[]));
+            : _toIncludeMap(listeningIncludes ?? <String>[]),
+        lazyLoading);
 
     return parseLiveList._init().then((_) {
       return parseLiveList;
@@ -28,6 +32,7 @@ class ParseLiveList<T extends ParseObject> {
   List<ParseLiveListElement<T>> _list = List<ParseLiveListElement<T>>();
   StreamController<ParseLiveListEvent<T>> _eventStreamController;
   int _nextID = 0;
+  bool _debug;
 
   /// is object1 listed after object2?
   /// can return null
@@ -89,6 +94,8 @@ class ParseLiveList<T extends ParseObject> {
   //The included Items, where LiveList should look for updates.
   final Map<String, dynamic> _listeningIncludes;
 
+  final bool _lazyLoading;
+
   int get size {
     return _list.length;
   }
@@ -122,18 +129,21 @@ class ParseLiveList<T extends ParseObject> {
 
   Future<ParseResponse> _runQuery() async {
     final QueryBuilder<T> query = QueryBuilder<T>.copy(_query);
-    if (query.limiters.containsKey('order')) {
-      query.keysToReturn(
-          query.limiters['order'].toString().split(',').map((String string) {
-        if (string.startsWith('-')) {
-          return string.substring(1);
-        }
-        return string;
-      }).toList());
-    } else {
-      query.keysToReturn(List<String>());
+    if (_debug)
+      print('ParseLiveList: lazyLoading is ${_lazyLoading ? 'on' : 'off'}');
+    if (_lazyLoading) {
+      if (query.limiters.containsKey('order')) {
+        query.keysToReturn(
+            query.limiters['order'].toString().split(',').map((String string) {
+          if (string.startsWith('-')) {
+            return string.substring(1);
+          }
+          return string;
+        }).toList());
+      } else {
+        query.keysToReturn(List<String>());
+      }
     }
-
     return await query.query<T>();
   }
 
@@ -145,7 +155,8 @@ class ParseLiveList<T extends ParseObject> {
       _list = parseResponse.results
               ?.map<ParseLiveListElement<T>>((dynamic element) =>
                   ParseLiveListElement<T>(element,
-                      updatedSubItems: _listeningIncludes))
+                      updatedSubItems: _listeningIncludes,
+                      loaded: !_lazyLoading))
               ?.toList() ??
           List<ParseLiveListElement<T>>();
     }
@@ -748,6 +759,7 @@ class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
     this.removedItemBuilder,
     this.listenOnAllSubItems,
     this.listeningIncludes,
+    this.lazyLoading = true,
   }) : super(key: key);
 
   final QueryBuilder<T> query;
@@ -768,12 +780,15 @@ class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
   final bool listenOnAllSubItems;
   final List<String> listeningIncludes;
 
+  final bool lazyLoading;
+
   @override
   _ParseLiveListWidgetState<T> createState() => _ParseLiveListWidgetState<T>(
         query: query,
         removedItemBuilder: removedItemBuilder,
         listenOnAllSubItems: listenOnAllSubItems,
         listeningIncludes: listeningIncludes,
+        lazyLoading: lazyLoading,
       );
 
   static Widget defaultChildBuilder<T extends ParseObject>(
@@ -802,11 +817,13 @@ class _ParseLiveListWidgetState<T extends ParseObject>
       {@required this.query,
       @required this.removedItemBuilder,
       bool listenOnAllSubItems,
-      List<String> listeningIncludes}) {
+      List<String> listeningIncludes,
+      bool lazyLoading = true}) {
     ParseLiveList.create(
       query,
       listenOnAllSubItems: listenOnAllSubItems,
       listeningIncludes: listeningIncludes,
+      lazyLoading: lazyLoading,
     ).then((ParseLiveList<T> value) {
       setState(() {
         _liveList = value;
