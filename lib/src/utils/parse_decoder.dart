@@ -62,7 +62,8 @@ dynamic parseDecode(dynamic value) {
         final String className = map['className'];
         return ParseCoreData.instance.createObject(className).fromJson(map);
       case 'File':
-        return ParseFile(null, url: map['url'], name: map['name'])
+        return ParseCoreData.instance
+            .createFile(url: map['url'], name: map['name'])
             .fromJson(map);
       case 'GeoPoint':
         final num latitude = map['latitude'] ?? 0.0;
@@ -70,7 +71,7 @@ dynamic parseDecode(dynamic value) {
         return ParseGeoPoint(
             latitude: latitude.toDouble(), longitude: longitude.toDouble());
       case 'Relation':
-      // ignore: always_specify_types
+        // ignore: always_specify_types
         return ParseRelation().fromJson(map);
     }
   }

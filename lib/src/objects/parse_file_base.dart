@@ -10,7 +10,7 @@ abstract class ParseFileBase extends ParseObject {
       bool debug,
       ParseHTTPClient client,
       bool autoSendSessionId})
-      : super('ParseFile',
+      : super(keyFileClassname,
             debug: debug,
             autoSendSessionId: autoSendSessionId,
             client: client) {

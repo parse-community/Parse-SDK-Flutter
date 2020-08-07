@@ -3,7 +3,6 @@ part of flutter_parse_sdk;
 class ParseWebFile extends ParseFileBase {
   ParseWebFile(this.file,
       {@required String name,
-      @required this.extension,
       String url,
       bool debug,
       ParseHTTPClient client,
@@ -17,7 +16,6 @@ class ParseWebFile extends ParseFileBase {
         );
 
   Uint8List file;
-  final String extension;
 
   @override
   Future<ParseWebFile> download() async {
@@ -39,7 +37,7 @@ class ParseWebFile extends ParseFileBase {
         'url': url,
         'name': name
       };
-      return handleResponse<ParseFile>(
+      return handleResponse<ParseWebFile>(
           this,
           Response(json.encode(response), 201),
           ParseApiRQ.upload,
@@ -48,7 +46,7 @@ class ParseWebFile extends ParseFileBase {
     }
 
     final Map<String, String> headers = <String, String>{
-      HttpHeaders.contentTypeHeader: getContentType(extension)
+      HttpHeaders.contentTypeHeader: getContentType(path.extension(url))
     };
     try {
       final String uri = _client.data.serverUrl + '$_path';
@@ -59,7 +57,7 @@ class ParseWebFile extends ParseFileBase {
         url = map['url'].toString();
         name = map['name'].toString();
       }
-      return handleResponse<ParseFile>(
+      return handleResponse<ParseWebFile>(
           this, response, ParseApiRQ.upload, _debug, parseClassName);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.upload, _debug, parseClassName);

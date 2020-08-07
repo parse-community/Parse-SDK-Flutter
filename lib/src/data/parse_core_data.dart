@@ -14,18 +14,22 @@ class ParseCoreData {
   ///
   /// This class should not be user unless switching servers during the app,
   /// which is odd. Should only be user by Parse.init
-  static Future<void> init(String appId, String serverUrl,
-      {bool debug,
-      String appName,
-      String liveQueryUrl,
-      String masterKey,
-      String clientKey,
-      String sessionId,
-      bool autoSendSessionId,
-      SecurityContext securityContext,
-      CoreStore store,
-      Map<String, ParseObjectConstructor> registeredSubClassMap,
-      ParseUserConstructor parseUserConstructor}) async {
+  static Future<void> init(
+    String appId,
+    String serverUrl, {
+    bool debug,
+    String appName,
+    String liveQueryUrl,
+    String masterKey,
+    String clientKey,
+    String sessionId,
+    bool autoSendSessionId,
+    SecurityContext securityContext,
+    CoreStore store,
+    Map<String, ParseObjectConstructor> registeredSubClassMap,
+    ParseUserConstructor parseUserConstructor,
+    ParseFileConstructor parseFileConstructor,
+  }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
     _instance.storage ??=
@@ -59,6 +63,7 @@ class ParseCoreData {
     _instance._subClassHandler = ParseSubClassHandler(
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
+      parseFileConstructor: parseFileConstructor,
     );
   }
 
@@ -84,6 +89,10 @@ class ParseCoreData {
     _subClassHandler.registerUserSubClass(parseUserConstructor);
   }
 
+  void registerFileSubClass(ParseFileConstructor parseFileConstructor) {
+    _subClassHandler.registerFileSubClass(parseFileConstructor);
+  }
+
   ParseObject createObject(String classname) {
     return _subClassHandler.createObject(classname);
   }
@@ -94,6 +103,9 @@ class ParseCoreData {
     return _subClassHandler.createParseUser(username, password, emailAddress,
         sessionToken: sessionToken, debug: debug, client: client);
   }
+
+  ParseFileBase createFile({String url, String name}) =>
+      _subClassHandler.createFile(name: name, url: url);
 
   /// Sets the current sessionId.
   ///
