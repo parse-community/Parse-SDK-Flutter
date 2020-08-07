@@ -1,62 +1,36 @@
 part of flutter_parse_sdk;
 
-class ParseFile extends ParseFileBase {
-  /// Creates a new file
-  ///
-  /// {https://docs.parseplatform.org/rest/guide/#files/}
-  ParseFile(this.file,
-      {String name,
+class ParseWebFile extends ParseFileBase {
+  ParseWebFile(this.file,
+      {@required String name,
+      @required this.extension,
       String url,
       bool debug,
       ParseHTTPClient client,
       bool autoSendSessionId})
       : super(
-          name: file != null ? path.basename(file.path) : name,
+          name: name,
           url: url,
           debug: debug,
           client: client,
           autoSendSessionId: autoSendSessionId,
         );
 
-  File file;
-
-  Future<ParseFile> loadStorage() async {
-    final Directory tempPath = await getTemporaryDirectory();
-
-    if (name == null) {
-      file = null;
-      return this;
-    }
-
-    final File possibleFile = File('${tempPath.path}/$name');
-    // ignore: avoid_slow_async_io
-    final bool exists = await possibleFile.exists();
-
-    if (exists) {
-      file = possibleFile;
-    } else {
-      file = null;
-    }
-
-    return this;
-  }
+  Uint8List file;
+  final String extension;
 
   @override
-  Future<ParseFile> download() async {
+  Future<ParseWebFile> download() async {
     if (url == null) {
       return this;
     }
 
-    final Directory tempPath = await getTemporaryDirectory();
-    file = File('${tempPath.path}/$name');
-    await file.create();
     final Response response = await _client.get(url);
-    await file.writeAsBytes(response.bodyBytes);
+    file = response.bodyBytes;
 
     return this;
   }
 
-  /// Uploads a file to Parse Server
   @override
   Future<ParseResponse> upload() async {
     if (saved) {
@@ -73,15 +47,13 @@ class ParseFile extends ParseFileBase {
           parseClassName);
     }
 
-    final String ext = path.extension(file.path).replaceAll('.', '');
     final Map<String, String> headers = <String, String>{
-      HttpHeaders.contentTypeHeader: getContentType(ext)
+      HttpHeaders.contentTypeHeader: getContentType(extension)
     };
     try {
       final String uri = _client.data.serverUrl + '$_path';
-      final List<int> body = await file.readAsBytes();
       final Response response =
-          await _client.post(uri, headers: headers, body: body);
+          await _client.post(uri, headers: headers, body: file);
       if (response.statusCode == 201) {
         final Map<String, dynamic> map = json.decode(response.body);
         url = map['url'].toString();
