@@ -46,7 +46,9 @@ class ParseWebFile extends ParseFileBase {
     }
 
     final Map<String, String> headers = <String, String>{
-      HttpHeaders.contentTypeHeader: getContentType(path.extension(url))
+      HttpHeaders.contentTypeHeader: url ?? name != null
+          ? getContentType(path.extension(url ?? name))
+          : 'text/plain'
     };
     try {
       final String uri = _client.data.serverUrl + '$_path';
