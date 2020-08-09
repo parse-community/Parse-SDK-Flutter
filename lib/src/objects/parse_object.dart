@@ -121,7 +121,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
   Future<ParseResponse> _saveChildren(dynamic object) async {
     final Set<ParseObject> uniqueObjects = Set<ParseObject>();
-    final Set<ParseFile> uniqueFiles = Set<ParseFile>();
+    final Set<ParseFileBase> uniqueFiles = Set<ParseFileBase>();
     if (!_collectionDirtyChildren(object, uniqueObjects, uniqueFiles,
         Set<ParseObject>(), Set<ParseObject>())) {
       final ParseResponse response = ParseResponse();
@@ -130,7 +130,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     if (object is ParseObject) {
       uniqueObjects.remove(object);
     }
-    for (ParseFile file in uniqueFiles) {
+    for (ParseFileBase file in uniqueFiles) {
       final ParseResponse response = await file.save();
       if (!response.success) {
         return response;
@@ -224,7 +224,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   bool _canbeSerialized(List<dynamic> aftersaving, {dynamic value}) {
     if (value != null) {
       if (value is ParseObject) {
-        if (value is ParseFile) {
+        if (value is ParseFileBase) {
           if (!value.saved && !aftersaving.contains(value)) {
             return false;
           }
@@ -254,7 +254,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   bool _collectionDirtyChildren(
       dynamic object,
       Set<ParseObject> uniqueObjects,
-      Set<ParseFile> uniqueFiles,
+      Set<ParseFileBase> uniqueFiles,
       Set<ParseObject> seen,
       Set<ParseObject> seenNew) {
     if (object is List) {
@@ -273,7 +273,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       }
     } else if (object is ParseACL) {
       // TODO(yulingtianxia): handle ACL
-    } else if (object is ParseFile) {
+    } else if (object is ParseFileBase) {
       if (!object.saved) {
         uniqueFiles.add(object);
       }

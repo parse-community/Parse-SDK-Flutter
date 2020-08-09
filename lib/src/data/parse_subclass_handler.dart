@@ -4,28 +4,46 @@ typedef ParseObjectConstructor = ParseObject Function();
 typedef ParseUserConstructor = ParseUser Function(
     String username, String password, String emailAddress,
     {String sessionToken, bool debug, ParseHTTPClient client});
+typedef ParseFileConstructor = ParseFileBase Function(
+    {String name, String url});
 
 class ParseSubClassHandler {
-
-  ParseSubClassHandler({Map<String, ParseObjectConstructor> registeredSubClassMap,
-    ParseUserConstructor parseUserConstructor}){
-    _subClassMap = registeredSubClassMap ?? Map<String, ParseObjectConstructor>();
+  ParseSubClassHandler(
+      {Map<String, ParseObjectConstructor> registeredSubClassMap,
+      ParseUserConstructor parseUserConstructor,
+      ParseFileConstructor parseFileConstructor}) {
+    _subClassMap =
+        registeredSubClassMap ?? Map<String, ParseObjectConstructor>();
     _parseUserConstructor = parseUserConstructor;
+    if (parseFileConstructor != null)
+      _parseFileConstructor = parseFileConstructor;
   }
 
   Map<String, ParseObjectConstructor> _subClassMap;
   ParseUserConstructor _parseUserConstructor;
+  ParseFileConstructor _parseFileConstructor = ({String name, String url}) {
+    if (kIsWeb) {
+      return ParseWebFile(null, name: name, url: url);
+    } else {
+      return ParseFile(null, name: name, url: url);
+    }
+  };
 
   void registerSubClass(
       String className, ParseObjectConstructor objectConstructor) {
     if (className != keyClassUser &&
         className != keyClassInstallation &&
-        className != keyClassSession)
-      _subClassMap.putIfAbsent(className, () => objectConstructor);
+        className != keyClassSession &&
+        className != keyFileClassname)
+      _subClassMap[className] = objectConstructor;
   }
 
   void registerUserSubClass(ParseUserConstructor parseUserConstructor) {
-    _parseUserConstructor ??= parseUserConstructor;
+    _parseUserConstructor = parseUserConstructor;
+  }
+
+  void registerFileSubClass(ParseFileConstructor parseFileConstructor) {
+    _parseFileConstructor = parseFileConstructor;
   }
 
   ParseObject createObject(String classname) {
@@ -43,4 +61,7 @@ class ParseSubClassHandler {
         : ParseUser(username, password, emailAddress,
             sessionToken: sessionToken, debug: debug, client: client);
   }
+
+  ParseFileBase createFile({String name, String url}) =>
+      _parseFileConstructor(name: name, url: url);
 }
