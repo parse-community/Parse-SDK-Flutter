@@ -846,11 +846,11 @@ Widget buildImage(ParseFileBase image){
 ```
 ```dart
 //A short example for storing a selected picture
-//libraries: image_picker, image_picker_for_web
+//libraries: image_picker (https://pub.dev/packages/image_picker), image_picker_for_web (https://pub.dev/packages/image_picker_for_web)
 PickedFile pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
 ParseFileBase parseFile;
 if (kIsWeb) {
-  //Seems weird but this lets you get the data from the selected file as an Uint8List very easily. 
+  //Seems weird, but this lets you get the data from the selected file as an Uint8List very easily. 
   ParseWebFile file = ParseWebFile(null, name: null, url: pickedFile.path);
   await file.download();
   parseFile = ParseWebFile(file.file, name: file.name);
