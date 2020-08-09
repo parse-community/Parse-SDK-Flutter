@@ -146,6 +146,8 @@ ParseCoreData().registerUserSubClass((username, password, emailAddress, {client,
 ```
 Providing a `ParseObject` as described above should still work, even if you have registered a different `SubClass`.
 
+For custom file classes have a lock at [here](#File).
+
 ## Add new values to objects
 To add a variable to an object call and retrieve it, call
 
@@ -809,11 +811,44 @@ QueryBuilder<ParseObject> query =
       ..whereRelatedTo('fruits', 'DietPlan', DietPlan.objectId);
 ```
 
+## File
+There are three different file classes in this SDK:
+- `ParseFileBase` is and abstract class and is the foundation of every file class that can be handled by this SDK.
+- `ParseFile` (former the only file class in the SDK) extends ParseFileBase and is by default used as the file class on every platform but web.
+This class uses a `File` from `dart:io` for storing the raw file.
+- `ParseWebFile` is the equivalent to ParseFile used at Flutter Web.
+This class uses an `Uint8List` for storing the raw file.
+
+These classes are used by default to represent files, but you can also build your own class extending ParseFileBase and provide a custom `ParseFileConstructor` similar to the `SubClasses`.
+
+Have a look at the example application for a small (non web) example.
+
+
+```dart
+//A short example
+Widget buildImage(ParseFileBase image){
+  return FutureBuilder<ParseFileBase>(
+    future: image.download(),
+    builder: (BuildContext context,
+    AsyncSnapshot<ParseFileBase> snapshot) {
+      if (snapshot.hasData) {
+        if (kIsWeb) {
+          return Image.memory((snapshot.data as ParseWebFile).file);
+        } else {
+          return Image.file((snapshot.data as ParseFile).file);
+        }
+      } else {
+        return CircularProgressIndicator();
+      }
+    },
+  );
+}
+```
+
 ## Other Features of this library
 Main:
 * Installation (View the example application)
 * GeoPoints (View the example application)
-* Files (View the example application)
 * Persistent storage
 * Debug Mode - Logging API calls
 * Manage Session ID's tokens
