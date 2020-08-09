@@ -894,7 +894,7 @@ class _ParseLiveListWidgetState<T extends ParseObject>
 
   @override
   void dispose() {
-    _liveList.dispose();
+    _liveList?.dispose();
     _liveList = null;
     super.dispose();
   }
