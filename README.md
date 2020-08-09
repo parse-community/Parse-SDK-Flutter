@@ -825,7 +825,7 @@ Have a look at the example application for a small (non web) example.
 
 
 ```dart
-//A short example
+//A short example for showing an image from a ParseFileBase
 Widget buildImage(ParseFileBase image){
   return FutureBuilder<ParseFileBase>(
     future: image.download(),
@@ -843,6 +843,23 @@ Widget buildImage(ParseFileBase image){
     },
   );
 }
+```
+```dart
+//A short example for storing a selected picture
+//libraries: image_picker, image_picker_for_web
+PickedFile pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+ParseFileBase parseFile;
+if (kIsWeb) {
+  //Seems weird but this lets you get the data from the selected file as an Uint8List very easily. 
+  ParseWebFile file = ParseWebFile(null, name: null, url: pickedFile.path);
+  await file.download();
+  parseFile = ParseWebFile(file.file, name: file.name);
+} else {
+  parseFile = ParseFile(File(pickedFile.path));
+}
+someParseObject.set("image", parseFile);
+//This saves the ParseObject as well as all of its children, and the ParseFileBase is such a child. 
+await someParseObject.save();
 ```
 
 ## Other Features of this library
