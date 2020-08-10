@@ -5,8 +5,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:devicelocale/devicelocale.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:meta/meta.dart';
