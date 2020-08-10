@@ -29,6 +29,7 @@ class ParseCoreData {
     Map<String, ParseObjectConstructor> registeredSubClassMap,
     ParseUserConstructor parseUserConstructor,
     ParseFileConstructor parseFileConstructor,
+    List<int> liveListRetryIntervals,
   }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
@@ -59,6 +60,13 @@ class ParseCoreData {
     if (securityContext != null) {
       _instance.securityContext = securityContext;
     }
+    if (liveListRetryIntervals != null) {
+      _instance.liveListRetryIntervals = liveListRetryIntervals;
+    } else {
+      _instance.liveListRetryIntervals = kIsWeb
+          ? <int>[0, 500, 1000, 2000, 5000]
+          : <int>[0, 500, 1000, 2000, 5000, 10000];
+    }
 
     _instance._subClassHandler = ParseSubClassHandler(
       registeredSubClassMap: registeredSubClassMap,
@@ -79,6 +87,7 @@ class ParseCoreData {
   bool debug;
   CoreStore storage;
   ParseSubClassHandler _subClassHandler;
+  List<int> liveListRetryIntervals;
 
   void registerSubClass(
       String className, ParseObjectConstructor objectConstructor) {
