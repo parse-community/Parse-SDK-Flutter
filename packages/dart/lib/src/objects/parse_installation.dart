@@ -169,13 +169,13 @@ class ParseInstallation extends ParseObject {
             ParseApiRQ.create.toString(), uri, body);
       }
 
-      final Response result =
-          await _client.post(uri, body: body, headers: headers);
+      final Response<String> result = await _client.post<String>(uri,
+          data: body, options: Options(headers: headers));
 
       //Set the objectId on the object after it is created.
       //This allows you to perform operations on the object after creation
       if (result.statusCode == 201) {
-        final Map<String, dynamic> map = json.decode(result.body);
+        final Map<String, dynamic> map = json.decode(result.data);
         objectId = map['objectId'].toString();
       }
 
@@ -199,7 +199,8 @@ class ParseInstallation extends ParseObject {
           logRequest(ParseCoreData().appName, parseClassName,
               ParseApiRQ.save.toString(), uri, body);
         }
-        final Response result = await _client.put(uri, body: body);
+        final Response<String> result =
+            await _client.put<String>(uri, data: body);
         return handleResponse<ParseInstallation>(
             this, result, ParseApiRQ.save, _debug, parseClassName);
       } on Exception catch (e) {

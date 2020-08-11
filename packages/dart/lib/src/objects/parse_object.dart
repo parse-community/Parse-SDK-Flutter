@@ -44,7 +44,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
       final Uri url = getSanitisedUri(_client, '$uri');
 
-      final Response result = await _client.get(url);
+      final Response<String> result = await _client.get<String>(url.toString());
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.get, _debug, parseClassName);
     } on Exception catch (e) {
@@ -56,7 +56,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   Future<ParseResponse> getAll() async {
     try {
       final Uri url = getSanitisedUri(_client, '$_path');
-      final Response result = await _client.get(url);
+      final Response<String> result = await _client.get<String>(url.toString());
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.getAll, _debug, parseClassName);
     } on Exception catch (e) {
@@ -70,7 +70,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
       final Uri url = getSanitisedUri(_client, '$_path');
       final String body = json.encode(toJson(forApiRQ: true));
       _saveChanges();
-      final Response result = await _client.post(url, body: body);
+      final Response result =
+          await _client.post<String>(url.toString(), data: body);
 
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.create, _debug, parseClassName);
@@ -87,8 +88,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
       final Map<String, String> headers = {
         keyHeaderContentType: keyHeaderContentTypeJson
       };
-      final Response result =
-          await _client.put(url, body: body, headers: headers);
+      final Response<String> result = await _client.put<String>(url.toString(),
+          data: body, options: Options(headers: headers));
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.save, _debug, parseClassName);
     } on Exception catch (e) {
@@ -212,7 +213,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
   dynamic _getRequestJson(String method) {
     final Uri tempUri = Uri.parse(_client.data.serverUrl);
-    final String parsePath = tempUri.path;
+    final String parsePath = tempUri.toString();
     final dynamic request = <String, dynamic>{
       'method': method,
       'path': '$parsePath$_path' + (objectId != null ? '/$objectId' : ''),
@@ -410,7 +411,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final Uri url = getSanitisedUri(_client, '$_path/$objectId');
         final String body =
             '{\"$key\":{\"__op\":\"$arrayAction\",\"objects\":${json.encode(parseEncode(values))}}}';
-        final Response result = await _client.put(url, body: body);
+        final Response<String> result =
+            await _client.put<String>(url.toString(), data: body);
         return handleResponse<ParseObject>(
             this, result, apiRQType, _debug, parseClassName);
       } else {
@@ -468,7 +470,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final Uri url = getSanitisedUri(_client, '$_path/$objectId');
         final String body =
             '{\"$key\":{\"__op\":\"$countAction\",\"amount\":$amount}}';
-        final Response result = await _client.put(url, body: body);
+        final Response<String> result =
+            await _client.put<String>(url.toString(), data: body);
         return handleResponse<ParseObject>(
             this, result, apiRQType, _debug, parseClassName);
       } else {
@@ -496,7 +499,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
       if (objectId != null) {
         final Uri url = getSanitisedUri(_client, '$_path/$objectId');
         final String body = '{\"$key\":{\"__op\":\"Delete\"}}';
-        final Response result = await _client.put(url, body: body);
+        final Response<String> result =
+            await _client.put<String>(url.toString(), data: body);
         final ParseResponse response = handleResponse<ParseObject>(
             this, result, ParseApiRQ.unset, _debug, parseClassName);
         if (!response.success) {
@@ -517,10 +521,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Can be used to create custom queries
-  Future<ParseResponse> query<T extends ParseObject>(String query) async {
+  Future<ParseResponse> query<T extends ParseObject>(String query,
+      {ProgressCallback progressCallback}) async {
     try {
       final Uri url = getSanitisedUri(_client, '$_path', query: query);
-      final Response result = await _client.get(url);
+      final Response<String> result = await _client.get<String>(
+        url.toString(),
+        onReceiveProgress: progressCallback,
+      );
       return handleResponse<T>(
           this, result, ParseApiRQ.query, _debug, parseClassName);
     } on Exception catch (e) {
@@ -531,7 +539,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   Future<ParseResponse> distinct<T extends ParseObject>(String query) async {
     try {
       final Uri url = getSanitisedUri(_client, '$_aggregatepath', query: query);
-      final Response result = await _client.get(url);
+      final Response<String> result = await _client.get<String>(url.toString());
       return handleResponse<T>(
           this, result, ParseApiRQ.query, _debug, parseClassName);
     } on Exception catch (e) {
@@ -546,7 +554,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
       path ??= _path;
       id ??= objectId;
       final Uri url = getSanitisedUri(_client, '$_path/$id');
-      final Response result = await _client.delete(url);
+      final Response<String> result =
+      await _client.delete<String>(url.toString());
       return handleResponse<T>(
           this, result, ParseApiRQ.delete, _debug, parseClassName);
     } on Exception catch (e) {

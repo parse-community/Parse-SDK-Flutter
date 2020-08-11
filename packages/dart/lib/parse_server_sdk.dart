@@ -6,9 +6,9 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:http/http.dart';
-import 'package:http/io_client.dart';
+import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
+import 'package:parse_server_sdk/src/network/http_client_adapter.dart';
 import 'package:parse_server_sdk/src/network/parse_websocket.dart'
     as parse_web_socket;
 import 'package:path/path.dart' as path;
@@ -150,8 +150,8 @@ class Parse {
     const ParseApiRQ type = ParseApiRQ.healthCheck;
 
     try {
-      final Response response =
-          await _client.get('${ParseCoreData().serverUrl}$keyEndPointHealth');
+      final Response<String> response = await _client
+          .get<String>('${ParseCoreData().serverUrl}$keyEndPointHealth');
       parseResponse =
           handleResponse<Parse>(null, response, type, _debug, className);
     } on Exception catch (e) {

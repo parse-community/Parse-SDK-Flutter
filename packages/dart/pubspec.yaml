@@ -7,9 +7,9 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
-  http: ^0.12.2
 
   # Networking
+  dio: ^3.0.10
   web_socket_channel: ^1.1.0
 
   #Database

@@ -9,7 +9,7 @@ part of flutter_parse_sdk;
 /// 4. Success with results. Again [ParseResponse()] is returned
 class _ParseResponseBuilder {
   ParseResponse handleResponse<T>(
-      dynamic object, Response apiResponse, ParseApiRQ type) {
+      dynamic object, Response<String> apiResponse, ParseApiRQ type) {
     final ParseResponse parseResponse = ParseResponse();
     final bool returnAsResult = shouldReturnAsABaseResult(type);
     if (apiResponse != null) {
@@ -25,9 +25,9 @@ class _ParseResponseBuilder {
             parseResponse, 1, 'Successful request, but no results found');
       } else if (returnAsResult) {
         return _handleSuccessWithoutParseObject(
-            parseResponse, object, apiResponse.body);
+            parseResponse, object, apiResponse.data);
       } else {
-        return _handleSuccess<T>(parseResponse, object, apiResponse.body, type);
+        return _handleSuccess<T>(parseResponse, object, apiResponse.data, type);
       }
     } else {
       parseResponse.error = ParseError(
@@ -150,7 +150,7 @@ class _ParseResponseBuilder {
     }
   }
 
-  bool isHealthCheck(Response apiResponse) {
-    return <String>['{\"status\":\"ok\"}', 'OK'].contains(apiResponse.body);
+  bool isHealthCheck(Response<String> apiResponse) {
+    return <String>['{\"status\":\"ok\"}', 'OK'].contains(apiResponse.data);
   }
 }

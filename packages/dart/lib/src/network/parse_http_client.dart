@@ -1,14 +1,13 @@
 part of flutter_parse_sdk;
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset
-class ParseHTTPClient extends BaseClient {
+class ParseHTTPClient with DioMixin implements Dio {
   ParseHTTPClient({bool sendSessionId = false, SecurityContext securityContext})
-      : _sendSessionId = sendSessionId,
-        _client = securityContext != null
-            ? IOClient(HttpClient(context: securityContext))
-            : Client();
+      : _sendSessionId = sendSessionId {
+    options = BaseOptions();
+    httpClientAdapter = createHttpClientAdapter(securityContext);
+  }
 
-  final Client _client;
   final bool _sendSessionId;
   final String _userAgent = '$keyLibraryName $keySdkVersion';
   ParseCoreData data = ParseCoreData();
@@ -16,31 +15,48 @@ class ParseHTTPClient extends BaseClient {
 
   /// Overrides the call method for HTTP Client and adds custom headers
   @override
-  Future<StreamedResponse> send(BaseRequest request) {
+  Future<Response<T>> request<T>(
+      String path, {
+        dynamic data,
+        Map<String, dynamic> queryParameters,
+        CancelToken cancelToken,
+        Options options,
+        ProgressCallback onSendProgress,
+        ProgressCallback onReceiveProgress,
+      }) {
+    options ??= Options();
     if (!identical(0, 0.0)) {
-      request.headers[keyHeaderUserAgent] = _userAgent;
+      options.headers[keyHeaderUserAgent] = _userAgent;
     }
-    request.headers[keyHeaderApplicationId] = data.applicationId;
+    options.headers[keyHeaderApplicationId] = this.data.applicationId;
     if ((_sendSessionId == true) &&
-        (data.sessionId != null) &&
-        (request.headers[keyHeaderSessionToken] == null))
-      request.headers[keyHeaderSessionToken] = data.sessionId;
+        (this.data.sessionId != null) &&
+        (options.headers[keyHeaderSessionToken] == null))
+      options.headers[keyHeaderSessionToken] = this.data.sessionId;
 
-    if (data.clientKey != null)
-      request.headers[keyHeaderClientKey] = data.clientKey;
+    if (this.data.clientKey != null)
+      options.headers[keyHeaderClientKey] = this.data.clientKey;
     if (data.masterKey != null)
-      request.headers[keyHeaderMasterKey] = data.masterKey;
+      options.headers[keyHeaderMasterKey] = this.data.masterKey;
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
     if (additionalHeaders != null && additionalHeaders.isNotEmpty) {
       additionalHeaders
-          .forEach((String key, String value) => request.headers[key] = value);
+          .forEach((String key, String value) => options.headers[key] = value);
     }
 
-    if (data.debug) {
-      logCUrl(request);
+    if (this.data.debug) {
+      logCUrl(options, data, path);
     }
 
-    return _client.send(request);
+    return super.request(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      cancelToken: cancelToken,
+      options: options,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
   }
 }

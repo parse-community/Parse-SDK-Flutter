@@ -18,19 +18,23 @@ class ParseWebFile extends ParseFileBase {
   Uint8List file;
 
   @override
-  Future<ParseWebFile> download() async {
+  Future<ParseWebFile> download({ProgressCallback progressCallback}) async {
     if (url == null) {
       return this;
     }
 
-    final Response response = await _client.get(url);
-    file = response.bodyBytes;
+    final Response<List<int>> response = await _client.get<List<int>>(
+      url,
+      options: Options(responseType: ResponseType.bytes),
+      onReceiveProgress: progressCallback,
+    );
+    file = response.data;
 
     return this;
   }
 
   @override
-  Future<ParseResponse> upload() async {
+  Future<ParseResponse> upload({ProgressCallback progressCallback}) async {
     if (saved) {
       //Creates a Fake Response to return the correct result
       final Map<String, String> response = <String, String>{
@@ -39,7 +43,7 @@ class ParseWebFile extends ParseFileBase {
       };
       return handleResponse<ParseWebFile>(
           this,
-          Response(json.encode(response), 201),
+          Response<String>(data: json.encode(response), statusCode: 201),
           ParseApiRQ.upload,
           _debug,
           parseClassName);
@@ -52,10 +56,14 @@ class ParseWebFile extends ParseFileBase {
     };
     try {
       final String uri = _client.data.serverUrl + '$_path';
-      final Response response =
-          await _client.post(uri, headers: headers, body: file);
+      final Response<String> response = await _client.post<String>(
+        uri,
+        options: Options(headers: headers),
+        data: file,
+        onSendProgress: progressCallback,
+      );
       if (response.statusCode == 201) {
-        final Map<String, dynamic> map = json.decode(response.body);
+        final Map<String, dynamic> map = json.decode(response.data);
         url = map['url'].toString();
         name = map['name'].toString();
       }
