@@ -524,6 +524,13 @@ LiveQuery server.
 liveQuery.client.unSubscribe(subscription);
 ```
 
+__Disconnection__
+In case the client's connection to the server breaks,
+LiveQuery will automatically try to reconnect.
+LiveQuery will wait at increasing intervals between reconnection attempts.
+By default, these intervals are set to `[0, 500, 1000, 2000, 5000, 10000]` for mobile and `[0, 500, 1000, 2000, 5000]` for web.
+You can change these by providing a custom list using the `liveListRetryIntervals` parameter at `Parse.initialize()` ("-1" means "do not try to reconnect").
+
 ## ParseLiveList
 ParseLiveList makes implementing a dynamic List as simple as possible.
 

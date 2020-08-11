@@ -95,6 +95,8 @@ class Parse {
     CoreStore coreStore,
     Map<String, ParseObjectConstructor> registeredSubClassMap,
     ParseUserConstructor parseUserConstructor,
+    ParseFileConstructor parseFileConstructor,
+    List<int> liveListRetryIntervals,
   }) async {
     final String url = removeTrailingSlash(serverUrl);
 
@@ -112,6 +114,8 @@ class Parse {
       store: coreStore,
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
+      parseFileConstructor: parseFileConstructor,
+      liveListRetryIntervals: liveListRetryIntervals,
     );
 
     _hasBeenInitialized = true;

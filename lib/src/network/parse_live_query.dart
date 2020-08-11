@@ -76,8 +76,7 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
   }
 
-  // -1 means "do not try to reconnect",
-  static const List<int> retryInterval = <int>[0, 500, 1000, 2000, 5000, 10000];
+  static List<int> get retryInterval => ParseCoreData().liveListRetryIntervals;
   static const String DEBUG_TAG = 'LiveQueryReconnectingController';
 
   final Function _reconnect;
