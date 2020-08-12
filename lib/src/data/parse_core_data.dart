@@ -63,7 +63,7 @@ class ParseCoreData {
     if (liveListRetryIntervals != null) {
       _instance.liveListRetryIntervals = liveListRetryIntervals;
     } else {
-      _instance.liveListRetryIntervals = kIsWeb
+      _instance.liveListRetryIntervals = parseIsWeb
           ? <int>[0, 500, 1000, 2000, 5000]
           : <int>[0, 500, 1000, 2000, 5000, 10000];
     }

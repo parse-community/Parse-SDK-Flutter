@@ -22,7 +22,7 @@ class ParseSubClassHandler {
   Map<String, ParseObjectConstructor> _subClassMap;
   ParseUserConstructor _parseUserConstructor;
   ParseFileConstructor _parseFileConstructor = ({String name, String url}) {
-    if (kIsWeb) {
+    if (parseIsWeb) {
       return ParseWebFile(null, name: name, url: url);
     } else {
       return ParseFile(null, name: name, url: url);
