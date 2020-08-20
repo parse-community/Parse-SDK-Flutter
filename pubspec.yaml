@@ -7,30 +7,30 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
-  http: ^0.12.0+4
+  http: ^0.12.2
   flutter:
     sdk: flutter
 
   # Networking
   web_socket_channel: ^1.1.0
-  connectivity: ^0.4.6+2
+  connectivity: ^0.4.9
 
   #Database
-  sembast: ^2.3.0
-  xxtea: ^2.0.2
-  shared_preferences: ^0.5.6
+  sembast: ^2.4.7+6
+  xxtea: ^2.0.3
+  shared_preferences: ^0.5.8
 
   # Utils
-  path_provider: ^1.5.1
-  uuid: ^2.0.4
-  package_info: ^0.4.0+13
-  devicelocale: ^0.2.1
+  path_provider: ^1.6.11
+  uuid: ^2.2.0
+  package_info: ^0.4.1
+  devicelocale: ^0.3.1
   meta: ^1.1.8
-  path: ^1.6.4
+  path: ^1.7.0
 
 dev_dependencies:
   # Testing
   test: ^1.5.1
-  mockito: ^4.1.0
+  mockito: ^4.1.1
   flutter_test:
     sdk: flutter
