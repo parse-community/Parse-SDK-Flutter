@@ -144,6 +144,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// After creating a new user via [Parse.create] call this method to register
   /// that user on Parse
   Future<ParseResponse> signUp() async {
+    forgetLocalSession();
+
     try {
       if (emailAddress == null) {
         return null;
@@ -173,6 +175,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Once a user is created using [Parse.create] and a username and password is
   /// provided, call this method to login.
   Future<ParseResponse> login() async {
+    forgetLocalSession();
+
     try {
       final Map<String, dynamic> queryParams = <String, String>{
         keyVarUsername: username,
@@ -197,6 +201,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   // Logs in a user anonymously
   Future<ParseResponse> loginAnonymous() async {
+    forgetLocalSession();
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
       final Uuid uuid = Uuid();

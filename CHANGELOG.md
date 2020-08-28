@@ -1,4 +1,5 @@
 ## 1.0.27
+User login / signUp / loginAnonymous delete SessionId stored in device before calling server
 
 ## 1.0.26
 LiveList
