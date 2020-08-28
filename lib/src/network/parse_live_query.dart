@@ -1,9 +1,10 @@
+// TODO(maaeps): Combine both liveQuery versions
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:connectivity/connectivity.dart';
-import 'package:flutter/widgets.dart';
+import 'package:connectivity/connectivity.dart'; // TODO(maaeps): 'remove' from dart part
+import 'package:flutter/widgets.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 

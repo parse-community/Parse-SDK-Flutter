@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:html' as html;
 
-import 'package:connectivity/connectivity.dart';
-import 'package:flutter/widgets.dart';
+import 'package:connectivity/connectivity.dart'; // TODO(maaeps): 'remove' from dart part
+import 'package:flutter/widgets.dart'; // TODO(maaeps): 'remove' from dart part
 
 import '../../parse_server_sdk.dart';
 

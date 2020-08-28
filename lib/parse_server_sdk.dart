@@ -7,16 +7,16 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:devicelocale/devicelocale.dart';
+import 'package:devicelocale/devicelocale.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:meta/meta.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info/package_info.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
+import 'package:path_provider/path_provider.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:uuid/uuid.dart';
 import 'package:xxtea/xxtea.dart';
 
