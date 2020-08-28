@@ -68,7 +68,9 @@ class ParseInstallation extends ParseObject {
   /// Updates the installation with current device data
   Future<void> _updateInstallation() async {
     //Device type
-    if (Platform.isAndroid) {
+    if (parseIsWeb) {
+      set<String>(keyDeviceType, 'web');
+    } else if (Platform.isAndroid) {
       set<String>(keyDeviceType, 'android');
     } else if (Platform.isIOS) {
       set<String>(keyDeviceType, 'ios');
@@ -81,7 +83,9 @@ class ParseInstallation extends ParseObject {
     }
 
     //Locale
-    final String locale = await Devicelocale.currentLocale;
+    final String locale = parseIsWeb
+        ? ui.window.locale.toString()
+        : await Devicelocale.currentLocale;
     if (locale != null && locale.isNotEmpty) {
       set<String>(keyLocaleIdentifier, locale);
     }
@@ -89,10 +93,12 @@ class ParseInstallation extends ParseObject {
     //Timezone
 
     //App info
-    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    set<String>(keyAppName, packageInfo.appName);
-    set<String>(keyAppVersion, packageInfo.version);
-    set<String>(keyAppIdentifier, packageInfo.packageName);
+    if (!parseIsWeb) {
+      final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      set<String>(keyAppName, packageInfo.appName);
+      set<String>(keyAppVersion, packageInfo.version);
+      set<String>(keyAppIdentifier, packageInfo.packageName);
+    }
     set<String>(keyParseVersion, keySdkVersion);
   }
 
@@ -153,6 +159,8 @@ class ParseInstallation extends ParseObject {
     final ParseInstallation installation = ParseInstallation();
     installation._installationId = _currentInstallationId;
     await installation._updateInstallation();
+    await ParseCoreData().getStore().setString(keyParseStoreInstallation,
+        json.encode(installation.toJson(full: true)));
     return installation;
   }
 

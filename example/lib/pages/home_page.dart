@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
             title: const Text('Parse Server demo'),
             actions: <Widget>[
               FlatButton(
-                  child: Text('Logout',
+                  child: const Text('Logout',
                       style: TextStyle(fontSize: 17.0, color: Colors.white)),
                   onPressed: () async {
                     final ParseUser user = await ParseUser.currentUser();

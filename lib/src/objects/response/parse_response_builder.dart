@@ -151,6 +151,6 @@ class _ParseResponseBuilder {
   }
 
   bool isHealthCheck(Response apiResponse) {
-    return apiResponse.body == '{\"status\":\"ok\"}';
+    return <String>['{\"status\":\"ok\"}', 'OK'].contains(apiResponse.body);
   }
 }

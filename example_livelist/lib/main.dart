@@ -172,7 +172,7 @@ class _ObjectFormState extends State<ObjectForm> {
                 ],
               ),
               trailing: IconButton(
-                  icon: Icon(Icons.save),
+                  icon: const Icon(Icons.save),
                   onPressed: () {
                     setState(() {
                       _formKey.currentState.save();

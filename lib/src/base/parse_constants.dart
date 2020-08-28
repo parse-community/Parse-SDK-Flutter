@@ -1,7 +1,7 @@
 part of flutter_parse_sdk;
 
 // Library
-const String keySdkVersion = '1.0.26';
+const String keySdkVersion = '1.0.27';
 const String keyLibraryName = 'Flutter Parse SDK';
 
 // End Points
@@ -39,6 +39,7 @@ const String keyClassInstallation = '_Installation';
 const String keyGeoPoint = 'GeoPoint';
 const String keyFile = 'File';
 const String keyRelation = 'Relation';
+const String keyFileClassname = 'ParseFile';
 
 // Headers
 const String keyHeaderSessionToken = 'X-Parse-Session-Token';
@@ -80,3 +81,5 @@ const String keyVarInstallationId = 'installationId';
 // Error
 const String keyError = 'error';
 const String keyCode = 'code';
+
+const bool parseIsWeb = identical(0, 0.0);

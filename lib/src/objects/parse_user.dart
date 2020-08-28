@@ -76,7 +76,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   static ParseUser createUser(
       [String username, String password, String emailAddress]) {
-    return ParseUser(username, password, emailAddress);
+    return ParseCoreData.instance
+        .createParseUser(username, password, emailAddress);
   }
 
   /// Gets the current user from the server
@@ -118,11 +119,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUserName');
       final Response response = await _client.get(url, headers: headers);
-      return await _handleResponse(this, response,
-          ParseApiRQ.currentUser, _debug, parseClassName);
+      return await _handleResponse(
+          this, response, ParseApiRQ.currentUser, _debug, parseClassName);
     } on Exception catch (e) {
-      return handleException(
-          e, ParseApiRQ.currentUser, _debug, parseClassName);
+      return handleException(e, ParseApiRQ.currentUser, _debug, parseClassName);
     }
   }
 
@@ -144,6 +144,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// After creating a new user via [Parse.create] call this method to register
   /// that user on Parse
   Future<ParseResponse> signUp() async {
+    forgetLocalSession();
+
     try {
       if (emailAddress == null) {
         return null;
@@ -173,18 +175,21 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Once a user is created using [Parse.create] and a username and password is
   /// provided, call this method to login.
   Future<ParseResponse> login() async {
+    forgetLocalSession();
+
     try {
       final Map<String, dynamic> queryParams = <String, String>{
         keyVarUsername: username,
         keyVarPassword: password
       };
-
+      final String installationId = await _getInstallationId();
       final Uri url = getSanitisedUri(_client, '$keyEndPointLogin',
           queryParams: queryParams);
       _saveChanges();
       final Response response =
           await _client.get(url, headers: <String, String>{
         keyHeaderRevocableSession: '1',
+        if (installationId != null) keyHeaderInstallationId: installationId,
       });
 
       return await _handleResponse(
@@ -196,6 +201,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   // Logs in a user anonymously
   Future<ParseResponse> loginAnonymous() async {
+    forgetLocalSession();
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
       final Uuid uuid = Uuid();
@@ -328,6 +334,19 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
+  @override
+  Future<ParseResponse> update() async {
+    if (objectId == null) {
+      return await signUp();
+    } else {
+      final ParseResponse response = await super.update();
+      if (response.success) {
+        await _onResponseSuccess();
+      }
+      return response;
+    }
+  }
+
   Future<void> _onResponseSuccess() async {
     await saveInStorage(keyParseStoreUser);
   }
@@ -413,7 +432,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
-  static ParseUser _getEmptyUser() => ParseUser(null, null, null);
+  static ParseUser _getEmptyUser() =>
+      ParseCoreData.instance.createParseUser(null, null, null);
 
   static Future<String> _getInstallationId() async {
     final ParseInstallation parseInstallation =

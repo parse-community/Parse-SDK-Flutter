@@ -135,15 +135,13 @@ class DietPlanProviderDB implements DietPlanProviderContract {
     final Map<String, dynamic> values = convertItemToStorageMap(item);
     final Finder finder =
         Finder(filter: Filter.equals('objectId', item.objectId));
-    final int returnedCount =
-        await _store.update(_db, values, finder: finder);
+    final int returnedCount = await _store.update(_db, values, finder: finder);
 
     if (returnedCount == 0) {
       return add(item);
     }
 
-    return ApiResponse(
-        true, 200, <dynamic>[item], null);
+    return ApiResponse(true, 200, <dynamic>[item], null);
   }
 
   Map<String, dynamic> convertItemToStorageMap(DietPlan item) {
@@ -171,6 +169,6 @@ class DietPlanProviderDB implements DietPlanProviderContract {
     }
   }
 
-  static ApiError error = ApiError(1, 'No records found', false, '');
+  static ApiError error = ApiError(1, 'No records found', null, '');
   ApiResponse errorResponse = ApiResponse(false, 1, null, error);
 }

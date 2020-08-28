@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_errorMessage.isNotEmpty && _errorMessage != null) {
       return Text(
         _errorMessage,
-        style: TextStyle(
+        style: const TextStyle(
             fontSize: 13.0,
             color: Colors.red,
             height: 1.0,
@@ -215,9 +215,9 @@ class _LoginPageState extends State<LoginPage> {
   Widget _showSecondaryButton() {
     return FlatButton(
       child: _formMode == FormMode.LOGIN
-          ? Text('Create an account',
+          ? const Text('Create an account',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
-          : Text('Have an account? Sign in',
+          : const Text('Have an account? Sign in',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
       onPressed: _formMode == FormMode.LOGIN
           ? _changeFormToSignUp
@@ -236,9 +236,9 @@ class _LoginPageState extends State<LoginPage> {
                 borderRadius: BorderRadius.circular(30.0)),
             color: Colors.blue,
             child: _formMode == FormMode.LOGIN
-                ? Text('Login',
+                ? const Text('Login',
                     style: TextStyle(fontSize: 20.0, color: Colors.white))
-                : Text('Create account',
+                : const Text('Create account',
                     style: TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: _validateAndSubmit,
           ),

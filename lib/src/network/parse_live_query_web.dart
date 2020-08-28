@@ -41,7 +41,6 @@ class Subscription<T extends ParseObject> {
 enum LiveQueryClientEvent { CONNECTED, DISCONNECTED, USER_DISCONNECTED }
 
 class LiveQueryReconnectingController with WidgetsBindingObserver {
-
   LiveQueryReconnectingController(
       this._reconnect, this._eventStream, this.debug) {
     _connectivityChanged(ConnectivityResult.wifi);
@@ -72,8 +71,7 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
   }
 
-  // -1 means "do not try to reconnect",
-  static const List<int> retryInterval = <int>[0, 500, 1000, 2000, 5000];
+  static List<int> get retryInterval => ParseCoreData().liveListRetryIntervals;
   static const String DEBUG_TAG = 'LiveQueryReconnectingController';
 
   final Function _reconnect;
@@ -179,7 +177,6 @@ class Client {
   StreamController<LiveQueryClientEvent> _clientEventStreamController;
   Stream<LiveQueryClientEvent> _clientEventStream;
   LiveQueryReconnectingController reconnectingController;
-
 
   final Map<int, Subscription> _requestSubScription = <int, Subscription>{};
 
@@ -342,7 +339,6 @@ class Client {
 //    _channel.sink.add(jsonEncode(connectMessage));
   }
 
-
   void _subscribeLiveQuery(Subscription subscription) {
     if (subscription._enabled) {
       return;
@@ -409,13 +405,15 @@ class Client {
       if (actionData.containsKey('object')) {
         final Map<String, dynamic> map = actionData['object'];
         final String className = map['className'];
-        if (className == '_User') {
+        if (className == keyClassUser) {
           subscription.eventCallbacks[actionData['op']](
-              (subscription.copyObject ?? ParseUser(null, null, null))
+              (subscription.copyObject ??
+                      ParseCoreData.instance.createParseUser(null, null, null))
                   .fromJson(map));
         } else {
           subscription.eventCallbacks[actionData['op']](
-              (subscription.copyObject ?? ParseObject(className))
+              (subscription.copyObject ??
+                      ParseCoreData.instance.createObject(className))
                   .fromJson(map));
         }
       } else {

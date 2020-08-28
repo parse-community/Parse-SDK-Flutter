@@ -58,19 +58,12 @@ dynamic parseDecode(dynamic value) {
         final String val = map['base64'];
         return base64.decode(val);
       case 'Pointer':
-        final String className = map['className'];
-        if (className == '_User') {
-          return ParseUser._getEmptyUser().fromJson(map);
-        }
-        return ParseObject(className).fromJson(map);
       case 'Object':
         final String className = map['className'];
-        if (className == '_User') {
-          return ParseUser._getEmptyUser().fromJson(map);
-        }
-        return ParseObject(className).fromJson(map);
+        return ParseCoreData.instance.createObject(className).fromJson(map);
       case 'File':
-        return ParseFile(null, url: map['url'], name: map['name'])
+        return ParseCoreData.instance
+            .createFile(url: map['url'], name: map['name'])
             .fromJson(map);
       case 'GeoPoint':
         final num latitude = map['latitude'] ?? 0.0;
@@ -78,7 +71,7 @@ dynamic parseDecode(dynamic value) {
         return ParseGeoPoint(
             latitude: latitude.toDouble(), longitude: longitude.toDouble());
       case 'Relation':
-      // ignore: always_specify_types
+        // ignore: always_specify_types
         return ParseRelation().fromJson(map);
     }
   }
@@ -86,15 +79,15 @@ dynamic parseDecode(dynamic value) {
   /// Decoding from locally cached JSON
   if (map.containsKey('className')) {
     switch (map['className']) {
-      case '_User':
-        return ParseUser._getEmptyUser().fromJson(map);
       case 'GeoPoint':
         final num latitude = map['latitude'] ?? 0.0;
         final num longitude = map['longitude'] ?? 0.0;
         return ParseGeoPoint(
             latitude: latitude.toDouble(), longitude: longitude.toDouble());
       default:
-        return ParseObject(map['className']).fromJson(map);
+        return ParseCoreData.instance
+            .createObject(map['className'])
+            .fromJson(map);
     }
   }
 

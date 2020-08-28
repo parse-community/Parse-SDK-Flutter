@@ -5,7 +5,7 @@ class ParseError {
   ParseError(
       {this.code = -1,
         this.message = 'Unknown error',
-        this.isTypeOfException = false,
+        this.exception,
         bool debug = false}) {
     type = exceptions[code];
     if (debug) {
@@ -70,7 +70,7 @@ class ParseError {
 
   final int code;
   final String message;
-  final bool isTypeOfException;
+  final Exception exception;
   String type;
 
   @override
