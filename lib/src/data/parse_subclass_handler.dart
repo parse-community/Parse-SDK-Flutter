@@ -47,8 +47,12 @@ class ParseSubClassHandler {
   }
 
   ParseObject createObject(String classname) {
-    if (classname == keyClassUser) return createParseUser(null, null, null);
-    if (_subClassMap.containsKey(classname)) return _subClassMap[classname]();
+    if (classname == keyClassUser) {
+      return createParseUser(null, null, null);
+    }
+    if (_subClassMap.containsKey(classname)) {
+      return _subClassMap[classname]();
+    }
     return ParseObject(classname);
   }
 

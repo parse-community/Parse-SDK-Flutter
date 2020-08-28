@@ -256,7 +256,9 @@ class ParseLiveList<T extends ParseObject> {
 
   static Future<void> _loadIncludes(ParseObject object,
       {ParseObject oldObject, Map<String, dynamic> paths}) async {
-    if (object == null || paths == null || paths.isEmpty) return;
+    if (object == null || paths == null || paths.isEmpty) {
+      return;
+    }
 
     final List<Future<void>> loadingNodes = <Future<void>>[];
 
@@ -284,11 +286,13 @@ class ParseLiveList<T extends ParseObject> {
                   .then<void>((ParseResponse parseResponse) {
                 if (parseResponse.success &&
                     parseResponse.results.length == 1) {
+                  // ignore: deprecated_member_use_from_same_package
                   object.getObjectData()[key] = parseResponse.results[0];
                 }
               }));
               continue;
             } else {
+              // ignore: deprecated_member_use_from_same_package
               object.getObjectData()[key] = includedObject;
               //recursion
               loadingNodes
@@ -305,6 +309,7 @@ class ParseLiveList<T extends ParseObject> {
             loadingNodes.add(
                 queryBuilder.query().then<void>((ParseResponse parseResponse) {
               if (parseResponse.success && parseResponse.results.length == 1) {
+                // ignore: deprecated_member_use_from_same_package
                 object.getObjectData()[key] = parseResponse.results[0];
               }
             }));
@@ -331,7 +336,7 @@ class ParseLiveList<T extends ParseObject> {
       // ignore: avoid_as
       if ((includes[key] as Map<String, dynamic>).isNotEmpty) {
         includeList
-            .addAll(_toIncludeStringList(includes[key]).map((e) => '$key.$e'));
+            .addAll(_toIncludeStringList(includes[key]).map((String e) => '$key.$e'));
       }
     }
     return includeList;
@@ -343,7 +348,9 @@ class ParseLiveList<T extends ParseObject> {
     //(Hide first element, hide second, view first, view second => second is displayed twice)
     object = object?.clone(object?.toJson(full: true));
 
-    if (!fetchedIncludes) await _loadIncludes(object, paths: _includePaths);
+    if (!fetchedIncludes) {
+      await _loadIncludes(object, paths: _includePaths);
+    }
     for (int i = 0; i < _list.length; i++) {
       if (after(object, _list[i].object) != true) {
         _list.insert(
@@ -604,6 +611,7 @@ class ParseLiveListElement<T extends ParseObject> {
           _subscriptionQueue.whenComplete(() async {
             await ParseLiveList._loadIncludes(newObject,
                 oldObject: subObject, paths: _toKeyMap(path));
+            // ignore: deprecated_member_use_from_same_package
             parentObject.getObjectData()[currentKey.key] = newObject;
             if (!_streamController.isClosed) {
               _streamController
@@ -667,21 +675,20 @@ class ParseLiveListElement<T extends ParseObject> {
       if (subObject?.containsKey(keyVarUpdatedAt) == true) {
         final QueryBuilder<ParseObject> queryBuilder =
             QueryBuilder<ParseObject>(subObject)
-              ..keysToReturn([keyVarUpdatedAt])
+              ..keysToReturn(<String>[keyVarUpdatedAt])
               ..whereEqualTo(keyVarObjectId, subObject.objectId);
-        ParseResponse parseResponse = await queryBuilder.query();
-        if (parseResponse.success &&
-            (parseResponse.results.first as ParseObject).updatedAt !=
+        final ParseResponse parseResponse = await queryBuilder.query();
+        if (parseResponse.success && parseResponse.results.first.updatedAt !=
                 subObject.updatedAt) {
-          queryBuilder.limiters.remove("keys");
+          queryBuilder.limiters.remove('keys');
           queryBuilder.includeObject(_getIncludeList(path[key]));
-          ParseResponse parseResponse = await queryBuilder.query();
+          final ParseResponse parseResponse = await queryBuilder.query();
           if (parseResponse.success) {
             subObject = parseResponse.result.first;
 //            root.getObjectData()[key.key] = subObject;
-            if (key.subscription?.eventCallbacks?.containsKey("update") ==
+            if (key.subscription?.eventCallbacks?.containsKey('update') ==
                 true) {
-              key.subscription.eventCallbacks["update"](subObject);
+              key.subscription.eventCallbacks['update'](subObject);
             }
 //            key.subscription.eventCallbacks["update"](subObject);
             break;

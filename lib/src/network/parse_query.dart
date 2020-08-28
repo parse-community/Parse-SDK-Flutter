@@ -301,7 +301,7 @@ class QueryBuilder<T extends ParseObject> {
   // Add a constraint to the query that requires a particular key's value matches a value for a key in the results of another ParseQuery.
   // ignore: always_specify_types
   void whereMatchesKeyInQuery(
-      String column, String keyInQuery, QueryBuilder query) {
+      String column, String keyInQuery, QueryBuilder<T> query) {
     if (query.queries.isEmpty) {
       throw ArgumentError('query conditions is required');
     }
@@ -322,7 +322,7 @@ class QueryBuilder<T extends ParseObject> {
   // Add a constraint to the query that requires a particular key's value does not match any value for a key in the results of another ParseQuery
   // ignore: always_specify_types
   void whereDoesNotMatchKeyInQuery(
-      String column, String keyInQuery, QueryBuilder query) {
+      String column, String keyInQuery, QueryBuilder<T> query) {
     if (query.queries.isEmpty) {
       throw ArgumentError('query conditions is required');
     }
