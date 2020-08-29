@@ -1,6 +1,6 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:test/test.dart';
 
 void main() {
   SharedPreferences.setMockInitialValues(Map<String, String>());
