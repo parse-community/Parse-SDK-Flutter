@@ -85,7 +85,7 @@ class ParseInstallation extends ParseObject {
     //Locale
     final String locale = parseIsWeb
         ? ui.window.locale.toString()
-        : await Devicelocale.currentLocale;
+        : Platform.localeName;
     if (locale != null && locale.isNotEmpty) {
       set<String>(keyLocaleIdentifier, locale);
     }
