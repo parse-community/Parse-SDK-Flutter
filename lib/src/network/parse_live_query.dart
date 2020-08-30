@@ -95,6 +95,9 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
       _retryState = 0;
     }
     _isOnline = state != ConnectivityResult.none;
+    if(state == ConnectivityResult.none) {
+      _isConnected = false;
+    }
     if (debug) {
       print('$DEBUG_TAG: $state');
     }
