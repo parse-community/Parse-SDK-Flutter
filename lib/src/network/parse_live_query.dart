@@ -1,12 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-
-import 'package:connectivity/connectivity.dart';
-import 'package:flutter/widgets.dart';
-import 'package:parse_server_sdk/src/network/parse_websocket.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-
-import '../../parse_server_sdk.dart';
+part of flutter_parse_sdk;
 
 enum LiveQueryEvent { create, enter, update, leave, delete, error }
 
@@ -134,9 +126,9 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
   }
 }
 
-class Client {
-  factory Client() => _getInstance();
-  Client._internal(
+class LiveQueryClient {
+  factory LiveQueryClient() => _getInstance();
+  LiveQueryClient._internal(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
     _clientEventStreamController = StreamController<LiveQueryClientEvent>();
     _clientEventStream =
@@ -161,11 +153,11 @@ class Client {
     reconnectingController = LiveQueryReconnectingController(
         () => reconnect(userInitialized: false), getClientEventStream, _debug);
   }
-  static Client get instance => _getInstance();
-  static Client _instance;
-  static Client _getInstance(
+  static LiveQueryClient get instance => _getInstance();
+  static LiveQueryClient _instance;
+  static LiveQueryClient _getInstance(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
-    _instance ??= Client._internal(
+    _instance ??= LiveQueryClient._internal(
         debug: debug, client: client, autoSendSessionId: autoSendSessionId);
     return _instance;
   }
@@ -174,7 +166,7 @@ class Client {
     return _clientEventStream;
   }
 
-  WebSocket _webSocket;
+  parse_web_socket.WebSocket _webSocket;
   ParseHTTPClient _client;
   bool _debug;
   bool _sendSessionId;
@@ -200,7 +192,8 @@ class Client {
   }
 
   Future<dynamic> disconnect({bool userInitialized = false}) async {
-    if (_webSocket != null && _webSocket.readyState == WebSocket.OPEN) {
+    if (_webSocket != null &&
+        _webSocket.readyState == parse_web_socket.WebSocket.OPEN) {
       if (_debug) {
         print('$_printConstLiveQuery: Socket closed');
       }
@@ -271,9 +264,10 @@ class Client {
     _connecting = true;
 
     try {
-      _webSocket = await WebSocket.connect(_liveQueryURL);
+      _webSocket = await parse_web_socket.WebSocket.connect(_liveQueryURL);
       _connecting = false;
-      if (_webSocket != null && _webSocket.readyState == WebSocket.OPEN) {
+      if (_webSocket != null &&
+          _webSocket.readyState == parse_web_socket.WebSocket.OPEN) {
         if (_debug) {
           print('$_printConstLiveQuery: Socket opened');
         }
@@ -431,7 +425,7 @@ class LiveQuery {
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _sendSessionId =
         autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
-    this.client = Client._getInstance(
+    this.client = LiveQueryClient._getInstance(
         client: _client, debug: _debug, autoSendSessionId: _sendSessionId);
   }
 
@@ -439,7 +433,7 @@ class LiveQuery {
   bool _debug;
   bool _sendSessionId;
   Subscription _latestSubscription;
-  Client client;
+  LiveQueryClient client;
 
   @deprecated
   Future<dynamic> subscribe(QueryBuilder query) async {
