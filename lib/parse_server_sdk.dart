@@ -19,8 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:xxtea/xxtea.dart';
 
-export 'src/network/parse_live_query.dart'
-    if (dart.library.js) 'src/network/parse_live_query_web.dart';
+export 'src/network/parse_live_query.dart';
 export 'src/utils/parse_live_list.dart';
 
 part 'package:parse_server_sdk/src/data/core_store.dart';
