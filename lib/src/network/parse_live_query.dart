@@ -188,7 +188,7 @@ class LiveQueryClient {
     if (_webSocket != null) {
       return _webSocket.readyState;
     }
-    return WebSocket.CONNECTING;
+    return parse_web_socket.WebSocket.CONNECTING;
   }
 
   Future<dynamic> disconnect({bool userInitialized = false}) async {
@@ -293,8 +293,11 @@ class LiveQueryClient {
           print(
               '$_printConstLiveQuery: Error: ${error.runtimeType.toString()}');
         }
-        return Future<ParseResponse>.value(handleException(Exception(error),
-            ParseApiRQ.liveQuery, _debug, 'IOWebSocketChannel'));
+        return Future<ParseResponse>.value(handleException(
+            Exception(error),
+            ParseApiRQ.liveQuery,
+            _debug,
+            !parseIsWeb ? 'IOWebSocketChannel' : 'HtmlWebSocketChannel'));
       });
     } on Exception catch (e) {
       _connecting = false;
