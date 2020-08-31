@@ -4,6 +4,8 @@ import 'dart:html' as html;
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/widgets.dart';
+import 'package:web_socket_channel/html.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../parse_server_sdk.dart';
 
@@ -171,7 +173,7 @@ class Client {
   ParseHTTPClient _client;
   bool _debug;
   bool _sendSessionId;
-  Stream<html.MessageEvent> _stream;
+  WebSocketChannel _channel;
   String _liveQueryURL;
   bool _connecting = false;
   StreamController<LiveQueryClientEvent> _clientEventStreamController;
@@ -200,15 +202,14 @@ class Client {
       _webSocket.close();
       _webSocket = null;
     }
-    if (_webSocket != null) {
+    if (_channel != null && _channel.sink != null) {
       if (_debug) {
         print('$_printConstLiveQuery: close');
       }
-      _webSocket.close();
-      _webSocket = null;
-      _stream = null;
-    }
+      await _channel.sink.close();
 
+      _channel = null;
+    }
     _requestSubScription.values.toList().forEach((Subscription subscription) {
       subscription._enabled = false;
     });
@@ -241,12 +242,11 @@ class Client {
       'op': 'unsubscribe',
       'requestId': subscription.requestId,
     };
-    if (_webSocket != null) {
+    if (_channel != null && _channel.sink != null) {
       if (_debug) {
         print('$_printConstLiveQuery: UnsubscribeMessage: $unsubscribeMessage');
       }
-      _webSocket.send(jsonEncode(unsubscribeMessage));
-//      _channel.sink.add(jsonEncode(unsubscribeMessage));
+      _channel.sink.add(jsonEncode(unsubscribeMessage));
       subscription._enabled = false;
       _requestSubScription.remove(subscription.requestId);
     }
@@ -269,7 +269,6 @@ class Client {
     try {
       _webSocket = html.WebSocket(_liveQueryURL);
       await _webSocket.onOpen.first;
-
       _connecting = false;
       if (_webSocket != null && _webSocket.readyState == html.WebSocket.OPEN) {
         if (_debug) {
@@ -281,10 +280,8 @@ class Client {
         }
         return Future<void>.value(null);
       }
-      _stream = _webSocket.onMessage;
-
-      _stream.listen((html.MessageEvent event) {
-        final dynamic message = event.data;
+      _channel = HtmlWebSocketChannel(_webSocket);
+      _channel.stream.listen((dynamic message) {
         _handleMessage(message);
       }, onDone: () {
         _clientEventStreamController.sink
@@ -299,8 +296,8 @@ class Client {
           print(
               '$_printConstLiveQuery: Error: ${error.runtimeType.toString()}');
         }
-        return Future<ParseResponse>.value(handleException(
-            Exception(error), ParseApiRQ.liveQuery, _debug, 'HtmlWebSocket'));
+        return Future<ParseResponse>.value(handleException(Exception(error),
+            ParseApiRQ.liveQuery, _debug, 'HtmlWebSocketChannel'));
       });
     } on Exception catch (e) {
       _connecting = false;
@@ -313,7 +310,7 @@ class Client {
   }
 
   void _connectLiveQuery() {
-    if (_webSocket == null) {
+    if (_channel == null || _channel.sink == null) {
       return;
     }
     //The connect message is sent from a client to the LiveQuery server.
@@ -335,8 +332,7 @@ class Client {
     if (_debug) {
       print('$_printConstLiveQuery: ConnectMessage: $connectMessage');
     }
-    _webSocket.send(jsonEncode(connectMessage));
-//    _channel.sink.add(jsonEncode(connectMessage));
+    _channel.sink.add(jsonEncode(connectMessage));
   }
 
   void _subscribeLiveQuery(Subscription subscription) {
@@ -344,7 +340,6 @@ class Client {
       return;
     }
     subscription._enabled = true;
-
     final QueryBuilder query = subscription.query;
     final List<String> keysToReturn = query.limiters['keys']?.split(',');
     query.limiters.clear(); //Remove limits in LiveQuery
@@ -374,8 +369,7 @@ class Client {
       print('$_printConstLiveQuery: SubscribeMessage: $subscribeMessage');
     }
 
-    _webSocket.send(jsonEncode(subscribeMessage));
-//    _channel.sink.add(jsonEncode(subscribeMessage));
+    _channel.sink.add(jsonEncode(subscribeMessage));
   }
 
   void _handleMessage(String message) {
