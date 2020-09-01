@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart'; // TODO(maaeps): 'remove' from dart part
 
-import '../../parse_server_sdk.dart';
+import '../../parse_server_sdk_dart.dart';
 
 // ignore_for_file: invalid_use_of_protected_member
 class ParseLiveList<T extends ParseObject> {
@@ -335,8 +335,8 @@ class ParseLiveList<T extends ParseObject> {
       includeList.add(key);
       // ignore: avoid_as
       if ((includes[key] as Map<String, dynamic>).isNotEmpty) {
-        includeList
-            .addAll(_toIncludeStringList(includes[key]).map((String e) => '$key.$e'));
+        includeList.addAll(
+            _toIncludeStringList(includes[key]).map((String e) => '$key.$e'));
       }
     }
     return includeList;
@@ -678,8 +678,8 @@ class ParseLiveListElement<T extends ParseObject> {
               ..keysToReturn(<String>[keyVarUpdatedAt])
               ..whereEqualTo(keyVarObjectId, subObject.objectId);
         final ParseResponse parseResponse = await queryBuilder.query();
-        if (parseResponse.success && parseResponse.results.first.updatedAt !=
-                subObject.updatedAt) {
+        if (parseResponse.success &&
+            parseResponse.results.first.updatedAt != subObject.updatedAt) {
           queryBuilder.limiters.remove('keys');
           queryBuilder.includeObject(_getIncludeList(path[key]));
           final ParseResponse parseResponse = await queryBuilder.query();

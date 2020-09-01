@@ -19,6 +19,8 @@ class ParseCoreData {
     String serverUrl, {
     bool debug,
     String appName,
+    String appVersion,
+    String appPackageName,
     String liveQueryUrl,
     String masterKey,
     String clientKey,
@@ -41,6 +43,12 @@ class ParseCoreData {
     }
     if (appName != null) {
       _instance.appName = appName;
+    }
+    if (appVersion != null) {
+      _instance.appVersion = appVersion;
+    }
+    if (appPackageName != null) {
+      _instance.appPackageName = appPackageName;
     }
     if (liveQueryUrl != null) {
       _instance.liveQueryURL = liveQueryUrl;
@@ -76,6 +84,8 @@ class ParseCoreData {
   }
 
   String appName;
+  String appVersion;
+  String appPackageName;
   String applicationId;
   String serverUrl;
   String liveQueryURL;
