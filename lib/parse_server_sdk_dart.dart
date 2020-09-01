@@ -8,7 +8,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:connectivity/connectivity.dart'; // TODO(maaeps): 'remove' from dart part
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:meta/meta.dart';
