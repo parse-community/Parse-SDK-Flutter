@@ -13,7 +13,7 @@ dependencies:
 
   # Networking
   web_socket_channel: ^1.1.0
-  connectivity: ^0.4.9+2 # TODO(maaeps): 'remove' from dart part
+  connectivity: ^0.4.9+2 # only used in the flutter part
 
   #Database
   sembast: ^2.4.7+6

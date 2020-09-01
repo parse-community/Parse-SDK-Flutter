@@ -36,12 +36,14 @@ enum LiveQueryClientEvent { CONNECTED, DISCONNECTED, USER_DISCONNECTED }
 class LiveQueryReconnectingController with WidgetsBindingObserver {
   LiveQueryReconnectingController(
       this._reconnect, this._eventStream, this.debug) {
-    //Connectivity works differently on web
-    if (!parseIsWeb) {
-      Connectivity().checkConnectivity().then(_connectivityChanged);
-      Connectivity().onConnectivityChanged.listen(_connectivityChanged);
+    final ParseConnectivityProvider connectivityProvider =
+        ParseCoreData().connectivityProvider;
+    if (connectivityProvider != null) {
+      connectivityProvider.checkConnectivity().then(_connectivityChanged);
+      connectivityProvider.connectivityStream.listen(_connectivityChanged);
     } else {
-      _connectivityChanged(ConnectivityResult.wifi);
+      print(
+          'LiveQuery does not work, if there is ParseConnectivityProvider provided.');
     }
     _eventStream.listen((LiveQueryClientEvent event) {
       switch (event) {
@@ -84,11 +86,11 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
 
   Timer _currentTimer;
 
-  void _connectivityChanged(ConnectivityResult state) {
-    if (!_isOnline && state != ConnectivityResult.none) {
+  void _connectivityChanged(ParseConnectivityResult state) {
+    if (!_isOnline && state != ParseConnectivityResult.none) {
       _retryState = 0;
     }
-    _isOnline = state != ConnectivityResult.none;
+    _isOnline = state != ParseConnectivityResult.none;
     if (debug) {
       print('$DEBUG_TAG: $state');
     }

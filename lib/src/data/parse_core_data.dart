@@ -32,6 +32,7 @@ class ParseCoreData {
     ParseUserConstructor parseUserConstructor,
     ParseFileConstructor parseFileConstructor,
     List<int> liveListRetryIntervals,
+    ParseConnectivityProvider connectivityProvider,
   }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
@@ -81,6 +82,9 @@ class ParseCoreData {
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
     );
+    if (connectivityProvider != null) {
+      _instance.connectivityProvider = connectivityProvider;
+    }
   }
 
   String appName;
@@ -98,6 +102,7 @@ class ParseCoreData {
   CoreStore storage;
   ParseSubClassHandler _subClassHandler;
   List<int> liveListRetryIntervals;
+  ParseConnectivityProvider connectivityProvider;
 
   void registerSubClass(
       String className, ParseObjectConstructor objectConstructor) {

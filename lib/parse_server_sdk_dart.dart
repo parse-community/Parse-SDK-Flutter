@@ -7,7 +7,6 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:connectivity/connectivity.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:flutter/widgets.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
@@ -38,6 +37,7 @@ part 'package:parse_server_sdk/src/storage/xxtea_codec.dart';
 part 'src/base/parse_constants.dart';
 part 'src/data/parse_core_data.dart';
 part 'src/enums/parse_enum_api_rq.dart';
+part 'src/network/parse_connectivity.dart';
 part 'src/network/parse_http_client.dart';
 part 'src/network/parse_live_query.dart';
 part 'src/network/parse_query.dart';
@@ -100,6 +100,7 @@ class Parse {
     ParseUserConstructor parseUserConstructor,
     ParseFileConstructor parseFileConstructor,
     List<int> liveListRetryIntervals,
+    ParseConnectivityProvider connectivityProvider,
   }) async {
     final String url = removeTrailingSlash(serverUrl);
 
@@ -121,6 +122,7 @@ class Parse {
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
       liveListRetryIntervals: liveListRetryIntervals,
+      connectivityProvider: connectivityProvider,
     );
 
     _hasBeenInitialized = true;
