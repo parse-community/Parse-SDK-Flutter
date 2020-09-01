@@ -7,20 +7,23 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:meta/meta.dart';
 import 'package:package_info/package_info.dart';
+import 'package:parse_server_sdk/src/network/parse_websocket.dart'
+    as parse_web_socket;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:xxtea/xxtea.dart';
 
-export 'src/network/parse_live_query.dart'
-    if (dart.library.js) 'src/network/parse_live_query_web.dart';
 export 'src/utils/parse_live_list.dart';
 
 part 'package:parse_server_sdk/src/data/core_store.dart';
@@ -37,6 +40,7 @@ part 'src/base/parse_constants.dart';
 part 'src/data/parse_core_data.dart';
 part 'src/enums/parse_enum_api_rq.dart';
 part 'src/network/parse_http_client.dart';
+part 'src/network/parse_live_query.dart';
 part 'src/network/parse_query.dart';
 part 'src/objects/parse_acl.dart';
 part 'src/objects/parse_base.dart';
