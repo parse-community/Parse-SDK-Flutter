@@ -35,6 +35,7 @@ class ParseCoreData {
     List<int> liveListRetryIntervals,
     ParseConnectivityProvider connectivityProvider,
     String fileDirectory,
+        Stream<void> appResumedStream,
   }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
@@ -96,6 +97,10 @@ class ParseCoreData {
     if (fileDirectory != null) {
       _instance.fileDirectory = fileDirectory;
     }
+
+    if(appResumedStream!= null){
+      _instance.appResumedStream = appResumedStream;
+    }
   }
 
   String appName;
@@ -116,6 +121,7 @@ class ParseCoreData {
   List<int> liveListRetryIntervals;
   ParseConnectivityProvider connectivityProvider;
   String fileDirectory;
+  Stream<void> appResumedStream;
 
   void registerSubClass(
       String className, ParseObjectConstructor objectConstructor) {

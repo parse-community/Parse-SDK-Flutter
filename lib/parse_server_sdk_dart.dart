@@ -6,7 +6,6 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter/widgets.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:meta/meta.dart';
@@ -18,8 +17,6 @@ import 'package:sembast/sembast_io.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:xxtea/xxtea.dart';
-
-export 'src/utils/parse_live_list.dart';
 
 part 'package:parse_server_sdk/src/data/core_store.dart';
 part 'package:parse_server_sdk/src/data/parse_subclass_handler.dart';
@@ -61,6 +58,7 @@ part 'src/utils/parse_file_extensions.dart';
 part 'src/utils/parse_logger.dart';
 part 'src/utils/parse_login_helpers.dart';
 part 'src/utils/parse_utils.dart';
+part 'src/utils/parse_live_list.dart';
 
 class Parse {
   ParseCoreData data;
@@ -99,6 +97,7 @@ class Parse {
     List<int> liveListRetryIntervals,
     ParseConnectivityProvider connectivityProvider,
     String fileDirectory,
+    Stream<void> appResumedStream,
   }) async {
     final String url = removeTrailingSlash(serverUrl);
 
@@ -123,6 +122,7 @@ class Parse {
       liveListRetryIntervals: liveListRetryIntervals,
       connectivityProvider: connectivityProvider,
       fileDirectory: fileDirectory,
+      appResumedStream: appResumedStream,
     );
 
     _hasBeenInitialized = true;

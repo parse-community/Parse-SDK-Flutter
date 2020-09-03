@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/widgets.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -12,8 +14,11 @@ import 'src/storage/core_store_sp_impl.dart';
 
 export 'parse_server_sdk_dart.dart' hide Parse, CoreStoreSembastImp;
 export 'src/storage/core_store_sp_impl.dart';
+export 'src/utils/parse_live_list_flutter.dart';
 
-class Parse extends sdk.Parse implements sdk.ParseConnectivityProvider {
+class Parse extends sdk.Parse
+    with WidgetsBindingObserver
+    implements sdk.ParseConnectivityProvider {
   /// To initialize Parse Server in your application
   ///
   /// This should be initialized in MyApp() creation
@@ -50,6 +55,7 @@ class Parse extends sdk.Parse implements sdk.ParseConnectivityProvider {
     List<int> liveListRetryIntervals,
     sdk.ParseConnectivityProvider connectivityProvider,
     String fileDirectory,
+    Stream<void> appResumedStream,
   }) async {
     if (!sdk.parseIsWeb) {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -81,8 +87,12 @@ class Parse extends sdk.Parse implements sdk.ParseConnectivityProvider {
       parseFileConstructor: parseFileConstructor,
       connectivityProvider: connectivityProvider ?? this,
       fileDirectory: fileDirectory ?? (await getTemporaryDirectory()).path,
+      appResumedStream: appResumedStream ?? _appResumedStreamController.stream,
     );
   }
+
+  final StreamController<void> _appResumedStreamController =
+      StreamController<void>();
 
   @override
   Future<sdk.ParseConnectivityResult> checkConnectivity() async {
@@ -112,6 +122,11 @@ class Parse extends sdk.Parse implements sdk.ParseConnectivityProvider {
           return sdk.ParseConnectivityResult.none;
       }
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _appResumedStreamController.sink.add(null);
   }
 }
 

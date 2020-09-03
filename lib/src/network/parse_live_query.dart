@@ -33,9 +33,12 @@ class Subscription<T extends ParseObject> {
 
 enum LiveQueryClientEvent { CONNECTED, DISCONNECTED, USER_DISCONNECTED }
 
-class LiveQueryReconnectingController with WidgetsBindingObserver {
+class LiveQueryReconnectingController {
   LiveQueryReconnectingController(
-      this._reconnect, this._eventStream, this.debug) {
+    this._reconnect,
+    this._eventStream,
+    this.debug,
+  ) {
     final ParseConnectivityProvider connectivityProvider =
         ParseCoreData().connectivityProvider;
     if (connectivityProvider != null) {
@@ -69,7 +72,7 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
         print('$DEBUG_TAG: $event');
       }
     });
-    WidgetsBinding.instance.addObserver(this);
+    ParseCoreData().appResumedStream?.listen((void _) => _setReconnect());
   }
 
   static List<int> get retryInterval => ParseCoreData().liveListRetryIntervals;
@@ -95,17 +98,6 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
       print('$DEBUG_TAG: $state');
     }
     _setReconnect();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        _setReconnect();
-        break;
-      default:
-        break;
-    }
   }
 
   void _setReconnect() {
