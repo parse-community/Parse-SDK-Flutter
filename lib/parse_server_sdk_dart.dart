@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
+import 'dart:ui' as ui; // TODO(maaeps): 'remove' from dart part
 
 import 'package:flutter/widgets.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:http/http.dart';
