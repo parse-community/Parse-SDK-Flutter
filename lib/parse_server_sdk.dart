@@ -7,8 +7,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 
 import 'parse_server_sdk_dart.dart' as sdk;
+import 'src/storage/core_store_sp_impl.dart';
 
 export 'parse_server_sdk_dart.dart' hide Parse, CoreStoreSembastImp;
+export 'src/storage/core_store_sp_impl.dart';
 
 class Parse extends sdk.Parse implements sdk.ParseConnectivityProvider {
   /// To initialize Parse Server in your application
@@ -67,7 +69,8 @@ class Parse extends sdk.Parse implements sdk.ParseConnectivityProvider {
       sessionId: sessionId,
       autoSendSessionId: autoSendSessionId,
       securityContext: securityContext,
-      coreStore: coreStore,
+      coreStore: coreStore ??
+          await CoreStoreSharedPrefsImp.getInstance(password: masterKey),
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,

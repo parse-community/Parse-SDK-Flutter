@@ -1,4 +1,5 @@
-part of flutter_parse_sdk;
+import 'package:parse_server_sdk/parse_server_sdk_dart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CoreStoreSharedPrefsImp implements CoreStore {
   CoreStoreSharedPrefsImp._internal(this._store);

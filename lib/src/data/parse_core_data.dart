@@ -37,8 +37,10 @@ class ParseCoreData {
   }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
-    _instance.storage ??=
-        store ?? await CoreStoreSharedPrefsImp.getInstance(password: masterKey);
+    assert(_instance.storage != null || store != null,
+        'There is no CoreStore set.');
+
+    _instance.storage ??= store;
 
     if (debug != null) {
       _instance.debug = debug;

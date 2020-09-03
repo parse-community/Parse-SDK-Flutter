@@ -16,7 +16,6 @@ import 'package:parse_server_sdk/src/network/parse_websocket.dart'
 import 'package:path/path.dart' as path;
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:xxtea/xxtea.dart';
@@ -31,7 +30,6 @@ part 'package:parse_server_sdk/src/objects/response/parse_response_builder.dart'
 part 'package:parse_server_sdk/src/objects/response/parse_response_utils.dart';
 part 'package:parse_server_sdk/src/objects/response/parse_success_no_results.dart';
 part 'package:parse_server_sdk/src/storage/core_store_sem_impl.dart';
-part 'package:parse_server_sdk/src/storage/core_store_sp_impl.dart';
 part 'package:parse_server_sdk/src/storage/xxtea_codec.dart';
 part 'src/base/parse_constants.dart';
 part 'src/data/parse_core_data.dart';
