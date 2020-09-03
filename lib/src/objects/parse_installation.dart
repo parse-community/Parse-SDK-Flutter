@@ -83,11 +83,7 @@ class ParseInstallation extends ParseObject {
     }
 
     //Locale
-    final String locale =
-        parseIsWeb ? ui.window.locale.toString() : Platform.localeName;
-    if (locale != null && locale.isNotEmpty) {
-      set<String>(keyLocaleIdentifier, locale);
-    }
+    set<String>(keyLocaleIdentifier, ParseCoreData().locale);
 
     //Timezone
 

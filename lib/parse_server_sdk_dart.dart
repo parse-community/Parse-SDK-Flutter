@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:ui' as ui; // TODO(maaeps): 'remove' from dart part
 
 import 'package:flutter/widgets.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:http/http.dart';
@@ -86,6 +85,7 @@ class Parse {
     String appName,
     String appVersion,
     String appPackageName,
+    String locale,
     String liveQueryUrl,
     String clientKey,
     String masterKey,
@@ -109,6 +109,7 @@ class Parse {
       appName: appName,
       appVersion: appVersion,
       appPackageName: appPackageName,
+      locale: locale,
       liveQueryUrl: liveQueryUrl,
       masterKey: masterKey,
       clientKey: clientKey,

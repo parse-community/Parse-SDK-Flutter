@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:connectivity/connectivity.dart';
 import 'package:package_info/package_info.dart';
@@ -35,6 +36,7 @@ class Parse extends sdk.Parse implements sdk.ParseConnectivityProvider {
     String appName,
     String appVersion,
     String appPackageName,
+    String locale,
     String liveQueryUrl,
     String clientKey,
     String masterKey,
@@ -63,6 +65,9 @@ class Parse extends sdk.Parse implements sdk.ParseConnectivityProvider {
       appName: appName,
       appVersion: appVersion,
       appPackageName: appPackageName,
+      locale: locale ?? sdk.parseIsWeb
+          ? ui.window.locale.toString()
+          : Platform.localeName,
       liveQueryUrl: liveQueryUrl,
       clientKey: clientKey,
       masterKey: masterKey,
