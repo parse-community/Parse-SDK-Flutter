@@ -18,7 +18,7 @@ dependencies:
   #Database
   sembast: ^2.4.7+6
   xxtea: ^2.0.3
-  shared_preferences: ^0.5.10 # TODO(maaeps): 'remove' from dart part
+  shared_preferences: ^0.5.10 # only used in the flutter part
 
   # Utils
   path_provider: ^1.6.14 # only used in the flutter part
