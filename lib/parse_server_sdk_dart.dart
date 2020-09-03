@@ -14,7 +14,6 @@ import 'package:meta/meta.dart';
 import 'package:parse_server_sdk/src/network/parse_websocket.dart'
     as parse_web_socket;
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart'; // TODO(maaeps): 'remove' from dart part
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // TODO(maaeps): 'remove' from dart part
@@ -101,6 +100,7 @@ class Parse {
     ParseFileConstructor parseFileConstructor,
     List<int> liveListRetryIntervals,
     ParseConnectivityProvider connectivityProvider,
+    String fileDirectory,
   }) async {
     final String url = removeTrailingSlash(serverUrl);
 
@@ -123,6 +123,7 @@ class Parse {
       parseFileConstructor: parseFileConstructor,
       liveListRetryIntervals: liveListRetryIntervals,
       connectivityProvider: connectivityProvider,
+      fileDirectory: fileDirectory,
     );
 
     _hasBeenInitialized = true;

@@ -33,6 +33,7 @@ class ParseCoreData {
     ParseFileConstructor parseFileConstructor,
     List<int> liveListRetryIntervals,
     ParseConnectivityProvider connectivityProvider,
+    String fileDirectory,
   }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
@@ -85,6 +86,10 @@ class ParseCoreData {
     if (connectivityProvider != null) {
       _instance.connectivityProvider = connectivityProvider;
     }
+
+    if (fileDirectory != null) {
+      _instance.fileDirectory = fileDirectory;
+    }
   }
 
   String appName;
@@ -103,6 +108,7 @@ class ParseCoreData {
   ParseSubClassHandler _subClassHandler;
   List<int> liveListRetryIntervals;
   ParseConnectivityProvider connectivityProvider;
+  String fileDirectory;
 
   void registerSubClass(
       String className, ParseObjectConstructor objectConstructor) {

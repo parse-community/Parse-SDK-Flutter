@@ -21,7 +21,7 @@ dependencies:
   shared_preferences: ^0.5.10 # TODO(maaeps): 'remove' from dart part
 
   # Utils
-  path_provider: ^1.6.14 # TODO(maaeps): 'remove' from dart part
+  path_provider: ^1.6.14 # only used in the flutter part
   uuid: ^2.2.2
   package_info: ^0.4.3 # only used in the flutter part
   meta: ^1.1.8

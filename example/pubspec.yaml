@@ -11,6 +11,8 @@ dependencies:
   sembast: ^2.0.1
   shared_preferences: ^0.5.0
 
+  path_provider: ^1.6.14
+
 dev_dependencies:
   parse_server_sdk:
     path: ../
