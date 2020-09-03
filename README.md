@@ -27,6 +27,8 @@ await Parse().initialize(
 ```
 
 If you want to use secure storage or use the Flutter web/desktop SDK, please change to the below instance of CoreStorage as it has no dependencies on Flutter.
+
+**The `CoreStoreSembastImp` does not encrypt the data!** (Web is not safe anyway. Encrypt fields manually as needed.)
 ```dart
 
 await Parse().initialize(
