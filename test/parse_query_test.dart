@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:parse_server_sdk/parse_server_sdk_dart.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MockClient extends Mock implements ParseHTTPClient {}
@@ -12,7 +12,19 @@ void main() {
     test('whereRelatedTo', () async {
       final MockClient client = MockClient();
 
-      await Parse().initialize('appId', 'https://test.parse.com', debug: true);
+      await Parse().initialize(
+        'appId',
+        'https://test.parse.com',
+        debug: true,
+        // to prevent automatic detection
+        fileDirectory: 'someDirectory',
+        // to prevent automatic detection
+        appName: 'appName',
+        // to prevent automatic detection
+        appPackageName: 'somePackageName',
+        // to prevent automatic detection
+        appVersion: 'someAppVersion',
+      );
 
       final QueryBuilder<ParseObject> queryBuilder =
           QueryBuilder<ParseObject>(ParseObject('_User', client: client));

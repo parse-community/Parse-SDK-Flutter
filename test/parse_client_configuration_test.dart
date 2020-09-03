@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:parse_server_sdk/parse_server_sdk_dart.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -14,6 +14,7 @@ void main() {
         appVersion: 'someAppVersion',
         masterKey: 'masterKey',
         sessionId: 'sessionId',
+        fileDirectory: 'someDirectory',
         debug: true);
 
     expect(ParseCoreData().applicationId, 'appId');
@@ -26,5 +27,6 @@ void main() {
     expect(ParseCoreData().masterKey, 'masterKey');
     expect(ParseCoreData().sessionId, 'sessionId');
     expect(ParseCoreData().debug, true);
+    expect(ParseCoreData().fileDirectory, 'someDirectory');
   });
 }

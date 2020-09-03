@@ -57,7 +57,7 @@ class Parse extends sdk.Parse
     String fileDirectory,
     Stream<void> appResumedStream,
   }) async {
-    if (!sdk.parseIsWeb) {
+    if (!sdk.parseIsWeb && (appName == null || appVersion == null || appPackageName == null)) {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
       appName ??= packageInfo.appName;
       appVersion ??= packageInfo.version;
