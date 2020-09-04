@@ -14,8 +14,16 @@ class CoreStoreSembastImp implements CoreStore {
       if (!parseIsWeb &&
           (Platform.isIOS || Platform.isAndroid || Platform.isMacOS))
         dbDirectory = (await getApplicationDocumentsDirectory()).path;
+      assert(() {
+        if (parseIsWeb) {
+          print(
+              'Warning: CoreStoreSembastImp of the Parse_Server_SDK does not encrypt the database on WEB.');
+        }
+        return true;
+      }());
       final String dbPath = path.join('$dbDirectory/parse', 'parse.db');
-      final Database db = await factory.openDatabase(dbPath, codec: !parseIsWeb ? getXXTeaSembastCodec(password: password) : null);
+      final Database db = await factory.openDatabase(dbPath,
+          codec: !parseIsWeb ? getXXTeaSembastCodec(password: password) : null);
       _instance =
           CoreStoreSembastImp._internal(db, StoreRef<String, String>.main());
     }
