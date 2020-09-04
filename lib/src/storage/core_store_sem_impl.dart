@@ -17,7 +17,8 @@ class CoreStoreSembastImp implements CoreStore {
         }
         return true;
       }());
-      final Database db = await factory.openDatabase(dbPath, codec: !parseIsWeb ? getXXTeaSembastCodec(password: password) : null));
+      final Database db = await factory.openDatabase(dbPath,
+          codec: !parseIsWeb ? getXXTeaSembastCodec(password: password) : null);
       _instance =
           CoreStoreSembastImp._internal(db, StoreRef<String, String>.main());
     }
