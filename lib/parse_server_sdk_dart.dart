@@ -14,6 +14,7 @@ import 'package:parse_server_sdk/src/network/parse_websocket.dart'
 import 'package:path/path.dart' as path;
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
+import 'package:sembast_web/sembast_web.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:xxtea/xxtea.dart';
