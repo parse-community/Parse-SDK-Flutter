@@ -1,12 +1,11 @@
-import 'package:parse_server_sdk/parse_server_sdk_dart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+part of flutter_parse_sdk_flutter;
 
-class CoreStoreSharedPrefsImp implements CoreStore {
+class CoreStoreSharedPrefsImp implements sdk.CoreStore {
   CoreStoreSharedPrefsImp._internal(this._store);
 
   static CoreStoreSharedPrefsImp _instance;
 
-  static Future<CoreStore> getInstance(
+  static Future<sdk.CoreStore> getInstance(
       {SharedPreferences store, String password = 'flutter_sdk'}) async {
     if (_instance == null) {
       store ??= await SharedPreferences.getInstance();

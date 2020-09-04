@@ -1,20 +1,24 @@
+library flutter_parse_sdk_flutter;
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:package_info/package_info.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart' as sdk;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'parse_server_sdk_dart.dart' as sdk;
-import 'src/storage/core_store_sp_impl.dart';
+export 'package:parse_server_sdk/parse_server_sdk.dart'
+    hide Parse, CoreStoreSembastImp;
 
-export 'parse_server_sdk_dart.dart' hide Parse, CoreStoreSembastImp;
-export 'src/storage/core_store_sp_impl.dart';
-export 'src/utils/parse_live_list_flutter.dart';
+part 'src/storage/core_store_sp_impl.dart';
+part 'src/utils/parse_live_list.dart';
 
 class Parse extends sdk.Parse
     with WidgetsBindingObserver
@@ -57,7 +61,8 @@ class Parse extends sdk.Parse
     String fileDirectory,
     Stream<void> appResumedStream,
   }) async {
-    if (!sdk.parseIsWeb && (appName == null || appVersion == null || appPackageName == null)) {
+    if (!sdk.parseIsWeb &&
+        (appName == null || appVersion == null || appPackageName == null)) {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
       appName ??= packageInfo.appName;
       appVersion ??= packageInfo.version;
@@ -135,7 +140,8 @@ class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
 
   static sdk.CoreStoreSembastImp _sembastImp;
 
-  static Future<sdk.CoreStore> getInstance({DatabaseFactory factory, String password}) async {
+  static Future<sdk.CoreStore> getInstance(
+      {DatabaseFactory factory, String password}) async {
     if (_sembastImp == null) {
       String dbDirectory = '';
       if (!sdk.parseIsWeb &&
