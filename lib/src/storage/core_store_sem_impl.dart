@@ -6,14 +6,10 @@ class CoreStoreSembastImp implements CoreStore {
 
   static CoreStoreSembastImp _instance;
 
-  static Future<CoreStore> getInstance(
+  static Future<CoreStore> getInstance(String dbPath,
       {DatabaseFactory factory, String password = 'flutter_sdk'}) async {
     if (_instance == null) {
       factory ??= !parseIsWeb ? databaseFactoryIo : databaseFactoryWeb;
-      String dbDirectory = '';
-      if (!parseIsWeb &&
-          (Platform.isIOS || Platform.isAndroid || Platform.isMacOS))
-        dbDirectory = (await getApplicationDocumentsDirectory()).path;
       assert(() {
         if (parseIsWeb) {
           print(
@@ -21,9 +17,7 @@ class CoreStoreSembastImp implements CoreStore {
         }
         return true;
       }());
-      final String dbPath = path.join('$dbDirectory/parse', 'parse.db');
-      final Database db = await factory.openDatabase(dbPath,
-          codec: !parseIsWeb ? getXXTeaSembastCodec(password: password) : null);
+      final Database db = await factory.openDatabase(dbPath, codec: !parseIsWeb ? getXXTeaSembastCodec(password: password) : null));
       _instance =
           CoreStoreSembastImp._internal(db, StoreRef<String, String>.main());
     }
