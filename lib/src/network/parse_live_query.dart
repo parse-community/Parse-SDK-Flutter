@@ -1,13 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:connectivity/connectivity.dart';
-import 'package:flutter/widgets.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-
-import '../../parse_server_sdk.dart';
+part of flutter_parse_sdk;
 
 enum LiveQueryEvent { create, enter, update, leave, delete, error }
 
@@ -31,7 +22,6 @@ class Subscription<T extends ParseObject> {
     'error'
   ];
   Map<String, Function> eventCallbacks = <String, Function>{};
-
   void on(LiveQueryEvent op, Function callback) {
     eventCallbacks[_liveQueryEvent[op.index]] = callback;
   }
@@ -43,12 +33,21 @@ class Subscription<T extends ParseObject> {
 
 enum LiveQueryClientEvent { CONNECTED, DISCONNECTED, USER_DISCONNECTED }
 
-class LiveQueryReconnectingController with WidgetsBindingObserver {
+class LiveQueryReconnectingController {
   LiveQueryReconnectingController(
-      this._reconnect, this._eventStream, this.debug) {
-    Connectivity().checkConnectivity().then(_connectivityChanged);
-    Connectivity().onConnectivityChanged.listen(_connectivityChanged);
-
+    this._reconnect,
+    this._eventStream,
+    this.debug,
+  ) {
+    final ParseConnectivityProvider connectivityProvider =
+        ParseCoreData().connectivityProvider;
+    if (connectivityProvider != null) {
+      connectivityProvider.checkConnectivity().then(_connectivityChanged);
+      connectivityProvider.connectivityStream.listen(_connectivityChanged);
+    } else {
+      print(
+          'LiveQuery does not work, if there is ParseConnectivityProvider provided.');
+    }
     _eventStream.listen((LiveQueryClientEvent event) {
       switch (event) {
         case LiveQueryClientEvent.CONNECTED:
@@ -73,7 +72,7 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
         print('$DEBUG_TAG: $event');
       }
     });
-    WidgetsBinding.instance.addObserver(this);
+    ParseCoreData().appResumedStream?.listen((void _) => _setReconnect());
   }
 
   static List<int> get retryInterval => ParseCoreData().liveListRetryIntervals;
@@ -90,29 +89,18 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
 
   Timer _currentTimer;
 
-  void _connectivityChanged(ConnectivityResult state) {
-    if (!_isOnline && state != ConnectivityResult.none) {
+  void _connectivityChanged(ParseConnectivityResult state) {
+    if (!_isOnline && state != ParseConnectivityResult.none) {
       _retryState = 0;
     }
-    _isOnline = state != ConnectivityResult.none;
-    if(state == ConnectivityResult.none) {
+    _isOnline = state != ParseConnectivityResult.none;
+	if(state == ConnectivityResult.none) {
       _isConnected = false;
     }
     if (debug) {
       print('$DEBUG_TAG: $state');
     }
     _setReconnect();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        _setReconnect();
-        break;
-      default:
-        break;
-    }
   }
 
   void _setReconnect() {
@@ -135,10 +123,9 @@ class LiveQueryReconnectingController with WidgetsBindingObserver {
   }
 }
 
-class Client {
-  factory Client() => _getInstance();
-
-  Client._internal(
+class LiveQueryClient {
+  factory LiveQueryClient() => _getInstance();
+  LiveQueryClient._internal(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
     _clientEventStreamController = StreamController<LiveQueryClientEvent>();
     _clientEventStream =
@@ -163,13 +150,11 @@ class Client {
     reconnectingController = LiveQueryReconnectingController(
         () => reconnect(userInitialized: false), getClientEventStream, _debug);
   }
-
-  static Client get instance => _getInstance();
-  static Client _instance;
-
-  static Client _getInstance(
+  static LiveQueryClient get instance => _getInstance();
+  static LiveQueryClient _instance;
+  static LiveQueryClient _getInstance(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
-    _instance ??= Client._internal(
+    _instance ??= LiveQueryClient._internal(
         debug: debug, client: client, autoSendSessionId: autoSendSessionId);
     return _instance;
   }
@@ -178,7 +163,7 @@ class Client {
     return _clientEventStream;
   }
 
-  WebSocket _webSocket;
+  parse_web_socket.WebSocket _webSocket;
   ParseHTTPClient _client;
   bool _debug;
   bool _sendSessionId;
@@ -189,7 +174,6 @@ class Client {
   Stream<LiveQueryClientEvent> _clientEventStream;
   LiveQueryReconnectingController reconnectingController;
 
-  // ignore: always_specify_types
   final Map<int, Subscription> _requestSubScription = <int, Subscription>{};
 
   Future<void> reconnect({bool userInitialized = false}) async {
@@ -201,11 +185,12 @@ class Client {
     if (_webSocket != null) {
       return _webSocket.readyState;
     }
-    return WebSocket.connecting;
+    return parse_web_socket.WebSocket.CONNECTING;
   }
 
   Future<dynamic> disconnect({bool userInitialized = false}) async {
-    if (_webSocket != null && _webSocket.readyState == WebSocket.open) {
+    if (_webSocket != null &&
+        _webSocket.readyState == parse_web_socket.WebSocket.OPEN) {
       if (_debug) {
         print('$_printConstLiveQuery: Socket closed');
       }
@@ -219,7 +204,6 @@ class Client {
       await _channel.sink.close();
       _channel = null;
     }
-    // ignore: always_specify_types
     _requestSubScription.values.toList().forEach((Subscription subscription) {
       subscription._enabled = false;
     });
@@ -277,9 +261,10 @@ class Client {
     _connecting = true;
 
     try {
-      _webSocket = await WebSocket.connect(_liveQueryURL);
+      _webSocket = await parse_web_socket.WebSocket.connect(_liveQueryURL);
       _connecting = false;
-      if (_webSocket != null && _webSocket.readyState == WebSocket.open) {
+      if (_webSocket != null &&
+          _webSocket.readyState == parse_web_socket.WebSocket.OPEN) {
         if (_debug) {
           print('$_printConstLiveQuery: Socket opened');
         }
@@ -289,7 +274,7 @@ class Client {
         }
         return Future<void>.value(null);
       }
-      _channel = IOWebSocketChannel(_webSocket);
+      _channel = _webSocket.createWebSocketChannel();
       _channel.stream.listen((dynamic message) {
         _handleMessage(message);
       }, onDone: () {
@@ -305,8 +290,11 @@ class Client {
           print(
               '$_printConstLiveQuery: Error: ${error.runtimeType.toString()}');
         }
-        return Future<ParseResponse>.value(handleException(Exception(error),
-            ParseApiRQ.liveQuery, _debug, 'IOWebSocketChannel'));
+        return Future<ParseResponse>.value(handleException(
+            Exception(error),
+            ParseApiRQ.liveQuery,
+            _debug,
+            !parseIsWeb ? 'IOWebSocketChannel' : 'HtmlWebSocketChannel'));
       });
     } on Exception catch (e) {
       _connecting = false;
@@ -344,13 +332,11 @@ class Client {
     _channel.sink.add(jsonEncode(connectMessage));
   }
 
-  // ignore: always_specify_types
   void _subscribeLiveQuery(Subscription subscription) {
     if (subscription._enabled) {
       return;
     }
     subscription._enabled = true;
-    // ignore: always_specify_types
     final QueryBuilder query = subscription.query;
     final List<String> keysToReturn = query.limiters['keys']?.split(',');
     query.limiters.clear(); //Remove limits in LiveQuery
@@ -389,11 +375,11 @@ class Client {
     }
 
     final Map<String, dynamic> actionData = jsonDecode(message);
-    // ignore: always_specify_types
+
     Subscription subscription;
     if (actionData.containsKey('op') && actionData['op'] == 'connected') {
       print('ReSubScription:$_requestSubScription');
-      // ignore: always_specify_types
+
       _requestSubScription.values.toList().forEach((Subscription subcription) {
         _subscribeLiveQuery(subcription);
       });
@@ -439,21 +425,17 @@ class LiveQuery {
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _sendSessionId =
         autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
-    this.client = Client._getInstance(
+    this.client = LiveQueryClient._getInstance(
         client: _client, debug: _debug, autoSendSessionId: _sendSessionId);
   }
 
   ParseHTTPClient _client;
   bool _debug;
   bool _sendSessionId;
-
-  // ignore: always_specify_types
   Subscription _latestSubscription;
-  Client client;
+  LiveQueryClient client;
 
-  // ignore: always_specify_types
   @deprecated
-  // ignore: always_specify_types
   Future<dynamic> subscribe(QueryBuilder query) async {
     _latestSubscription = await client.subscribe(query);
     return _latestSubscription;

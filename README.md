@@ -13,7 +13,7 @@ Want to get involved? Join our Slack channel and help out! (http://flutter-parse
 To install, either add to your pubspec.yaml
 ```yml
 dependencies:  
-    parse_server_sdk: ^1.0.27
+    parse_server_sdk: ^1.0.28
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -27,6 +27,8 @@ await Parse().initialize(
 ```
 
 If you want to use secure storage or use the Flutter web/desktop SDK, please change to the below instance of CoreStorage as it has no dependencies on Flutter.
+
+**The `CoreStoreSembastImp` does not encrypt the data!** (Web is not safe anyway. Encrypt fields manually as needed.)
 ```dart
 
 await Parse().initialize(
