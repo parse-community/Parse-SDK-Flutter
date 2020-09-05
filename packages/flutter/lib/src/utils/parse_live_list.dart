@@ -1,12 +1,9 @@
-import 'dart:async';
+part of flutter_parse_sdk_flutter;
 
-import 'package:flutter/material.dart';
-import 'package:parse_server_sdk/parse_server_sdk_dart.dart';
+typedef ChildBuilder<T extends sdk.ParseObject> = Widget Function(
+    BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot);
 
-typedef ChildBuilder<T extends ParseObject> = Widget Function(
-    BuildContext context, ParseLiveListElementSnapshot<T> snapshot);
-
-class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
+class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   const ParseLiveListWidget({
     Key key,
     @required this.query,
@@ -26,7 +23,7 @@ class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
     this.lazyLoading = true,
   }) : super(key: key);
 
-  final QueryBuilder<T> query;
+  final sdk.QueryBuilder<T> query;
   final Widget listLoadingElement;
   final Duration duration;
   final ScrollPhysics scrollPhysics;
@@ -55,15 +52,15 @@ class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
         lazyLoading: lazyLoading,
       );
 
-  static Widget defaultChildBuilder<T extends ParseObject>(
-      BuildContext context, ParseLiveListElementSnapshot<T> snapshot) {
+  static Widget defaultChildBuilder<T extends sdk.ParseObject>(
+      BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot) {
     Widget child;
     if (snapshot.failed) {
       child = const Text('something went wrong!');
     } else if (snapshot.hasData) {
       child = ListTile(
         title: Text(
-          snapshot.loadedData.get(keyVarObjectId),
+          snapshot.loadedData.get(sdk.keyVarObjectId),
         ),
       );
     } else {
@@ -75,7 +72,7 @@ class ParseLiveListWidget<T extends ParseObject> extends StatefulWidget {
   }
 }
 
-class _ParseLiveListWidgetState<T extends ParseObject>
+class _ParseLiveListWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveListWidget<T>> {
   _ParseLiveListWidgetState(
       {@required this.query,
@@ -83,26 +80,27 @@ class _ParseLiveListWidgetState<T extends ParseObject>
       bool listenOnAllSubItems,
       List<String> listeningIncludes,
       bool lazyLoading = true}) {
-    ParseLiveList.create(
+    sdk.ParseLiveList.create(
       query,
       listenOnAllSubItems: listenOnAllSubItems,
       listeningIncludes: listeningIncludes,
       lazyLoading: lazyLoading,
-    ).then((ParseLiveList<T> value) {
+    ).then((sdk.ParseLiveList<T> value) {
       setState(() {
         _liveList = value;
-        _liveList.stream.listen((ParseLiveListEvent<ParseObject> event) {
-          if (event is ParseLiveListAddEvent) {
+        _liveList.stream
+            .listen((sdk.ParseLiveListEvent<sdk.ParseObject> event) {
+          if (event is sdk.ParseLiveListAddEvent) {
             if (_animatedListKey.currentState != null)
               _animatedListKey.currentState
                   .insertItem(event.index, duration: widget.duration);
-          } else if (event is ParseLiveListDeleteEvent) {
+          } else if (event is sdk.ParseLiveListDeleteEvent) {
             _animatedListKey.currentState.removeItem(
                 event.index,
                 (BuildContext context, Animation<double> animation) =>
                     ParseLiveListElementWidget<T>(
                       key: ValueKey<String>(event.object?.get<String>(
-                          keyVarObjectId,
+                          sdk.keyVarObjectId,
                           defaultValue: 'removingItem')),
                       childBuilder: widget.childBuilder ??
                           ParseLiveListWidget.defaultChildBuilder,
@@ -117,8 +115,8 @@ class _ParseLiveListWidgetState<T extends ParseObject>
     });
   }
 
-  final QueryBuilder<T> query;
-  ParseLiveList<T> _liveList;
+  final sdk.QueryBuilder<T> query;
+  sdk.ParseLiveList<T> _liveList;
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
   final ChildBuilder<T> removedItemBuilder;
@@ -164,7 +162,8 @@ class _ParseLiveListWidgetState<T extends ParseObject>
   }
 }
 
-class ParseLiveListElementWidget<T extends ParseObject> extends StatefulWidget {
+class ParseLiveListElementWidget<T extends sdk.ParseObject>
+    extends StatefulWidget {
   const ParseLiveListElementWidget(
       {Key key,
       this.stream,
@@ -174,8 +173,8 @@ class ParseLiveListElementWidget<T extends ParseObject> extends StatefulWidget {
       @required this.childBuilder})
       : super(key: key);
 
-  final StreamGetter<T> stream;
-  final DataGetter<T> loadedData;
+  final sdk.StreamGetter<T> stream;
+  final sdk.DataGetter<T> loadedData;
   final Animation<double> sizeFactor;
   final Duration duration;
   final ChildBuilder<T> childBuilder;
@@ -186,31 +185,32 @@ class ParseLiveListElementWidget<T extends ParseObject> extends StatefulWidget {
   }
 }
 
-class _ParseLiveListElementWidgetState<T extends ParseObject>
+class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveListElementWidget<T>>
     with SingleTickerProviderStateMixin {
   _ParseLiveListElementWidgetState(
-      DataGetter<T> loadedDataGetter, StreamGetter<T> stream) {
-    _snapshot = ParseLiveListElementSnapshot<T>(loadedData: loadedDataGetter());
+      sdk.DataGetter<T> loadedDataGetter, sdk.StreamGetter<T> stream) {
+    _snapshot =
+        sdk.ParseLiveListElementSnapshot<T>(loadedData: loadedDataGetter());
     if (stream != null) {
       _streamSubscription = stream().listen(
         (T data) {
           if (widget != null) {
             setState(() {
-              _snapshot = ParseLiveListElementSnapshot<T>(loadedData: data);
+              _snapshot = sdk.ParseLiveListElementSnapshot<T>(loadedData: data);
             });
           } else {
-            _snapshot = ParseLiveListElementSnapshot<T>(loadedData: data);
+            _snapshot = sdk.ParseLiveListElementSnapshot<T>(loadedData: data);
           }
         },
         onError: (Object error) {
-          if (error is ParseError) {
+          if (error is sdk.ParseError) {
             if (widget != null) {
               setState(() {
-                _snapshot = ParseLiveListElementSnapshot<T>(error: error);
+                _snapshot = sdk.ParseLiveListElementSnapshot<T>(error: error);
               });
             } else {
-              _snapshot = ParseLiveListElementSnapshot<T>(error: error);
+              _snapshot = sdk.ParseLiveListElementSnapshot<T>(error: error);
             }
           }
         },
@@ -219,7 +219,7 @@ class _ParseLiveListElementWidgetState<T extends ParseObject>
     }
   }
 
-  ParseLiveListElementSnapshot<T> _snapshot;
+  sdk.ParseLiveListElementSnapshot<T> _snapshot;
 
   StreamSubscription<T> _streamSubscription;
 
