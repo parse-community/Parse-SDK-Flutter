@@ -21,14 +21,12 @@ class ParseFile extends ParseFileBase {
   File file;
 
   Future<ParseFile> loadStorage() async {
-    final Directory tempPath = await getTemporaryDirectory();
-
     if (name == null) {
       file = null;
       return this;
     }
 
-    final File possibleFile = File('${tempPath.path}/$name');
+    final File possibleFile = File('${ParseCoreData().fileDirectory}/$name');
     // ignore: avoid_slow_async_io
     final bool exists = await possibleFile.exists();
 
@@ -47,8 +45,7 @@ class ParseFile extends ParseFileBase {
       return this;
     }
 
-    final Directory tempPath = await getTemporaryDirectory();
-    file = File('${tempPath.path}/$name');
+    file = File('${ParseCoreData().fileDirectory}/$name');
     await file.create();
     final Response response = await _client.get(url);
     await file.writeAsBytes(response.bodyBytes);

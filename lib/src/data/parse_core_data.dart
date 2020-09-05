@@ -19,6 +19,9 @@ class ParseCoreData {
     String serverUrl, {
     bool debug,
     String appName,
+    String appVersion,
+    String appPackageName,
+    String locale,
     String liveQueryUrl,
     String masterKey,
     String clientKey,
@@ -30,17 +33,31 @@ class ParseCoreData {
     ParseUserConstructor parseUserConstructor,
     ParseFileConstructor parseFileConstructor,
     List<int> liveListRetryIntervals,
+    ParseConnectivityProvider connectivityProvider,
+    String fileDirectory,
+        Stream<void> appResumedStream,
   }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
-    _instance.storage ??=
-        store ?? await CoreStoreSharedPrefsImp.getInstance(password: masterKey);
+    assert(_instance.storage != null || store != null,
+        'There is no CoreStore set.');
+
+    _instance.storage ??= store;
 
     if (debug != null) {
       _instance.debug = debug;
     }
     if (appName != null) {
       _instance.appName = appName;
+    }
+    if (appVersion != null) {
+      _instance.appVersion = appVersion;
+    }
+    if (appPackageName != null) {
+      _instance.appPackageName = appPackageName;
+    }
+    if (locale != null) {
+      _instance.locale = locale;
     }
     if (liveQueryUrl != null) {
       _instance.liveQueryURL = liveQueryUrl;
@@ -73,10 +90,24 @@ class ParseCoreData {
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
     );
+    if (connectivityProvider != null) {
+      _instance.connectivityProvider = connectivityProvider;
+    }
+
+    if (fileDirectory != null) {
+      _instance.fileDirectory = fileDirectory;
+    }
+
+    if(appResumedStream!= null){
+      _instance.appResumedStream = appResumedStream;
+    }
   }
 
   String appName;
+  String appVersion;
+  String appPackageName;
   String applicationId;
+  String locale;
   String serverUrl;
   String liveQueryURL;
   String masterKey;
@@ -88,6 +119,9 @@ class ParseCoreData {
   CoreStore storage;
   ParseSubClassHandler _subClassHandler;
   List<int> liveListRetryIntervals;
+  ParseConnectivityProvider connectivityProvider;
+  String fileDirectory;
+  Stream<void> appResumedStream;
 
   void registerSubClass(
       String className, ParseObjectConstructor objectConstructor) {
