@@ -94,7 +94,7 @@ class LiveQueryReconnectingController {
       _retryState = 0;
     }
     _isOnline = state != ParseConnectivityResult.none;
-    if(state == ConnectivityResult.none) {
+    if(state == ParseConnectivityResult.none) {
       _isConnected = false;
     }
     if (debug) {
