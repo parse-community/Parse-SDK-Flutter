@@ -34,7 +34,7 @@ If you want to use secure storage or use the Flutter web/desktop SDK, please cha
 await Parse().initialize(
   	keyParseApplicationId, 
   	keyParseServerUrl,
-    coreStore: await CoreStoreSembastImp.getInstance());
+    coreStore: await CoreStoreSembastImp.getInstance("/data"));
 ```
 It's possible to add other parameters to work with your instance of Parse Server:- 
 
@@ -48,7 +48,7 @@ It's possible to add other parameters to work with your instance of Parse Server
         liveQueryUrl: keyLiveQueryUrl, // Required if using LiveQuery 
         autoSendSessionId: true, // Required for authentication and ACL
         securityContext: securityContext, // Again, required for some setups
-	coreStore: await CoreStoreSharedPrefsImp.getInstance()); // Local data storage method. Will use SharedPreferences instead of Sembast as an internal DB
+	coreStore: CoreStoreMemoryImp()); // Non persistent mode (default): Sdk will store everything in memmore instead of using Sembast as an internal DB.
 ```
 
 
