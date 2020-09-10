@@ -1,4 +1,4 @@
-![Dart Logo](https://dart.dev/assets/shared/dart-logo-for-shares.png?2) ![Parse Logo](https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png?fit=200%2C200&ssl=1&resize=350%2C200)
+![Parse Logo](https://parseplatform.org/img/logo.svg) ![Dart Logo](https://dart.dev/assets/shared/dart-logo-for-shares.png?2)
 
 
 **THIS README IS WORK IN PROGRESS**
@@ -7,9 +7,6 @@
 This is a Dart package that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like (http://Back4App.com).
 
 This is a work in progress and we are consistently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project. (Even if it is just to improve our documentation)
-
-## Join in!
-Want to get involved? Join our Slack channel and help out! (http://flutter-parse-sdk.slack.com)
 
 ## Getting Started
 To install, either add to your pubspec.yaml

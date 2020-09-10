@@ -1,5 +1,6 @@
 
-![Parse Logo](https://i2.wp.com/blog.openshift.com/wp-content/uploads/parse-server-logo-1.png?fit=200%2C200&ssl=1&resize=350%2C200)
+![Parse Logo](https://parseplatform.org/img/logo.svg)
+
 ---
 
 This repository contains packages that allow communication with a Parse Server, 
