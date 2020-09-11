@@ -35,14 +35,11 @@ class ParseCoreData {
     List<int> liveListRetryIntervals,
     ParseConnectivityProvider connectivityProvider,
     String fileDirectory,
-        Stream<void> appResumedStream,
+    Stream<void> appResumedStream,
   }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
-    assert(_instance.storage != null || store != null,
-        'There is no CoreStore set.');
-
-    _instance.storage ??= store;
+    _instance.storage ??= store ?? CoreStoreMemoryImp();
 
     if (debug != null) {
       _instance.debug = debug;
@@ -98,7 +95,7 @@ class ParseCoreData {
       _instance.fileDirectory = fileDirectory;
     }
 
-    if(appResumedStream!= null){
+    if (appResumedStream != null) {
       _instance.appResumedStream = appResumedStream;
     }
   }

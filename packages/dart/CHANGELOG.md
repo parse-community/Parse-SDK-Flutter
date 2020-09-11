@@ -1,4 +1,5 @@
 ## 1.0.28
+Spit this package: All flutter parts are now in [this](https://pub.dev/packages/parse_server_sdk_flutter) package!
 
 ## 1.0.27
 User login / signUp / loginAnonymous delete SessionId stored in device before calling server
