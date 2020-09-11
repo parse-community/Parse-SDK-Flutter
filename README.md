@@ -16,7 +16,7 @@ These are the available packages in this repository.
 | Plugin | Pub | explanation|
 |--------|-----|------------|
 | [parse_server_sdk](./packages/dart) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk.svg)](https://pub.dev/packages/parse_server_sdk) | a dart package that lets you communicate with the parse server |
-| [parse_server_sdk_flutter](./packages/dart) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter) | a flutter package that lets you communicate with the parse server |
+| [parse_server_sdk_flutter](./packages/flutter) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter) | a flutter package that lets you communicate with the parse server |
 
 ### Author:-
 This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
