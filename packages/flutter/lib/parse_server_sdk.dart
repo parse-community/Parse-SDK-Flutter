@@ -91,7 +91,9 @@ class Parse extends sdk.Parse
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
       connectivityProvider: connectivityProvider ?? this,
-      fileDirectory: fileDirectory ?? (await getTemporaryDirectory()).path,
+      fileDirectory: fileDirectory ?? !sdk.parseIsWeb
+          ? (await getTemporaryDirectory()).path
+          : null,
       appResumedStream: appResumedStream ?? _appResumedStreamController.stream,
     );
   }
