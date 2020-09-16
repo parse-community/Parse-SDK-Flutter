@@ -8,6 +8,9 @@ install:
   - ls ../
   - ls ../../
   - ls ../../../
+  - ls ~/build
+  - ls ~/builds
+  - ls ~/virtualenv
   - git clone https://github.com/flutter/flutter.git -b stable --depth 1
   - export PATH=~/builds/flutter/bin:$PATH
   - flutter doctor
