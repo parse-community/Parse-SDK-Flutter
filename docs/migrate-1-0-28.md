@@ -15,7 +15,7 @@ to
 dependencies:
     parse_server_sdk_flutter: ^1.0.28
 ```
-This is the current released version of the parse_server_sdk_flutter: [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter)
+This is the current released version of the parse_server_sdk_flutter package: [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter)
 
 ### 2. imports
 As the package name changed, you have to change
