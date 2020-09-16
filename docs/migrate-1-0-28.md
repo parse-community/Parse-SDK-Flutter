@@ -41,4 +41,4 @@ Parse().initialize(
     appVersion: kIsWeb ? "Version 1" : null,
     appPackageName: kIsWeb ? "com.example.myapplication" : null,
 );
-``
+```
