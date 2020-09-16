@@ -21,7 +21,7 @@ This is the current released version of the parse_server_sdk_flutter: [![pub pac
 As the package name changed, you have to change
 ```
 import 'package:parse_server_sdk/parse_server_sdk.dart';
-```  `
+```
  to  
 ```
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
