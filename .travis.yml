@@ -5,18 +5,11 @@ dart:
   - dev
 
 install:
-  - ls ../
-  - ls ../../
-  - ls ../../../
-  - ls ~/build
-  - ls ~/builds
-  - ls ~/virtualenv
   - git clone https://github.com/flutter/flutter.git -b stable --depth 1
-  - export PATH=~/builds/flutter/bin:$PATH
+  - export PATH=~/build/parse-community/Parse-SDK-Flutter/flutter/bin:$PATH
   - flutter doctor
 
 script:
-  - ls
   - (cd packages/dart && dart pub get)
   - (cd packages/dart && dart test test/)
   - (cd packages/flutter && flutter pub get)
