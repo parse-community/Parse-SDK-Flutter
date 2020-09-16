@@ -10,8 +10,8 @@ install:
   - flutter doctor
 
 script:
-  - (cd packages/dart && flutter pub get)
-  - (cd packages/dart && dart test test/)
+  - (cd packages/dart && pub get)
+  - (cd packages/dart && pub run test)
   - (cd packages/flutter && flutter pub get)
   - (cd packages/flutter && flutter test --no-pub test/)
 
