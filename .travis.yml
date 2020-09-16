@@ -5,8 +5,8 @@ dart:
   - dev
 
 install:
+  - ls ../
   - git clone https://github.com/flutter/flutter.git -b stable --depth 1
-  - ls ~/builds
   - export PATH=~/builds/flutter/bin:$PATH
   - flutter doctor
 
