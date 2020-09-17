@@ -11,7 +11,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Requires [String] username, [String] password. [String] email address
   /// is required as well to create a full new user object on ParseServer. Only
   /// username and password is required to login
-  ParseUser(String username, String password, String emailAddress,
+  ParseUser(String username, this.password, String emailAddress,
       {String sessionToken, bool debug, ParseHTTPClient client})
       : super(keyClassUser) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
@@ -21,7 +21,6 @@ class ParseUser extends ParseObject implements ParseCloneable {
             securityContext: ParseCoreData().securityContext);
 
     this.username = username;
-    this.password = password;
     this.emailAddress = emailAddress;
     this.sessionToken = sessionToken;
   }
@@ -29,7 +28,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   ParseUser.forQuery() : super(keyClassUser);
 
   ParseUser.clone(Map<String, dynamic> map)
-      : this(map[keyVarUsername], map[keyVarPassword], map[keyVarEmail]);
+      : this(map[keyVarUsername], null, map[keyVarEmail]);
 
   @override
   dynamic clone(Map<String, dynamic> map) =>
@@ -39,6 +38,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   static const String keyUsername = 'username';
   static const String keyEmailAddress = 'email';
   static const String path = '$keyEndPointClasses$keyClassUser';
+
+  String password;
 
   Map<String, dynamic> get acl => super.get<Map<String, dynamic>>(keyVarAcl);
 
@@ -53,10 +54,6 @@ class ParseUser extends ParseObject implements ParseCloneable {
   String get username => super.get<String>(keyVarUsername);
 
   set username(String username) => set<String>(keyVarUsername, username);
-
-  String get password => super.get<String>(keyVarPassword);
-
-  set password(String password) => set<String>(keyVarPassword, password);
 
   String get emailAddress => super.get<String>(keyVarEmail);
 
