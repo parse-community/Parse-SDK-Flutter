@@ -28,7 +28,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   ParseUser.forQuery() : super(keyClassUser);
 
   ParseUser.clone(Map<String, dynamic> map)
-      : this(map[keyVarUsername], map[keyVarPassword], map[keyVarEmail]);
+      : this(map[keyVarUsername], null, map[keyVarEmail]);
 
   @override
   dynamic clone(Map<String, dynamic> map) =>
