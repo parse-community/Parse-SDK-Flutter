@@ -1,7 +1,7 @@
 # Migrate your Flutter application to version 1.0.28
 
-Strating with version 1.0.28, this repository is now seperated in a pure dart (parse_server_sdk) and a flutter package (parse_server_sdk_flutter).
-This was done in order to provide a dart package for the parse-server, while keeping maintainance simple.
+Starting with version 1.0.28, this repository is now separated in a pure dart (parse_server_sdk) and a flutter package (parse_server_sdk_flutter).
+This was done in order to provide a dart package for the parse-server, while keeping maintenance simple.
 You can find both packages in the package directory.
 
 ### 1. pubspec.yaml
@@ -30,10 +30,10 @@ in every file.
 
 It is recommended to do so by the replacement feature of your IDE.
 
-### optional: provide app informations on web
-As flutter web is now in beta, this SDK aims to be web compadible.
-But there are some parts completly different on web. For example the wep-app cant determine it's name, version or packagename.
-That's why you should provide this informations on web.
+### optional: provide app information on web
+As flutter web is now in beta, this SDK aims to be web compatible.
+But there are some parts completely different on web. For example, the wep-app cant determine it's name, version or packagename.
+That's why you should provide this information on web.
 ```dart
 Parse().initialize(
     ...
