@@ -84,3 +84,7 @@ Future<ParseResponse> batchRequest(
     return handleException(e, ParseApiRQ.batch, debug, 'parse_utils');
   }
 }
+
+Stream<T> _createStreamError<T>(Object error) async* {
+  throw error;
+}

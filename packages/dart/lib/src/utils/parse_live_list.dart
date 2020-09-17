@@ -406,11 +406,17 @@ class ParseLiveList<T extends ParseObject> {
               keyVarObjectId, _list[index].object.get<String>(keyVarObjectId))
           ..setLimit(1);
         final ParseResponse response = await queryBuilder.query<T>();
+        if (_list.isEmpty) {
+          yield* _createStreamError<T>(
+              ParseError(message: 'ParseLiveList: _list is empty'));
+          return;
+        }
         if (response.success) {
           _list[index].object = response.results?.first;
         } else {
           _list[index].object = null;
-          throw response.error;
+          yield* _createStreamError<T>(response.error);
+          return;
         }
       }
 //    just for testing
@@ -732,7 +738,6 @@ class ParseLiveListDeleteEvent<T extends ParseObject>
 typedef StreamGetter<T extends ParseObject> = Stream<T> Function();
 typedef DataGetter<T extends ParseObject> = T Function();
 
-
 class ParseLiveListElementSnapshot<T extends ParseObject> {
   ParseLiveListElementSnapshot({this.loadedData, this.error});
 
@@ -743,5 +748,3 @@ class ParseLiveListElementSnapshot<T extends ParseObject> {
 
   bool get failed => error != null;
 }
-
-
