@@ -8,6 +8,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
+import 'package:mime_type/mime_type.dart';
 import 'package:parse_server_sdk/src/network/http_client_adapter.dart';
 import 'package:parse_server_sdk/src/network/parse_websocket.dart'
     as parse_web_socket;

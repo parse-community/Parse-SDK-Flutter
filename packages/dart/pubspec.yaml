@@ -21,6 +21,7 @@ dependencies:
   uuid: ^2.2.2
   meta: ^1.1.8
   path: ^1.7.0
+  mime_type: ^0.3.2
 
 dev_dependencies:
   # Testing

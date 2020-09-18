@@ -74,9 +74,8 @@ class ParseFile extends ParseFileBase {
           parseClassName);
     }
 
-    final String ext = path.extension(file.path).replaceAll('.', '');
     final Map<String, String> headers = <String, String>{
-      HttpHeaders.contentTypeHeader: getContentType(ext)
+      HttpHeaders.contentTypeHeader: mime(file.path) ?? 'application/octet-stream',
     };
     try {
       final String uri = _client.data.serverUrl + '$_path';
