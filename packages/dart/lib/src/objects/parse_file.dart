@@ -79,11 +79,10 @@ class ParseFile extends ParseFileBase {
     };
     try {
       final String uri = _client.data.serverUrl + '$_path';
-      final List<int> body = await file.readAsBytes();
       final Response<String> response = await _client.post<String>(
         uri,
         options: Options(headers: headers),
-        data: body,
+        data: file.openRead(),
         onSendProgress: progressCallback,
       );
       if (response.statusCode == 201) {
