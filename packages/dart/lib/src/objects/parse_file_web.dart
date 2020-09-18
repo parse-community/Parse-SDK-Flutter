@@ -57,7 +57,7 @@ class ParseWebFile extends ParseFileBase {
       final Response<String> response = await _client.post<String>(
         uri,
         options: Options(headers: headers),
-        data: Stream.fromIterable(file),
+        data: Stream.fromIterable(file.map((e) => [e])),
         onSendProgress: progressCallback,
       );
       if (response.statusCode == 201) {
