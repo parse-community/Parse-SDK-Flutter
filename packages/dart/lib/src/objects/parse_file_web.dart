@@ -50,14 +50,15 @@ class ParseWebFile extends ParseFileBase {
     }
 
     final Map<String, String> headers = <String, String>{
-      HttpHeaders.contentTypeHeader: mime(url??name) ?? 'application/octet-stream',
+      HttpHeaders.contentTypeHeader:
+          mime(url ?? name) ?? 'application/octet-stream',
     };
     try {
       final String uri = _client.data.serverUrl + '$_path';
       final Response<String> response = await _client.post<String>(
         uri,
         options: Options(headers: headers),
-        data: Stream.fromIterable(file.map((e) => [e])),
+        data: Stream<List<int>>.fromIterable(<List<int>>[file]),
         onSendProgress: progressCallback,
       );
       if (response.statusCode == 201) {
