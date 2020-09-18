@@ -6,7 +6,8 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' hide Options;
+import 'package:dio/dio.dart' as dio show Options;
 import 'package:meta/meta.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:parse_server_sdk/src/network/http_client_adapter.dart';
@@ -24,6 +25,7 @@ part 'src/base/parse_constants.dart';
 part 'src/data/parse_core_data.dart';
 part 'src/data/parse_subclass_handler.dart';
 part 'src/enums/parse_enum_api_rq.dart';
+part 'src/network/dio-options.dart';
 part 'src/network/parse_connectivity.dart';
 part 'src/network/parse_http_client.dart';
 part 'src/network/parse_live_query.dart';

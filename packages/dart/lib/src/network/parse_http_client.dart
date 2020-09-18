@@ -20,7 +20,7 @@ class ParseHTTPClient with DioMixin implements Dio {
     dynamic data,
     Map<String, dynamic> queryParameters,
     CancelToken cancelToken,
-    Options options,
+    dio.Options options,
     ProgressCallback onSendProgress,
     ProgressCallback onReceiveProgress,
   }) {
