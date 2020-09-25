@@ -2,7 +2,9 @@ part of flutter_parse_sdk;
 
 // ignore_for_file: invalid_use_of_protected_member
 class ParseLiveList<T extends ParseObject> {
-  ParseLiveList._(this._query, this._listeningIncludes, this._lazyLoading) {
+  ParseLiveList._(this._query, this._listeningIncludes, this._lazyLoading,
+      {List<String> preloadedColumns = const <String>[]})
+      : _preloadedColumns = preloadedColumns {
     _debug = isDebugEnabled();
   }
 
@@ -10,7 +12,7 @@ class ParseLiveList<T extends ParseObject> {
       QueryBuilder<T> _query,
       {bool listenOnAllSubItems,
       List<String> listeningIncludes,
-      bool lazyLoading = true}) {
+      bool lazyLoading = true, List<String> preloadedColumns,}) {
     final ParseLiveList<T> parseLiveList = ParseLiveList<T>._(
         _query,
         listenOnAllSubItems == true
@@ -18,17 +20,25 @@ class ParseLiveList<T extends ParseObject> {
                 _query.limiters['include']?.toString()?.split(',') ??
                     <String>[])
             : _toIncludeMap(listeningIncludes ?? <String>[]),
-        lazyLoading);
+        lazyLoading,preloadedColumns: preloadedColumns,);
 
-    return parseLiveList._init().then((_) {
+                        return parseLiveList._init().then((_) {
       return parseLiveList;
     });
   }
+
+  final QueryBuilder<T> _query;
+  //The included Items, where LiveList should look for updates.
+  final Map<String, dynamic> _listeningIncludes;
+  final bool _lazyLoading;
+  final List<String> _preloadedColumns;
 
   List<ParseLiveListElement<T>> _list = List<ParseLiveListElement<T>>();
   StreamController<ParseLiveListEvent<T>> _eventStreamController;
   int _nextID = 0;
   bool _debug;
+
+  int get nextID => _nextID++;
 
   /// is object1 listed after object2?
   /// can return null
@@ -84,14 +94,6 @@ class ParseLiveList<T extends ParseObject> {
     return null;
   }
 
-  int get nextID => _nextID++;
-
-  final QueryBuilder<T> _query;
-  //The included Items, where LiveList should look for updates.
-  final Map<String, dynamic> _listeningIncludes;
-
-  final bool _lazyLoading;
-
   int get size {
     return _list.length;
   }
@@ -127,19 +129,17 @@ class ParseLiveList<T extends ParseObject> {
     final QueryBuilder<T> query = QueryBuilder<T>.copy(_query);
     if (_debug)
       print('ParseLiveList: lazyLoading is ${_lazyLoading ? 'on' : 'off'}');
-    if (_lazyLoading) {
-      if (query.limiters.containsKey('order')) {
-        query.keysToReturn(
-            query.limiters['order'].toString().split(',').map((String string) {
+    final List<String> keys = _preloadedColumns?.toList() ?? <String>[];
+    if (_lazyLoading && query.limiters.containsKey('order'))
+      keys.addAll(
+        query.limiters['order'].toString().split(',').map((String string) {
           if (string.startsWith('-')) {
             return string.substring(1);
           }
           return string;
-        }).toList());
-      } else {
-        query.keysToReturn(List<String>());
-      }
-    }
+        }),
+      );
+    query.keysToReturn(keys);
     return await query.query<T>();
   }
 
@@ -449,6 +449,13 @@ class ParseLiveList<T extends ParseObject> {
     return null;
   }
 
+  T getPreLoadedAt(int index) {
+    if (index < _list.length) {
+      return _list[index].object;
+    }
+    return null;
+  }
+
   void dispose() {
     if (_liveQuerySubscription != null) {
       LiveQuery().client.unSubscribe(_liveQuerySubscription);
@@ -739,12 +746,17 @@ typedef StreamGetter<T extends ParseObject> = Stream<T> Function();
 typedef DataGetter<T extends ParseObject> = T Function();
 
 class ParseLiveListElementSnapshot<T extends ParseObject> {
-  ParseLiveListElementSnapshot({this.loadedData, this.error});
+  ParseLiveListElementSnapshot(
+      {this.loadedData, this.error, this.preLoadedData});
 
   final T loadedData;
+  final T preLoadedData;
+
   final ParseError error;
 
   bool get hasData => loadedData != null;
+
+  bool get hasPreLoadedData => preLoadedData != null;
 
   bool get failed => error != null;
 }
