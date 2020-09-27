@@ -34,7 +34,7 @@ void main() {
       await queryBuilder.query();
 
       final Uri result =
-          verify<String>(client.get<String>(captureAny)).captured.single;
+          Uri.parse(verify(client.get<String>(captureAny)).captured.single);
 
       expect(result.path, '/classes/_User');
 
