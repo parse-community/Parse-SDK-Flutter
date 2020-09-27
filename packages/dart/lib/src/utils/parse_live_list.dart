@@ -129,17 +129,19 @@ class ParseLiveList<T extends ParseObject> {
     final QueryBuilder<T> query = QueryBuilder<T>.copy(_query);
     if (_debug)
       print('ParseLiveList: lazyLoading is ${_lazyLoading ? 'on' : 'off'}');
-    final List<String> keys = _preloadedColumns?.toList() ?? <String>[];
-    if (_lazyLoading && query.limiters.containsKey('order'))
-      keys.addAll(
-        query.limiters['order'].toString().split(',').map((String string) {
-          if (string.startsWith('-')) {
-            return string.substring(1);
-          }
-          return string;
-        }),
-      );
-    query.keysToReturn(keys);
+    if(_lazyLoading) {
+      final List<String> keys = _preloadedColumns?.toList() ?? <String>[];
+      if (_lazyLoading && query.limiters.containsKey('order'))
+        keys.addAll(
+          query.limiters['order'].toString().split(',').map((String string) {
+            if (string.startsWith('-')) {
+              return string.substring(1);
+            }
+            return string;
+          }),
+        );
+      query.keysToReturn(keys);
+    }
     return await query.query<T>();
   }
 
