@@ -31,7 +31,7 @@ void logAPIResponse(
   print(responseString);
 }
 
-void logCUrl(Options options, dynamic data, String url) {
+void logCUrl(dio.Options options, dynamic data, String url) {
   String curlCmd = 'curl';
   curlCmd += ' -X ' + options.method;
   bool compressed = false;
