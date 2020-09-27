@@ -9,20 +9,23 @@ class ParseLiveList<T extends ParseObject> {
   }
 
   static Future<ParseLiveList<T>> create<T extends ParseObject>(
-      QueryBuilder<T> _query,
-      {bool listenOnAllSubItems,
-      List<String> listeningIncludes,
-      bool lazyLoading = true, List<String> preloadedColumns,}) {
+    QueryBuilder<T> _query, {
+    bool listenOnAllSubItems,
+    List<String> listeningIncludes,
+    bool lazyLoading = true,
+    List<String> preloadedColumns,
+  }) {
     final ParseLiveList<T> parseLiveList = ParseLiveList<T>._(
-        _query,
-        listenOnAllSubItems == true
-            ? _toIncludeMap(
-                _query.limiters['include']?.toString()?.split(',') ??
-                    <String>[])
-            : _toIncludeMap(listeningIncludes ?? <String>[]),
-        lazyLoading,preloadedColumns: preloadedColumns,);
+      _query,
+      listenOnAllSubItems == true
+          ? _toIncludeMap(
+              _query.limiters['include']?.toString()?.split(',') ?? <String>[])
+          : _toIncludeMap(listeningIncludes ?? <String>[]),
+      lazyLoading,
+      preloadedColumns: preloadedColumns,
+    );
 
-                        return parseLiveList._init().then((_) {
+    return parseLiveList._init().then((_) {
       return parseLiveList;
     });
   }
@@ -129,7 +132,7 @@ class ParseLiveList<T extends ParseObject> {
     final QueryBuilder<T> query = QueryBuilder<T>.copy(_query);
     if (_debug)
       print('ParseLiveList: lazyLoading is ${_lazyLoading ? 'on' : 'off'}');
-    if(_lazyLoading) {
+    if (_lazyLoading) {
       final List<String> keys = _preloadedColumns?.toList() ?? <String>[];
       if (_lazyLoading && query.limiters.containsKey('order'))
         keys.addAll(
