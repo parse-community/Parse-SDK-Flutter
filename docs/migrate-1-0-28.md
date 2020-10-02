@@ -42,3 +42,8 @@ Parse().initialize(
     appPackageName: kIsWeb ? "com.example.myapplication" : null,
 );
 ```
+
+### changed network library
+In order to provide a `ProgressCallback` for heavy file operations,
+the network library was switched from [http](https://pub.dev/packages/http) to [dio](https://pub.dev/packages/dio).
+There should be no breaking changes regarding this change, except if you are overriding the `ParseHTTPClient`.
