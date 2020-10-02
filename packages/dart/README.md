@@ -820,7 +820,10 @@ someParseObject.set("image", parseFile);
 //This saves the ParseObject as well as all of its children, and the ParseFileBase is such a child. 
 await someParseObject.save();
 ```
-
+```dart
+//progressCallback example
+file.upload(progressCallback: (int count, int total) => print("$count of $total"));
+```
 ## Other Features of this library
 Main:
 * Installation (View the example application)
