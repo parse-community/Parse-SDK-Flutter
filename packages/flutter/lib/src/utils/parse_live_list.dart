@@ -21,6 +21,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.listenOnAllSubItems,
     this.listeningIncludes,
     this.lazyLoading = true,
+    this.preloadedColumns,
   }) : super(key: key);
 
   final sdk.QueryBuilder<T> query;
@@ -42,6 +43,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final List<String> listeningIncludes;
 
   final bool lazyLoading;
+  final List<String> preloadedColumns;
 
   @override
   _ParseLiveListWidgetState<T> createState() => _ParseLiveListWidgetState<T>(
@@ -50,6 +52,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
         listenOnAllSubItems: listenOnAllSubItems,
         listeningIncludes: listeningIncludes,
         lazyLoading: lazyLoading,
+        preloadedColumns: preloadedColumns,
       );
 
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
@@ -79,12 +82,14 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       @required this.removedItemBuilder,
       bool listenOnAllSubItems,
       List<String> listeningIncludes,
-      bool lazyLoading = true}) {
+      bool lazyLoading = true,
+      List<String> preloadedColumns}) {
     sdk.ParseLiveList.create(
       query,
       listenOnAllSubItems: listenOnAllSubItems,
       listeningIncludes: listeningIncludes,
       lazyLoading: lazyLoading,
+      preloadedColumns: preloadedColumns,
     ).then((sdk.ParseLiveList<T> value) {
       setState(() {
         _liveList = value;
@@ -107,6 +112,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                       sizeFactor: animation,
                       duration: widget.duration,
                       loadedData: () => event.object,
+                      preLoadedData: () => event.object,
                     ),
                 duration: widget.duration);
           }
@@ -146,6 +152,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                 _liveList?.getIdentifier(index) ?? '_NotFound'),
             stream: () => _liveList?.getAt(index),
             loadedData: () => _liveList?.getLoadedAt(index),
+            preLoadedData: () => _liveList?.getPreLoadedAt(index),
             sizeFactor: animation,
             duration: widget.duration,
             childBuilder:
@@ -168,6 +175,7 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
       {Key key,
       this.stream,
       this.loadedData,
+      this.preLoadedData,
       @required this.sizeFactor,
       @required this.duration,
       @required this.childBuilder})
@@ -175,32 +183,36 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
 
   final sdk.StreamGetter<T> stream;
   final sdk.DataGetter<T> loadedData;
+  final sdk.DataGetter<T> preLoadedData;
   final Animation<double> sizeFactor;
   final Duration duration;
   final ChildBuilder<T> childBuilder;
 
   @override
   _ParseLiveListElementWidgetState<T> createState() {
-    return _ParseLiveListElementWidgetState<T>(loadedData, stream);
+    return _ParseLiveListElementWidgetState<T>(
+        loadedData, preLoadedData, stream);
   }
 }
 
 class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveListElementWidget<T>>
     with SingleTickerProviderStateMixin {
-  _ParseLiveListElementWidgetState(
-      sdk.DataGetter<T> loadedDataGetter, sdk.StreamGetter<T> stream) {
-    _snapshot =
-        sdk.ParseLiveListElementSnapshot<T>(loadedData: loadedDataGetter());
+  _ParseLiveListElementWidgetState(sdk.DataGetter<T> loadedDataGetter,
+      sdk.DataGetter<T> preLoadedDataGetter, sdk.StreamGetter<T> stream) {
+    _snapshot = sdk.ParseLiveListElementSnapshot<T>(
+        loadedData: loadedDataGetter(), preLoadedData: preLoadedDataGetter());
     if (stream != null) {
       _streamSubscription = stream().listen(
         (T data) {
           if (widget != null) {
             setState(() {
-              _snapshot = sdk.ParseLiveListElementSnapshot<T>(loadedData: data);
+              _snapshot = sdk.ParseLiveListElementSnapshot<T>(
+                  loadedData: data, preLoadedData: data);
             });
           } else {
-            _snapshot = sdk.ParseLiveListElementSnapshot<T>(loadedData: data);
+            _snapshot = sdk.ParseLiveListElementSnapshot<T>(
+                loadedData: data, preLoadedData: data);
           }
         },
         onError: (Object error) {

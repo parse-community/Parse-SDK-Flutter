@@ -597,6 +597,38 @@ To activate listening for updates on all included objects, add `listenOnAllSubIt
 If you want ParseLiveList to listen for updates on only some sub-objects, use `listeningIncludes: const <String>[/*all the included sub-objects*/]` instead.
 Just as QueryBuilder, ParseLiveList supports nested sub-objects too.
 
+### Lazy loading
+By default, ParseLiveList lazy loads the content.
+You can avoid that by setting `lazyLoading: false`.
+In case you want to use lazyLoading but you need some columns to be preloaded, you can provide a list of `preloadedColumns`.
+Preloading fields of a pointer is supported by using the dot-notation.
+You can access the preloaded data is stored in the `preLoadedData` field of the `ParseLiveListElementSnapshot`.
+```dart
+ParseLiveListWidget<ParseObject>(
+  query: query,
+  lazyLoading: true,
+  preloadedColumns: ["test1", "sender.username"],
+  childBuilder:
+      (BuildContext context, ParseLiveListElementSnapshot<ParseObject> snapshot) {
+    if (snapshot.failed) {
+      return const Text('something went wrong!');
+    } else if (snapshot.hasData) {
+      return ListTile(
+        title: Text(
+          snapshot.loadedData.get<String>("text"),
+        ),
+      );
+    } else {
+      return ListTile(
+        title: Text(
+          "loading comment from: ${snapshot.preLoadedData?.get<ParseObject>("sender")?.get<String>("username")}",
+        ),
+      );
+    }
+  },
+);
+```
+
 **NOTE:** To use this features you have to enable [Live Queries](#live-queries) first.
 
 ## Users
