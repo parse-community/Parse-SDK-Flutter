@@ -1,5 +1,9 @@
+<p align="center">
+  <img src="https://parseplatform.org/img/logo.svg" alt="Parse Logo" width="250" style="text-align:center; ">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png" alt="Flutter Logo" width="250" style="text-align:center;">
+</p>
 
-![Parse Logo](https://parseplatform.org/img/logo.svg) ![Flutter Logo](https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png)
+---
 
 ## Parse For Flutter! 
 Hi, this is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like (http://Back4App.com).
@@ -49,12 +53,12 @@ It's possible to add other parameters to work with your instance of Parse Server
 ```
 
 
-#### Early Web support
-Currently this requires adding `X-Parse-Installation-Id` as an allowed header to parse-server.
+#### Web support
+Due to Cross-origin resource sharing (CORS) restrictions, this requires adding `X-Parse-Installation-Id` as an allowed header to parse-server.
 When running directly via docker, set the env var `PARSE_SERVER_ALLOW_HEADERS=X-Parse-Installation-Id`.
 When running via express, set [ParseServerOptions](https://parseplatform.org/parse-server/api/master/ParseServerOptions.html) `allowHeaders: ['X-Parse-Installation-Id']`.
 
-Be aware that for web ParseInstallation does include app name, version or package identifier.
+Be aware that for web ParseInstallation does include app name, version or package identifier automatically. You should manually provide this data as described [here](https://github.com/parse-community/Parse-SDK-Flutter/blob/master/docs/migrate-1-0-28.md#optional-provide-app-information-on-web);
 
 
 ## Objects
