@@ -149,10 +149,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
         return null;
       }
 
-      final Map<String, dynamic> bodyData = _getObjectData();
-      bodyData[keyVarPassword] = password;
       final Uri url = getSanitisedUri(_client, '$path');
-      final String body = json.encode(bodyData);
+      _unsavedChanges[keyVarPassword] = password;
+      final String body = json.encode(toJson(forApiRQ: true));
       _saveChanges();
       final String installationId = await _getInstallationId();
       final Response<String> response =
