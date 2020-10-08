@@ -33,7 +33,8 @@ void main() {
       when(client.data).thenReturn(ParseCoreData());
       await queryBuilder.query();
 
-      final Uri result = verify(client.get(captureAny)).captured.single;
+      final Uri result =
+          Uri.parse(verify(client.get<String>(captureAny)).captured.single);
 
       expect(result.path, '/classes/_User');
 

@@ -861,6 +861,7 @@ These classes are used by default to represent files, but you can also build you
 
 Have a look at the example application for a small (non web) example.
 
+When uploading or downloading a file, you can use the `progressCallback`-parameter to track the progress of the http request.
 
 ```dart
 //A short example for showing an image from a ParseFileBase

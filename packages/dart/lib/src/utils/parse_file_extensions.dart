@@ -3,6 +3,7 @@ part of flutter_parse_sdk;
 // ignore_for_file: always_specify_types
 
 /// Get the extension type of the file
+@deprecated
 String getExtension(String contentType) {
   if (_extensions.containsKey(contentType) &&
       _extensions[contentType].containsKey('extensions')) {
@@ -12,6 +13,7 @@ String getExtension(String contentType) {
 }
 
 /// Get the content type based on
+@deprecated
 String getContentType(String extension) {
   final Map<String, dynamic> extensions = _queryExtensions();
   if (extension.lastIndexOf('.') >= 0) {
@@ -26,6 +28,7 @@ String getContentType(String extension) {
 }
 
 /// Add content types based on extension to a map
+@deprecated
 Map<String, dynamic> _queryExtensions() {
   Map<String, dynamic> extensions = Map<String, dynamic>();
 
@@ -43,6 +46,7 @@ Map<String, dynamic> _queryExtensions() {
   return extensions;
 }
 
+@deprecated
 final Map _extensions = <String, dynamic>{
   'application/1d-interleaved-parityfec': {'source': 'iana'},
   'application/3gpdash-qoe-report+xml': {

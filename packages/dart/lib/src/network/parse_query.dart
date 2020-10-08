@@ -343,8 +343,12 @@ class QueryBuilder<T extends ParseObject> {
   /// Finishes the query and calls the server
   ///
   /// Make sure to call this after defining your queries
-  Future<ParseResponse> query<T extends ParseObject>() async {
-    return object.query<T>(buildQuery());
+  Future<ParseResponse> query<T extends ParseObject>(
+      {ProgressCallback progressCallback}) async {
+    return object.query<T>(
+      buildQuery(),
+      progressCallback: progressCallback,
+    );
   }
 
   Future<ParseResponse> distinct<T extends ParseObject>(

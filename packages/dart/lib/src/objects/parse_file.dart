@@ -40,22 +40,26 @@ class ParseFile extends ParseFileBase {
   }
 
   @override
-  Future<ParseFile> download() async {
+  Future<ParseFile> download({ProgressCallback progressCallback}) async {
     if (url == null) {
       return this;
     }
 
     file = File('${ParseCoreData().fileDirectory}/$name');
     await file.create();
-    final Response response = await _client.get(url);
-    await file.writeAsBytes(response.bodyBytes);
+    final Response<List<int>> response = await _client.get<List<int>>(
+      url,
+      options: Options(responseType: ResponseType.bytes),
+      onReceiveProgress: progressCallback,
+    );
+    await file.writeAsBytes(response.data);
 
     return this;
   }
 
   /// Uploads a file to Parse Server
   @override
-  Future<ParseResponse> upload() async {
+  Future<ParseResponse> upload({ProgressCallback progressCallback}) async {
     if (saved) {
       //Creates a Fake Response to return the correct result
       final Map<String, String> response = <String, String>{
@@ -64,23 +68,25 @@ class ParseFile extends ParseFileBase {
       };
       return handleResponse<ParseFile>(
           this,
-          Response(json.encode(response), 201),
+          Response<String>(data: json.encode(response), statusCode: 201),
           ParseApiRQ.upload,
           _debug,
           parseClassName);
     }
 
-    final String ext = path.extension(file.path).replaceAll('.', '');
     final Map<String, String> headers = <String, String>{
-      HttpHeaders.contentTypeHeader: getContentType(ext)
+      HttpHeaders.contentTypeHeader: mime(file.path) ?? 'application/octet-stream',
     };
     try {
       final String uri = _client.data.serverUrl + '$_path';
-      final List<int> body = await file.readAsBytes();
-      final Response response =
-          await _client.post(uri, headers: headers, body: body);
+      final Response<String> response = await _client.post<String>(
+        uri,
+        options: Options(headers: headers),
+        data: file.openRead(),
+        onSendProgress: progressCallback,
+      );
       if (response.statusCode == 201) {
-        final Map<String, dynamic> map = json.decode(response.body);
+        final Map<String, dynamic> map = json.decode(response.data);
         url = map['url'].toString();
         name = map['name'].toString();
       }

@@ -782,7 +782,7 @@ These classes are used by default to represent files, but you can also build you
 
 Have a look at the example application for a small (non web) example.
 
-
+When uploading or downloading a file, you can use the `progressCallback`-parameter to track the progress of the http request.
 ```dart
 //A short example for showing an image from a ParseFileBase
 Widget buildImage(ParseFileBase image){
@@ -820,7 +820,10 @@ someParseObject.set("image", parseFile);
 //This saves the ParseObject as well as all of its children, and the ParseFileBase is such a child. 
 await someParseObject.save();
 ```
-
+```dart
+//progressCallback example
+file.upload(progressCallback: (int count, int total) => print("$count of $total"));
+```
 ## Other Features of this library
 Main:
 * Installation (View the example application)

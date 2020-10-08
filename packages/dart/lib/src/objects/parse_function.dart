@@ -33,8 +33,9 @@ class ParseCloudFunction extends ParseObject {
       _setObjectData(parameters);
     }
 
-    final Response result = await _client.post(uri,
-        headers: headers, body: json.encode(_getObjectData()));
+    final Response<String> result = await _client.post<String>(uri,
+        options: Options(headers: headers),
+        data: json.encode(_getObjectData()));
     return handleResponse<ParseCloudFunction>(
         this, result, ParseApiRQ.execute, _debug, parseClassName);
   }
@@ -48,8 +49,9 @@ class ParseCloudFunction extends ParseObject {
     if (parameters != null) {
       _setObjectData(parameters);
     }
-    final Response result = await _client.post(uri,
-        headers: headers, body: json.encode(_getObjectData()));
+    final Response<String> result = await _client.post<String>(uri,
+        options: Options(headers: headers),
+        data: json.encode(_getObjectData()));
     return handleResponse<T>(this, result, ParseApiRQ.executeObjectionFunction,
         _debug, parseClassName);
   }

@@ -1,7 +1,7 @@
 part of flutter_parse_sdk;
 
-void logAPIResponse(String className, String type,
-    ParseResponse parseResponse) {
+void logAPIResponse(
+    String className, String type, ParseResponse parseResponse) {
   const String spacer = ' \n';
   String responseString = '';
 
@@ -31,26 +31,28 @@ void logAPIResponse(String className, String type,
   print(responseString);
 }
 
-void logCUrl(BaseRequest request) {
+void logCUrl(dio.Options options, dynamic data, String url) {
   String curlCmd = 'curl';
-  curlCmd += ' -X ' + request.method;
+  curlCmd += ' -X ' + options.method;
   bool compressed = false;
-  request.headers.forEach((String name, String value) {
+  options.headers.forEach((String name, dynamic value) {
     if (name?.toLowerCase() == 'accept-encoding' &&
-        value?.toLowerCase() == 'gzip') {
+        value?.toString()?.toLowerCase() == 'gzip') {
       compressed = true;
     }
     curlCmd += ' -H \'$name: $value\'';
   });
-  if (request.method == 'POST' || request.method == 'PUT') {
-    if (request is Request) {
-      final String body = latin1.decode(request.bodyBytes);
-      curlCmd += ' -d \'$body\'';
-    }
-  }
 
-  curlCmd += (compressed ? ' --compressed ' : ' ') + request.url.toString();
-  curlCmd += '\n\n ${Uri.decodeFull(request.url.toString())}';
+  //TODO: log request
+  // if (options.method == 'POST' || options.method == 'PUT') {
+  //   if (request is Request) {
+  //     final String body = latin1.decode(request.bodyBytes);
+  //     curlCmd += ' -d \'$body\'';
+  //   }
+  // }
+
+  curlCmd += (compressed ? ' --compressed ' : ' ') + url;
+  curlCmd += '\n\n ${Uri.decodeFull(url)}';
   print('╭-- Parse Request');
   print(curlCmd);
   print('╰--');
