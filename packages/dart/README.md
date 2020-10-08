@@ -1,9 +1,16 @@
-![Parse Logo](https://parseplatform.org/img/logo.svg) ![Dart Logo](https://dart.dev/assets/shared/dart-logo-for-shares.png?2)
+<p align="center">
+  <img src="https://parseplatform.org/img/logo.svg" alt="Parse Logo" width="250">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/f/fe/Dart_programming_language_logo.svg" alt="Dart Logo" width="250">
+</p>
 
+---
 
-**THIS README IS WORK IN PROGRESS**
+**This is now a dart package. The Flutter package was moved [here](https://pub.dev/packages/parse_server_sdk_flutter).**
 
-## Parse For Dart! 
+**THIS README IS WORK IN PROGRESS!**
+Help out to improve this README on [GitHub](https://github.com/parse-community/Parse-SDK-Flutter/edit/master/packages/dart/README.md).
+
+## Parse For Dart!
 This is a Dart package that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like (http://Back4App.com).
 
 This is a work in progress and we are consistently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project. (Even if it is just to improve our documentation)
@@ -36,7 +43,7 @@ await Parse().initialize(
   	keyParseServerUrl,
     coreStore: await CoreStoreSembastImp.getInstance("/data"));
 ```
-It's possible to add other parameters to work with your instance of Parse Server:- 
+It's possible to add other parameters to work with your instance of Parse Server:-
 
 ```dart
   await Parse().initialize(
@@ -307,7 +314,7 @@ The features available are:-
  * Ascending
  * Descending
  * Plenty more!
- 
+
 ## Relational queries
 If you want to retrieve objects where a field contains an object that matches another query, you can use the
 __whereMatchesQuery__ condition.
@@ -429,7 +436,7 @@ QueryBuilder<ParseObject> query =
   ..whereEqualTo('intNumber', 1);
 ```
 __Create a subscription__
-You’ll get the LiveQuery events through this subscription. 
+You’ll get the LiveQuery events through this subscription.
 The first time you call subscribe, we’ll try to open the WebSocket connection to the LiveQuery server for you.
 
 ```dart
@@ -440,7 +447,7 @@ __Event Handling__
 We define several types of events you’ll get through a subscription object:
 
 __Create event__
-When a new ParseObject is created and it fulfills the QueryBuilder you subscribe, you’ll get this event. 
+When a new ParseObject is created and it fulfills the QueryBuilder you subscribe, you’ll get this event.
 The object is the ParseObject which was created.
 ```dart
 subscription.on(LiveQueryEvent.create, (value) {
@@ -455,8 +462,8 @@ subscription.on(LiveQueryEvent.create, (value) {
 ```
 
 __Update event__
-When an existing ParseObject which fulfills the QueryBuilder you subscribe is updated (The ParseObject fulfills the 
-QueryBuilder before and after changes), you’ll get this event. 
+When an existing ParseObject which fulfills the QueryBuilder you subscribe is updated (The ParseObject fulfills the
+QueryBuilder before and after changes), you’ll get this event.
 The object is the ParseObject which was updated. Its content is the latest value of the ParseObject.
 ```dart
 subscription.on(LiveQueryEvent.update, (value) {
@@ -471,8 +478,8 @@ subscription.on(LiveQueryEvent.update, (value) {
 ```
 
 __Enter event__
-When an existing ParseObject’s old value does not fulfill the QueryBuilder but its new value fulfills the QueryBuilder, 
-you’ll get this event. The object is the ParseObject which enters the QueryBuilder. 
+When an existing ParseObject’s old value does not fulfill the QueryBuilder but its new value fulfills the QueryBuilder,
+you’ll get this event. The object is the ParseObject which enters the QueryBuilder.
 Its content is the latest value of the ParseObject.
 ```dart
 subscription.on(LiveQueryEvent.enter, (value) {
@@ -487,8 +494,8 @@ subscription.on(LiveQueryEvent.enter, (value) {
 ```
 
 __Leave event__
-When an existing ParseObject’s old value fulfills the QueryBuilder but its new value doesn’t fulfill the QueryBuilder, 
-you’ll get this event. The object is the ParseObject which leaves the QueryBuilder. 
+When an existing ParseObject’s old value fulfills the QueryBuilder but its new value doesn’t fulfill the QueryBuilder,
+you’ll get this event. The object is the ParseObject which leaves the QueryBuilder.
 Its content is the latest value of the ParseObject.
 ```dart
 subscription.on(LiveQueryEvent.leave, (value) {
@@ -503,7 +510,7 @@ subscription.on(LiveQueryEvent.leave, (value) {
 ```
 
 __Delete event__
-When an existing ParseObject which fulfills the QueryBuilder is deleted, you’ll get this event. 
+When an existing ParseObject which fulfills the QueryBuilder is deleted, you’ll get this event.
 The object is the ParseObject which is deleted
 ```dart
 subscription.on(LiveQueryEvent.delete, (value) {
@@ -518,8 +525,8 @@ subscription.on(LiveQueryEvent.delete, (value) {
 ```
 
 __Unsubscribe__
-If you would like to stop receiving events from a QueryBuilder, you can just unsubscribe the subscription. 
-After that, you won’t get any events from the subscription object and will close the WebSocket connection to the 
+If you would like to stop receiving events from a QueryBuilder, you can just unsubscribe the subscription.
+After that, you won’t get any events from the subscription object and will close the WebSocket connection to the
 LiveQuery server.
 
 ```dart
@@ -594,13 +601,13 @@ Other user features are:-
  * Get all users
  * Save
  * Destroy user
- * Queries 
- 
+ * Queries
+
  ## Facebook, OAuth and 3rd Party Login/User
- 
+
  Usually, each provider will provide their own library for logins, but the loginWith method on ParseUser accepts a name of provider, then a Map<String, dynamic> with the authentication details required.
  For Facebook and the example below, we used the library provided at https://pub.dev/packages/flutter_facebook_login
- 
+
  ```
  Future<void> goToFacebookLogin() async {
         final FacebookLogin facebookLogin = FacebookLogin();
@@ -651,9 +658,9 @@ For any object, you can specify which users are allowed to read the object, and 
 To support this type of security, each object has an access control list, implemented by the __ParseACL__ class.
 
 If ParseACL is not specified (with the exception of the ParseUser class) all objects are set to Public for read and write.
-The simplest way to use a ParseACL is to specify that an object may only be read or written by a single user. 
+The simplest way to use a ParseACL is to specify that an object may only be read or written by a single user.
 To create such an object, there must first be a logged in ParseUser. Then, new ParseACL(user) generates a ParseACL that
-limits access to that user. An object’s ACL is updated when the object is saved, like any other property. 
+limits access to that user. An object’s ACL is updated when the object is saved, like any other property.
 
 ```dart
 ParseUser user = await ParseUser.currentUser() as ParseUser;
@@ -664,7 +671,7 @@ ParseObject parseObject = ParseObject("TestAPI");
 parseObject.setACL(parseACL);
 var apiResponse = await parseObject.save();
 ```
-Permissions can also be granted on a per-user basis. You can add permissions individually to a ParseACL using 
+Permissions can also be granted on a per-user basis. You can add permissions individually to a ParseACL using
 __setReadAccess__ and __setWriteAccess__
 ```dart
 ParseUser user = await ParseUser.currentUser() as ParseUser;
@@ -693,8 +700,8 @@ parseObject.setACL(parseACL);
 var apiResponse = await parseObject.save();
 ```
 Operations that are forbidden, such as deleting an object that you do not have write access to, result in a
-ParseError with code 101: 'ObjectNotFound'. 
-For security purposes, this prevents clients from distinguishing which object ids exist but are secured, versus which 
+ParseError with code 101: 'ObjectNotFound'.
+For security purposes, this prevents clients from distinguishing which object ids exist but are secured, versus which
 object ids do not exist at all.
 
 You can retrieve the ACL list of an object using:

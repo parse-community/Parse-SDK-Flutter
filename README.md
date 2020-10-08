@@ -1,5 +1,7 @@
-
-![Parse Logo](https://parseplatform.org/img/logo.svg)
+<p align="center">
+    <img alt="Parse Logo" src="https://parseplatform.org/img/logo.svg" width="500">
+  </a>
+</p>
 
 ---
 
