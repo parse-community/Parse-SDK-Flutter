@@ -14,7 +14,7 @@ dependencies:
 
   #Database
   sembast: ^2.4.7+6
-  sembast_web: '>=1.0.0'
+  sembast_web: ^1.2.0
   xxtea: ^2.0.3
 
   # Utils
