@@ -52,6 +52,7 @@ It's possible to add other parameters to work with your instance of Parse Server
 	coreStore: await CoreStoreSharedPrefsImp.getInstance()); // Local data storage method. Will use SharedPreferences instead of Sembast as an internal DB
 ```
 
+⚠️ Please note that the master key should only be used in safe environments and never on client side ‼️
 
 #### Web support
 Due to Cross-origin resource sharing (CORS) restrictions, this requires adding `X-Parse-Installation-Id` as an allowed header to parse-server.
