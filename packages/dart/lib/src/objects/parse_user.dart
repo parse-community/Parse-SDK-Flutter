@@ -11,7 +11,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Requires [String] username, [String] password. [String] email address
   /// is required as well to create a full new user object on ParseServer. Only
   /// username and password is required to login
-  ParseUser(String username, this.password, String emailAddress,
+  ParseUser(String username, String password, String emailAddress,
       {String sessionToken, bool debug, ParseHTTPClient client})
       : super(keyClassUser) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
@@ -22,6 +22,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
     this.username = username;
     this.emailAddress = emailAddress;
+    this.password = password;
     this.sessionToken = sessionToken;
   }
 
@@ -39,7 +40,16 @@ class ParseUser extends ParseObject implements ParseCloneable {
   static const String keyEmailAddress = 'email';
   static const String path = '$keyEndPointClasses$keyClassUser';
 
-  String password;
+  String _password;
+
+  String get password => _password;
+
+  set password(String password) {
+    if (_password != password) {
+      _password = password;
+      if (password != null) _unsavedChanges[keyVarPassword] = password;
+    }
+  }
 
   Map<String, dynamic> get acl => super.get<Map<String, dynamic>>(keyVarAcl);
 
@@ -157,10 +167,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
         }
       }
 
-      final Map<String, dynamic> bodyData = _getObjectData();
-      bodyData[keyVarPassword] = password;
       final Uri url = getSanitisedUri(_client, '$path');
-      final String body = json.encode(bodyData);
+      final String body = json.encode(toJson(forApiRQ: true));
       _saveChanges();
       final String installationId = await _getInstallationId();
       final Response<String> response =
