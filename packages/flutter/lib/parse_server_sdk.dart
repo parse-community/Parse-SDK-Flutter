@@ -90,6 +90,7 @@ class Parse extends sdk.Parse
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
+      liveListRetryIntervals: liveListRetryIntervals,
       connectivityProvider: connectivityProvider ?? this,
       fileDirectory: fileDirectory ??
           (!sdk.parseIsWeb ? (await getTemporaryDirectory()).path : null),
