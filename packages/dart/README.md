@@ -57,7 +57,7 @@ It's possible to add other parameters to work with your instance of Parse Server
         securityContext: securityContext, // Again, required for some setups
 	coreStore: CoreStoreMemoryImp()); // Non persistent mode (default): Sdk will store everything in memmore instead of using Sembast as an internal DB.
 ```
-
+⚠️ Please note that the master key should only be used in safe environments and never on client side ‼️ Using this package on a server should be fine.
 
 #### Early Web support
 Currently this requires adding `X-Parse-Installation-Id` as an allowed header to parse-server.

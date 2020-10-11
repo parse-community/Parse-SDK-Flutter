@@ -134,6 +134,13 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         : buildAnimatedList();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
   Widget buildAnimatedList() {
     return AnimatedList(
         key: _animatedListKey,
@@ -234,6 +241,13 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
   sdk.ParseLiveListElementSnapshot<T> _snapshot;
 
   StreamSubscription<T> _streamSubscription;
+
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
 
   @override
   void dispose() {
