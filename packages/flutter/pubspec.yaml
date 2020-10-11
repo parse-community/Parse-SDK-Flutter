@@ -13,6 +13,7 @@ dependencies:
   parse_server_sdk: ^1.0.28
 
   # Networking
+  dio: ^3.0.10
   connectivity: ^0.4.9+2 # only used in the flutter part
 
   #Database
