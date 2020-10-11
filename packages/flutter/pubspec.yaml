@@ -10,8 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  parse_server_sdk:
-    path: ../dart/
+  parse_server_sdk: ^1.0.28
 
   # Networking
   dio: ^3.0.10
@@ -23,6 +22,9 @@ dependencies:
   # Utils
   path_provider: ^1.6.14 # only used in the flutter part
   package_info: ^0.4.3 # only used in the flutter part
+
+  sembast: ^2.4.7+6 # required for transitive use only
+  path: ^1.7.0 # required for transitive use only
 
 dev_dependencies:
   # Testing
