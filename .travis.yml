@@ -6,12 +6,14 @@ dart:
 
 install:
   - git clone https://github.com/flutter/flutter.git -b stable --depth 1
-  - export PATH=./flutter/bin:$PATH
+  - export PATH=~/build/parse-community/Parse-SDK-Flutter/flutter/bin:$PATH
   - flutter doctor
 
 script:
-  - flutter packages get
-  - flutter test --no-pub test/
+  - (cd packages/dart && pub get)
+  - (cd packages/dart && pub run test)
+  - (cd packages/flutter && flutter pub get)
+  - (cd packages/flutter && flutter test --no-pub test/)
 
 cache:
   directories:
