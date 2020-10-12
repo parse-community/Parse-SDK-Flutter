@@ -1,4 +1,6 @@
-## 1.0.28
+## 2.0.0
+##### Warning: This release contains breaking changes. If you are using flutter you should migrate using *[this](https://github.com/parse-community/Parse-SDK-Flutter/blob/release/2.0.0/docs/migrate-2-0-0.md)* guide.
+
 - Added full web support
 - split this package in a dart and a flutter one
   - [flutter package](https://pub.dev/packages/parse_server_sdk_flutter)
@@ -6,6 +8,9 @@
 - Moved ParseHTTPClient to Dio [#459](https://github.com/parse-community/Parse-SDK-Flutter/pull/459)
 - Bug fixes
 - general improvements
+
+## 1.0.28
+1.0.28 was renamed to 2.0.0
 
 ## 1.0.27
 User login / signUp / loginAnonymous delete SessionId stored in device before calling server

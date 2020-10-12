@@ -6,6 +6,7 @@
 ---
 
 **This is now a dart package. The Flutter package was moved [here](https://pub.dev/packages/parse_server_sdk_flutter).**
+If you are using flutter you should migrate using [this](https://github.com/parse-community/Parse-SDK-Flutter/blob/release/2.0.0/docs/migrate-2-0-0.md) guide.
 
 **THIS README IS WORK IN PROGRESS!**
 Help out to improve this README on [GitHub](https://github.com/parse-community/Parse-SDK-Flutter/edit/master/packages/dart/README.md).
@@ -19,7 +20,7 @@ This is a work in progress and we are consistently updating it. Please let us kn
 To install, either add to your pubspec.yaml
 ```yml
 dependencies:  
-    parse_server_sdk: ^1.0.28
+    parse_server_sdk: ^2.0.0
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
