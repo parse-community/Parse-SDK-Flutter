@@ -32,12 +32,15 @@ class ParseCloudFunction extends ParseObject {
     if (parameters != null) {
       _setObjectData(parameters);
     }
-
-    final Response<String> result = await _client.post<String>(uri,
-        options: Options(headers: headers),
-        data: json.encode(_getObjectData()));
-    return handleResponse<ParseCloudFunction>(
-        this, result, ParseApiRQ.execute, _debug, parseClassName);
+    try {
+      final Response<String> result = await _client.post<String>(uri,
+          options: Options(headers: headers),
+          data: json.encode(_getObjectData()));
+      return handleResponse<ParseCloudFunction>(
+          this, result, ParseApiRQ.execute, _debug, parseClassName);
+    } on Exception catch (e) {
+      return handleException(e, ParseApiRQ.execute, _debug, parseClassName);
+    }
   }
 
   /// Executes a cloud function that returns a ParseObject type
@@ -49,10 +52,15 @@ class ParseCloudFunction extends ParseObject {
     if (parameters != null) {
       _setObjectData(parameters);
     }
-    final Response<String> result = await _client.post<String>(uri,
-        options: Options(headers: headers),
-        data: json.encode(_getObjectData()));
-    return handleResponse<T>(this, result, ParseApiRQ.executeObjectionFunction,
-        _debug, parseClassName);
+    try {
+      final Response<String> result = await _client.post<String>(uri,
+          options: Options(headers: headers),
+          data: json.encode(_getObjectData()));
+      return handleResponse<T>(this, result,
+          ParseApiRQ.executeObjectionFunction, _debug, parseClassName);
+    } on Exception catch (e) {
+      return handleException(
+          e, ParseApiRQ.executeObjectionFunction, _debug, parseClassName);
+    }
   }
 }
