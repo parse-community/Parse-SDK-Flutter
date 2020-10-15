@@ -1,3 +1,6 @@
+## 2.0.1
+Fixed network exceptions. [#482](https://github.com/parse-community/Parse-SDK-Flutter/pull/482)
+
 ## 2.0.0
 ##### Warning: This release contains breaking changes. If you are using flutter you should migrate using *[this](https://github.com/parse-community/Parse-SDK-Flutter/blob/release/2.0.0/docs/migrate-2-0-0.md)* guide.
 
