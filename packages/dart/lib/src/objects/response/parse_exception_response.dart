@@ -5,13 +5,20 @@ ParseResponse buildParseResponseWithException(Exception exception) {
   final ParseResponse response = ParseResponse();
   if (exception is DioError) {
     try {
-      final Map<String, dynamic> errorResponse =
-          json.decode(exception.response?.data?.toString() ?? '{}');
+      Map<String, dynamic> errorResponse;
+
+      try {
+        errorResponse =
+            json.decode(exception.response?.data?.toString() ?? '{}');
+      } catch (_) {}
+
+      errorResponse ??= <String, dynamic>{};
 
       response.error = ParseError(
-        message: errorResponse['error']?.toString(),
+        message: errorResponse['error']?.toString() ??
+            exception.response?.statusMessage,
         exception: exception,
-        code: errorResponse['code'],
+        code: errorResponse['code'] ?? exception.response?.statusCode,
       );
     } catch (error) {
       response.error = ParseError(
