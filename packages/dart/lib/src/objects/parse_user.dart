@@ -175,7 +175,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
           await _client.post<String>(url.toString(),
               options: Options(headers: <String, String>{
                 keyHeaderRevocableSession: '1',
-                if (installationId != null)
+                if (installationId != null && !parseIsWeb)
                   keyHeaderInstallationId: installationId,
               }),
               data: body);
@@ -207,7 +207,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
         url.toString(),
         options: Options(headers: <String, String>{
           keyHeaderRevocableSession: '1',
-          if (installationId != null) keyHeaderInstallationId: installationId,
+          if (installationId != null && !parseIsWeb)
+            keyHeaderInstallationId: installationId,
         }),
       );
 
@@ -230,7 +231,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
         url.toString(),
         options: Options(headers: <String, String>{
           keyHeaderRevocableSession: '1',
-          if (installationId != null) keyHeaderInstallationId: installationId,
+          if (installationId != null && !parseIsWeb)
+            keyHeaderInstallationId: installationId,
         }),
         data: jsonEncode(<String, dynamic>{
           'authData': <String, dynamic>{
@@ -263,7 +265,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
         url.toString(),
         options: Options(headers: <String, String>{
           keyHeaderRevocableSession: '1',
-          if (installationId != null) keyHeaderInstallationId: installationId,
+          if (installationId != null && !parseIsWeb)
+            keyHeaderInstallationId: installationId,
         }),
         data: jsonEncode(<String, dynamic>{
           'authData': <String, dynamic>{provider: authData}
