@@ -73,7 +73,11 @@ abstract class ParseBase {
 
   /// Converts object to [String] in JSON format
   @protected
-  Map<String, dynamic> toJson({bool full, bool forApiRQ = false}) {
+  Map<String, dynamic> toJson({
+    bool full,
+    bool forApiRQ = false,
+    bool allowCustomObjectId = false,
+    }) {
     final Map<String, dynamic> map = <String, dynamic>{
       keyVarClassName: parseClassName,
     };
@@ -103,7 +107,10 @@ abstract class ParseBase {
       map.remove(keyVarUpdatedAt);
       map.remove(keyVarClassName);
       //map.remove(keyVarAcl);
-      map.remove(keyVarObjectId);
+
+      if (!allowCustomObjectId) {
+        map.remove(keyVarObjectId);
+      }
       map.remove(keyParamSessionToken);
     }
 

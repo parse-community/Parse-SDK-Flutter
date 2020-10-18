@@ -95,13 +95,13 @@ class ParseInstallation extends ParseObject {
   }
 
   @override
-  Future<ParseResponse> create() async {
+  Future<ParseResponse> create({bool allowCustomObjectId = false}) async {
     final bool isCurrent = await ParseInstallation.isCurrent(this);
     if (isCurrent) {
       await _updateInstallation();
     }
 
-    final ParseResponse parseResponse = await _create();
+    final ParseResponse parseResponse = await _create(allowCustomObjectId: allowCustomObjectId);
     if (parseResponse.success && isCurrent) {
       saveInStorage(keyParseStoreInstallation);
     }
@@ -157,10 +157,13 @@ class ParseInstallation extends ParseObject {
   }
 
   /// Creates a new object and saves it online
-  Future<ParseResponse> _create() async {
+  Future<ParseResponse> _create({bool allowCustomObjectId = false}) async {
     try {
       final String uri = '${_client.data.serverUrl}$keyEndPointInstallations';
-      final String body = json.encode(toJson(forApiRQ: true));
+      final String body = json.encode(toJson(
+        forApiRQ: true,
+        allowCustomObjectId: allowCustomObjectId,
+      ));
       final Map<String, String> headers = <String, String>{
         keyHeaderContentType: keyHeaderContentTypeJson
       };

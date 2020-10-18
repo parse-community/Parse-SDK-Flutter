@@ -65,10 +65,13 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Creates a new object and saves it online
-  Future<ParseResponse> create() async {
+  Future<ParseResponse> create({bool allowCustomObjectId = false}) async {
     try {
       final Uri url = getSanitisedUri(_client, '$_path');
-      final String body = json.encode(toJson(forApiRQ: true));
+      final String body = json.encode(toJson(
+        forApiRQ: true,
+        allowCustomObjectId: allowCustomObjectId,
+      ));
       _saveChanges();
       final Response result =
           await _client.post<String>(url.toString(), data: body);
