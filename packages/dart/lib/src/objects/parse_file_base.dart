@@ -28,7 +28,11 @@ abstract class ParseFileBase extends ParseObject {
   bool get saved => url != null;
 
   @override
-  Map<String, dynamic> toJson({bool full = false, bool forApiRQ = false}) =>
+  Map<String, dynamic> toJson({
+    bool full = false,
+    bool forApiRQ = false,
+    bool allowCustomObjectId = false,
+  }) =>
       <String, String>{'__type': keyFile, 'name': name, 'url': url};
 
   @override
