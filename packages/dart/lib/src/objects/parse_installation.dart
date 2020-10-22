@@ -3,14 +3,9 @@ part of flutter_parse_sdk;
 class ParseInstallation extends ParseObject {
   /// Creates an instance of ParseInstallation
   ParseInstallation(
-      {bool debug, ParseHTTPClient client, bool autoSendSessionId})
-      : super(keyClassInstallation) {
+      {bool debug, ParseClient client, bool autoSendSessionId})
+      : super(keyClassInstallation, client: client, autoSendSessionId: autoSendSessionId) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
   }
 
   ParseInstallation.forQuery() : super(keyClassUser);
@@ -159,7 +154,7 @@ class ParseInstallation extends ParseObject {
   /// Creates a new object and saves it online
   Future<ParseResponse> _create({bool allowCustomObjectId = false}) async {
     try {
-      final String uri = '${_client.data.serverUrl}$keyEndPointInstallations';
+      final String uri = '${ParseCoreData().serverUrl}$keyEndPointInstallations';
       final String body = json.encode(toJson(
         forApiRQ: true,
         allowCustomObjectId: allowCustomObjectId,
@@ -172,8 +167,8 @@ class ParseInstallation extends ParseObject {
             ParseApiRQ.create.toString(), uri, body);
       }
 
-      final Response<String> result = await _client.post<String>(uri,
-          data: body, options: Options(headers: headers));
+      final ParseNetworkResponse<String> result = await _client.post<String>(uri,
+          data: body, options: ParseNetworkOptions(headers: headers));
 
       //Set the objectId on the object after it is created.
       //This allows you to perform operations on the object after creation
@@ -202,7 +197,7 @@ class ParseInstallation extends ParseObject {
           logRequest(ParseCoreData().appName, parseClassName,
               ParseApiRQ.save.toString(), uri, body);
         }
-        final Response<String> result =
+        final ParseNetworkResponse<String> result =
             await _client.put<String>(uri, data: body);
         return handleResponse<ParseInstallation>(
             this, result, ParseApiRQ.save, _debug, parseClassName);

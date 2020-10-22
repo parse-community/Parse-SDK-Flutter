@@ -5,16 +5,11 @@ class ParseCloudFunction extends ParseObject {
   ///
   /// {https://docs.parseplatform.org/cloudcode/guide/}
   ParseCloudFunction(this.functionName,
-      {bool debug, ParseHTTPClient client, bool autoSendSessionId})
-      : super(functionName) {
+      {bool debug, ParseClient client, bool autoSendSessionId})
+      : super(functionName,client: client, autoSendSessionId: autoSendSessionId) {
     _path = '/functions/$functionName';
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
   }
 
   final String functionName;
@@ -28,13 +23,13 @@ class ParseCloudFunction extends ParseObject {
   /// To add the parameters, create an object and call [set](value to set)
   Future<ParseResponse> execute(
       {Map<String, dynamic> parameters, Map<String, String> headers}) async {
-    final String uri = '${_client.data.serverUrl}$_path';
+    final String uri = '${ParseCoreData().serverUrl}$_path';
     if (parameters != null) {
       _setObjectData(parameters);
     }
     try {
-      final Response<String> result = await _client.post<String>(uri,
-          options: Options(headers: headers),
+      final ParseNetworkResponse<String> result = await _client.post<String>(uri,
+          options: ParseNetworkOptions(headers: headers),
           data: json.encode(_getObjectData()));
       return handleResponse<ParseCloudFunction>(
           this, result, ParseApiRQ.execute, _debug, parseClassName);
@@ -48,13 +43,13 @@ class ParseCloudFunction extends ParseObject {
   /// To add the parameters, create an object and call [set](value to set)
   Future<ParseResponse> executeObjectFunction<T extends ParseObject>(
       {Map<String, dynamic> parameters, Map<String, String> headers}) async {
-    final String uri = '${_client.data.serverUrl}$_path';
+    final String uri = '${ParseCoreData().serverUrl}$_path';
     if (parameters != null) {
       _setObjectData(parameters);
     }
     try {
-      final Response<String> result = await _client.post<String>(uri,
-          options: Options(headers: headers),
+      final ParseNetworkResponse<String> result = await _client.post<String>(uri,
+          options: ParseNetworkOptions(headers: headers),
           data: json.encode(_getObjectData()));
       return handleResponse<T>(this, result,
           ParseApiRQ.executeObjectionFunction, _debug, parseClassName);

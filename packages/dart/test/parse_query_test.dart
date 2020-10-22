@@ -2,7 +2,7 @@ import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
 
-class MockClient extends Mock implements ParseHTTPClient {}
+class MockClient extends Mock implements ParseClient {}
 
 void main() {
   group('queryBuilder', () {

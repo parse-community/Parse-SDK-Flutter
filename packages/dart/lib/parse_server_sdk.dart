@@ -6,11 +6,10 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart' hide Options;
-import 'package:dio/dio.dart' as dio show Options;
 import 'package:meta/meta.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:parse_server_sdk/src/network/http_client_adapter.dart';
+import 'package:parse_server_sdk/src/network/parse_dio_client.dart';
 import 'package:parse_server_sdk/src/network/parse_websocket.dart'
     as parse_web_socket;
 import 'package:path/path.dart' as path;
@@ -25,9 +24,9 @@ part 'src/base/parse_constants.dart';
 part 'src/data/parse_core_data.dart';
 part 'src/data/parse_subclass_handler.dart';
 part 'src/enums/parse_enum_api_rq.dart';
-part 'src/network/dio-options.dart';
+part 'src/network/options.dart';
+part 'src/network/parse_client.dart';
 part 'src/network/parse_connectivity.dart';
-part 'src/network/parse_http_client.dart';
 part 'src/network/parse_live_query.dart';
 part 'src/network/parse_query.dart';
 part 'src/objects/parse_acl.dart';
@@ -103,6 +102,7 @@ class Parse {
     ParseConnectivityProvider connectivityProvider,
     String fileDirectory,
     Stream<void> appResumedStream,
+    ParseClientCreator clientCreator,
   }) async {
     final String url = removeTrailingSlash(serverUrl);
 
@@ -128,6 +128,7 @@ class Parse {
       connectivityProvider: connectivityProvider,
       fileDirectory: fileDirectory,
       appResumedStream: appResumedStream,
+      clientCreator: clientCreator,
     );
 
     _hasBeenInitialized = true;
@@ -138,22 +139,18 @@ class Parse {
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
   Future<ParseResponse> healthCheck(
-      {bool debug, ParseHTTPClient client, bool sendSessionIdByDefault}) async {
+      {bool debug, ParseClient client, bool sendSessionIdByDefault}) async {
     ParseResponse parseResponse;
 
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
 
-    final ParseHTTPClient _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+    final ParseClient _client = client ?? ParseCoreData().clientCreator();
 
     const String className = 'parseBase';
     const ParseApiRQ type = ParseApiRQ.healthCheck;
 
     try {
-      final Response<String> response = await _client
+      final ParseNetworkResponse<String> response = await _client
           .get<String>('${ParseCoreData().serverUrl}$keyEndPointHealth');
       parseResponse =
           handleResponse<Parse>(null, response, type, _debug, className);

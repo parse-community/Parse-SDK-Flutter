@@ -1,12 +1,8 @@
 part of flutter_parse_sdk;
 
 class ParseSession extends ParseObject implements ParseCloneable {
-  ParseSession({bool debug, ParseHTTPClient client}) : super(keyClassSession) {
+  ParseSession({bool debug, ParseClient client}) : super(keyClassSession, client: client,) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId: true,
-            securityContext: ParseCoreData().securityContext);
   }
 
   @override
@@ -35,7 +31,7 @@ class ParseSession extends ParseObject implements ParseCloneable {
       const String path = '$keyEndPointSessions/me';
       final Uri url = getSanitisedUri(_client, path);
 
-      final Response<String> response =
+      final ParseNetworkResponse<String> response =
           await _client.get<String>(url.toString());
 
       return handleResponse<ParseSession>(
