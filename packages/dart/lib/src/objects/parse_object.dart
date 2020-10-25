@@ -16,7 +16,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _client = client ??
-        ParseCoreData().clientCreator(sendSessionId: autoSendSessionId);
+        ParseCoreData().clientCreator(sendSessionId:
+        autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            securityContext: ParseCoreData().securityContext);
   }
 
   ParseObject.clone(String className) : this(className);

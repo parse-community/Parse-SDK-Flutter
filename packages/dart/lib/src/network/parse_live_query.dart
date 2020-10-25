@@ -411,7 +411,10 @@ class LiveQueryClient {
 class LiveQuery {
   LiveQuery({bool debug, ParseClient client, bool autoSendSessionId}) {
     _client = client ??
-        ParseCoreData().clientCreator(sendSessionId: autoSendSessionId);
+        ParseCoreData().clientCreator(
+            sendSessionId:
+            autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            securityContext: ParseCoreData().securityContext);
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _sendSessionId =

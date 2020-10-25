@@ -25,11 +25,13 @@ class ParseDioClient extends ParseClient {
     try {
       final dio.Response<String> dioResponse = await _client.get<String>(
         path,
-        options: _Options(headers: options.headers),
+        options: _Options(headers: options?.headers),
       );
-      return ParseNetworkResponse(data: dioResponse.data, statusCode: dioResponse.statusCode);
+      return ParseNetworkResponse(
+          data: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
-      return ParseNetworkResponse(data: error.response?.data, statusCode: error.response?.statusCode);
+      return ParseNetworkResponse(
+          data: error.response?.data, statusCode: error.response?.statusCode);
     }
   }
 
@@ -42,70 +44,86 @@ class ParseDioClient extends ParseClient {
     try {
       final dio.Response<List<int>> dioResponse = await _client.get<List<int>>(
         path,
-        options: _Options(headers: options.headers,responseType: dio.ResponseType.bytes),
+        options: _Options(
+            headers: options?.headers, responseType: dio.ResponseType.bytes),
       );
-      return ParseNetworkByteResponse(bytes: dioResponse.data, statusCode: dioResponse.statusCode);
+      return ParseNetworkByteResponse(
+          bytes: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
-      return ParseNetworkByteResponse(data: error.response?.data, statusCode: error.response?.statusCode);
+      return ParseNetworkByteResponse(
+          data: error.response?.data, statusCode: error.response?.statusCode);
     }
   }
 
   @override
-  Future<ParseNetworkResponse> put(String path, {String data, ParseNetworkOptions options}) async {
+  Future<ParseNetworkResponse> put(String path,
+      {String data, ParseNetworkOptions options}) async {
     try {
       final dio.Response<String> dioResponse = await _client.put<String>(
         path,
         data: data,
-        options: _Options(headers: options.headers),
+        options: _Options(headers: options?.headers),
       );
-      return ParseNetworkResponse(data: dioResponse.data, statusCode: dioResponse.statusCode);
+      return ParseNetworkResponse(
+          data: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
-      return ParseNetworkResponse(data: error.response?.data, statusCode: error.response?.statusCode);
+      return ParseNetworkResponse(
+          data: error.response?.data, statusCode: error.response?.statusCode);
     }
   }
 
   @override
-  Future<ParseNetworkResponse> post(String path, {String data, ParseNetworkOptions options}) async {
+  Future<ParseNetworkResponse> post(String path,
+      {String data, ParseNetworkOptions options}) async {
     try {
       final dio.Response<String> dioResponse = await _client.post<String>(
         path,
         data: data,
-        options: _Options(headers: options.headers),
+        options: _Options(headers: options?.headers),
       );
       return ParseNetworkResponse(data: dioResponse.data);
     } on dio.DioError catch (error) {
-      return ParseNetworkResponse(data: error.response?.data, statusCode: error.response?.statusCode);
+      return ParseNetworkResponse(
+          data: error.response?.data, statusCode: error.response?.statusCode);
     }
   }
 
   @override
-  Future<ParseNetworkResponse> postBytes(String path, {Stream<List<int>> data, ParseNetworkOptions options, ProgressCallback onSendProgress}) async {
+  Future<ParseNetworkResponse> postBytes(String path,
+      {Stream<List<int>> data,
+      ParseNetworkOptions options,
+      ProgressCallback onSendProgress}) async {
     try {
       final dio.Response<String> dioResponse = await _client.post<String>(
         path,
         data: data,
-        options: _Options(headers: options.headers,responseType: dio.ResponseType.bytes),
+        options: _Options(
+            headers: options?.headers, responseType: dio.ResponseType.bytes),
         onSendProgress: onSendProgress,
       );
-      return ParseNetworkResponse(data: dioResponse.data, statusCode: dioResponse.statusCode);
+      return ParseNetworkResponse(
+          data: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
-      return ParseNetworkResponse(data: error.response?.data, statusCode: error.response?.statusCode);
+      return ParseNetworkResponse(
+          data: error.response?.data, statusCode: error.response?.statusCode);
     }
   }
 
   @override
-  Future<ParseNetworkResponse> delete(String path, {ParseNetworkOptions options}) async {
+  Future<ParseNetworkResponse> delete(String path,
+      {ParseNetworkOptions options}) async {
     try {
       final dio.Response<String> dioResponse = await _client.delete<String>(
         path,
-        options: _Options(headers: options.headers),
+        options: _Options(headers: options?.headers),
       );
-      return ParseNetworkResponse(data: dioResponse.data, statusCode: dioResponse.statusCode);
+      return ParseNetworkResponse(
+          data: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
-      return ParseNetworkResponse(data: error.response?.data, statusCode: error.response?.statusCode);
+      return ParseNetworkResponse(
+          data: error.response?.data, statusCode: error.response?.statusCode);
     }
   }
-
 }
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset

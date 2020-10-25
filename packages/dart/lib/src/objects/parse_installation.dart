@@ -3,10 +3,8 @@ part of flutter_parse_sdk;
 class ParseInstallation extends ParseObject {
   /// Creates an instance of ParseInstallation
   ParseInstallation(
-      {bool debug, ParseClient client, bool autoSendSessionId})
-      : super(keyClassInstallation, client: client, autoSendSessionId: autoSendSessionId) {
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-  }
+      {bool debug, ParseClient client, bool autoSendSessionId,})
+      : super(keyClassInstallation, client: client, autoSendSessionId: autoSendSessionId, debug: debug, );
 
   ParseInstallation.forQuery() : super(keyClassUser);
 

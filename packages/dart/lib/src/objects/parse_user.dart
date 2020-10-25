@@ -12,10 +12,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// is required as well to create a full new user object on ParseServer. Only
   /// username and password is required to login
   ParseUser(String username, String password, String emailAddress,
-      {String sessionToken, bool debug, ParseClient client})
-      : super(keyClassUser, client: client, autoSendSessionId: true) {
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-
+      {String sessionToken, bool debug, ParseClient client,})
+      : super(keyClassUser, client: client, autoSendSessionId: true, debug: debug,) {
     this.username = username;
     this.emailAddress = emailAddress;
     this.password = password;

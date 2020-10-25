@@ -5,11 +5,9 @@ class ParseCloudFunction extends ParseObject {
   ///
   /// {https://docs.parseplatform.org/cloudcode/guide/}
   ParseCloudFunction(this.functionName,
-      {bool debug, ParseClient client, bool autoSendSessionId})
-      : super(functionName,client: client, autoSendSessionId: autoSendSessionId) {
+      {bool debug, ParseClient client, bool autoSendSessionId,})
+      : super(functionName,client: client, autoSendSessionId: autoSendSessionId, debug: debug,) {
     _path = '/functions/$functionName';
-
-    _debug = isDebugEnabled(objectLevelDebug: debug);
   }
 
   final String functionName;

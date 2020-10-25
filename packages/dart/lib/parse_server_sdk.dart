@@ -146,7 +146,9 @@ class Parse {
 
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
 
-    final ParseClient _client = client ?? ParseCoreData().clientCreator();
+    final ParseClient _client = client ?? ParseCoreData().clientCreator(sendSessionId:
+    sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
+        securityContext: ParseCoreData().securityContext);
 
     const String className = 'parseBase';
     const ParseApiRQ type = ParseApiRQ.healthCheck;

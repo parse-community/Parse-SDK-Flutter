@@ -1,9 +1,7 @@
 part of flutter_parse_sdk;
 
 class ParseSession extends ParseObject implements ParseCloneable {
-  ParseSession({bool debug, ParseClient client}) : super(keyClassSession, client: client,) {
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-  }
+  ParseSession({bool debug, ParseClient client,}) : super(keyClassSession, client: client, debug: debug,);
 
   @override
   ParseSession clone(Map<String, dynamic> map) {
