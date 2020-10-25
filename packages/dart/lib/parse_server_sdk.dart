@@ -19,6 +19,9 @@ import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:xxtea/xxtea.dart';
 
+export 'src/network/parse_dio_client.dart';
+export 'src/network/parse_http_client.dart';
+
 part 'src/base/parse_constants.dart';
 part 'src/data/parse_core_data.dart';
 part 'src/data/parse_subclass_handler.dart';
