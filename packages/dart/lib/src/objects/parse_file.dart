@@ -47,12 +47,11 @@ class ParseFile extends ParseFileBase {
 
     file = File('${ParseCoreData().fileDirectory}/$name');
     await file.create();
-    final ParseNetworkResponse<List<int>> response = await _client.get<List<int>>(
+    final ParseNetworkByteResponse response = await _client.getBytes(
       url,
-      options: ParseNetworkOptions(responseType: ParseNetworkResponseType.bytes),
       onReceiveProgress: progressCallback,
     );
-    await file.writeAsBytes(response.data);
+    await file.writeAsBytes(response.bytes);
 
     return this;
   }
@@ -68,7 +67,7 @@ class ParseFile extends ParseFileBase {
       };
       return handleResponse<ParseFile>(
           this,
-          ParseNetworkResponse<String>(data: json.encode(response), statusCode: 201),
+          ParseNetworkResponse(data: json.encode(response), statusCode: 201),
           ParseApiRQ.upload,
           _debug,
           parseClassName);
@@ -79,7 +78,7 @@ class ParseFile extends ParseFileBase {
     };
     try {
       final String uri = ParseCoreData().serverUrl + '$_path';
-      final ParseNetworkResponse<String> response = await _client.post<String>(
+      final ParseNetworkResponse response = await _client.postBytes(
         uri,
         options: ParseNetworkOptions(headers: headers),
         data: file.openRead(),

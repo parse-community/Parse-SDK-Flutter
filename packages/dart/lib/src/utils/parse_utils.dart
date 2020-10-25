@@ -76,8 +76,8 @@ Future<ParseResponse> batchRequest(
   try {
     final Uri url = getSanitisedUri(client, '/batch');
     final String body = json.encode(<String, dynamic>{'requests': requests});
-    final ParseNetworkResponse<String> result =
-        await client.post<String>(url.toString(), data: body);
+    final ParseNetworkResponse result =
+        await client.post(url.toString(), data: body);
 
     return handleResponse<ParseObject>(
         objects, result, ParseApiRQ.batch, debug, 'parse_utils');

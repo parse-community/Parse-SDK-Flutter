@@ -28,7 +28,7 @@ class ParseCloudFunction extends ParseObject {
       _setObjectData(parameters);
     }
     try {
-      final ParseNetworkResponse<String> result = await _client.post<String>(uri,
+      final ParseNetworkResponse result = await _client.post(uri,
           options: ParseNetworkOptions(headers: headers),
           data: json.encode(_getObjectData()));
       return handleResponse<ParseCloudFunction>(
@@ -48,7 +48,7 @@ class ParseCloudFunction extends ParseObject {
       _setObjectData(parameters);
     }
     try {
-      final ParseNetworkResponse<String> result = await _client.post<String>(uri,
+      final ParseNetworkResponse result = await _client.post(uri,
           options: ParseNetworkOptions(headers: headers),
           data: json.encode(_getObjectData()));
       return handleResponse<T>(this, result,

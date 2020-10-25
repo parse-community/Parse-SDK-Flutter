@@ -167,7 +167,7 @@ class ParseInstallation extends ParseObject {
             ParseApiRQ.create.toString(), uri, body);
       }
 
-      final ParseNetworkResponse<String> result = await _client.post<String>(uri,
+      final ParseNetworkResponse result = await _client.post(uri,
           data: body, options: ParseNetworkOptions(headers: headers));
 
       //Set the objectId on the object after it is created.
@@ -197,8 +197,8 @@ class ParseInstallation extends ParseObject {
           logRequest(ParseCoreData().appName, parseClassName,
               ParseApiRQ.save.toString(), uri, body);
         }
-        final ParseNetworkResponse<String> result =
-            await _client.put<String>(uri, data: body);
+        final ParseNetworkResponse result =
+            await _client.put(uri, data: body);
         return handleResponse<ParseInstallation>(
             this, result, ParseApiRQ.save, _debug, parseClassName);
       } on Exception catch (e) {

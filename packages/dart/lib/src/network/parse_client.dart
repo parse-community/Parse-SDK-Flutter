@@ -4,35 +4,63 @@ typedef ParseClientCreator = ParseClient Function(
     {bool sendSessionId, SecurityContext securityContext});
 
 abstract class ParseClient {
-  Future<ParseNetworkResponse<T>> get<T>(
+  Future<ParseNetworkResponse> get(
     String path, {
-    Map<String, dynamic> queryParameters,
     ParseNetworkOptions options,
     ProgressCallback onReceiveProgress,
   });
 
-  Future<ParseNetworkResponse<T>> put<T>(
+  Future<ParseNetworkResponse> put(
     String path, {
-    dynamic data,
-    Map<String, dynamic> queryParameters,
+    String data,
+    ParseNetworkOptions options,
+  });
+
+  Future<ParseNetworkResponse> post(
+    String path, {
+    String data,
+    ParseNetworkOptions options,
+  });
+
+    Future<ParseNetworkResponse> postBytes(
+        String path, {
+          Stream<List<int>> data,
+          ParseNetworkOptions options,
+          ProgressCallback onSendProgress,
+        });
+
+  Future<ParseNetworkResponse> delete(
+    String path, {
+    ParseNetworkOptions options,
+  });
+
+  Future<ParseNetworkByteResponse> getBytes(
+    String path, {
     ParseNetworkOptions options,
     ProgressCallback onReceiveProgress,
   });
 
-  Future<ParseNetworkResponse<T>> post<T>(
-    String path, {
-    dynamic data,
-    Map<String, dynamic> queryParameters,
-    ParseNetworkOptions options,
-    ProgressCallback onReceiveProgress,
-    ProgressCallback onSendProgress,
-  });
-
-  Future<ParseNetworkResponse<T>> delete<T>(
-    String path, {
-    Map<String, dynamic> queryParameters,
-    ParseNetworkOptions options,
-  });
+  // Future<ParseNetworkByteResponse> putBytes(
+  //   String path, {
+  //   dynamic data,
+  //   Map<String, dynamic> queryParameters,
+  //   ParseNetworkOptions options,
+  //   ProgressCallback onReceiveProgress,
+  // });
+  //
+  // Future<ParseNetworkByteResponse> postBytes(
+  //   String path, {
+  //   String data,
+  //   ParseNetworkOptions options,
+  //   ProgressCallback onReceiveProgress,
+  //   ProgressCallback onSendProgress,
+  // });
+  //
+  // Future<ParseNetworkByteResponse> deleteBytes(
+  //   String path, {
+  //   Map<String, dynamic> queryParameters,
+  //   ParseNetworkOptions options,
+  // });
 
   @deprecated
   ParseCoreData get data => ParseCoreData();
@@ -50,11 +78,23 @@ abstract class ParseClient {
 ///   for example: response data is compressed with gzip or no content-length header.
 typedef ProgressCallback = void Function(int count, int total);
 
-class ParseNetworkResponse<T> {
-  final T data;
+class ParseNetworkResponse {
+  final String data;
   final int statusCode;
+
   ParseNetworkResponse({
     this.data,
-    this.statusCode,
+    this.statusCode = -1,
   });
+}
+
+class ParseNetworkByteResponse extends ParseNetworkResponse{
+
+  final List<int> bytes;
+
+  ParseNetworkByteResponse({
+    this.bytes,
+    final String data = 'byte response',
+    final int statusCode,
+  }) : super(data: data, statusCode: statusCode,);
 }

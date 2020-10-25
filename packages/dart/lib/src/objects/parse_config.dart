@@ -15,8 +15,7 @@ class ParseConfig extends ParseObject {
   Future<ParseResponse> getConfigs() async {
     try {
       final String uri = '${ParseCoreData().serverUrl}/config';
-      final ParseNetworkResponse<String> result =
-          await _client.get<String>(uri);
+      final ParseNetworkResponse result = await _client.get(uri);
       return handleResponse<ParseConfig>(
           this, result, ParseApiRQ.getConfigs, _debug, parseClassName);
     } on Exception catch (e) {
@@ -29,8 +28,8 @@ class ParseConfig extends ParseObject {
     try {
       final String uri = '${ParseCoreData().serverUrl}/config';
       final String body = '{\"params\":{\"$key\": \"${parseEncode(value)}\"}}';
-      final ParseNetworkResponse<String> result =
-          await _client.put<String>(uri, data: body);
+      final ParseNetworkResponse result =
+          await _client.put(uri, data: body);
       return handleResponse<ParseConfig>(
           this, result, ParseApiRQ.addConfig, _debug, parseClassName);
     } on Exception catch (e) {

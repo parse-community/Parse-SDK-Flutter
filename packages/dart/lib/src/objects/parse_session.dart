@@ -31,8 +31,8 @@ class ParseSession extends ParseObject implements ParseCloneable {
       const String path = '$keyEndPointSessions/me';
       final Uri url = getSanitisedUri(_client, path);
 
-      final ParseNetworkResponse<String> response =
-          await _client.get<String>(url.toString());
+      final ParseNetworkResponse response =
+          await _client.get(url.toString());
 
       return handleResponse<ParseSession>(
           this, response, ParseApiRQ.logout, _debug, parseClassName);
