@@ -23,66 +23,83 @@ class ParseHTTPClient extends ParseClient {
     ProgressCallback onReceiveProgress,
   }) async {
     final http.Response response = await _client.get(
-        path,
-        headers: options?.headers,
-      );
-      return ParseNetworkResponse(data: response.body, statusCode: response.statusCode);
+      path,
+      headers: options?.headers,
+    );
+    return ParseNetworkResponse(
+        data: response.body, statusCode: response.statusCode);
   }
 
   @override
   Future<ParseNetworkByteResponse> getBytes(
-      String path, {
-        ParseNetworkOptions options,
-        ProgressCallback onReceiveProgress,
-      }) async {
+    String path, {
+    ParseNetworkOptions options,
+    ProgressCallback onReceiveProgress,
+  }) async {
     final http.Response response = await _client.get(
       path,
       headers: options?.headers,
     );
-    return ParseNetworkByteResponse(bytes: response.bodyBytes, statusCode: response.statusCode);
+    return ParseNetworkByteResponse(
+        bytes: response.bodyBytes, statusCode: response.statusCode);
   }
 
-
   @override
-  Future<ParseNetworkResponse> put(String path, {String data, ParseNetworkOptions options,}) async {
+  Future<ParseNetworkResponse> put(
+    String path, {
+    String data,
+    ParseNetworkOptions options,
+  }) async {
     final http.Response response = await _client.put(
       path,
       body: data,
       headers: options?.headers,
     );
-    return ParseNetworkByteResponse(bytes: response.bodyBytes, statusCode: response.statusCode);
+    return ParseNetworkByteResponse(
+        bytes: response.bodyBytes, statusCode: response.statusCode);
   }
 
   @override
-  Future<ParseNetworkResponse> post(String path, {String data, ParseNetworkOptions options,}) async {
+  Future<ParseNetworkResponse> post(
+    String path, {
+    String data,
+    ParseNetworkOptions options,
+  }) async {
     final http.Response response = await _client.post(
       path,
       body: data,
       headers: options?.headers,
     );
-    return ParseNetworkByteResponse(bytes: response.bodyBytes, statusCode: response.statusCode);
+    return ParseNetworkByteResponse(
+        bytes: response.bodyBytes, statusCode: response.statusCode);
   }
 
   @override
-  Future<ParseNetworkResponse> postBytes(String path, {Stream<List<int>> data, ParseNetworkOptions options, ProgressCallback onSendProgress,}) async {
+  Future<ParseNetworkResponse> postBytes(
+    String path, {
+    Stream<List<int>> data,
+    ParseNetworkOptions options,
+    ProgressCallback onSendProgress,
+  }) async {
     final http.Response response = await _client.post(
       path,
       body: data,
       headers: options?.headers,
     );
-    return ParseNetworkResponse(data: response.body, statusCode: response.statusCode);
+    return ParseNetworkResponse(
+        data: response.body, statusCode: response.statusCode);
   }
 
   @override
-  Future<ParseNetworkResponse> delete(String path, {ParseNetworkOptions options}) async {
+  Future<ParseNetworkResponse> delete(String path,
+      {ParseNetworkOptions options}) async {
     final http.Response response = await _client.delete(
       path,
       headers: options?.headers,
     );
-    return ParseNetworkByteResponse(bytes: response.bodyBytes, statusCode: response.statusCode);
+    return ParseNetworkByteResponse(
+        bytes: response.bodyBytes, statusCode: response.statusCode);
   }
-
-
 }
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset

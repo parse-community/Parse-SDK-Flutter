@@ -126,8 +126,7 @@ class LiveQueryReconnectingController {
 class LiveQueryClient {
   factory LiveQueryClient() => _getInstance();
 
-  LiveQueryClient._internal(
-      {bool debug, bool autoSendSessionId}) {
+  LiveQueryClient._internal({bool debug, bool autoSendSessionId}) {
     _clientEventStreamController = StreamController<LiveQueryClientEvent>();
     _clientEventStream =
         _clientEventStreamController.stream.asBroadcastStream();
@@ -413,7 +412,7 @@ class LiveQuery {
     _client = client ??
         ParseCoreData().clientCreator(
             sendSessionId:
-            autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
 
     _debug = isDebugEnabled(objectLevelDebug: debug);

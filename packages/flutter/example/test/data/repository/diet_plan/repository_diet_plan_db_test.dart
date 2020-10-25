@@ -15,7 +15,7 @@ void main() {
 
   StoreRef<String, Map<String, dynamic>> _getStore(Database database) {
     final StoreRef<String, Map<String, dynamic>> store =
-    stringMapStoreFactory.store('repository_diet');
+        stringMapStoreFactory.store('repository_diet');
     return store;
   }
 

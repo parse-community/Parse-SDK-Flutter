@@ -2,9 +2,16 @@ part of flutter_parse_sdk;
 
 class ParseInstallation extends ParseObject {
   /// Creates an instance of ParseInstallation
-  ParseInstallation(
-      {bool debug, ParseClient client, bool autoSendSessionId,})
-      : super(keyClassInstallation, client: client, autoSendSessionId: autoSendSessionId, debug: debug, );
+  ParseInstallation({
+    bool debug,
+    ParseClient client,
+    bool autoSendSessionId,
+  }) : super(
+          keyClassInstallation,
+          client: client,
+          autoSendSessionId: autoSendSessionId,
+          debug: debug,
+        );
 
   ParseInstallation.forQuery() : super(keyClassUser);
 
@@ -94,7 +101,8 @@ class ParseInstallation extends ParseObject {
       await _updateInstallation();
     }
 
-    final ParseResponse parseResponse = await _create(allowCustomObjectId: allowCustomObjectId);
+    final ParseResponse parseResponse =
+        await _create(allowCustomObjectId: allowCustomObjectId);
     if (parseResponse.success && isCurrent) {
       saveInStorage(keyParseStoreInstallation);
     }
@@ -152,7 +160,8 @@ class ParseInstallation extends ParseObject {
   /// Creates a new object and saves it online
   Future<ParseResponse> _create({bool allowCustomObjectId = false}) async {
     try {
-      final String uri = '${ParseCoreData().serverUrl}$keyEndPointInstallations';
+      final String uri =
+          '${ParseCoreData().serverUrl}$keyEndPointInstallations';
       final String body = json.encode(toJson(
         forApiRQ: true,
         allowCustomObjectId: allowCustomObjectId,
@@ -195,8 +204,7 @@ class ParseInstallation extends ParseObject {
           logRequest(ParseCoreData().appName, parseClassName,
               ParseApiRQ.save.toString(), uri, body);
         }
-        final ParseNetworkResponse result =
-            await _client.put(uri, data: body);
+        final ParseNetworkResponse result = await _client.put(uri, data: body);
         return handleResponse<ParseInstallation>(
             this, result, ParseApiRQ.save, _debug, parseClassName);
       } on Exception catch (e) {

@@ -22,12 +22,12 @@ abstract class ParseClient {
     ParseNetworkOptions options,
   });
 
-    Future<ParseNetworkResponse> postBytes(
-        String path, {
-          Stream<List<int>> data,
-          ParseNetworkOptions options,
-          ProgressCallback onSendProgress,
-        });
+  Future<ParseNetworkResponse> postBytes(
+    String path, {
+    Stream<List<int>> data,
+    ParseNetworkOptions options,
+    ProgressCallback onSendProgress,
+  });
 
   Future<ParseNetworkResponse> delete(
     String path, {
@@ -88,13 +88,15 @@ class ParseNetworkResponse {
   });
 }
 
-class ParseNetworkByteResponse extends ParseNetworkResponse{
-
+class ParseNetworkByteResponse extends ParseNetworkResponse {
   final List<int> bytes;
 
   ParseNetworkByteResponse({
     this.bytes,
     final String data = 'byte response',
     final int statusCode,
-  }) : super(data: data, statusCode: statusCode,);
+  }) : super(
+          data: data,
+          statusCode: statusCode,
+        );
 }

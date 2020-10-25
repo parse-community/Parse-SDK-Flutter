@@ -1,7 +1,14 @@
 part of flutter_parse_sdk;
 
 class ParseSession extends ParseObject implements ParseCloneable {
-  ParseSession({bool debug, ParseClient client,}) : super(keyClassSession, client: client, debug: debug,);
+  ParseSession({
+    bool debug,
+    ParseClient client,
+  }) : super(
+          keyClassSession,
+          client: client,
+          debug: debug,
+        );
 
   @override
   ParseSession clone(Map<String, dynamic> map) {
@@ -29,8 +36,7 @@ class ParseSession extends ParseObject implements ParseCloneable {
       const String path = '$keyEndPointSessions/me';
       final Uri url = getSanitisedUri(_client, path);
 
-      final ParseNetworkResponse response =
-          await _client.get(url.toString());
+      final ParseNetworkResponse response = await _client.get(url.toString());
 
       return handleResponse<ParseSession>(
           this, response, ParseApiRQ.logout, _debug, parseClassName);

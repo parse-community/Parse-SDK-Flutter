@@ -11,9 +11,19 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Requires [String] username, [String] password. [String] email address
   /// is required as well to create a full new user object on ParseServer. Only
   /// username and password is required to login
-  ParseUser(String username, String password, String emailAddress,
-      {String sessionToken, bool debug, ParseClient client,})
-      : super(keyClassUser, client: client, autoSendSessionId: true, debug: debug,) {
+  ParseUser(
+    String username,
+    String password,
+    String emailAddress, {
+    String sessionToken,
+    bool debug,
+    ParseClient client,
+  }) : super(
+          keyClassUser,
+          client: client,
+          autoSendSessionId: true,
+          debug: debug,
+        ) {
     this.username = username;
     this.emailAddress = emailAddress;
     this.password = password;
@@ -102,7 +112,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
   Future<ParseResponse> getUpdatedUser({bool debug, ParseClient client}) async {
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
     final ParseClient _client = client ??
-        ParseCoreData().clientCreator(sendSessionId: true, securityContext: ParseCoreData().securityContext);
+        ParseCoreData().clientCreator(
+            sendSessionId: true,
+            securityContext: ParseCoreData().securityContext);
 
     // We can't get the current user and session without a sessionId
     if ((ParseCoreData().sessionId == null) && (sessionToken == null)) {
@@ -117,8 +129,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUserName');
       final ParseNetworkResponse response = await _client.get(
-          url.toString(),
-          options: ParseNetworkOptions(headers: headers),);
+        url.toString(),
+        options: ParseNetworkOptions(headers: headers),
+      );
       return await _handleResponse(
           this, response, ParseApiRQ.currentUser, _debug, parseClassName);
     } on Exception catch (e) {
@@ -163,14 +176,12 @@ class ParseUser extends ParseObject implements ParseCloneable {
       final String body = json.encode(toJson(forApiRQ: true));
       _saveChanges();
       final String installationId = await _getInstallationId();
-      final ParseNetworkResponse response =
-          await _client.post(url.toString(),
-              options: ParseNetworkOptions(headers: <String, String>{
-                keyHeaderRevocableSession: '1',
-                if (installationId != null)
-                  keyHeaderInstallationId: installationId,
-              }),
-              data: body);
+      final ParseNetworkResponse response = await _client.post(url.toString(),
+          options: ParseNetworkOptions(headers: <String, String>{
+            keyHeaderRevocableSession: '1',
+            if (installationId != null) keyHeaderInstallationId: installationId,
+          }),
+          data: body);
 
       return await _handleResponse(
           this, response, ParseApiRQ.signUp, _debug, parseClassName);
@@ -394,12 +405,13 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
     final ParseClient _client = client ??
-        ParseCoreData().clientCreator(sendSessionId: true, securityContext: ParseCoreData().securityContext);
+        ParseCoreData().clientCreator(
+            sendSessionId: true,
+            securityContext: ParseCoreData().securityContext);
 
     try {
       final Uri url = getSanitisedUri(_client, '$path');
-      final ParseNetworkResponse response =
-          await _client.get(url.toString());
+      final ParseNetworkResponse response = await _client.get(url.toString());
       final ParseResponse parseResponse = handleResponse<ParseUser>(
           emptyUser, response, ParseApiRQ.getAll, _debug, keyClassUser);
       return parseResponse;
