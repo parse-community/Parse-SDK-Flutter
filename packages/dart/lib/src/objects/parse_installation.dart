@@ -160,10 +160,14 @@ class ParseInstallation extends ParseObject {
   Future<ParseResponse> _create({bool allowCustomObjectId = false}) async {
     try {
       final String uri = '${_client.data.serverUrl}$keyEndPointInstallations';
-      final String body = json.encode(toJson(
+      final Map<String, dynamic> bodyData = toJson(
         forApiRQ: true,
         allowCustomObjectId: allowCustomObjectId,
-      ));
+      );
+
+      bodyData[keyVarInstallationId] = installationId;
+
+      final String body = json.encode(bodyData);
       final Map<String, String> headers = <String, String>{
         keyHeaderContentType: keyHeaderContentTypeJson
       };
