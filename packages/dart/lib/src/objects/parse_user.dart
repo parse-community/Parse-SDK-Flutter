@@ -152,7 +152,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// After creating a new user via [Parse.create] call this method to register
   /// that user on Parse
   /// By setting [allowWithoutEmail] to `true`, you can sign up without setting an email
-  Future<ParseResponse> signUp({bool allowWithoutEmail = false}) async {
+  /// Set [doNotSendInstallationID] to 'true' in order to prevent the SDK from sending the installationID to the Server.
+  /// This option is especially useful if you are running you application on web and you don't have permission to add 'X-Parse-Installation-Id' as an allowed header on your parse-server.
+  Future<ParseResponse> signUp(
+      {bool allowWithoutEmail = false,
+      bool doNotSendInstallationID = false}) async {
     forgetLocalSession();
 
     try {
@@ -161,7 +165,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
           return null;
         } else {
           assert(() {
-            print('It is recommended to only allow user signUp with a ');
+            print(
+                'It is recommended to only allow user signUp with an email beeing set.');
             return true;
           }());
         }
@@ -175,7 +180,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
           await _client.post<String>(url.toString(),
               options: Options(headers: <String, String>{
                 keyHeaderRevocableSession: '1',
-                if (installationId != null)
+                if (installationId != null && !doNotSendInstallationID)
                   keyHeaderInstallationId: installationId,
               }),
               data: body);
@@ -191,7 +196,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
   ///
   /// Once a user is created using [Parse.create] and a username and password is
   /// provided, call this method to login.
-  Future<ParseResponse> login() async {
+  /// Set [doNotSendInstallationID] to 'true' in order to prevent the SDK from sending the installationID to the Server.
+  /// This option is especially useful if you are running you application on web and you don't have permission to set 'X-Parse-Installation-Id' as an allowed header on your parse-server.
+  Future<ParseResponse> login({bool doNotSendInstallationID = false}) async {
     forgetLocalSession();
 
     try {
@@ -207,7 +214,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
         url.toString(),
         options: Options(headers: <String, String>{
           keyHeaderRevocableSession: '1',
-          if (installationId != null) keyHeaderInstallationId: installationId,
+          if (installationId != null && !doNotSendInstallationID)
+            keyHeaderInstallationId: installationId,
         }),
       );
 
@@ -218,8 +226,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
-  // Logs in a user anonymously
-  Future<ParseResponse> loginAnonymous() async {
+  /// Logs in a user anonymously
+  /// Set [doNotSendInstallationID] to 'true' in order to prevent the SDK from sending the installationID to the Server.
+  /// This option is especially useful if you are running you application on web and you don't have permission to add 'X-Parse-Installation-Id' as an allowed header on your parse-server.
+  Future<ParseResponse> loginAnonymous(
+      {bool doNotSendInstallationID = false}) async {
     forgetLocalSession();
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
@@ -230,7 +241,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
         url.toString(),
         options: Options(headers: <String, String>{
           keyHeaderRevocableSession: '1',
-          if (installationId != null) keyHeaderInstallationId: installationId,
+          if (installationId != null && !doNotSendInstallationID)
+            keyHeaderInstallationId: installationId,
         }),
         data: jsonEncode(<String, dynamic>{
           'authData': <String, dynamic>{
@@ -247,15 +259,21 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
-  // Logs in a user using a service
-  static Future<ParseResponse> loginWith(
-      String provider, Object authData) async {
+  /// Logs in a user using a service
+  /// Set [doNotSendInstallationID] to 'true' in order to prevent the SDK from sending the installationID to the Server.
+  /// This option is especially useful if you are running you application on web and you don't have permission to add 'X-Parse-Installation-Id' as an allowed header on your parse-server.
+  static Future<ParseResponse> loginWith(String provider, Object authData,
+      {bool doNotSendInstallationID = false}) async {
     final ParseUser user = ParseUser.createUser();
-    final ParseResponse response = await user._loginWith(provider, authData);
+    final ParseResponse response = await user._loginWith(provider, authData,
+        doNotSendInstallationID: doNotSendInstallationID);
     return response;
   }
 
-  Future<ParseResponse> _loginWith(String provider, Object authData) async {
+  /// Set [doNotSendInstallationID] to 'true' in order to prevent the SDK from sending the installationID to the Server.
+  /// This option is especially useful if you are running you application on web and you don't have permission to add 'X-Parse-Installation-Id' as an allowed header on your parse-server.
+  Future<ParseResponse> _loginWith(String provider, Object authData,
+      {bool doNotSendInstallationID = false}) async {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
       final String installationId = await _getInstallationId();
@@ -263,7 +281,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
         url.toString(),
         options: Options(headers: <String, String>{
           keyHeaderRevocableSession: '1',
-          if (installationId != null) keyHeaderInstallationId: installationId,
+          if (installationId != null && !doNotSendInstallationID)
+            keyHeaderInstallationId: installationId,
         }),
         data: jsonEncode(<String, dynamic>{
           'authData': <String, dynamic>{provider: authData}
