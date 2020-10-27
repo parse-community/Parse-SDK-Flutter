@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:dio/dio.dart' as dio;
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
-import 'http_client_adapter.dart';
+import 'dio_adapter_io.dart'
+  if (dart.library.js) 'dio_adapter_js.dart';
 
 class ParseDioClient extends ParseClient {
   _ParseDioClient _client;
