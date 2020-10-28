@@ -55,8 +55,8 @@ class ParseHTTPClient extends ParseClient {
       body: data,
       headers: options?.headers,
     );
-    return ParseNetworkByteResponse(
-        bytes: response.bodyBytes, statusCode: response.statusCode);
+    return ParseNetworkResponse(
+        data: response.body, statusCode: response.statusCode);
   }
 
   @override
@@ -70,8 +70,8 @@ class ParseHTTPClient extends ParseClient {
       body: data,
       headers: options?.headers,
     );
-    return ParseNetworkByteResponse(
-        bytes: response.bodyBytes, statusCode: response.statusCode);
+    return ParseNetworkResponse(
+        data: response.body, statusCode: response.statusCode);
   }
 
   @override
@@ -97,8 +97,8 @@ class ParseHTTPClient extends ParseClient {
       path,
       headers: options?.headers,
     );
-    return ParseNetworkByteResponse(
-        bytes: response.bodyBytes, statusCode: response.statusCode);
+    return ParseNetworkResponse(
+        data: response.body, statusCode: response.statusCode);
   }
 }
 
