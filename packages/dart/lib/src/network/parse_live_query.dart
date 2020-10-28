@@ -75,7 +75,7 @@ class LiveQueryReconnectingController {
     ParseCoreData().appResumedStream?.listen((void _) => _setReconnect());
   }
 
-  static List<int> get retryInterval => ParseCoreData().liveListRetryIntervals;
+  List<int> get retryInterval => ParseCoreData().liveListRetryIntervals;
   static const String DEBUG_TAG = 'LiveQueryReconnectingController';
 
   final Function _reconnect;
@@ -94,7 +94,7 @@ class LiveQueryReconnectingController {
       _retryState = 0;
     }
     _isOnline = state != ParseConnectivityResult.none;
-    if(state == ParseConnectivityResult.none) {
+    if (state == ParseConnectivityResult.none) {
       _isConnected = false;
     }
     if (debug) {
@@ -124,8 +124,7 @@ class LiveQueryReconnectingController {
 }
 
 class LiveQueryClient {
-  factory LiveQueryClient() => _getInstance();
-  LiveQueryClient._internal(
+  LiveQueryClient(
       {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
     _clientEventStreamController = StreamController<LiveQueryClientEvent>();
     _clientEventStream =
@@ -149,14 +148,6 @@ class LiveQueryClient {
 
     reconnectingController = LiveQueryReconnectingController(
         () => reconnect(userInitialized: false), getClientEventStream, _debug);
-  }
-  static LiveQueryClient get instance => _getInstance();
-  static LiveQueryClient _instance;
-  static LiveQueryClient _getInstance(
-      {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
-    _instance ??= LiveQueryClient._internal(
-        debug: debug, client: client, autoSendSessionId: autoSendSessionId);
-    return _instance;
   }
 
   Stream<LiveQueryClientEvent> get getClientEventStream {
@@ -188,7 +179,7 @@ class LiveQueryClient {
     return parse_web_socket.WebSocket.CONNECTING;
   }
 
-  Future<dynamic> disconnect({bool userInitialized = false}) async {
+  Future<dynamic> disconnect({bool userInitialized = true}) async {
     if (_webSocket != null &&
         _webSocket.readyState == parse_web_socket.WebSocket.OPEN) {
       if (_debug) {
@@ -246,7 +237,7 @@ class LiveQueryClient {
     }
   }
 
-  static int _requestIdCount = 1;
+  int _requestIdCount = 1;
 
   int _requestIdGenerator() {
     return _requestIdCount++;
@@ -425,7 +416,7 @@ class LiveQuery {
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _sendSessionId =
         autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
-    this.client = LiveQueryClient._getInstance(
+    this.client = LiveQueryClient(
         client: _client, debug: _debug, autoSendSessionId: _sendSessionId);
   }
 
