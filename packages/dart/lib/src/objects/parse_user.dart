@@ -153,6 +153,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// that user on Parse
   /// By setting [allowWithoutEmail] to `true`, you can sign up without setting an email
   Future<ParseResponse> signUp({bool allowWithoutEmail = false}) async {
+
     forgetLocalSession();
 
     try {
