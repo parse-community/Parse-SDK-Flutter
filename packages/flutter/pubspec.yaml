@@ -10,8 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  parse_server_sdk:
-    path: ../dart
+  parse_server_sdk: ^2.0.1
 
   # Networking
   dio: ^3.0.10
