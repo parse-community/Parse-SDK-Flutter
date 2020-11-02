@@ -27,6 +27,20 @@ class _MyAppState extends State<MyApp> {
         );
 
   final Future<Parse> initFuture;
+  bool loggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    initFuture.then((_) async {
+      final ParseUser currentUser = await ParseUser.currentUser();
+      setState(() {
+        loggedIn = currentUser != null;
+        print(loggedIn);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +50,24 @@ class _MyAppState extends State<MyApp> {
         future: initFuture,
         builder: (BuildContext context, AsyncSnapshot<Parse> snapshot) {
           if (snapshot.hasData) {
-            return MyLoginPage(title: 'Flutter Demo Home Page');
+            if (!loggedIn) {
+              return MyLoginPage(
+                title: 'Flutter Demo Home Page',
+                afterLogin: () {
+                  setState(() {
+                    loggedIn = true;
+                  });
+                },
+              );
+            } else {
+              return HelloPage(
+                afterLogout: () {
+                  setState(() {
+                    loggedIn = false;
+                  });
+                },
+              );
+            }
           } else {
             return const Scaffold(
               body: Center(
@@ -50,12 +81,49 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+class HelloPage extends StatelessWidget {
+  final VoidCallback afterLogout;
+
+  const HelloPage({Key key, @required this.afterLogout}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Welcome!'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            const Text('You are logged in!'),
+            OutlineButton(
+              onPressed: () async {
+                (await ParseUser.currentUser() as ParseUser)
+                    ?.logout()
+                    ?.then((ParseResponse response) {
+                  if (response.success) {
+                    afterLogout();
+                  }
+                });
+              },
+              child: const Text('logout'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class MyLoginPage extends StatelessWidget {
-  MyLoginPage({Key key, this.title})
+  MyLoginPage({Key key, this.title, @required this.afterLogin})
       : _rnd = Random(),
         super(key: key);
 
   final String title;
+  final VoidCallback afterLogin;
 
   @override
   Widget build(BuildContext context) {
@@ -63,63 +131,20 @@ class MyLoginPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: Column(
-        children: [
-          OutlineButton(
-            onPressed: () async {
-              signUp(
-                  username: getRandomString(10),
-                  pass: getRandomString(10),
-                  email: "${getRandomString(10)}@example.com");
-              // final ParseUser user = ParseUser(getRandomString(10),
-              //     getRandomString(10), "${getRandomString(10)}@example.com");
-              // print('method signIn, user is: $user');
-              //
-              // final ParseResponse response = await user.signUp();
-              // print(
-              //     'auth_service_parse.dart, method signIn, response is: ${response}');
-              //
-              // if (response.success) {
-              //   print('user logged in with id: ${user.objectId}');
-              //   return user;
-              // } else {
-              //   print('user logging in error: ${response.error.message}');
-              // }
-              //
-              // print('user sign in is null');
-              // return null;
-            },
-            child: const Text("sign up"),
-          ),
-          RaisedButton(
-            onPressed: () async {
-              final ParseUser user = ParseUser(
-                  "${getRandomString(10)}@example.com",
-                  getRandomString(10),
-                  "${getRandomString(10)}@example.com");
-              print('method signIn, user is: $user');
-
-              user.signUp().then((singUpResponse) async {
-                print('singUpResponse: ${singUpResponse.success}');
-
-                ParseResponse response = await user.login();
-                print(
-                    'auth_service_parse.dart, method signIn, response is: ${response.success}');
-
-                if (response.success) {
-                  print('user logged in with id: ${user.objectId}');
-                  return user;
-                } else {
-                  print('user logging in error: ${response.error.message}');
-                }
-
-                print('user sign in is null');
-                return null;
-              });
-            },
-            child: const Text("sign up 2"),
-          ),
-        ],
+      body: Center(
+        child: OutlineButton(
+          onPressed: () async {
+            final String email = '${getRandomString(10)}@example.com';
+            final ParseResponse response =
+                await ParseUser(email, getRandomString(10), email).signUp();
+            print(
+                'Sign up was ${!(response?.success ?? false) ? 'not ' : ''}success full. Response is ${response == null ? '' : 'not '}null.');
+            if (response.success) {
+              afterLogin();
+            }
+          },
+          child: Text("sign up"),
+        ),
       ),
     );
   }
@@ -132,13 +157,13 @@ class MyLoginPage extends StatelessWidget {
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
   void signUp({String email, String pass, String username}) async {
-    print("SignUp started");
+    print('SignUp started');
     ParseUser user = ParseUser.createUser(username, pass, email);
     print(user);
-    ParseResponse response = await user.signUp();
+    final ParseResponse response = await user.signUp();
     print(response);
     if (response.success) {
-      print("SignUp Success");
+      print('SignUp Success');
     }
   }
 }
