@@ -14,19 +14,19 @@ dependencies:
 
   # Networking
   dio: ^3.0.10
-  connectivity: ^0.4.9+2 # only used in the flutter part
+  connectivity: ^2.0.1 # only used in the flutter part
 
   #Database
-  shared_preferences: ^0.5.10 # only used in the flutter part
+  shared_preferences: ^0.5.12+4 # only used in the flutter part
 
   # Utils
-  path_provider: ^1.6.14 # only used in the flutter part
-  package_info: ^0.4.3 # only used in the flutter part
-  sembast: ^2.4.7+6 # required for transitive use only
+  path_provider: ^1.6.24 # only used in the flutter part
+  package_info: ^0.4.3+2 # only used in the flutter part
+  sembast: ^2.4.8 # required for transitive use only
   path: ^1.7.0 # required for transitive use only
 
 dev_dependencies:
   # Testing
   flutter_test:
     sdk: flutter
-  mockito: ^4.1.1
+  mockito: ^4.1.3
