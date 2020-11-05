@@ -95,7 +95,7 @@ class ParseCoreData {
       _instance.fileDirectory = fileDirectory;
     }
 
-    if (appResumedStream != null && _instance.appResumedStream != null) {
+    if (appResumedStream != null) {
       _instance.appResumedStream = appResumedStream;
     }
   }
