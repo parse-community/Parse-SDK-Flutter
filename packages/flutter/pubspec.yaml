@@ -12,8 +12,8 @@ dependencies:
 
   parse_server_sdk:
     git:
-      url: git://github.com/fischerscode/Parse-SDK-Flutter.git
-      ref: issue-489
+      url: git://github.com/parse-community/Parse-SDK-Flutter.git
+      ref: development
       path: packages/dart
 
   # Networking
