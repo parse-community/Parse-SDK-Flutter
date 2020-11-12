@@ -77,7 +77,7 @@ abstract class ParseBase {
     bool full,
     bool forApiRQ = false,
     bool allowCustomObjectId = false,
-    }) {
+  }) {
     final Map<String, dynamic> map = <String, dynamic>{
       keyVarClassName: parseClassName,
     };
@@ -95,7 +95,7 @@ abstract class ParseBase {
     }
 
     final Map<String, dynamic> target =
-    forApiRQ ? _unsavedChanges : _getObjectData();
+        forApiRQ ? _unsavedChanges : _getObjectData();
     target.forEach((String key, dynamic value) {
       if (!map.containsKey(key)) {
         map[key] = parseEncode(value, full: full);

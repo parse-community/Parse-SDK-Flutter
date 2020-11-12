@@ -8,7 +8,7 @@ class ParseFile extends ParseFileBase {
       {String name,
       String url,
       bool debug,
-      ParseHTTPClient client,
+      ParseClient client,
       bool autoSendSessionId})
       : super(
           name: file != null ? path.basename(file.path) : name,
@@ -47,12 +47,11 @@ class ParseFile extends ParseFileBase {
 
     file = File('${ParseCoreData().fileDirectory}/$name');
     await file.create();
-    final Response<List<int>> response = await _client.get<List<int>>(
+    final ParseNetworkByteResponse response = await _client.getBytes(
       url,
-      options: Options(responseType: ResponseType.bytes),
       onReceiveProgress: progressCallback,
     );
-    await file.writeAsBytes(response.data);
+    await file.writeAsBytes(response.bytes);
 
     return this;
   }
@@ -68,20 +67,21 @@ class ParseFile extends ParseFileBase {
       };
       return handleResponse<ParseFile>(
           this,
-          Response<String>(data: json.encode(response), statusCode: 201),
+          ParseNetworkResponse(data: json.encode(response), statusCode: 201),
           ParseApiRQ.upload,
           _debug,
           parseClassName);
     }
 
     final Map<String, String> headers = <String, String>{
-      HttpHeaders.contentTypeHeader: mime(file.path) ?? 'application/octet-stream',
+      HttpHeaders.contentTypeHeader:
+          mime(file.path) ?? 'application/octet-stream',
     };
     try {
-      final String uri = _client.data.serverUrl + '$_path';
-      final Response<String> response = await _client.post<String>(
+      final String uri = ParseCoreData().serverUrl + '$_path';
+      final ParseNetworkResponse response = await _client.postBytes(
         uri,
-        options: Options(headers: headers),
+        options: ParseNetworkOptions(headers: headers),
         data: file.openRead(),
         onSendProgress: progressCallback,
       );

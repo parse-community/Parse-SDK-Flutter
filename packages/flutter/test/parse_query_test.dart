@@ -3,7 +3,7 @@ import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MockClient extends Mock implements ParseHTTPClient {}
+class MockClient extends Mock implements ParseClient {}
 
 void main() {
   SharedPreferences.setMockInitialValues(Map<String, String>());
@@ -34,7 +34,7 @@ void main() {
       await queryBuilder.query();
 
       final Uri result =
-          Uri.parse(verify(client.get<String>(captureAny)).captured.single);
+          Uri.parse(verify(client.get(captureAny)).captured.single);
 
       expect(result.path, '/classes/_User');
 

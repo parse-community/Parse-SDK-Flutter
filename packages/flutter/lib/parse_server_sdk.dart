@@ -60,6 +60,7 @@ class Parse extends sdk.Parse
     sdk.ParseConnectivityProvider connectivityProvider,
     String fileDirectory,
     Stream<void> appResumedStream,
+    sdk.ParseClientCreator clientCreator,
   }) async {
     if (!sdk.parseIsWeb &&
         (appName == null || appVersion == null || appPackageName == null)) {
@@ -95,6 +96,7 @@ class Parse extends sdk.Parse
       fileDirectory: fileDirectory ??
           (!sdk.parseIsWeb ? (await getTemporaryDirectory()).path : null),
       appResumedStream: appResumedStream ?? _appResumedStreamController.stream,
+      clientCreator: clientCreator,
     );
   }
 

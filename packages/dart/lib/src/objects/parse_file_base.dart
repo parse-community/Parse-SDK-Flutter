@@ -8,7 +8,7 @@ abstract class ParseFileBase extends ParseObject {
       {@required String name,
       String url,
       bool debug,
-      ParseHTTPClient client,
+      ParseClient client,
       bool autoSendSessionId})
       : super(keyFileClassname,
             debug: debug,
