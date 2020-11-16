@@ -17,7 +17,7 @@ class ParseACL {
 
   final String _publicKEY = '*';
   final Map<String, _ACLPermissions> _permissionsById =
-  <String, _ACLPermissions>{};
+      <String, _ACLPermissions>{};
 
   /// Helper for setting stuff
   void _setPermissionsIfNonEmpty(
