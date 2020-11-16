@@ -81,7 +81,8 @@ class ParseDioClient extends ParseClient {
         data: data,
         options: _Options(headers: options?.headers),
       );
-      return ParseNetworkResponse(data: dioResponse.data);
+      return ParseNetworkResponse(
+          data: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
           data: error.response?.data, statusCode: error.response?.statusCode);
