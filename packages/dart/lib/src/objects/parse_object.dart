@@ -315,8 +315,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Get the instance of ParseRelation class associated with the given key.
-  ParseRelation getRelation(String key) {
-    return ParseRelation(parent: this, key: key);
+  ParseRelation<T> getRelation<T extends ParseObject>(String key) {
+    return ParseRelation<T>(parent: this, key: key);
   }
 
   /// Removes an element from an Array
