@@ -28,7 +28,8 @@ class ParseConfig extends ParseObject {
   Future<ParseResponse> addConfig(String key, dynamic value) async {
     try {
       final String uri = '${ParseCoreData().serverUrl}/config';
-      final String body = '{\"params\":{\"$key\": \"${parseEncode(value)}\"}}';
+      final String body =
+          '{\"params\":{\"$key\": ${json.encode(parseEncode(value))}}}';
       final Response<String> result = await _client.put<String>(uri, data: body);
       return handleResponse<ParseConfig>(
           this, result, ParseApiRQ.addConfig, _debug, parseClassName);
