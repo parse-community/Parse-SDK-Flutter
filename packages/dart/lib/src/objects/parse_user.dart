@@ -272,8 +272,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Set [doNotSendInstallationID] to 'true' in order to prevent the SDK from sending the installationID to the Server.
   /// This option is especially useful if you are running you application on web and you don't have permission to add 'X-Parse-Installation-Id' as an allowed header on your parse-server.
   static Future<ParseResponse> loginWith(String provider, Object authData,
-      {bool doNotSendInstallationID = false}) async {
-    final ParseUser user = ParseUser.createUser();
+      {bool doNotSendInstallationID = false, String username, String password, String email}) async {
+    final ParseUser user = ParseUser.createUser(username, password, email);
     final ParseResponse response = await user._loginWith(provider, authData,
         doNotSendInstallationID: doNotSendInstallationID);
     return response;
@@ -286,6 +286,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
       final String installationId = await _getInstallationId();
+      final Map<String, dynamic> body = toJson(forApiRQ: true);
+      body['authData'] = <String, dynamic>{provider: authData};
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
         options: ParseNetworkOptions(headers: <String, String>{
@@ -293,9 +295,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
           if (installationId != null && !doNotSendInstallationID)
             keyHeaderInstallationId: installationId,
         }),
-        data: jsonEncode(<String, dynamic>{
-          'authData': <String, dynamic>{provider: authData}
-        }),
+        data: jsonEncode(body),
       );
 
       return await _handleResponse(
