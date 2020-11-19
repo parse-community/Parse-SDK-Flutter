@@ -5,7 +5,7 @@ class ParseWebFile extends ParseFileBase {
       {@required String name,
       String url,
       bool debug,
-      ParseHTTPClient client,
+      ParseClient client,
       bool autoSendSessionId})
       : super(
           name: name,
@@ -23,12 +23,11 @@ class ParseWebFile extends ParseFileBase {
       return this;
     }
 
-    final Response<List<int>> response = await _client.get<List<int>>(
+    final ParseNetworkByteResponse response = await _client.getBytes(
       url,
-      options: Options(responseType: ResponseType.bytes),
       onReceiveProgress: progressCallback,
     );
-    file = response.data;
+    file = response.bytes;
 
     return this;
   }
@@ -43,7 +42,7 @@ class ParseWebFile extends ParseFileBase {
       };
       return handleResponse<ParseWebFile>(
           this,
-          Response<String>(data: json.encode(response), statusCode: 201),
+          ParseNetworkResponse(data: json.encode(response), statusCode: 201),
           ParseApiRQ.upload,
           _debug,
           parseClassName);
@@ -54,10 +53,10 @@ class ParseWebFile extends ParseFileBase {
           mime(url ?? name) ?? 'application/octet-stream',
     };
     try {
-      final String uri = _client.data.serverUrl + '$_path';
-      final Response<String> response = await _client.post<String>(
+      final String uri = ParseCoreData().serverUrl + '$_path';
+      final ParseNetworkResponse response = await _client.postBytes(
         uri,
-        options: Options(headers: headers),
+        options: ParseNetworkOptions(headers: headers),
         data: Stream<List<int>>.fromIterable(<List<int>>[file]),
         onSendProgress: progressCallback,
       );

@@ -3,16 +3,19 @@ import 'package:test/test.dart';
 
 void main() {
   test('testBuilder', () async {
-    await Parse().initialize('appId', 'serverUrl',
-        clientKey: 'clientKey',
-        liveQueryUrl: 'liveQueryUrl',
-        appName: 'appName',
-        appPackageName: 'somePackageName',
-        appVersion: 'someAppVersion',
-        masterKey: 'masterKey',
-        sessionId: 'sessionId',
-        fileDirectory: 'someDirectory',
-        debug: true,);
+    await Parse().initialize(
+      'appId',
+      'serverUrl',
+      clientKey: 'clientKey',
+      liveQueryUrl: 'liveQueryUrl',
+      appName: 'appName',
+      appPackageName: 'somePackageName',
+      appVersion: 'someAppVersion',
+      masterKey: 'masterKey',
+      sessionId: 'sessionId',
+      fileDirectory: 'someDirectory',
+      debug: true,
+    );
 
     expect(ParseCoreData().applicationId, 'appId');
     expect(ParseCoreData().serverUrl, 'serverUrl');

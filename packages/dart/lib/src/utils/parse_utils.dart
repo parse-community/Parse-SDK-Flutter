@@ -24,9 +24,9 @@ dynamic convertValueToCorrectType(dynamic value) {
 }
 
 /// Sanitises a url
-Uri getSanitisedUri(ParseHTTPClient client, String pathToAppend,
+Uri getSanitisedUri(ParseClient client, String pathToAppend,
     {Map<String, dynamic> queryParams, String query}) {
-  final Uri tempUri = Uri.parse(client.data.serverUrl);
+  final Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
 
   final Uri url = Uri(
       scheme: tempUri.scheme,
@@ -40,9 +40,9 @@ Uri getSanitisedUri(ParseHTTPClient client, String pathToAppend,
 }
 
 /// Sanitises a url
-Uri getCustomUri(ParseHTTPClient client, String path,
+Uri getCustomUri(ParseClient client, String path,
     {Map<String, dynamic> queryParams, String query}) {
-  final Uri tempUri = Uri.parse(client.data.serverUrl);
+  final Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
 
   final Uri url = Uri(
       scheme: tempUri.scheme,
@@ -67,17 +67,17 @@ String removeTrailingSlash(String serverUrl) {
 
 Future<ParseResponse> batchRequest(
     List<dynamic> requests, List<ParseObject> objects,
-    {ParseHTTPClient client, bool debug}) async {
+    {ParseClient client, bool debug}) async {
   debug = isDebugEnabled(objectLevelDebug: debug);
   client = client ??
-      ParseHTTPClient(
+      ParseCoreData().clientCreator(
           sendSessionId: ParseCoreData().autoSendSessionId,
           securityContext: ParseCoreData().securityContext);
   try {
     final Uri url = getSanitisedUri(client, '/batch');
     final String body = json.encode(<String, dynamic>{'requests': requests});
-    final Response<String> result =
-      await client.post<String>(url.toString(), data: body);
+    final ParseNetworkResponse result =
+        await client.post(url.toString(), data: body);
 
     return handleResponse<ParseObject>(
         objects, result, ParseApiRQ.batch, debug, 'parse_utils');

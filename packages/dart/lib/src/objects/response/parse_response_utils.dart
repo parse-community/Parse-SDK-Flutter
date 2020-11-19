@@ -2,7 +2,7 @@ part of flutter_parse_sdk;
 
 /// Handles an API response and logs data if [bool] debug is enabled
 @protected
-ParseResponse handleResponse<T>(dynamic object, Response<String> response,
+ParseResponse handleResponse<T>(dynamic object, ParseNetworkResponse response,
     ParseApiRQ type, bool debug, String className) {
   final ParseResponse parseResponse =
       _ParseResponseBuilder().handleResponse<T>(object, response, type);
@@ -46,10 +46,10 @@ bool shouldReturnAsABaseResult(ParseApiRQ type) {
   }
 }
 
-bool isUnsuccessfulResponse(Response<String> apiResponse) =>
+bool isUnsuccessfulResponse(ParseNetworkResponse apiResponse) =>
     apiResponse.statusCode != 200 && apiResponse.statusCode != 201;
 
-bool isSuccessButNoResults(Response<String> apiResponse) {
+bool isSuccessButNoResults(ParseNetworkResponse apiResponse) {
   final dynamic decodedResponse = jsonDecode(apiResponse.data);
   List<dynamic> results;
   if (decodedResponse is Map<String, dynamic>) {

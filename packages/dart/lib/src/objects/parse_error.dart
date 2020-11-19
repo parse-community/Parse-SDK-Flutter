@@ -4,9 +4,9 @@ part of flutter_parse_sdk;
 class ParseError {
   ParseError(
       {this.code = -1,
-        this.message = 'Unknown error',
-        this.exception,
-        bool debug = false}) {
+      this.message = 'Unknown error',
+      this.exception,
+      bool debug = false}) {
     type = exceptions[code];
     if (debug) {
       print(toString());

@@ -10,6 +10,7 @@ dependencies:
 
   # Networking
   dio: ^3.0.10
+  http: ^0.12.2
   web_socket_channel: ^1.1.0
 
   #Database

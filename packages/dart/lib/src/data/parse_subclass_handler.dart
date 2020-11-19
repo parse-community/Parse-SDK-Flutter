@@ -3,7 +3,7 @@ part of flutter_parse_sdk;
 typedef ParseObjectConstructor = ParseObject Function();
 typedef ParseUserConstructor = ParseUser Function(
     String username, String password, String emailAddress,
-    {String sessionToken, bool debug, ParseHTTPClient client});
+    {String sessionToken, bool debug, ParseClient client});
 typedef ParseFileConstructor = ParseFileBase Function(
     {String name, String url});
 
@@ -58,7 +58,7 @@ class ParseSubClassHandler {
 
   ParseUser createParseUser(
       String username, String password, String emailAddress,
-      {String sessionToken, bool debug, ParseHTTPClient client}) {
+      {String sessionToken, bool debug, ParseClient client}) {
     return _parseUserConstructor != null
         ? _parseUserConstructor(username, password, emailAddress,
             sessionToken: sessionToken, debug: debug, client: client)

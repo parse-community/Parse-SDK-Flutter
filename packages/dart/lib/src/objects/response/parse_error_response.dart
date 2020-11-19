@@ -2,7 +2,7 @@ part of flutter_parse_sdk;
 
 /// Handles any errors returned in response
 ParseResponse buildErrorResponse(
-    ParseResponse response, Response<String> apiResponse) {
+    ParseResponse response, ParseNetworkResponse apiResponse) {
   if (apiResponse.data == null) {
     return null;
   }
