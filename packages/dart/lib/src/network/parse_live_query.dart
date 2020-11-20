@@ -46,7 +46,7 @@ class LiveQueryReconnectingController {
       connectivityProvider.connectivityStream.listen(_connectivityChanged);
     } else {
       print(
-          'LiveQuery does not work, if there is ParseConnectivityProvider provided.');
+          'LiveQuery does not work, if there is no ParseConnectivityProvider provided.');
     }
     _eventStream.listen((LiveQueryClientEvent event) {
       switch (event) {
