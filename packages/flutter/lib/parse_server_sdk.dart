@@ -7,7 +7,7 @@ import 'dart:ui' as ui;
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart' as sdk;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -35,7 +35,6 @@ class Parse extends sdk.Parse
   ///        debug: true,
   ///        liveQuery: true);
   /// ```
-  /// [appName], [appVersion] and [appPackageName] are automatically set on Android and IOS, if they are not defined. You should provide a value on web.
   /// [fileDirectory] is not used on web
   @override
   Future<Parse> initialize(
@@ -62,8 +61,7 @@ class Parse extends sdk.Parse
     Stream<void> appResumedStream,
     sdk.ParseClientCreator clientCreator,
   }) async {
-    if (!sdk.parseIsWeb &&
-        (appName == null || appVersion == null || appPackageName == null)) {
+    if (appName == null || appVersion == null || appPackageName == null) {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
       appName ??= packageInfo.appName;
       appVersion ??= packageInfo.version;
