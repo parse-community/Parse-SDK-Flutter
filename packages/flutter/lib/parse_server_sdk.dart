@@ -31,7 +31,7 @@ class Parse extends sdk.Parse
   /// Parse().initialize(
   ///        "PARSE_APP_ID",
   ///        "https://parse.myaddress.com/parse/,
-  ///        masterKey: "asd23rjh234r234r234r",
+  ///        clientKey: "asd23rjh234r234r234r",
   ///        debug: true,
   ///        liveQuery: true);
   /// ```
