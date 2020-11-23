@@ -85,7 +85,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
 }
 
 class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
-    extends State<ParseLiveListWidget<T>> {
+    extends State<ParseLiveGridWidget<T>> {
   _ParseLiveGridWidgetState(
       {@required this.query,
       @required this.removedItemBuilder,
@@ -139,7 +139,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   @override
   Widget build(BuildContext context) {
     return _liveGrid == null
-        ? widget.listLoadingElement ?? Container()
+        ? widget.gridLoadingElement ?? Container()
         : buildAnimatedGrid();
   }
 

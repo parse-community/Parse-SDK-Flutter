@@ -22,12 +22,6 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.listeningIncludes,
     this.lazyLoading = true,
     this.preloadedColumns,
-    this.grid = false,
-    this.animationController,
-    this.crossAxisCount = 3,
-    this.crossAxisSpacing = 5.0,
-    this.mainAxisSpacing = 5.0,
-    this.childAspectRatio = 0.80,
   }) : super(key: key);
 
   final sdk.QueryBuilder<T> query;
@@ -50,14 +44,6 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
 
   final bool lazyLoading;
   final List<String> preloadedColumns;
-
-  final bool grid;
-  final AnimationController animationController;
-
-  final int crossAxisCount;
-  final double crossAxisSpacing;
-  final double mainAxisSpacing;
-  final double childAspectRatio;
 
   @override
   _ParseLiveListWidgetState<T> createState() => _ParseLiveListWidgetState<T>(
@@ -145,9 +131,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   Widget build(BuildContext context) {
     return _liveList == null
         ? widget.listLoadingElement ?? Container()
-        : widget.grid
-            ? buildAnimatedGrid()
-            : buildAnimatedList();
+        : buildAnimatedList();
   }
 
   @override
@@ -177,49 +161,6 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
             loadedData: () => _liveList?.getLoadedAt(index),
             preLoadedData: () => _liveList?.getPreLoadedAt(index),
             sizeFactor: animation,
-            duration: widget.duration,
-            childBuilder:
-                widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
-          );
-        });
-  }
-
-  Widget buildAnimatedGrid() {
-    AnimationController controller;
-    // controller = AnimationController(
-    // duration: Duration(milliseconds: 2000), vsync: this.widget);
-    Animation<double> boxAnimation;
-    boxAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
-      CurvedAnimation(
-        parent: widget.animationController,
-        curve: Interval(
-          0,
-          0.5,
-          curve: Curves.decelerate,
-        ),
-      ),
-    );
-    return GridView.builder(
-        itemCount: _liveList?.size,
-        gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: widget.crossAxisCount,
-            crossAxisSpacing: widget.crossAxisSpacing,
-            mainAxisSpacing: widget.mainAxisSpacing,
-            childAspectRatio: widget.childAspectRatio),
-        itemBuilder: (
-          BuildContext context,
-          int index,
-        ) {
-          return ParseLiveListElementWidget<T>(
-            key: ValueKey<String>(
-                _liveList?.getIdentifier(index) ?? '_NotFound'),
-            stream: () => _liveList?.getAt(index),
-            loadedData: () => _liveList?.getLoadedAt(index),
-            preLoadedData: () => _liveList?.getPreLoadedAt(index),
-            sizeFactor: boxAnimation,
             duration: widget.duration,
             childBuilder:
                 widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
