@@ -19,6 +19,7 @@ export 'package:parse_server_sdk/parse_server_sdk.dart'
 
 part 'src/storage/core_store_sp_impl.dart';
 part 'src/utils/parse_live_list.dart';
+part 'src/utils/parse_live_grid.dart';
 
 class Parse extends sdk.Parse
     with WidgetsBindingObserver
