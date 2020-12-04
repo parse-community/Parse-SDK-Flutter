@@ -103,7 +103,7 @@ class ParseInstallation extends ParseObject {
 
     final ParseResponse parseResponse = await _create();
     if (parseResponse.success && isCurrent) {
-      saveInStorage(keyParseStoreInstallation);
+      await saveInStorage(keyParseStoreInstallation);
     }
     return parseResponse;
   }
@@ -118,7 +118,7 @@ class ParseInstallation extends ParseObject {
     //ParseResponse parseResponse = await super.save();
     final ParseResponse parseResponse = await _save();
     if (parseResponse.success && isCurrent) {
-      saveInStorage(keyParseStoreInstallation);
+      await saveInStorage(keyParseStoreInstallation);
     }
     return parseResponse;
   }
