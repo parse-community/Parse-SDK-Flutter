@@ -50,7 +50,7 @@ It's possible to add other parameters to work with your instance of Parse Server
   await Parse().initialize(
         keyApplicationId,
         keyParseServerUrl,
-        masterKey: keyParseMasterKey, // Required for Back4App and others
+        masterKey: keyParseMasterKey, // Required for some setups
         clientKey: keyParseClientKey, // Required for some setups
         debug: true, // When enabled, prints logs to console
         liveQueryUrl: keyLiveQueryUrl, // Required if using LiveQuery 
