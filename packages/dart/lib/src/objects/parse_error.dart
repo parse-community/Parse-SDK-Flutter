@@ -8,6 +8,9 @@ class ParseError {
       this.exception,
       bool debug = false}) {
     type = exceptions[code];
+    if (code == 209) {
+      ParseCoreData.instance.setSessionId(null);
+    }
     if (debug) {
       print(toString());
     }

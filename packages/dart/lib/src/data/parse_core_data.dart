@@ -124,6 +124,7 @@ class ParseCoreData {
   ParseConnectivityProvider connectivityProvider;
   String fileDirectory;
   Stream<void> appResumedStream;
+  StreamController<String> _sessionIdController = StreamController<String>();
   ParseClientCreator clientCreator =
       ({bool sendSessionId, SecurityContext securityContext}) => ParseDioClient(
           sendSessionId: sendSessionId, securityContext: securityContext);
@@ -161,11 +162,14 @@ class ParseCoreData {
   /// their keys
   void setSessionId(String sessionId) {
     this.sessionId = sessionId;
+    _sessionIdController.add(sessionId);
   }
 
   CoreStore getStore() {
     return storage;
   }
+
+  Stream<String> get sessionIdStream => _sessionIdController.stream;
 
   @override
   String toString() => '$applicationId $masterKey';
