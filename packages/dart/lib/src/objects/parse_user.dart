@@ -220,7 +220,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       _saveChanges();
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
-        data: jsonEncode(queryParams),
+		data: queryParams,
         options: ParseNetworkOptions(headers: <String, String>{
           keyHeaderRevocableSession: '1',
           if (installationId != null && !doNotSendInstallationID)
