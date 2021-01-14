@@ -51,7 +51,7 @@ class ParseACL {
   }
 
   ///Set whether the given user id is allowed to read this object.
-  void setReadAccess({@required String userId, bool allowed}) {
+  void setReadAccess({@required String userId, bool allowed = true}) {
     if (userId == null) {
       throw 'cannot setReadAccess for null userId';
     }
@@ -74,7 +74,7 @@ class ParseACL {
   }
 
   ///Set whether the given user id is allowed to write this object.
-  void setWriteAccess({@required String userId, bool allowed}) {
+  void setWriteAccess({@required String userId, bool allowed = true}) {
     if (userId == null) {
       throw 'cannot setWriteAccess for null userId';
     }
