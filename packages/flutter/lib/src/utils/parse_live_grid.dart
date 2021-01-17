@@ -5,6 +5,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
     Key key,
     @required this.query,
     this.gridLoadingElement,
+    this.queryEmptyElement,
     this.duration = const Duration(milliseconds: 300),
     this.scrollPhysics,
     this.scrollController,
@@ -28,6 +29,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
 
   final sdk.QueryBuilder<T> query;
   final Widget gridLoadingElement;
+  final Widget queryEmptyElement;
   final Duration duration;
   final ScrollPhysics scrollPhysics;
   final ScrollController scrollController;
@@ -100,6 +102,13 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       lazyLoading: lazyLoading,
       preloadedColumns: preloadedColumns,
     ).then((sdk.ParseLiveList<T> value) {
+      query.count().then((value) {
+        if (value.count > 0) {
+          setState(() {
+            noData = false;
+          });
+        }
+      });
       setState(() {
         _liveGrid = value;
         _liveGrid.stream
@@ -108,6 +117,9 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
             if (_animatedListKey.currentState != null)
               _animatedListKey.currentState
                   .insertItem(event.index, duration: widget.duration);
+            setState(() {
+              noData = false;
+            });
           } else if (event is sdk.ParseLiveListDeleteEvent) {
             _animatedListKey.currentState.removeItem(
                 event.index,
@@ -124,6 +136,17 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
                       preLoadedData: () => event.object,
                     ),
                 duration: widget.duration);
+            query.count().then((value) {
+              if (value.count > 0) {
+                setState(() {
+                  noData = false;
+                });
+              } else {
+                setState(() {
+                  noData = true;
+                });
+              }
+            });
           }
         });
       });
@@ -135,12 +158,15 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
   final ChildBuilder<T> removedItemBuilder;
+  var noData = true;
 
   @override
   Widget build(BuildContext context) {
     return _liveGrid == null
         ? widget.gridLoadingElement ?? Container()
-        : buildAnimatedGrid();
+        : noData
+            ? widget.queryEmptyElement ?? Container()
+            : buildAnimatedGrid();
   }
 
   @override
