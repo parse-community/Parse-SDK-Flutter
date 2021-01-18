@@ -107,46 +107,18 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
           setState(() {
             noData = false;
           });
+        } else {
+          setState(() {
+            noData = true;
+          });
         }
       });
       setState(() {
         _liveGrid = value;
         _liveGrid.stream
             .listen((sdk.ParseLiveListEvent<sdk.ParseObject> event) {
-          if (event is sdk.ParseLiveListAddEvent) {
-            if (_animatedListKey.currentState != null)
-              _animatedListKey.currentState
-                  .insertItem(event.index, duration: widget.duration);
-            setState(() {
-              noData = false;
-            });
-          } else if (event is sdk.ParseLiveListDeleteEvent) {
-            _animatedListKey.currentState.removeItem(
-                event.index,
-                (BuildContext context, Animation<double> animation) =>
-                    ParseLiveListElementWidget<T>(
-                      key: ValueKey<String>(event.object?.get<String>(
-                          sdk.keyVarObjectId,
-                          defaultValue: 'removingItem')),
-                      childBuilder: widget.childBuilder ??
-                          ParseLiveListWidget.defaultChildBuilder,
-                      sizeFactor: animation,
-                      duration: widget.duration,
-                      loadedData: () => event.object,
-                      preLoadedData: () => event.object,
-                    ),
-                duration: widget.duration);
-            query.count().then((value) {
-              if (value.count > 0) {
-                setState(() {
-                  noData = false;
-                });
-              } else {
-                setState(() {
-                  noData = true;
-                });
-              }
-            });
+          if (mounted) {
+            setState(() {});
           }
         });
       });
@@ -158,7 +130,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
   final ChildBuilder<T> removedItemBuilder;
-  var noData = true;
+  bool noData = false;
 
   @override
   Widget build(BuildContext context) {

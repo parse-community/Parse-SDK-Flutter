@@ -98,6 +98,10 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
           setState(() {
             noData = false;
           });
+        } else {
+          setState(() {
+            noData = true;
+          });
         }
       });
       setState(() {
@@ -149,7 +153,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
   final ChildBuilder<T> removedItemBuilder;
-  var noData = true;
+  bool noData = false;
 
   @override
   Widget build(BuildContext context) {
