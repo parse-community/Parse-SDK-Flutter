@@ -718,7 +718,7 @@ For Google and the example below, we used the library provided at https://pub.de
 class OAuthLogin {
   final GoogleSignIn _googleSignIn = GoogleSignIn( scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly'] );
   
-  sigInGoogle() async {
+  signInGoogle() async {
     GoogleSignInAccount account = await _googleSignIn.signIn();
     GoogleSignInAuthentication authentication = await account.authentication;
     await ParseUser.loginWith(
