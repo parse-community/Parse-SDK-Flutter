@@ -51,7 +51,7 @@ class Parse extends sdk.Parse
     String clientKey,
     String masterKey,
     String sessionId,
-    bool autoSendSessionId,
+    bool autoSendSessionId = true,
     SecurityContext securityContext,
     sdk.CoreStore coreStore,
     Map<String, sdk.ParseObjectConstructor> registeredSubClassMap,
