@@ -1,7 +1,6 @@
 part of flutter_parse_sdk;
 
-void logAPIResponse(
-    String className, String type, ParseResponse parseResponse) {
+void logAPIResponse(String className, String type, ParseResponse parseResponse) {
   const String spacer = ' \n';
   String responseString = '';
 
@@ -20,8 +19,7 @@ void logAPIResponse(
     responseString += '\nStatus Code: ${parseResponse.error.code}';
     responseString += '\nType: ${parseResponse.error.type}';
 
-    final String errorOrException =
-        parseResponse.error.exception != null ? 'Exception' : 'Error';
+    final String errorOrException = parseResponse.error.exception != null ? 'Exception' : 'Error';
 
     responseString += '\n$errorOrException: ${parseResponse.error.message}';
   }
@@ -36,30 +34,26 @@ void logCUrl(dio.Options options, dynamic data, String url) {
   curlCmd += ' -X ' + options.method;
   bool compressed = false;
   options.headers.forEach((String name, dynamic value) {
-    if (name?.toLowerCase() == 'accept-encoding' &&
-        value?.toString()?.toLowerCase() == 'gzip') {
+    if (name?.toLowerCase() == 'accept-encoding' && value?.toString()?.toLowerCase() == 'gzip') {
       compressed = true;
     }
     curlCmd += ' -H \'$name: $value\'';
   });
 
-  //TODO: log request
-  // if (options.method == 'POST' || options.method == 'PUT') {
-  //   if (request is Request) {
-  //     final String body = latin1.decode(request.bodyBytes);
-  //     curlCmd += ' -d \'$body\'';
-  //   }
-  // }
+  // log request body data
+  if (options.method == 'POST' || options.method == 'PUT') {
+    curlCmd += ' -d \'$data\'';
+  }
 
   curlCmd += (compressed ? ' --compressed ' : ' ') + url;
-  curlCmd += '\n\n ${Uri.decodeFull(url)}';
+
+  curlCmd += '\n\n decode url => ${Uri.decodeFull(url)}';
   print('╭-- Parse Request');
   print(curlCmd);
   print('╰--');
 }
 
-void logRequest(
-    String appName, String className, String type, String uri, String body) {
+void logRequest(String appName, String className, String type, String uri, String body) {
   String requestString = ' \n';
   String name = appName;
   if (name.isNotEmpty) {
