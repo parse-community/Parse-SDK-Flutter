@@ -99,7 +99,7 @@ class ParseDioClient extends ParseClient {
         path,
         data: data,
         options: _Options(
-            headers: options?.headers),
+            headers: options?.headers, responseType: dio.ResponseType.bytes),
         onSendProgress: onSendProgress,
       );
       return ParseNetworkResponse(

@@ -199,12 +199,12 @@ class ParseInstallation extends ParseObject {
       try {
         final String uri =
             '${ParseCoreData().serverUrl}$keyEndPointInstallations/$objectId';
-        final Map<String, dynamic> body = {'forApiRQ': true};
+        final String body = json.encode(toJson(forApiRQ: true));
         if (_debug) {
           logRequest(ParseCoreData().appName, parseClassName,
-              ParseApiRQ.save.toString(), uri, body.toString());
+              ParseApiRQ.save.toString(), uri, body);
         }
-        final ParseNetworkResponse result = await _client.put(uri, data: jsonEncode(body));
+        final ParseNetworkResponse result = await _client.put(uri, data: body);
         return handleResponse<ParseInstallation>(
             this, result, ParseApiRQ.save, _debug, parseClassName);
       } on Exception catch (e) {
