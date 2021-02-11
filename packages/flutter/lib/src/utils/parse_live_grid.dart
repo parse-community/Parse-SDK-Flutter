@@ -157,7 +157,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     ).animate(
       CurvedAnimation(
         parent: widget.animationController,
-        curve: Interval(
+        curve: const Interval(
           0,
           0.5,
           curve: Curves.decelerate,
@@ -166,7 +166,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     );
     return GridView.builder(
         itemCount: _liveGrid?.size,
-        gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: widget.crossAxisCount,
             crossAxisSpacing: widget.crossAxisSpacing,
             mainAxisSpacing: widget.mainAxisSpacing,
