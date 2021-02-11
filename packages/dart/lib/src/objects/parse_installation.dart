@@ -40,6 +40,8 @@ class ParseInstallation extends ParseObject {
   String get deviceType => super.get<String>(keyDeviceType);
 
   String get installationId => super.get<String>(keyInstallationId);
+  set installationId(String installationId) =>
+      set<String>(keyInstallationId, installationId);
 
   set _installationId(String installationId) =>
       set<String>(keyInstallationId, installationId);
