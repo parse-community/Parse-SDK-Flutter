@@ -25,12 +25,12 @@ dependencies:
 
   # Utils
   path_provider: ^1.6.27 # only used in the flutter part
-  package_info: ^0.4.3+2 # only used in the flutter part
-  sembast: ^2.4.8+1 # required for transitive use only
+  package_info: ^0.4.3+4 # only used in the flutter part
+  sembast: ^2.4.9 # required for transitive use only
   path: ^1.7.0 # required for transitive use only
 
 dev_dependencies:
   # Testing
   flutter_test:
     sdk: flutter
-  mockito: ^4.1.3
+  mockito: ^4.1.4
