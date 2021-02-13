@@ -1,5 +1,6 @@
 ## 2.1.0
-Option para uses ParseHTTPClient (default) or ParseDioClient
+Option para uses ParseHTTPClient (default) or ParseDioClient (slow on Flutter Web).
+    **BREAKING CHANGE** if use progress callback at the file upload in version 2.0.1
 Make autoSendSessionId parameter default TRUE
 Fix ParseACL with no default value in setReadAccess and setWriteAccess
 Fix ParseInstallation - Quick updates produce concurrency errors #529
