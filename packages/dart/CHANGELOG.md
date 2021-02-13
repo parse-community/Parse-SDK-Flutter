@@ -1,3 +1,12 @@
+## 2.1.0
+Option para uses ParseHTTPClient (default) ou ParseDioClient
+Fix ParseACL with no default value in setReadAccess and setWriteAccess
+Fix ParseInstallation - Quick updates produce concurrency errors #529
+Add method excludeKeys: Exclude specific fields from the returned query
+Changed to the method to POST in the Login
+Fix upload file using ParseDioClient
+Updated Dependencies version in pubspec.yaml
+Minor fix
 ## 2.0.1
 Fixed network exceptions. [#482](https://github.com/parse-community/Parse-SDK-Flutter/pull/482)
 
