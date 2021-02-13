@@ -4,7 +4,7 @@ Make autoSendSessionId parameter default TRUE
 Fix CoreStoreSembastImp with no default passwod causes error in Flutter Package
 Fix ParseACL with no default value in setReadAccess and setWriteAccess
 Fix ParseInstallation - Quick updates produce concurrency errors #529
-Add method excludeKeys: Exclude specific fields from the returned query
+Added method excludeKeys: Exclude specific fields from the returned query
 Changed to the method to POST in the Login
 Fix upload file using ParseDioClient
 Updated Dependencies version in pubspec.yaml
