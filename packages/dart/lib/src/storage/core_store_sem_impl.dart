@@ -23,7 +23,7 @@ class CoreStoreSembastImp implements CoreStore {
           print(
               '***********************************************************************************************************');
           print(
-              'Warning: CoreStoreSembastImp uses the default password. Specify a custom one for increased security.');
+              'Warning: CoreStoreSembastImp uses the default password. Specify a custom password for increased security.');
           print(
               '***********************************************************************************************************');
         }
