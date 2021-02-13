@@ -98,8 +98,7 @@ class ParseDioClient extends ParseClient {
       final dio.Response<String> dioResponse = await _client.post<String>(
         path,
         data: data,
-        options: _Options(
-            headers: options?.headers, responseType: dio.ResponseType.bytes),
+        options: _Options(headers: options?.headers),
         onSendProgress: onSendProgress,
       );
       return ParseNetworkResponse(

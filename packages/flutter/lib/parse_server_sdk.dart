@@ -18,8 +18,8 @@ export 'package:parse_server_sdk/parse_server_sdk.dart'
     hide Parse, CoreStoreSembastImp;
 
 part 'src/storage/core_store_sp_impl.dart';
-part 'src/utils/parse_live_list.dart';
 part 'src/utils/parse_live_grid.dart';
+part 'src/utils/parse_live_list.dart';
 
 class Parse extends sdk.Parse
     with WidgetsBindingObserver
@@ -51,7 +51,7 @@ class Parse extends sdk.Parse
     String clientKey,
     String masterKey,
     String sessionId,
-    bool autoSendSessionId,
+    bool autoSendSessionId = true,
     SecurityContext securityContext,
     sdk.CoreStore coreStore,
     Map<String, sdk.ParseObjectConstructor> registeredSubClassMap,
@@ -146,7 +146,7 @@ class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
   static sdk.CoreStoreSembastImp _sembastImp;
 
   static Future<sdk.CoreStore> getInstance(
-      {DatabaseFactory factory, String password}) async {
+      {DatabaseFactory factory, String password = 'flutter_sdk'}) async {
     if (_sembastImp == null) {
       String dbDirectory = '';
       if (!sdk.parseIsWeb &&

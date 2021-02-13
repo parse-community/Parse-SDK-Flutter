@@ -125,7 +125,7 @@ class ParseCoreData {
   String fileDirectory;
   Stream<void> appResumedStream;
   ParseClientCreator clientCreator =
-      ({bool sendSessionId, SecurityContext securityContext}) => ParseDioClient(
+      ({bool sendSessionId, SecurityContext securityContext}) => ParseHTTPClient(
           sendSessionId: sendSessionId, securityContext: securityContext);
 
   void registerSubClass(

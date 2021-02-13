@@ -8,7 +8,7 @@ import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 import 'package:mime_type/mime_type.dart';
-import 'package:parse_server_sdk/src/network/parse_dio_client.dart';
+import 'package:parse_server_sdk/src/network/parse_http_client.dart';
 import 'package:parse_server_sdk/src/network/parse_websocket.dart'
     as parse_web_socket;
 import 'package:path/path.dart' as path;
@@ -94,7 +94,7 @@ class Parse {
     String clientKey,
     String masterKey,
     String sessionId,
-    bool autoSendSessionId,
+    bool autoSendSessionId = true,
     SecurityContext securityContext,
     CoreStore coreStore,
     Map<String, ParseObjectConstructor> registeredSubClassMap,
