@@ -1,7 +1,6 @@
 ## 2.1.0
 Option para uses ParseHTTPClient (default) or ParseDioClient (slow on Flutter Web).
     **BREAKING CHANGE** if use progress callback at the file upload in version 2.0.1
-Make autoSendSessionId parameter default TRUE
 Added method excludeKeys: Exclude specific fields from the returned query
 Changed to the method POST on Login
 Bug fixes
