@@ -102,15 +102,6 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       lazyLoading: lazyLoading,
       preloadedColumns: preloadedColumns,
     ).then((sdk.ParseLiveList<T> value) {
-      setState(() {
-        _liveGrid = value;
-        _liveGrid.stream
-            .listen((sdk.ParseLiveListEvent<sdk.ParseObject> event) {
-          if (mounted) {
-            setState(() {});
-          }
-        });
-      });
       if (value.size > 0) {
         setState(() {
           noData = false;
@@ -120,6 +111,15 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
           noData = true;
         });
       }
+      setState(() {
+        _liveGrid = value;
+        _liveGrid.stream
+            .listen((sdk.ParseLiveListEvent<sdk.ParseObject> event) {
+          if (mounted) {
+            setState(() {});
+          }
+        });
+      });
     });
   }
 

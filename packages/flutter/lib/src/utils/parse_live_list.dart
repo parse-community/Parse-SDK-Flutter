@@ -93,6 +93,15 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       lazyLoading: lazyLoading,
       preloadedColumns: preloadedColumns,
     ).then((sdk.ParseLiveList<T> value) {
+      if (value.size > 0) {
+        setState(() {
+          noData = false;
+        });
+      } else {
+        setState(() {
+          noData = true;
+        });
+      }
       setState(() {
         _liveList = value;
         _liveList.stream
@@ -117,18 +126,18 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                       preLoadedData: () => event.object,
                     ),
                 duration: widget.duration);
+            if (value.size > 0) {
+              setState(() {
+                noData = false;
+              });
+            } else {
+              setState(() {
+                noData = true;
+              });
+            }
           }
         });
       });
-      if (value.size > 0) {
-        setState(() {
-          noData = false;
-        });
-      } else {
-        setState(() {
-          noData = true;
-        });
-      }
     });
   }
 
