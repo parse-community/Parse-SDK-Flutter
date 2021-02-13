@@ -93,17 +93,6 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       lazyLoading: lazyLoading,
       preloadedColumns: preloadedColumns,
     ).then((sdk.ParseLiveList<T> value) {
-      query.count().then((value) {
-        if (value.count > 0) {
-          setState(() {
-            noData = false;
-          });
-        } else {
-          setState(() {
-            noData = true;
-          });
-        }
-      });
       setState(() {
         _liveList = value;
         _liveList.stream
@@ -112,9 +101,6 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
             if (_animatedListKey.currentState != null)
               _animatedListKey.currentState
                   .insertItem(event.index, duration: widget.duration);
-            setState(() {
-              noData = false;
-            });
           } else if (event is sdk.ParseLiveListDeleteEvent) {
             _animatedListKey.currentState.removeItem(
                 event.index,
@@ -131,20 +117,18 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                       preLoadedData: () => event.object,
                     ),
                 duration: widget.duration);
-            query.count().then((value) {
-              if (value.count > 0) {
-                setState(() {
-                  noData = false;
-                });
-              } else {
-                setState(() {
-                  noData = true;
-                });
-              }
-            });
           }
         });
       });
+      if (value.size > 0) {
+        setState(() {
+          noData = false;
+        });
+      } else {
+        setState(() {
+          noData = true;
+        });
+      }
     });
   }
 
