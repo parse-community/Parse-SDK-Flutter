@@ -1,5 +1,6 @@
 ## 2.1.0
 Option para uses ParseHTTPClient (default) ou ParseDioClient
+Make autoSendSessionId parameter default TRUE
 Fix CoreStoreSembastImp with no default passwod causes error in Flutter Package
 Fix ParseACL with no default value in setReadAccess and setWriteAccess
 Fix ParseInstallation - Quick updates produce concurrency errors #529

@@ -1,5 +1,6 @@
 ## 2.1.0
 Option para uses ParseHTTPClient (default) ou ParseDioClient
+Make autoSendSessionId parameter default TRUE
 Fix ParseACL with no default value in setReadAccess and setWriteAccess
 Fix ParseInstallation - Quick updates produce concurrency errors #529
 Add method excludeKeys: Exclude specific fields from the returned query
