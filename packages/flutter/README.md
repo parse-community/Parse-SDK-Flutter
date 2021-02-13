@@ -61,16 +61,17 @@ When running via express, set [ParseServerOptions](https://parseplatform.org/par
 Be aware that for web ParseInstallation does include app name, version or package identifier automatically. You should manually provide this data as described [here](https://github.com/parse-community/Parse-SDK-Flutter/blob/master/docs/migrate-1-0-28.md#optional-provide-app-information-on-web);
 
 #### Network client
-By default, this SDK uses the `ParseDioClient`. This client supports the most features (for example a progress callback at the file upload).
-A benchmark has shown, that dio is slower than http on web. If you want to use the `ParseHTTPClient`, which uses the http network library,
+By default, this SDK uses the `ParseHTTPClient`.
+Another option is use `ParseDioClient`. This client supports the most features (for example a progress callback at the file upload), but a benchmark has shown, that dio is slower than http on web.
+
+If you want to use the `ParseDioClient`, which uses the dio network library,
 you can provide a custom `ParseClientCreator` at the initialization of the SDK.
 ```dart
 await Parse().initialize(
   //...
-  clientCreator: ({bool sendSessionId, SecurityContext securityContext}) => ParseHTTPClient(sendSessionId: sendSessionId, securityContext: securityContext),
+  clientCreator: ({bool sendSessionId, SecurityContext securityContext}) => ParseDioClient(sendSessionId: sendSessionId, securityContext: securityContext),
 );
 ```
-
 
 ## Objects
 You can create custom objects by calling:
@@ -728,7 +729,7 @@ For Google and the example below, we used the library provided at https://pub.de
 class OAuthLogin {
   final GoogleSignIn _googleSignIn = GoogleSignIn( scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly'] );
   
-  sigInGoogle() async {
+  signInGoogle() async {
     GoogleSignInAccount account = await _googleSignIn.signIn();
     GoogleSignInAuthentication authentication = await account.authentication;
     await ParseUser.loginWith(
