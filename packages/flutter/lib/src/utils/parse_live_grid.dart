@@ -5,6 +5,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
     Key key,
     @required this.query,
     this.gridLoadingElement,
+    this.queryEmptyElement,
     this.duration = const Duration(milliseconds: 300),
     this.scrollPhysics,
     this.scrollController,
@@ -28,6 +29,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
 
   final sdk.QueryBuilder<T> query;
   final Widget gridLoadingElement;
+  final Widget queryEmptyElement;
   final Duration duration;
   final ScrollPhysics scrollPhysics;
   final ScrollController scrollController;
@@ -100,6 +102,15 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       lazyLoading: lazyLoading,
       preloadedColumns: preloadedColumns,
     ).then((sdk.ParseLiveList<T> value) {
+      if (value.size > 0) {
+        setState(() {
+          noData = false;
+        });
+      } else {
+        setState(() {
+          noData = true;
+        });
+      }
       setState(() {
         _liveGrid = value;
         _liveGrid.stream
@@ -117,12 +128,15 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
   final ChildBuilder<T> removedItemBuilder;
+  bool noData = false;
 
   @override
   Widget build(BuildContext context) {
     return _liveGrid == null
         ? widget.gridLoadingElement ?? Container()
-        : buildAnimatedGrid();
+        : noData
+            ? widget.queryEmptyElement ?? Container()
+            : buildAnimatedGrid();
   }
 
   @override
@@ -141,7 +155,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     ).animate(
       CurvedAnimation(
         parent: widget.animationController,
-        curve: Interval(
+        curve: const Interval(
           0,
           0.5,
           curve: Curves.decelerate,
@@ -150,7 +164,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     );
     return GridView.builder(
         itemCount: _liveGrid?.size,
-        gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: widget.crossAxisCount,
             crossAxisSpacing: widget.crossAxisSpacing,
             mainAxisSpacing: widget.mainAxisSpacing,
