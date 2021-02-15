@@ -426,6 +426,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     if (userJson != null) {
       final Map<String, dynamic> userMap = json.decode(userJson);
       if (cloneable != null) {
+        ParseCoreData().setSessionId(userMap[keyParamSessionToken]);
         return cloneable.clone(userMap);
       } else {
         ParseCoreData().setSessionId(userMap[keyParamSessionToken]);
