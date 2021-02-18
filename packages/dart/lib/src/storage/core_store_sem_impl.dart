@@ -13,7 +13,19 @@ class CoreStoreSembastImp implements CoreStore {
       assert(() {
         if (parseIsWeb) {
           print(
+              '***********************************************************************************************************');
+          print(
               'Warning: CoreStoreSembastImp of the Parse_Server_SDK does not encrypt the database on WEB.');
+          print(
+              '***********************************************************************************************************');
+        }
+        if (password == 'flutter_sdk') {
+          print(
+              '***********************************************************************************************************');
+          print(
+              'Warning: CoreStoreSembastImp uses the default password. Specify a custom password for increased security.');
+          print(
+              '***********************************************************************************************************');
         }
         return true;
       }());

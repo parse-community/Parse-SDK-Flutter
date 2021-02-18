@@ -25,6 +25,6 @@ ApiError getApiError(ParseError response) {
     return null;
   }
 
-  return ApiError(response.code, response.message, response.exception,
-      response.type);
+  return ApiError(
+      response.code, response.message, response.exception, response.type);
 }

@@ -6,11 +6,9 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart' hide Options;
-import 'package:dio/dio.dart' as dio show Options;
 import 'package:meta/meta.dart';
 import 'package:mime_type/mime_type.dart';
-import 'package:parse_server_sdk/src/network/http_client_adapter.dart';
+import 'package:parse_server_sdk/src/network/parse_http_client.dart';
 import 'package:parse_server_sdk/src/network/parse_websocket.dart'
     as parse_web_socket;
 import 'package:path/path.dart' as path;
@@ -21,13 +19,16 @@ import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:xxtea/xxtea.dart';
 
+export 'src/network/parse_dio_client.dart';
+export 'src/network/parse_http_client.dart';
+
 part 'src/base/parse_constants.dart';
 part 'src/data/parse_core_data.dart';
 part 'src/data/parse_subclass_handler.dart';
 part 'src/enums/parse_enum_api_rq.dart';
-part 'src/network/dio-options.dart';
+part 'src/network/options.dart';
+part 'src/network/parse_client.dart';
 part 'src/network/parse_connectivity.dart';
-part 'src/network/parse_http_client.dart';
 part 'src/network/parse_live_query.dart';
 part 'src/network/parse_query.dart';
 part 'src/objects/parse_acl.dart';
@@ -77,7 +78,7 @@ class Parse {
   /// Parse().initialize(
   ///        "PARSE_APP_ID",
   ///        "https://parse.myaddress.com/parse/,
-  ///        masterKey: "asd23rjh234r234r234r",
+  ///        clientKey: "asd23rjh234r234r234r",
   ///        debug: true,
   ///        liveQuery: true);
   /// ```
@@ -93,7 +94,7 @@ class Parse {
     String clientKey,
     String masterKey,
     String sessionId,
-    bool autoSendSessionId,
+    bool autoSendSessionId = true,
     SecurityContext securityContext,
     CoreStore coreStore,
     Map<String, ParseObjectConstructor> registeredSubClassMap,
@@ -103,6 +104,7 @@ class Parse {
     ParseConnectivityProvider connectivityProvider,
     String fileDirectory,
     Stream<void> appResumedStream,
+    ParseClientCreator clientCreator,
   }) async {
     final String url = removeTrailingSlash(serverUrl);
 
@@ -128,6 +130,7 @@ class Parse {
       connectivityProvider: connectivityProvider,
       fileDirectory: fileDirectory,
       appResumedStream: appResumedStream,
+      clientCreator: clientCreator,
     );
 
     _hasBeenInitialized = true;
@@ -138,13 +141,13 @@ class Parse {
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
   Future<ParseResponse> healthCheck(
-      {bool debug, ParseHTTPClient client, bool sendSessionIdByDefault}) async {
+      {bool debug, ParseClient client, bool sendSessionIdByDefault}) async {
     ParseResponse parseResponse;
 
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
 
-    final ParseHTTPClient _client = client ??
-        ParseHTTPClient(
+    final ParseClient _client = client ??
+        ParseCoreData().clientCreator(
             sendSessionId:
                 sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
@@ -153,8 +156,8 @@ class Parse {
     const ParseApiRQ type = ParseApiRQ.healthCheck;
 
     try {
-      final Response<String> response = await _client
-          .get<String>('${ParseCoreData().serverUrl}$keyEndPointHealth');
+      final ParseNetworkResponse response =
+          await _client.get('${ParseCoreData().serverUrl}$keyEndPointHealth');
       parseResponse =
           handleResponse<Parse>(null, response, type, _debug, className);
     } on Exception catch (e) {

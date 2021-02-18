@@ -9,7 +9,7 @@ part of flutter_parse_sdk;
 /// 4. Success with results. Again [ParseResponse()] is returned
 class _ParseResponseBuilder {
   ParseResponse handleResponse<T>(
-      dynamic object, Response<String> apiResponse, ParseApiRQ type) {
+      dynamic object, ParseNetworkResponse apiResponse, ParseApiRQ type) {
     final ParseResponse parseResponse = ParseResponse();
     final bool returnAsResult = shouldReturnAsABaseResult(type);
     if (apiResponse != null) {
@@ -150,7 +150,7 @@ class _ParseResponseBuilder {
     }
   }
 
-  bool isHealthCheck(Response<String> apiResponse) {
+  bool isHealthCheck(ParseNetworkResponse apiResponse) {
     return <String>['{\"status\":\"ok\"}', 'OK'].contains(apiResponse.data);
   }
 }

@@ -36,6 +36,7 @@ class ParseCoreData {
     ParseConnectivityProvider connectivityProvider,
     String fileDirectory,
     Stream<void> appResumedStream,
+    ParseClientCreator clientCreator,
   }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
@@ -98,6 +99,10 @@ class ParseCoreData {
     if (appResumedStream != null) {
       _instance.appResumedStream = appResumedStream;
     }
+
+    if (clientCreator != null) {
+      _instance.clientCreator = clientCreator;
+    }
   }
 
   String appName;
@@ -119,6 +124,9 @@ class ParseCoreData {
   ParseConnectivityProvider connectivityProvider;
   String fileDirectory;
   Stream<void> appResumedStream;
+  ParseClientCreator clientCreator =
+      ({bool sendSessionId, SecurityContext securityContext}) => ParseHTTPClient(
+          sendSessionId: sendSessionId, securityContext: securityContext);
 
   void registerSubClass(
       String className, ParseObjectConstructor objectConstructor) {
@@ -139,7 +147,7 @@ class ParseCoreData {
 
   ParseUser createParseUser(
       String username, String password, String emailAddress,
-      {String sessionToken, bool debug, ParseHTTPClient client}) {
+      {String sessionToken, bool debug, ParseClient client}) {
     return _subClassHandler.createParseUser(username, password, emailAddress,
         sessionToken: sessionToken, debug: debug, client: client);
   }

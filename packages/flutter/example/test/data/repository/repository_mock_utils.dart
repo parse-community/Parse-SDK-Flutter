@@ -23,7 +23,7 @@ Future<Database> getDB() async {
 
 Future<void> setupParseInstance() async {
   await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
-      masterKey: keyParseMasterKey, appName: keyApplicationName, debug: true);
+      clientKey: keyParseClientKey, appName: keyApplicationName, debug: true);
 }
 
 DietPlan getDummyDietPlan() {

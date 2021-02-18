@@ -2,16 +2,16 @@ part of flutter_parse_sdk;
 
 class ParseInstallation extends ParseObject {
   /// Creates an instance of ParseInstallation
-  ParseInstallation(
-      {bool debug, ParseHTTPClient client, bool autoSendSessionId})
-      : super(keyClassInstallation) {
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
-  }
+  ParseInstallation({
+    bool debug,
+    ParseClient client,
+    bool autoSendSessionId,
+  }) : super(
+          keyClassInstallation,
+          client: client,
+          autoSendSessionId: autoSendSessionId,
+          debug: debug,
+        );
 
   ParseInstallation.forQuery() : super(keyClassUser);
 
@@ -95,15 +95,17 @@ class ParseInstallation extends ParseObject {
   }
 
   @override
-  Future<ParseResponse> create() async {
+  Future<ParseResponse> create({bool allowCustomObjectId = false}) async {
     final bool isCurrent = await ParseInstallation.isCurrent(this);
     if (isCurrent) {
       await _updateInstallation();
     }
 
-    final ParseResponse parseResponse = await _create();
+    final ParseResponse parseResponse =
+        await _create(allowCustomObjectId: allowCustomObjectId);
     if (parseResponse.success && isCurrent) {
-      saveInStorage(keyParseStoreInstallation);
+      clearUnsavedChanges();
+      await saveInStorage(keyParseStoreInstallation);
     }
     return parseResponse;
   }
@@ -118,7 +120,8 @@ class ParseInstallation extends ParseObject {
     //ParseResponse parseResponse = await super.save();
     final ParseResponse parseResponse = await _save();
     if (parseResponse.success && isCurrent) {
-      saveInStorage(keyParseStoreInstallation);
+      clearUnsavedChanges();
+      await saveInStorage(keyParseStoreInstallation);
     }
     return parseResponse;
   }
@@ -157,10 +160,14 @@ class ParseInstallation extends ParseObject {
   }
 
   /// Creates a new object and saves it online
-  Future<ParseResponse> _create() async {
+  Future<ParseResponse> _create({bool allowCustomObjectId = false}) async {
     try {
-      final String uri = '${_client.data.serverUrl}$keyEndPointInstallations';
-      final String body = json.encode(toJson(forApiRQ: true));
+      final String uri =
+          '${ParseCoreData().serverUrl}$keyEndPointInstallations';
+      final String body = json.encode(toJson(
+        forApiRQ: true,
+        allowCustomObjectId: allowCustomObjectId,
+      ));
       final Map<String, String> headers = <String, String>{
         keyHeaderContentType: keyHeaderContentTypeJson
       };
@@ -169,8 +176,8 @@ class ParseInstallation extends ParseObject {
             ParseApiRQ.create.toString(), uri, body);
       }
 
-      final Response<String> result = await _client.post<String>(uri,
-          data: body, options: Options(headers: headers));
+      final ParseNetworkResponse result = await _client.post(uri,
+          data: body, options: ParseNetworkOptions(headers: headers));
 
       //Set the objectId on the object after it is created.
       //This allows you to perform operations on the object after creation
@@ -199,8 +206,7 @@ class ParseInstallation extends ParseObject {
           logRequest(ParseCoreData().appName, parseClassName,
               ParseApiRQ.save.toString(), uri, body);
         }
-        final Response<String> result =
-            await _client.put<String>(uri, data: body);
+        final ParseNetworkResponse result = await _client.put(uri, data: body);
         return handleResponse<ParseInstallation>(
             this, result, ParseApiRQ.save, _debug, parseClassName);
       } on Exception catch (e) {

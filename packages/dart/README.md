@@ -20,7 +20,7 @@ This is a work in progress and we are consistently updating it. Please let us kn
 To install, either add to your pubspec.yaml
 ```yml
 dependencies:  
-    parse_server_sdk: ^2.0.1
+    parse_server_sdk: ^2.1.0
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -50,7 +50,6 @@ It's possible to add other parameters to work with your instance of Parse Server
   await Parse().initialize(
         keyApplicationId,
         keyParseServerUrl,
-        masterKey: keyParseMasterKey, // Required for Back4App and others
         clientKey: keyParseClientKey, // Required for some setups
         debug: true, // When enabled, prints logs to console
         liveQueryUrl: keyLiveQueryUrl, // Required if using LiveQuery 

@@ -86,6 +86,13 @@ class QueryBuilder<T extends ParseObject> {
     limiters['keys'] = concatenateArray(keys);
   }
 
+  ///Exclude specific fields from the returned query
+  ///
+  /// [String] keys not will return the columns of a result you want the data for
+  void excludeKeys(List<String> keys) {
+    limiters['excludeKeys'] = concatenateArray(keys);
+  }
+
   /// Includes other ParseObjects stored as a Pointer
   void includeObject(List<String> objectTypes) {
     limiters['include'] = concatenateArray(objectTypes);

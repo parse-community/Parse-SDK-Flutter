@@ -14,7 +14,7 @@ This is a work in progress and we are consistently updating it. Please let us kn
 To install, either add to your pubspec.yaml
 ```yml
 dependencies:  
-    parse_server_sdk: ^2.0.1
+    parse_server_sdk: ^2.1.0
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
@@ -43,7 +43,6 @@ It's possible to add other parameters to work with your instance of Parse Server
   await Parse().initialize(
         keyApplicationId,
         keyParseServerUrl,
-        masterKey: keyParseMasterKey, // Required for Back4App and others
         clientKey: keyParseClientKey, // Required for some setups
         debug: true, // When enabled, prints logs to console
         liveQueryUrl: keyLiveQueryUrl, // Required if using LiveQuery 
@@ -61,6 +60,18 @@ When running via express, set [ParseServerOptions](https://parseplatform.org/par
 
 Be aware that for web ParseInstallation does include app name, version or package identifier automatically. You should manually provide this data as described [here](https://github.com/parse-community/Parse-SDK-Flutter/blob/master/docs/migrate-1-0-28.md#optional-provide-app-information-on-web);
 
+#### Network client
+By default, this SDK uses the `ParseHTTPClient`.
+Another option is use `ParseDioClient`. This client supports the most features (for example a progress callback at the file upload), but a benchmark has shown, that dio is slower than http on web.
+
+If you want to use the `ParseDioClient`, which uses the dio network library,
+you can provide a custom `ParseClientCreator` at the initialization of the SDK.
+```dart
+await Parse().initialize(
+  //...
+  clientCreator: ({bool sendSessionId, SecurityContext securityContext}) => ParseDioClient(sendSessionId: sendSessionId, securityContext: securityContext),
+);
+```
 
 ## Objects
 You can create custom objects by calling:
@@ -718,7 +729,7 @@ For Google and the example below, we used the library provided at https://pub.de
 class OAuthLogin {
   final GoogleSignIn _googleSignIn = GoogleSignIn( scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly'] );
   
-  sigInGoogle() async {
+  signInGoogle() async {
     GoogleSignInAccount account = await _googleSignIn.signIn();
     GoogleSignInAuthentication authentication = await account.authentication;
     await ParseUser.loginWith(

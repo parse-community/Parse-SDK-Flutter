@@ -1,7 +1,7 @@
 part of flutter_parse_sdk;
 
 // Library
-const String keySdkVersion = '2.0.1';
+const String keySdkVersion = '2.1.0';
 const String keyLibraryName = 'Flutter Parse SDK';
 
 // End Points
@@ -46,7 +46,7 @@ const String keyHeaderSessionToken = 'X-Parse-Session-Token';
 const String keyHeaderRevocableSession = 'X-Parse-Revocable-Session';
 const String keyHeaderUserAgent = 'user-agent';
 const String keyHeaderApplicationId = 'X-Parse-Application-Id';
-const String keyHeaderContentType = Headers.contentTypeHeader;
+const String keyHeaderContentType = 'content-type';
 const String keyHeaderContentTypeJson = 'application/json';
 const String keyHeaderMasterKey = 'X-Parse-Master-Key';
 const String keyHeaderClientKey = 'X-Parse-Client-Key';

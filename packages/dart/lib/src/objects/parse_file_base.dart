@@ -8,7 +8,7 @@ abstract class ParseFileBase extends ParseObject {
       {@required String name,
       String url,
       bool debug,
-      ParseHTTPClient client,
+      ParseClient client,
       bool autoSendSessionId})
       : super(keyFileClassname,
             debug: debug,
@@ -28,7 +28,11 @@ abstract class ParseFileBase extends ParseObject {
   bool get saved => url != null;
 
   @override
-  Map<String, dynamic> toJson({bool full = false, bool forApiRQ = false}) =>
+  Map<String, dynamic> toJson({
+    bool full = false,
+    bool forApiRQ = false,
+    bool allowCustomObjectId = false,
+  }) =>
       <String, String>{'__type': keyFile, 'name': name, 'url': url};
 
   @override

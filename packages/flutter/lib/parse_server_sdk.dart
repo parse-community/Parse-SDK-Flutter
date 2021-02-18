@@ -18,6 +18,7 @@ export 'package:parse_server_sdk/parse_server_sdk.dart'
     hide Parse, CoreStoreSembastImp;
 
 part 'src/storage/core_store_sp_impl.dart';
+part 'src/utils/parse_live_grid.dart';
 part 'src/utils/parse_live_list.dart';
 
 class Parse extends sdk.Parse
@@ -31,7 +32,7 @@ class Parse extends sdk.Parse
   /// Parse().initialize(
   ///        "PARSE_APP_ID",
   ///        "https://parse.myaddress.com/parse/,
-  ///        masterKey: "asd23rjh234r234r234r",
+  ///        clientKey: "asd23rjh234r234r234r",
   ///        debug: true,
   ///        liveQuery: true);
   /// ```
@@ -50,7 +51,7 @@ class Parse extends sdk.Parse
     String clientKey,
     String masterKey,
     String sessionId,
-    bool autoSendSessionId,
+    bool autoSendSessionId = true,
     SecurityContext securityContext,
     sdk.CoreStore coreStore,
     Map<String, sdk.ParseObjectConstructor> registeredSubClassMap,
@@ -60,6 +61,7 @@ class Parse extends sdk.Parse
     sdk.ParseConnectivityProvider connectivityProvider,
     String fileDirectory,
     Stream<void> appResumedStream,
+    sdk.ParseClientCreator clientCreator,
   }) async {
     if (!sdk.parseIsWeb &&
         (appName == null || appVersion == null || appPackageName == null)) {
@@ -95,6 +97,7 @@ class Parse extends sdk.Parse
       fileDirectory: fileDirectory ??
           (!sdk.parseIsWeb ? (await getTemporaryDirectory()).path : null),
       appResumedStream: appResumedStream ?? _appResumedStreamController.stream,
+      clientCreator: clientCreator,
     );
   }
 
@@ -143,7 +146,7 @@ class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
   static sdk.CoreStoreSembastImp _sembastImp;
 
   static Future<sdk.CoreStore> getInstance(
-      {DatabaseFactory factory, String password}) async {
+      {DatabaseFactory factory, String password = 'flutter_sdk'}) async {
     if (_sembastImp == null) {
       String dbDirectory = '';
       if (!sdk.parseIsWeb &&

@@ -31,33 +31,6 @@ void logAPIResponse(
   print(responseString);
 }
 
-void logCUrl(dio.Options options, dynamic data, String url) {
-  String curlCmd = 'curl';
-  curlCmd += ' -X ' + options.method;
-  bool compressed = false;
-  options.headers.forEach((String name, dynamic value) {
-    if (name?.toLowerCase() == 'accept-encoding' &&
-        value?.toString()?.toLowerCase() == 'gzip') {
-      compressed = true;
-    }
-    curlCmd += ' -H \'$name: $value\'';
-  });
-
-  //TODO: log request
-  // if (options.method == 'POST' || options.method == 'PUT') {
-  //   if (request is Request) {
-  //     final String body = latin1.decode(request.bodyBytes);
-  //     curlCmd += ' -d \'$body\'';
-  //   }
-  // }
-
-  curlCmd += (compressed ? ' --compressed ' : ' ') + url;
-  curlCmd += '\n\n ${Uri.decodeFull(url)}';
-  print('╭-- Parse Request');
-  print(curlCmd);
-  print('╰--');
-}
-
 void logRequest(
     String appName, String className, String type, String uri, String body) {
   String requestString = ' \n';

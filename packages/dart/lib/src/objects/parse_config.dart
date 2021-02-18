@@ -2,21 +2,22 @@ part of flutter_parse_sdk;
 
 class ParseConfig extends ParseObject {
   /// Creates an instance of ParseConfig so that you can grab all configs from the server
-  ParseConfig({bool debug, ParseHTTPClient client, bool autoSendSessionId})
-      : super('config') {
-    _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
-  }
+  ParseConfig({
+    bool debug,
+    ParseClient client,
+    bool autoSendSessionId,
+  }) : super(
+          'config',
+          debug: debug,
+          client: client,
+          autoSendSessionId: autoSendSessionId,
+        );
 
   /// Gets all configs from the server
   Future<ParseResponse> getConfigs() async {
     try {
       final String uri = '${ParseCoreData().serverUrl}/config';
-      final Response<String> result = await _client.get<String>(uri);
+      final ParseNetworkResponse result = await _client.get(uri);
       return handleResponse<ParseConfig>(
           this, result, ParseApiRQ.getConfigs, _debug, parseClassName);
     } on Exception catch (e) {
@@ -28,8 +29,9 @@ class ParseConfig extends ParseObject {
   Future<ParseResponse> addConfig(String key, dynamic value) async {
     try {
       final String uri = '${ParseCoreData().serverUrl}/config';
-      final String body = '{\"params\":{\"$key\": \"${parseEncode(value)}\"}}';
-      final Response<String> result = await _client.put<String>(uri, data: body);
+      final String body =
+          '{\"params\":{\"$key\": ${json.encode(parseEncode(value))}}}';
+      final ParseNetworkResponse result = await _client.put(uri, data: body);
       return handleResponse<ParseConfig>(
           this, result, ParseApiRQ.addConfig, _debug, parseClassName);
     } on Exception catch (e) {

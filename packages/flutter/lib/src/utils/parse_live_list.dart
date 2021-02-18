@@ -8,6 +8,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
     Key key,
     @required this.query,
     this.listLoadingElement,
+    this.queryEmptyElement,
     this.duration = const Duration(milliseconds: 300),
     this.scrollPhysics,
     this.scrollController,
@@ -26,6 +27,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
 
   final sdk.QueryBuilder<T> query;
   final Widget listLoadingElement;
+  final Widget queryEmptyElement;
   final Duration duration;
   final ScrollPhysics scrollPhysics;
   final ScrollController scrollController;
@@ -91,6 +93,15 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       lazyLoading: lazyLoading,
       preloadedColumns: preloadedColumns,
     ).then((sdk.ParseLiveList<T> value) {
+      if (value.size > 0) {
+        setState(() {
+          noData = false;
+        });
+      } else {
+        setState(() {
+          noData = true;
+        });
+      }
       setState(() {
         _liveList = value;
         _liveList.stream
@@ -115,6 +126,15 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                       preLoadedData: () => event.object,
                     ),
                 duration: widget.duration);
+            if (value.size > 0) {
+              setState(() {
+                noData = false;
+              });
+            } else {
+              setState(() {
+                noData = true;
+              });
+            }
           }
         });
       });
@@ -126,12 +146,15 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
   final ChildBuilder<T> removedItemBuilder;
+  bool noData = false;
 
   @override
   Widget build(BuildContext context) {
     return _liveList == null
         ? widget.listLoadingElement ?? Container()
-        : buildAnimatedList();
+        : noData
+            ? widget.queryEmptyElement ?? Container()
+            : buildAnimatedList();
   }
 
   @override

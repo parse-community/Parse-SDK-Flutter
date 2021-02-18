@@ -46,7 +46,7 @@ class LiveQueryReconnectingController {
       connectivityProvider.connectivityStream.listen(_connectivityChanged);
     } else {
       print(
-          'LiveQuery does not work, if there is ParseConnectivityProvider provided.');
+          'LiveQuery does not work, if there is no ParseConnectivityProvider provided.');
     }
     _eventStream.listen((LiveQueryClientEvent event) {
       switch (event) {
@@ -94,7 +94,7 @@ class LiveQueryReconnectingController {
       _retryState = 0;
     }
     _isOnline = state != ParseConnectivityResult.none;
-    if(state == ParseConnectivityResult.none) {
+    if (state == ParseConnectivityResult.none) {
       _isConnected = false;
     }
     if (debug) {
@@ -125,22 +125,16 @@ class LiveQueryReconnectingController {
 
 class LiveQueryClient {
   factory LiveQueryClient() => _getInstance();
-  LiveQueryClient._internal(
-      {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
+
+  LiveQueryClient._internal({bool debug, bool autoSendSessionId}) {
     _clientEventStreamController = StreamController<LiveQueryClientEvent>();
     _clientEventStream =
         _clientEventStreamController.stream.asBroadcastStream();
 
-    _client = client ??
-        ParseHTTPClient(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
-
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _sendSessionId =
         autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
-    _liveQueryURL = _client.data.liveQueryURL;
+    _liveQueryURL = ParseCoreData().liveQueryURL;
     if (_liveQueryURL.contains('https')) {
       _liveQueryURL = _liveQueryURL.replaceAll('https', 'wss');
     } else if (_liveQueryURL.contains('http')) {
@@ -153,9 +147,9 @@ class LiveQueryClient {
   static LiveQueryClient get instance => _getInstance();
   static LiveQueryClient _instance;
   static LiveQueryClient _getInstance(
-      {bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
+      {bool debug, ParseClient client, bool autoSendSessionId}) {
     _instance ??= LiveQueryClient._internal(
-        debug: debug, client: client, autoSendSessionId: autoSendSessionId);
+        debug: debug, autoSendSessionId: autoSendSessionId);
     return _instance;
   }
 
@@ -164,7 +158,6 @@ class LiveQueryClient {
   }
 
   parse_web_socket.WebSocket _webSocket;
-  ParseHTTPClient _client;
   bool _debug;
   bool _sendSessionId;
   WebSocketChannel _channel;
@@ -314,17 +307,17 @@ class LiveQueryClient {
     //It should be the first message sent from a client after the WebSocket connection is established.
     final Map<String, String> connectMessage = <String, String>{
       'op': 'connect',
-      'applicationId': _client.data.applicationId
+      'applicationId': ParseCoreData().applicationId
     };
 
-    if (_sendSessionId && _client.data.sessionId != null) {
-      connectMessage['sessionToken'] = _client.data.sessionId;
+    if (_sendSessionId && ParseCoreData().sessionId != null) {
+      connectMessage['sessionToken'] = ParseCoreData().sessionId;
     }
 
-    if (_client.data.clientKey != null)
-      connectMessage['clientKey'] = _client.data.clientKey;
-    if (_client.data.masterKey != null)
-      connectMessage['masterKey'] = _client.data.masterKey;
+    if (ParseCoreData().clientKey != null)
+      connectMessage['clientKey'] = ParseCoreData().clientKey;
+    if (ParseCoreData().masterKey != null)
+      connectMessage['masterKey'] = ParseCoreData().masterKey;
 
     if (_debug) {
       print('$_printConstLiveQuery: ConnectMessage: $connectMessage');
@@ -358,8 +351,8 @@ class LiveQueryClient {
           'fields': keysToReturn
       }
     };
-    if (_sendSessionId && _client.data.sessionId != null) {
-      subscribeMessage['sessionToken'] = _client.data.sessionId;
+    if (_sendSessionId && ParseCoreData().sessionId != null) {
+      subscribeMessage['sessionToken'] = ParseCoreData().sessionId;
     }
 
     if (_debug) {
@@ -415,9 +408,9 @@ class LiveQueryClient {
 }
 
 class LiveQuery {
-  LiveQuery({bool debug, ParseHTTPClient client, bool autoSendSessionId}) {
+  LiveQuery({bool debug, ParseClient client, bool autoSendSessionId}) {
     _client = client ??
-        ParseHTTPClient(
+        ParseCoreData().clientCreator(
             sendSessionId:
                 autoSendSessionId ?? ParseCoreData().autoSendSessionId,
             securityContext: ParseCoreData().securityContext);
@@ -429,14 +422,14 @@ class LiveQuery {
         client: _client, debug: _debug, autoSendSessionId: _sendSessionId);
   }
 
-  ParseHTTPClient _client;
+  ParseClient _client;
   bool _debug;
   bool _sendSessionId;
   Subscription _latestSubscription;
   LiveQueryClient client;
 
   @deprecated
-  Future<dynamic> subscribe(QueryBuilder query) async {
+  Future<dynamic> subscribe(QueryBuilder<dynamic> query) async {
     _latestSubscription = await client.subscribe(query);
     return _latestSubscription;
   }
