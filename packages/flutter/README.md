@@ -253,6 +253,19 @@ if (dietPlan.success) {
   print(ApplicationConstants.keyAppName + ": " + dietPlan.exception.message);
 }
 ```
+To query for user objects, you could use the function ```ParseUser.forQuery()``` like this:
+```dart
+var queryBuilder  = QueryBuilder<ParseUser>(ParseUser.forQuery())
+  ..whereEqualTo('activated', true);
+
+var response = await queryBuilder.query();
+
+if (response.success) {
+  print(response.results);
+} else {
+  print(response.exception.message);
+}
+```
 
 ## Complex queries
 You can create complex queries to really put your database to the test:
