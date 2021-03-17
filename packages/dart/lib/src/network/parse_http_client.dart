@@ -116,7 +116,7 @@ class _ParseHTTPClient extends http.BaseClient {
   final http.Client _client;
   final bool _sendSessionId;
   final String _userAgent = '$keyLibraryName $keySdkVersion';
-  ParseCoreData data = ParseCoreData();
+  ParseCoreData parseCoreData = ParseCoreData();
   Map<String, String>/*?*/ additionalHeaders;
 
   /// Overrides the call method for HTTP Client and adds custom headers
@@ -125,16 +125,16 @@ class _ParseHTTPClient extends http.BaseClient {
     if (!identical(0, 0.0)) {
       request.headers[keyHeaderUserAgent] = _userAgent;
     }
-    request.headers[keyHeaderApplicationId] = data.applicationId;
+    request.headers[keyHeaderApplicationId] = parseCoreData.applicationId;
     if ((_sendSessionId == true) &&
-        (data.sessionId != null) &&
+        (parseCoreData.sessionId != null) &&
         (request.headers[keyHeaderSessionToken] == null))
-      request.headers[keyHeaderSessionToken] = data.sessionId;
+      request.headers[keyHeaderSessionToken] = parseCoreData.sessionId;
 
-    if (data.clientKey != null)
-      request.headers[keyHeaderClientKey] = data.clientKey;
-    if (data.masterKey != null)
-      request.headers[keyHeaderMasterKey] = data.masterKey;
+    if (parseCoreData.clientKey != null)
+      request.headers[keyHeaderClientKey] = parseCoreData.clientKey;
+    if (parseCoreData.masterKey != null)
+      request.headers[keyHeaderMasterKey] = parseCoreData.masterKey;
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
     if (additionalHeaders != null && additionalHeaders.isNotEmpty) {
@@ -142,7 +142,7 @@ class _ParseHTTPClient extends http.BaseClient {
           .forEach((String key, String value) => request.headers[key] = value);
     }
 
-    if (data.debug) {
+    if (parseCoreData.debug) {
       _logCUrl(request);
     }
 
