@@ -126,9 +126,9 @@ class _ParseHTTPClient extends http.BaseClient {
       request.headers[keyHeaderUserAgent] = _userAgent;
     }
     request.headers[keyHeaderApplicationId] = parseCoreData.applicationId;
-    if ((_sendSessionId == true) &&
-        (parseCoreData.sessionId != null) &&
-        (request.headers[keyHeaderSessionToken] == null))
+    if (_sendSessionId &&
+        parseCoreData.sessionId != null &&
+        request.headers[keyHeaderSessionToken] == null)
       request.headers[keyHeaderSessionToken] = parseCoreData.sessionId;
 
     if (parseCoreData.clientKey != null)
