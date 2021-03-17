@@ -410,30 +410,12 @@ class LiveQueryClient {
 class LiveQuery {
   LiveQuery({bool debug, bool autoSendSessionId}) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _sendSessionId =
-        autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
+    _sendSessionId = autoSendSessionId ?? ParseCoreData().autoSendSessionId;
     client = LiveQueryClient._getInstance(
         debug: _debug, autoSendSessionId: _sendSessionId);
   }
 
   bool _debug;
   bool _sendSessionId;
-  Subscription _latestSubscription;
   LiveQueryClient client;
-
-  @deprecated
-  Future<dynamic> subscribe(QueryBuilder<dynamic> query) async {
-    _latestSubscription = await client.subscribe(query);
-    return _latestSubscription;
-  }
-
-  @deprecated
-  Future<void> unSubscribe() async {
-    client.unSubscribe(_latestSubscription);
-  }
-
-  @deprecated
-  void on(LiveQueryEvent op, Function callback) {
-    _latestSubscription.on(op, callback);
-  }
 }
