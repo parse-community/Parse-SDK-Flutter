@@ -167,7 +167,7 @@ class LiveQueryClient {
   bool _connecting = false;
   StreamController<LiveQueryClientEvent> _clientEventStreamController;
   Stream<LiveQueryClientEvent>/*!*/ _clientEventStream;
-  LiveQueryReconnectingController reconnectingController;
+  LiveQueryReconnectingController/*!*/ reconnectingController;
 
   final Map<int, Subscription> _requestSubscription = <int, Subscription>{};
 
