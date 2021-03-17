@@ -81,7 +81,7 @@ class ParseCoreData {
   bool/*!*/ debug;
   CoreStore storage;
   ParseSubClassHandler _subClassHandler;
-  List<int> liveListRetryIntervals;
+  List<int> /*!*/ liveListRetryIntervals;
   ParseConnectivityProvider connectivityProvider;
   String fileDirectory;
   Stream<void> appResumedStream;
