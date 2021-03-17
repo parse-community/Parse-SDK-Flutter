@@ -79,7 +79,7 @@ class ParseCoreData {
   bool /*!*/ autoSendSessionId;
   SecurityContext securityContext;
   bool /*!*/ debug;
-  CoreStore storage;
+  CoreStore/*!*/ storage;
   ParseSubClassHandler _subClassHandler;
   List<int> /*!*/ liveListRetryIntervals;
   ParseConnectivityProvider connectivityProvider;
