@@ -21,7 +21,7 @@ class WebSocket {
 
   int get readyState => _webSocket.readyState;
 
-  Future close() {
+  Future<void> close() {
     return _webSocket.close();
   }
 
