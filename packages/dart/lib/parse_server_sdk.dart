@@ -8,9 +8,6 @@ import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 import 'package:mime_type/mime_type.dart';
-import 'package:parse_server_sdk/src/network/parse_http_client.dart';
-import 'package:parse_server_sdk/src/network/parse_websocket.dart'
-    as parse_web_socket;
 import 'package:path/path.dart' as path;
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
@@ -18,6 +15,9 @@ import 'package:sembast_web/sembast_web.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:xxtea/xxtea.dart';
+
+import 'src/network/parse_http_client.dart';
+import 'src/network/parse_websocket.dart' as parse_web_socket;
 
 export 'src/network/parse_dio_client.dart';
 export 'src/network/parse_http_client.dart';
