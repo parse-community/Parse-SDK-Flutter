@@ -21,7 +21,9 @@ class ParseACL {
 
   /// Helper for setting stuff
   void _setPermissionsIfNonEmpty(
-      {@required String userId, bool readPermission, bool writePermission}) {
+      {@required String userId,
+      @required bool readPermission,
+      @required bool writePermission}) {
     if (!(readPermission || writePermission)) {
       _permissionsById.remove(userId);
     } else {
