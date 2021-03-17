@@ -307,7 +307,7 @@ class LiveQueryClient {
     }
     //The connect message is sent from a client to the LiveQuery server.
     //It should be the first message sent from a client after the WebSocket connection is established.
-    final Map<String, String> connectMessage = <String, String>{
+    final Map<String, String/*!*/> connectMessage = <String, String>{
       'op': 'connect',
       'applicationId': ParseCoreData().applicationId
     };
@@ -338,7 +338,7 @@ class LiveQueryClient {
     final String _where = query.buildQuery().replaceAll('where=', '');
 
     //Convert where condition to Map
-    Map<String, dynamic> _whereMap = Map<String, dynamic>();
+    Map<String, dynamic>/*!*/ _whereMap = Map<String, dynamic>();
     if (_where != '') {
       _whereMap = json.decode(_where);
     }
