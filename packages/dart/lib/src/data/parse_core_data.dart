@@ -41,68 +41,29 @@ class ParseCoreData {
     _instance = ParseCoreData._init(appId, serverUrl);
 
     _instance.storage ??= store ?? CoreStoreMemoryImp();
-
-    if (debug != null) {
-      _instance.debug = debug;
-    }
-    if (appName != null) {
-      _instance.appName = appName;
-    }
-    if (appVersion != null) {
-      _instance.appVersion = appVersion;
-    }
-    if (appPackageName != null) {
-      _instance.appPackageName = appPackageName;
-    }
-    if (locale != null) {
-      _instance.locale = locale;
-    }
-    if (liveQueryUrl != null) {
-      _instance.liveQueryURL = liveQueryUrl;
-    }
-    if (clientKey != null) {
-      _instance.clientKey = clientKey;
-    }
-    if (masterKey != null) {
-      _instance.masterKey = masterKey;
-    }
-    if (sessionId != null) {
-      _instance.sessionId = sessionId;
-    }
-    if (autoSendSessionId != null) {
-      _instance.autoSendSessionId = autoSendSessionId;
-    }
-    if (securityContext != null) {
-      _instance.securityContext = securityContext;
-    }
-    if (liveListRetryIntervals != null) {
-      _instance.liveListRetryIntervals = liveListRetryIntervals;
-    } else {
-      _instance.liveListRetryIntervals = parseIsWeb
-          ? <int>[0, 500, 1000, 2000, 5000]
-          : <int>[0, 500, 1000, 2000, 5000, 10000];
-    }
-
+    _instance.debug = debug;
+    _instance.appName = appName;
+    _instance.appVersion = appVersion;
+    _instance.appPackageName = appPackageName;
+    _instance.locale = locale;
+    _instance.liveQueryURL = liveQueryUrl;
+    _instance.clientKey = clientKey;
+    _instance.masterKey = masterKey;
+    _instance.sessionId = sessionId;
+    _instance.autoSendSessionId = autoSendSessionId;
+    _instance.securityContext = securityContext;
+    _instance.liveListRetryIntervals = liveListRetryIntervals ?? parseIsWeb
+        ? <int>[0, 500, 1000, 2000, 5000]
+        : <int>[0, 500, 1000, 2000, 5000, 10000];
     _instance._subClassHandler = ParseSubClassHandler(
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
     );
-    if (connectivityProvider != null) {
-      _instance.connectivityProvider = connectivityProvider;
-    }
-
-    if (fileDirectory != null) {
-      _instance.fileDirectory = fileDirectory;
-    }
-
-    if (appResumedStream != null) {
-      _instance.appResumedStream = appResumedStream;
-    }
-
-    if (clientCreator != null) {
-      _instance.clientCreator = clientCreator;
-    }
+    _instance.connectivityProvider = connectivityProvider;
+    _instance.fileDirectory = fileDirectory;
+    _instance.appResumedStream = appResumedStream;
+    _instance.clientCreator = clientCreator;
   }
 
   String appName;
