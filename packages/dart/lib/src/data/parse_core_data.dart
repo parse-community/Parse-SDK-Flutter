@@ -121,7 +121,7 @@ class ParseCoreData {
   ///
   /// This is generated when a users logs in, or calls currentUser to update
   /// their keys
-  void setSessionId(String sessionId) {
+  void setSessionId(String /*!*/ sessionId) {
     this.sessionId = sessionId;
   }
 
