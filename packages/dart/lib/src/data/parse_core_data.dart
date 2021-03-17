@@ -17,7 +17,7 @@ class ParseCoreData {
   static Future<void> init(
     String appId,
     String serverUrl, {
-    bool debug,
+    bool/*!*/ debug,
     String appName,
     String appVersion,
     String appPackageName,
@@ -26,7 +26,7 @@ class ParseCoreData {
     String masterKey,
     String clientKey,
     String sessionId,
-    bool autoSendSessionId,
+    bool/*!*/ autoSendSessionId,
     SecurityContext securityContext,
     CoreStore store,
     Map<String, ParseObjectConstructor> registeredSubClassMap,
@@ -115,17 +115,18 @@ class ParseCoreData {
   String masterKey;
   String clientKey;
   String sessionId;
-  bool autoSendSessionId;
+  bool/*!*/ autoSendSessionId;
   SecurityContext securityContext;
-  bool debug;
+  bool/*!*/ debug;
   CoreStore storage;
   ParseSubClassHandler _subClassHandler;
   List<int> liveListRetryIntervals;
   ParseConnectivityProvider connectivityProvider;
   String fileDirectory;
   Stream<void> appResumedStream;
-  ParseClientCreator clientCreator =
-      ({bool sendSessionId, SecurityContext securityContext}) => ParseHTTPClient(
+  ParseClientCreator clientCreator = (
+          {bool sendSessionId, SecurityContext securityContext}) =>
+      ParseHTTPClient(
           sendSessionId: sendSessionId, securityContext: securityContext);
 
   void registerSubClass(
