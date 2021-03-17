@@ -146,7 +146,7 @@ class LiveQueryClient {
   }
   static LiveQueryClient get instance => _getInstance();
   static LiveQueryClient _instance;
-  static LiveQueryClient _getInstance(
+  static LiveQueryClient/*!*/ _getInstance(
       {bool debug, ParseClient client, bool autoSendSessionId}) {
     _instance ??= LiveQueryClient._internal(
         debug: debug, autoSendSessionId: autoSendSessionId);
