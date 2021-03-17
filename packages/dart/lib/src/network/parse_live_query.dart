@@ -167,7 +167,7 @@ class LiveQueryClient {
   Stream<LiveQueryClientEvent> _clientEventStream;
   LiveQueryReconnectingController reconnectingController;
 
-  final Map<int, Subscription> _requestSubScription = <int, Subscription>{};
+  final Map<int, Subscription> _requestSubscription = <int, Subscription>{};
 
   Future<void> reconnect({bool userInitialized = false}) async {
     await _connect(userInitialized: userInitialized);
@@ -197,7 +197,7 @@ class LiveQueryClient {
       await _channel.sink.close();
       _channel = null;
     }
-    _requestSubScription.values.toList().forEach((Subscription subscription) {
+    _requestSubscription.values.toList().forEach((Subscription subscription) {
       subscription._enabled = false;
     });
     _connecting = false;
@@ -216,7 +216,7 @@ class LiveQueryClient {
     final int requestId = _requestIdGenerator();
     final Subscription<T> subscription =
         Subscription<T>(query, requestId, copyObject: copyObject);
-    _requestSubScription[requestId] = subscription;
+    _requestSubscription[requestId] = subscription;
     //After a client connects to the LiveQuery server,
     //it can send a subscribe message to subscribe a ParseQuery.
     _subscribeLiveQuery(subscription);
@@ -235,7 +235,7 @@ class LiveQueryClient {
       }
       _channel.sink.add(jsonEncode(unsubscribeMessage));
       subscription._enabled = false;
-      _requestSubScription.remove(subscription.requestId);
+      _requestSubscription.remove(subscription.requestId);
     }
   }
 
@@ -371,16 +371,16 @@ class LiveQueryClient {
 
     Subscription subscription;
     if (actionData.containsKey('op') && actionData['op'] == 'connected') {
-      print('ReSubScription:$_requestSubScription');
+      print('ReSubScription:$_requestSubscription');
 
-      _requestSubScription.values.toList().forEach((Subscription subcription) {
+      _requestSubscription.values.toList().forEach((Subscription subcription) {
         _subscribeLiveQuery(subcription);
       });
       _clientEventStreamController.sink.add(LiveQueryClientEvent.CONNECTED);
       return;
     }
     if (actionData.containsKey('requestId')) {
-      subscription = _requestSubScription[actionData['requestId']];
+      subscription = _requestSubscription[actionData['requestId']];
     }
     if (subscription == null) {
       return;
