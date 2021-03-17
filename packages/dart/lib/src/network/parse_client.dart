@@ -24,7 +24,7 @@ abstract class ParseClient {
 
   Future<ParseNetworkResponse> postBytes(
     String path, {
-    Stream<List<int>> data,
+    Stream<List<int> /*!*/ > data,
     ParseNetworkOptions options,
     ProgressCallback onSendProgress,
   });
@@ -79,7 +79,7 @@ abstract class ParseClient {
 typedef ProgressCallback = void Function(int count, int total);
 
 class ParseNetworkResponse {
-  final String data;
+  final String/*!*/ data;
   final int statusCode;
 
   ParseNetworkResponse({
