@@ -9,17 +9,15 @@ class QueryBuilder<T extends ParseObject> {
       : this(ParseCoreData.instance.createObject(classname));
 
   QueryBuilder.or(this.object, List<QueryBuilder<T>> list) {
-    if (list != null) {
-      String query = '"\$or":[';
-      for (int i = 0; i < list.length; ++i) {
-        if (i > 0) {
-          query += ',';
-        }
-        query += '{' + list[i].buildQueries(list[i].queries) + '}';
+    String query = '"\$or":[';
+    for (int i = 0; i < list.length; ++i) {
+      if (i > 0) {
+        query += ',';
       }
-      query += ']';
-      queries.add(MapEntry<String, dynamic>(_NO_OPERATOR_NEEDED, query));
+      query += '{' + list[i].buildQueries(list[i].queries) + '}';
     }
+    query += ']';
+    queries.add(MapEntry<String, dynamic>(_NO_OPERATOR_NEEDED, query));
   }
 
   QueryBuilder.copy(QueryBuilder<T> query) {
