@@ -40,7 +40,7 @@ class ParseCoreData {
   }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
-    _instance.storage ??= store ?? CoreStoreMemoryImp();
+    _instance.storage = store ?? CoreStoreMemoryImp();
     _instance.debug = debug;
     _instance.appName = appName;
     _instance.appVersion = appVersion;
