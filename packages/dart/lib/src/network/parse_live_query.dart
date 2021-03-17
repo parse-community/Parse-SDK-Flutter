@@ -147,7 +147,7 @@ class LiveQueryClient {
   static LiveQueryClient get instance => _getInstance();
   static LiveQueryClient _instance;
   static LiveQueryClient/*!*/ _getInstance(
-      {bool debug, ParseClient client, bool autoSendSessionId}) {
+      {bool debug, bool autoSendSessionId}) {
     _instance ??= LiveQueryClient._internal(
         debug: debug, autoSendSessionId: autoSendSessionId);
     return _instance;
@@ -408,21 +408,14 @@ class LiveQueryClient {
 }
 
 class LiveQuery {
-  LiveQuery({bool debug, ParseClient client, bool autoSendSessionId}) {
-    _client = client ??
-        ParseCoreData().clientCreator(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
-
+  LiveQuery({bool debug, bool autoSendSessionId}) {
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _sendSessionId =
         autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
-    this.client = LiveQueryClient._getInstance(
-        client: _client, debug: _debug, autoSendSessionId: _sendSessionId);
+    client = LiveQueryClient._getInstance(
+        debug: _debug, autoSendSessionId: _sendSessionId);
   }
 
-  ParseClient _client;
   bool _debug;
   bool _sendSessionId;
   Subscription _latestSubscription;
