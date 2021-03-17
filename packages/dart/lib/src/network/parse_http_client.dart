@@ -154,8 +154,8 @@ class _ParseHTTPClient extends http.BaseClient {
     curlCmd += ' -X ' + request.method;
     bool compressed = false;
     request.headers.forEach((String name, String value) {
-      if (name?.toLowerCase() == 'accept-encoding' &&
-          value?.toLowerCase() == 'gzip') {
+      if (name.toLowerCase() == 'accept-encoding' &&
+          value.toLowerCase() == 'gzip') {
         compressed = true;
       }
       curlCmd += ' -H \'$name: $value\'';
