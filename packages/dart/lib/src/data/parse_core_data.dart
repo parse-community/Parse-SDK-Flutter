@@ -103,7 +103,7 @@ class ParseCoreData {
     _subClassHandler.registerFileSubClass(parseFileConstructor);
   }
 
-  ParseObject createObject(String classname) {
+  ParseObject createObject(String/*!*/ classname) {
     return _subClassHandler.createObject(classname);
   }
 
