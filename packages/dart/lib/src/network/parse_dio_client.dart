@@ -154,16 +154,16 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
     if (!identical(0, 0.0)) {
       options.headers[keyHeaderUserAgent] = _userAgent;
     }
-    options.headers[keyHeaderApplicationId] = this.parseCoreData.applicationId;
+    options.headers[keyHeaderApplicationId] = parseCoreData.applicationId;
     if ((_sendSessionId == true) &&
-        (this.parseCoreData.sessionId != null) &&
+        (parseCoreData.sessionId != null) &&
         (options.headers[keyHeaderSessionToken] == null))
-      options.headers[keyHeaderSessionToken] = this.parseCoreData.sessionId;
+      options.headers[keyHeaderSessionToken] = parseCoreData.sessionId;
 
-    if (this.parseCoreData.clientKey != null)
-      options.headers[keyHeaderClientKey] = this.parseCoreData.clientKey;
-    if (this.parseCoreData.masterKey != null)
-      options.headers[keyHeaderMasterKey] = this.parseCoreData.masterKey;
+    if (parseCoreData.clientKey != null)
+      options.headers[keyHeaderClientKey] = parseCoreData.clientKey;
+    if (parseCoreData.masterKey != null)
+      options.headers[keyHeaderMasterKey] = parseCoreData.masterKey;
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
     if (additionalHeaders != null && additionalHeaders.isNotEmpty) {
