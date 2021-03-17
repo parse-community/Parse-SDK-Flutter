@@ -136,7 +136,7 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
 
   final bool _sendSessionId;
   final String _userAgent = '$keyLibraryName $keySdkVersion';
-  ParseCoreData data = ParseCoreData();
+  ParseCoreData parseCoreData = ParseCoreData();
   Map<String, String>/*?*/ additionalHeaders;
 
   /// Overrides the call method for HTTP Client and adds custom headers
@@ -154,16 +154,16 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
     if (!identical(0, 0.0)) {
       options.headers[keyHeaderUserAgent] = _userAgent;
     }
-    options.headers[keyHeaderApplicationId] = this.data.applicationId;
+    options.headers[keyHeaderApplicationId] = this.parseCoreData.applicationId;
     if ((_sendSessionId == true) &&
-        (this.data.sessionId != null) &&
+        (this.parseCoreData.sessionId != null) &&
         (options.headers[keyHeaderSessionToken] == null))
-      options.headers[keyHeaderSessionToken] = this.data.sessionId;
+      options.headers[keyHeaderSessionToken] = this.parseCoreData.sessionId;
 
-    if (this.data.clientKey != null)
-      options.headers[keyHeaderClientKey] = this.data.clientKey;
-    if (this.data.masterKey != null)
-      options.headers[keyHeaderMasterKey] = this.data.masterKey;
+    if (this.parseCoreData.clientKey != null)
+      options.headers[keyHeaderClientKey] = this.parseCoreData.clientKey;
+    if (this.parseCoreData.masterKey != null)
+      options.headers[keyHeaderMasterKey] = this.parseCoreData.masterKey;
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
     if (additionalHeaders != null && additionalHeaders.isNotEmpty) {
@@ -171,7 +171,7 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
           .forEach((String key, String value) => options.headers[key] = value);
     }
 
-    if (this.data.debug) {
+    if (this.parseCoreData.debug) {
       _logCUrl(options, data, path);
     }
 
