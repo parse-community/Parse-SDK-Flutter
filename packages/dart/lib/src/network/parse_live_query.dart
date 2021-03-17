@@ -135,6 +135,8 @@ class LiveQueryClient {
     _sendSessionId =
         autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
     _liveQueryURL = ParseCoreData().liveQueryURL;
+    assert(_liveQueryURL != null,
+        'liveQueryUrl is not set. For how to setup Live Queries, see https://github.com/parse-community/Parse-SDK-Flutter/tree/master/packages/flutter#live-queries.');
     if (_liveQueryURL.contains('https')) {
       _liveQueryURL = _liveQueryURL.replaceAll('https', 'wss');
     } else if (_liveQueryURL.contains('http')) {
