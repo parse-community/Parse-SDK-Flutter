@@ -160,7 +160,7 @@ class LiveQueryClient {
   }
 
   parse_web_socket.WebSocket _webSocket;
-  bool _debug;
+  bool/*!*/ _debug;
   bool _sendSessionId;
   WebSocketChannel _channel;
   String _liveQueryURL;
