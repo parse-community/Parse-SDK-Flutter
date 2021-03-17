@@ -8,7 +8,7 @@ class ParseCoreData {
 
   static ParseCoreData _instance;
 
-  static ParseCoreData get instance => _instance;
+  static ParseCoreData/*!*/ get instance => _instance;
 
   /// Creates an instance of Parse Server
   ///
