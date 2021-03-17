@@ -117,7 +117,7 @@ class _ACLPermissions {
   final String _keyReadPermission = 'read';
   final String _keyWritePermission = 'write';
   final bool _readPermission;
-  final bool _writePermission;
+  final bool/*!*/ _writePermission;
 
   bool getReadPermission() {
     return _readPermission;
