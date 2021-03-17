@@ -67,7 +67,6 @@ part 'src/utils/parse_login_helpers.dart';
 part 'src/utils/parse_utils.dart';
 
 class Parse {
-  ParseCoreData data;
   bool _hasBeenInitialized = false;
 
   /// To initialize Parse Server in your application
