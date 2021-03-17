@@ -284,8 +284,7 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   // Add a constraint to the query that requires a particular key's value match another QueryBuilder
-  // ignore: always_specify_types
-  void whereMatchesQuery(String column, QueryBuilder query) {
+  void whereMatchesQuery<E extends ParseObject>(String column, QueryBuilder<E> query) {
     final String inQuery =
         query._buildQueryRelational(query.object.parseClassName);
 
@@ -294,8 +293,7 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   //Add a constraint to the query that requires a particular key's value does not match another QueryBuilder
-  // ignore: always_specify_types
-  void whereDoesNotMatchQuery(String column, QueryBuilder query) {
+  void whereDoesNotMatchQuery<E extends ParseObject>(String column, QueryBuilder<E> query) {
     final String inQuery =
         query._buildQueryRelational(query.object.parseClassName);
 
@@ -304,9 +302,8 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   // Add a constraint to the query that requires a particular key's value matches a value for a key in the results of another ParseQuery.
-  // ignore: always_specify_types
-  void whereMatchesKeyInQuery(
-      String column, String keyInQuery, QueryBuilder query) {
+  void whereMatchesKeyInQuery<E extends ParseObject>(
+      String column, String keyInQuery, QueryBuilder<E> query) {
     if (query.queries.isEmpty) {
       throw ArgumentError('query conditions is required');
     }
@@ -325,9 +322,8 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   // Add a constraint to the query that requires a particular key's value does not match any value for a key in the results of another ParseQuery
-  // ignore: always_specify_types
-  void whereDoesNotMatchKeyInQuery(
-      String column, String keyInQuery, QueryBuilder query) {
+  void whereDoesNotMatchKeyInQuery<E extends ParseObject>(
+      String column, String keyInQuery, QueryBuilder<E> query) {
     if (query.queries.isEmpty) {
       throw ArgumentError('query conditions is required');
     }
