@@ -149,7 +149,7 @@ class _ParseHTTPClient extends http.BaseClient {
     return _client.send(request);
   }
 
-  void _logCUrl(http.Request request) {
+  void _logCUrl(http.BaseRequest request) {
     String curlCmd = 'curl';
     curlCmd += ' -X ' + request.method;
     bool compressed = false;
