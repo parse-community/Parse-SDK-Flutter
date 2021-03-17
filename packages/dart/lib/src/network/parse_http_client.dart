@@ -84,7 +84,7 @@ class ParseHTTPClient extends ParseClient {
     final http.Response response = await _client.post(
       Uri.parse(path),
       //Convert the stream to a list
-      body: await data.fold<List<int>>(<int>[],
+      body: await data?.fold<List<int>>(<int>[],
           (List<int> previous, List<int> element) => previous..addAll(element)),
       headers: options?.headers,
     );
