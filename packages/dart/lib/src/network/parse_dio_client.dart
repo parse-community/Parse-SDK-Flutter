@@ -191,7 +191,7 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
     curlCmd += ' -X ' + options.method;
     bool compressed = false;
     options.headers.forEach((String name, dynamic value) {
-      if (name?.toLowerCase() == 'accept-encoding' &&
+      if (name.toLowerCase() == 'accept-encoding' &&
           value?.toString()?.toLowerCase() == 'gzip') {
         compressed = true;
       }
