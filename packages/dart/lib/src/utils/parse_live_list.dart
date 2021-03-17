@@ -36,7 +36,7 @@ class ParseLiveList<T extends ParseObject> {
   final bool _lazyLoading;
   final List<String> _preloadedColumns;
 
-  List<ParseLiveListElement<T>> _list = List<ParseLiveListElement<T>>();
+  List<ParseLiveListElement<T>> _list = <ParseLiveListElement<T>>[];
   StreamController<ParseLiveListEvent<T>> _eventStreamController;
   int _nextID = 0;
   bool _debug;
@@ -46,7 +46,7 @@ class ParseLiveList<T extends ParseObject> {
   /// is object1 listed after object2?
   /// can return null
   bool after(T object1, T object2) {
-    List<String> fields = List<String>();
+    List<String> fields = <String>[];
 
     if (_query.limiters.containsKey('order')) {
       fields = _query.limiters['order'].toString().split(',');
@@ -159,7 +159,7 @@ class ParseLiveList<T extends ParseObject> {
                       updatedSubItems: _listeningIncludes,
                       loaded: !_lazyLoading))
               ?.toList() ??
-          List<ParseLiveListElement<T>>();
+          <ParseLiveListElement<T>>[];
     }
 
     LiveQuery()
@@ -202,7 +202,7 @@ class ParseLiveList<T extends ParseObject> {
           List<Future<void>> tasks = <Future<void>>[];
           final ParseResponse parseResponse = await _runQuery();
           if (parseResponse.success) {
-            final List<T> newList = parseResponse.results ?? List<T>();
+            final List<T> newList = parseResponse.results ?? <T>[];
 
             //update List
             for (int i = 0; i < _list.length; i++) {

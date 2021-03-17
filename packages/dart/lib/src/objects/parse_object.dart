@@ -141,16 +141,16 @@ class ParseObject extends ParseBase implements ParseCloneable {
       }
     }
     List<ParseObject> remaining = uniqueObjects.toList();
-    final List<ParseObject> finished = List<ParseObject>();
+    final List<ParseObject> finished = <ParseObject>[];
     final ParseResponse totalResponse = ParseResponse()
       ..success = true
-      ..results = List<dynamic>()
+      ..results = <dynamic>[]
       ..statusCode = 200;
     while (remaining.isNotEmpty) {
       /* Partition the objects into two sets: those that can be save immediately,
       and those that rely on other objects to be created first. */
-      final List<ParseObject> current = List<ParseObject>();
-      final List<ParseObject> nextBatch = List<ParseObject>();
+      final List<ParseObject> current = <ParseObject>[];
+      final List<ParseObject> nextBatch = <ParseObject>[];
       for (ParseObject object in remaining) {
         if (object._canbeSerialized(finished)) {
           current.add(object);

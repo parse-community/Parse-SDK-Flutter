@@ -444,8 +444,8 @@ class QueryBuilder<T extends ParseObject> {
   List<MapEntry<String, dynamic>> _checkForMultipleColumnInstances(
       List<MapEntry<String, dynamic>> queries) {
     final List<MapEntry<String, dynamic>> sanitizedQueries =
-        List<MapEntry<String, dynamic>>();
-    final List<String> keysAlreadyCompacted = List<String>();
+        <MapEntry<String, dynamic>>[];
+    final List<String> keysAlreadyCompacted = <String>[];
 
     // Run through each query
     for (final MapEntry<String, dynamic> query in queries) {
