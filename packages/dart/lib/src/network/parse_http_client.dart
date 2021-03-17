@@ -23,7 +23,7 @@ class ParseHTTPClient extends ParseClient {
     ProgressCallback onReceiveProgress,
   }) async {
     final http.Response response = await _client.get(
-      path,
+      Uri.parse(path),
       headers: options?.headers,
     );
     return ParseNetworkResponse(
@@ -37,7 +37,7 @@ class ParseHTTPClient extends ParseClient {
     ProgressCallback onReceiveProgress,
   }) async {
     final http.Response response = await _client.get(
-      path,
+      Uri.parse(path),
       headers: options?.headers,
     );
     return ParseNetworkByteResponse(
@@ -51,7 +51,7 @@ class ParseHTTPClient extends ParseClient {
     ParseNetworkOptions options,
   }) async {
     final http.Response response = await _client.put(
-      path,
+      Uri.parse(path),
       body: data,
       headers: options?.headers,
     );
@@ -66,7 +66,7 @@ class ParseHTTPClient extends ParseClient {
     ParseNetworkOptions options,
   }) async {
     final http.Response response = await _client.post(
-      path,
+      Uri.parse(path),
       body: data,
       headers: options?.headers,
     );
@@ -82,9 +82,10 @@ class ParseHTTPClient extends ParseClient {
     ProgressCallback onSendProgress,
   }) async {
     final http.Response response = await _client.post(
-      path,
+      Uri.parse(path),
       //Convert the stream to a list
-      body: await data.fold<List<int>>(<int>[], (List<int> previous, List<int> element) => previous..addAll(element)),
+      body: await data.fold<List<int>>(<int>[],
+          (List<int> previous, List<int> element) => previous..addAll(element)),
       headers: options?.headers,
     );
     return ParseNetworkResponse(
@@ -95,7 +96,7 @@ class ParseHTTPClient extends ParseClient {
   Future<ParseNetworkResponse> delete(String path,
       {ParseNetworkOptions options}) async {
     final http.Response response = await _client.delete(
-      path,
+      Uri.parse(path),
       headers: options?.headers,
     );
     return ParseNetworkResponse(
