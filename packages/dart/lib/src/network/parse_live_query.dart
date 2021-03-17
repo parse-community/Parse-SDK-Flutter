@@ -164,7 +164,7 @@ class LiveQueryClient {
   String _liveQueryURL;
   bool _connecting = false;
   StreamController<LiveQueryClientEvent> _clientEventStreamController;
-  Stream<LiveQueryClientEvent> _clientEventStream;
+  Stream<LiveQueryClientEvent>/*!*/ _clientEventStream;
   LiveQueryReconnectingController reconnectingController;
 
   final Map<int, Subscription> _requestSubscription = <int, Subscription>{};
