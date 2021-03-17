@@ -17,7 +17,7 @@ class ParseCoreData {
   static Future<void> init(
     String appId,
     String serverUrl, {
-    bool/*!*/ debug,
+    bool /*!*/ debug,
     String appName,
     String appVersion,
     String appPackageName,
@@ -26,7 +26,7 @@ class ParseCoreData {
     String masterKey,
     String clientKey,
     String sessionId,
-    bool/*!*/ autoSendSessionId,
+    bool /*!*/ autoSendSessionId,
     SecurityContext securityContext,
     CoreStore store,
     Map<String, ParseObjectConstructor> registeredSubClassMap,
@@ -66,19 +66,19 @@ class ParseCoreData {
     _instance.clientCreator = clientCreator;
   }
 
+  String applicationId;
+  String serverUrl;
   String appName;
   String appVersion;
   String appPackageName;
-  String applicationId;
   String locale;
-  String serverUrl;
   String liveQueryURL;
   String masterKey;
   String clientKey;
   String sessionId;
-  bool/*!*/ autoSendSessionId;
+  bool /*!*/ autoSendSessionId;
   SecurityContext securityContext;
-  bool/*!*/ debug;
+  bool /*!*/ debug;
   CoreStore storage;
   ParseSubClassHandler _subClassHandler;
   List<int> /*!*/ liveListRetryIntervals;
