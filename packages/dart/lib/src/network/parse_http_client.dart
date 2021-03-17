@@ -6,8 +6,6 @@ import 'package:http/io_client.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class ParseHTTPClient extends ParseClient {
-  _ParseHTTPClient _client;
-
   ParseHTTPClient(
       {bool/*!*/ sendSessionId = false, SecurityContext securityContext}) {
     _client = _ParseHTTPClient(
@@ -15,6 +13,8 @@ class ParseHTTPClient extends ParseClient {
       securityContext: securityContext,
     );
   }
+
+  _ParseHTTPClient _client;
 
   @override
   Future<ParseNetworkResponse> get(

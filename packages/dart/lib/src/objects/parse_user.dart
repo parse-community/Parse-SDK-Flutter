@@ -51,7 +51,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   set password(String password) {
     if (_password != password) {
       _password = password;
-      if (password != null) _unsavedChanges[keyVarPassword] = password;
+      if (password != null)
+        _unsavedChanges[keyVarPassword] = password;
     }
   }
 

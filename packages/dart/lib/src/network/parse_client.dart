@@ -79,18 +79,16 @@ abstract class ParseClient {
 typedef ProgressCallback = void Function(int count, int total);
 
 class ParseNetworkResponse {
-  final String/*!*/ data;
-  final int statusCode;
-
   ParseNetworkResponse({
     this.data,
     this.statusCode = -1,
   });
+
+  final String/*!*/ data;
+  final int statusCode;
 }
 
 class ParseNetworkByteResponse extends ParseNetworkResponse {
-  final List<int> bytes;
-
   ParseNetworkByteResponse({
     this.bytes,
     final String data = 'byte response',
@@ -99,4 +97,6 @@ class ParseNetworkByteResponse extends ParseNetworkResponse {
           data: data,
           statusCode: statusCode,
         );
+
+  final List<int> bytes;
 }

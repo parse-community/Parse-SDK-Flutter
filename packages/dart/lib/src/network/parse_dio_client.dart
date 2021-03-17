@@ -6,8 +6,6 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'dio_adapter_io.dart' if (dart.library.js) 'dio_adapter_js.dart';
 
 class ParseDioClient extends ParseClient {
-  _ParseDioClient _client;
-
   ParseDioClient(
       {bool/*!*/ sendSessionId = false, SecurityContext securityContext}) {
     _client = _ParseDioClient(
@@ -15,6 +13,8 @@ class ParseDioClient extends ParseClient {
       securityContext: securityContext,
     );
   }
+
+  _ParseDioClient _client;
 
   @override
   Future<ParseNetworkResponse> get(
@@ -171,7 +171,7 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
           .forEach((String key, String value) => options.headers[key] = value);
     }
 
-    if (this.parseCoreData.debug) {
+    if (parseCoreData.debug) {
       _logCUrl(options, data, path);
     }
 
