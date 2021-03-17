@@ -137,7 +137,7 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
   final bool _sendSessionId;
   final String _userAgent = '$keyLibraryName $keySdkVersion';
   ParseCoreData data = ParseCoreData();
-  Map<String, String> additionalHeaders;
+  Map<String, String>/*?*/ additionalHeaders;
 
   /// Overrides the call method for HTTP Client and adds custom headers
   @override
