@@ -9,7 +9,7 @@ class ParseDioClient extends ParseClient {
   _ParseDioClient _client;
 
   ParseDioClient(
-      {bool sendSessionId = false, SecurityContext securityContext}) {
+      {bool/*!*/ sendSessionId = false, SecurityContext securityContext}) {
     _client = _ParseDioClient(
       sendSessionId: sendSessionId,
       securityContext: securityContext,
@@ -128,7 +128,7 @@ class ParseDioClient extends ParseClient {
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset
 class _ParseDioClient with dio.DioMixin implements dio.Dio {
-  _ParseDioClient({bool sendSessionId = false, SecurityContext securityContext})
+  _ParseDioClient({bool/*!*/ sendSessionId = false, SecurityContext securityContext})
       : _sendSessionId = sendSessionId {
     options = dio.BaseOptions();
     httpClientAdapter = createHttpClientAdapter(securityContext);

@@ -9,7 +9,7 @@ class ParseHTTPClient extends ParseClient {
   _ParseHTTPClient _client;
 
   ParseHTTPClient(
-      {bool sendSessionId = false, SecurityContext securityContext}) {
+      {bool/*!*/ sendSessionId = false, SecurityContext securityContext}) {
     _client = _ParseHTTPClient(
       sendSessionId: sendSessionId,
       securityContext: securityContext,
@@ -107,7 +107,7 @@ class ParseHTTPClient extends ParseClient {
 /// Creates a custom version of HTTP Client that has Parse Data Preset
 class _ParseHTTPClient extends http.BaseClient {
   _ParseHTTPClient(
-      {bool sendSessionId = false, SecurityContext securityContext})
+      {bool/*!*/ sendSessionId = false, SecurityContext securityContext})
       : _sendSessionId = sendSessionId,
         _client = securityContext != null
             ? IOClient(HttpClient(context: securityContext))

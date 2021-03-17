@@ -1,7 +1,7 @@
 part of flutter_parse_sdk;
 
 typedef ParseClientCreator = ParseClient Function(
-    {bool sendSessionId, SecurityContext securityContext});
+    {bool/*!*/ sendSessionId, SecurityContext securityContext});
 
 abstract class ParseClient {
   Future<ParseNetworkResponse> get(
