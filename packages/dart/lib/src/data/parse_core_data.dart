@@ -85,7 +85,7 @@ class ParseCoreData {
   ParseConnectivityProvider connectivityProvider;
   String fileDirectory;
   Stream<void> appResumedStream;
-  ParseClientCreator clientCreator = (
+  ParseClientCreator /*!*/ clientCreator = (
           {bool sendSessionId, SecurityContext securityContext}) =>
       ParseHTTPClient(
           sendSessionId: sendSessionId, securityContext: securityContext);
