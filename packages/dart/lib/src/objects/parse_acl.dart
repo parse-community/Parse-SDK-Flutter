@@ -125,14 +125,8 @@ class _ACLPermissions {
     return _writePermission;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = <String, dynamic>{};
-    if (_readPermission) {
-      map[_keyReadPermission] = true;
-    }
-    if (_writePermission) {
-      map[_keyWritePermission] = true;
-    }
-    return map;
-  }
+  Map<String, dynamic> toJson() => <String, dynamic>{
+      _keyReadPermission: _readPermission,
+      _keyWritePermission: _writePermission
+    };
 }
