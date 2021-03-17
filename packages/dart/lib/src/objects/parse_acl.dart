@@ -65,8 +65,7 @@ class ParseACL {
   /// [false], the user may still be able to access it if getPublicReadAccess returns
   /// [true] or a role  that the user belongs to has read access.
   bool getReadAccess({@required String userId}) {
-    final _ACLPermissions _permissions = _permissionsById[userId];
-    return _permissions != null && _permissions.getReadPermission();
+    return _permissionsById[userId]?.readPermission ?? false;
   }
 
   ///Set whether the given user id is allowed to write this object.
@@ -82,8 +81,7 @@ class ParseACL {
   ///returns [false], the user may still be able to write it if getPublicWriteAccess returns
   ///[true] or a role that the user belongs to has write access.
   bool getWriteAccess({@required String userId}) {
-    final _ACLPermissions _permissions = _permissionsById[userId];
-    return _permissions != null && _permissions.getWritePermission();
+    return _permissionsById[userId]?.writePermission ?? false;
   }
 
   Map<String, dynamic> toJson() {
@@ -119,16 +117,12 @@ class _ACLPermissions {
   final bool _readPermission;
   final bool/*!*/ _writePermission;
 
-  bool getReadPermission() {
-    return _readPermission;
-  }
+  bool get readPermission => _readPermission;
 
-  bool getWritePermission() {
-    return _writePermission;
-  }
+  bool get writePermission => _writePermission;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-      _keyReadPermission: _readPermission,
-      _keyWritePermission: _writePermission
-    };
+        _keyReadPermission: _readPermission,
+        _keyWritePermission: _writePermission
+      };
 }
