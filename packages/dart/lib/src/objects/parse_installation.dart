@@ -149,7 +149,7 @@ class ParseInstallation extends ParseObject {
   /// Assumes that this is called because there is no previous installation
   /// so it creates and sets the static current installation UUID
   static Future<ParseInstallation> _createInstallation() async {
-    _currentInstallationId ??= Uuid().v4();
+    _currentInstallationId ??= const Uuid().v4();
 
     final ParseInstallation installation = ParseInstallation();
     installation._installationId = _currentInstallationId;

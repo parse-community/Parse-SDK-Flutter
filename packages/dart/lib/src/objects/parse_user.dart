@@ -243,7 +243,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     forgetLocalSession();
     try {
       final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
-      final Uuid uuid = Uuid();
+      const Uuid uuid = Uuid();
       final String installationId = await _getInstallationId();
 
       final ParseNetworkResponse response = await _client.post(
