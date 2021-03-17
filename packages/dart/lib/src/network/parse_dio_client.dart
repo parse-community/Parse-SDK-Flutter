@@ -155,9 +155,9 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
       options.headers[keyHeaderUserAgent] = _userAgent;
     }
     options.headers[keyHeaderApplicationId] = parseCoreData.applicationId;
-    if ((_sendSessionId == true) &&
-        (parseCoreData.sessionId != null) &&
-        (options.headers[keyHeaderSessionToken] == null))
+    if (_sendSessionId &&
+        parseCoreData.sessionId != null &&
+        options.headers[keyHeaderSessionToken] == null)
       options.headers[keyHeaderSessionToken] = parseCoreData.sessionId;
 
     if (parseCoreData.clientKey != null)
