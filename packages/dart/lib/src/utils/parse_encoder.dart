@@ -68,7 +68,7 @@ Map<String, dynamic> _encodeDate(DateTime date) {
   };
 }
 
-Map<String, String> encodeObject(String className, String objectId) {
+Map<String, String> encodeObject(String className, String/*!*/ objectId) {
   return <String, String>{
     '__type': 'Pointer',
     keyVarClassName: className,
