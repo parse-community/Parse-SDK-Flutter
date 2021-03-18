@@ -203,20 +203,6 @@ abstract class ParseBase {
     _unsavedChanges[key] = _getObjectData()[key];
   }
 
-  ///Set the [ParseACL] governing this object.
-  void setACL<ParseACL>(ParseACL acl) {
-    set(keyVarAcl, acl);
-  }
-
-  ///Access the [ParseACL] governing this object.
-  ParseACL getACL() {
-    if (_getObjectData().containsKey(keyVarAcl)) {
-      return _getObjectData()[keyVarAcl];
-    } else {
-      return ParseACL();
-    }
-  }
-
   /// Gets type [T] from objectData
   ///
   /// Returns null or [defaultValue] if provided. To get an int, call
@@ -273,6 +259,20 @@ abstract class ParseBase {
   }
 
   Map<String, dynamic> toPointer() => encodeObject(parseClassName, objectId);
+
+  ///Set the [ParseACL] governing this object.
+  void setACL<ParseACL>(ParseACL acl) {
+    set(keyVarAcl, acl);
+  }
+
+  ///Access the [ParseACL] governing this object.
+  ParseACL getACL() {
+    if (_getObjectData().containsKey(keyVarAcl)) {
+      return _getObjectData()[keyVarAcl];
+    } else {
+      return ParseACL();
+    }
+  }
 
   /// Deprecated
   @Deprecated('Prefer to use parseClassName')
