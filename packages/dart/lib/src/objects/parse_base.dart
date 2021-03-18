@@ -230,7 +230,7 @@ abstract class ParseBase {
   /// provided
   T get<T>(String key, {T defaultValue}) {
     if (_getObjectData().containsKey(key)) {
-      if (T != null && _getObjectData()[key] is T) {
+      if (_getObjectData()[key] is T) {
         final T data = _getObjectData()[key];
         return data;
       } else {
