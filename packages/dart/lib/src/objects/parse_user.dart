@@ -56,7 +56,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
-  Map<String, dynamic> get acl => super.get<Map<String, dynamic>>(keyVarAcl);
+  Map<String, dynamic>/*!*/ get acl => super
+      .get<Map<String, dynamic>>(keyVarAcl, defaultValue: <String, dynamic>{});
 
   set acl(Map<String, dynamic> acl) =>
       set<Map<String, dynamic>>(keyVarAcl, acl);
@@ -122,7 +123,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       return null;
     }
 
-    final Map<String, String> headers = <String, String>{};
+    final Map<String, String/*!*/> headers = <String, String>{};
     if (sessionToken != null) {
       headers[keyHeaderSessionToken] = sessionToken;
     }
@@ -212,7 +213,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     forgetLocalSession();
 
     try {
-      final Map<String, dynamic> queryParams = <String, String>{
+      final Map<String, dynamic> queryParams = <String, String/*!*/>{
         keyVarUsername: username,
         keyVarPassword: password
       };
@@ -340,7 +341,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Delete the local user data.
   Future<void> deleteLocalUserData() async {
     await unpin(key: keyParseStoreUser);
-    _setObjectData(null);
+    _setObjectData(<String, dynamic>{});
   }
 
   /// Sends a verification email to the users email address
@@ -451,7 +452,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     final String userJson = await coreStore.getString(keyParseStoreUser);
 
     if (userJson != null) {
-      final Map<String, dynamic> userMap = json.decode(userJson);
+      final Map<String, dynamic>/*!*/ userMap = json.decode(userJson);
       if (cloneable != null) {
         return cloneable.clone(userMap);
       } else {
@@ -488,7 +489,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       return parseResponse;
     } else {
       final ParseUser user = parseResponse.result;
-      await user?._onResponseSuccess();
+      await user._onResponseSuccess();
       return parseResponse;
     }
   }
@@ -499,6 +500,6 @@ class ParseUser extends ParseObject implements ParseCloneable {
   static Future<String> _getInstallationId() async {
     final ParseInstallation parseInstallation =
         await ParseInstallation.currentInstallation();
-    return parseInstallation?.installationId;
+    return parseInstallation.installationId;
   }
 }
