@@ -288,13 +288,13 @@ class ParseLiveList<T extends ParseObject> {
                 if (parseResponse.success &&
                     parseResponse.results.length == 1) {
                   // ignore: deprecated_member_use_from_same_package
-                  object.getObjectData()[key] = parseResponse.results[0];
+                  object[key] = parseResponse.results[0];
                 }
               }));
               continue;
             } else {
               // ignore: deprecated_member_use_from_same_package
-              object.getObjectData()[key] = includedObject;
+              object[key] = includedObject;
               //recursion
               loadingNodes
                   .add(_loadIncludes(includedObject, paths: paths[key]));
@@ -311,7 +311,7 @@ class ParseLiveList<T extends ParseObject> {
                 queryBuilder.query().then<void>((ParseResponse parseResponse) {
               if (parseResponse.success && parseResponse.results.length == 1) {
                 // ignore: deprecated_member_use_from_same_package
-                object.getObjectData()[key] = parseResponse.results[0];
+                object[key] = parseResponse.results[0];
               }
             }));
             continue;
@@ -626,7 +626,7 @@ class ParseLiveListElement<T extends ParseObject> {
             await ParseLiveList._loadIncludes(newObject,
                 oldObject: subObject, paths: _toKeyMap(path));
             // ignore: deprecated_member_use_from_same_package
-            parentObject.getObjectData()[currentKey.key] = newObject;
+            parentObject[currentKey.key] = newObject;
             if (!_streamController.isClosed) {
               _streamController
                   ?.add(_object?.clone(_object?.toJson(full: true)));

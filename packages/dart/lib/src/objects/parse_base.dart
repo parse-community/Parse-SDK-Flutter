@@ -273,25 +273,4 @@ abstract class ParseBase {
       return ParseACL();
     }
   }
-
-  /// Deprecated
-  @Deprecated('Prefer to use parseClassName')
-  String className;
-
-  @Deprecated('Prefer to use parseClassName')
-  String getClassName() => parseClassName;
-
-  @Deprecated('Prefer to use parseClassName')
-  String setClassName(String className) => parseClassName = className;
-
-  @protected
-  @Deprecated(
-      'Prefer to use _getObjectData method, or operator [] for certain key.')
-  Map<String, dynamic> getObjectData() => _getObjectData();
-
-  @protected
-  @Deprecated(
-      'Prefer to use _setObjectData method, or operator [] for certain key.')
-  void setObjectData(Map<String, dynamic> objectData) =>
-      _setObjectData(objectData);
 }
