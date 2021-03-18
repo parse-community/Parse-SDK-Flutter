@@ -17,19 +17,15 @@ class ParseRelation<T extends ParseObject> {
   }
 
   void add(T object) {
-    if (object != null) {
-      _targetClass = object.parseClassName;
-      _objects.add(object);
-      _parent.addRelation(_key, _objects.toList());
-    }
+    _targetClass = object.parseClassName;
+    _objects.add(object);
+    _parent?.addRelation(_key, _objects.toList());
   }
 
   void remove(T object) {
-    if (object != null) {
-      _targetClass = object.parseClassName;
-      _objects.remove(object);
-      _parent.removeRelation(_key, _objects.toList());
-    }
+    _targetClass = object.parseClassName;
+    _objects.remove(object);
+    _parent?.removeRelation(_key, _objects.toList());
   }
 
   Map<String, dynamic> toJson() => <String, String>{
