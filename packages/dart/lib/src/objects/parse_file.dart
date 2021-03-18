@@ -57,7 +57,7 @@ class ParseFile extends ParseFileBase {
     if (saved) {
       //Creates a Fake Response to return the correct result
       final Map<String, String> response = <String, String>{
-        'url': url,
+        'url': url/*!*/,
         'name': name
       };
       return handleResponse<ParseFile>(
