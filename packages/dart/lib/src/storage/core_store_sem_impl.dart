@@ -6,7 +6,7 @@ class CoreStoreSembastImp implements CoreStore {
 
   static CoreStoreSembastImp _instance;
 
-  static Future<CoreStore> getInstance(String dbPath,
+  static Future<CoreStore/*!*/> getInstance(String dbPath,
       {DatabaseFactory factory, String password = 'flutter_sdk'}) async {
     if (_instance == null) {
       factory ??= !parseIsWeb ? databaseFactoryIo : databaseFactoryWeb;
@@ -42,7 +42,7 @@ class CoreStoreSembastImp implements CoreStore {
   final StoreRef<String, dynamic> _store;
 
   @override
-  Future<bool> clear() {
+  Future<bool/*!*/> clear() {
     return _store.drop(_database);
   }
 
