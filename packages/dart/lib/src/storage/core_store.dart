@@ -21,11 +21,11 @@ abstract class CoreStore {
 
   Future<dynamic> setDouble(String key, double value);
 
-  Future<dynamic> setString(String key, String value);
+  Future<dynamic> setString(String/*!*/ key, String value);
 
   Future<dynamic> setStringList(String key, List<String> values);
 
-  Future<dynamic> remove(String key);
+  Future<dynamic> remove(String/*!*/ key);
 
   Future<dynamic> clear();
 }
