@@ -14,5 +14,5 @@ class ParseResponse {
   // ignore: always_specify_types
   List results;
   int/*!*/ count = 0;
-  ParseError error;
+  ParseError/*?*/ error;
 }
