@@ -3,11 +3,11 @@ part of flutter_parse_sdk;
 abstract class ParseBase {
   String/*!*/ parseClassName;
   final bool _dirty = false; // reserved property
-  final Map<String, dynamic> _unsavedChanges = Map<String, dynamic>();
-  final Map<String, dynamic> _savingChanges = Map<String, dynamic>();
+  final Map<String/*!*/, dynamic> _unsavedChanges = Map<String, dynamic>();
+  final Map<String/*!*/, dynamic> _savingChanges = Map<String, dynamic>();
 
   /// Stores all the values of a class
-  Map<String, dynamic> _objectData = Map<String, dynamic>();
+  Map<String/*!*/, dynamic>/*!*/ _objectData = Map<String, dynamic>();
 
   /// Returns [String] objectId
   String get objectId => get<String>(keyVarObjectId);
@@ -52,8 +52,8 @@ abstract class ParseBase {
   /// Returns [DateTime] createdAt
   DateTime get createdAt {
     if (get<dynamic>(keyVarCreatedAt) is String) {
-      final String dateAsString = get<String>(keyVarCreatedAt);
-      return _parseDateFormat.parse(dateAsString);
+      final String/*?*/ dateAsString = get<String>(keyVarCreatedAt);
+      return dateAsString != null ? _parseDateFormat.parse(dateAsString) : null;
     } else {
       return get<DateTime>(keyVarCreatedAt);
     }
@@ -62,8 +62,8 @@ abstract class ParseBase {
   /// Returns [DateTime] updatedAt
   DateTime get updatedAt {
     if (get<dynamic>(keyVarUpdatedAt) is String) {
-      final String dateAsString = get<String>(keyVarUpdatedAt);
-      return _parseDateFormat.parse(dateAsString);
+      final String/*?*/ dateAsString = get<String>(keyVarUpdatedAt);
+      return dateAsString != null ? _parseDateFormat.parse(dateAsString) : null;
     } else {
       return get<DateTime>(keyVarUpdatedAt);
     }
@@ -157,7 +157,7 @@ abstract class ParseBase {
 
   /// Returns the objects variables
   @protected
-  Map<String, dynamic> _getObjectData() => _objectData;
+  Map<String/*!*/, dynamic> _getObjectData() => _objectData;
 
   bool containsValue(Object value) {
     return _getObjectData().containsValue(value);
@@ -247,14 +247,12 @@ abstract class ParseBase {
   ///
   /// Replicates Android SDK pin process and saves object to storage
   dynamic fromPin(String objectId) async {
-    if (objectId != null) {
       final CoreStore coreStore = ParseCoreData().getStore();
       final String itemFromStore = await coreStore.getString(objectId);
 
       if (itemFromStore != null) {
         return fromJson(json.decode(itemFromStore));
       }
-    }
     return null;
   }
 
@@ -266,7 +264,7 @@ abstract class ParseBase {
   }
 
   ///Access the [ParseACL] governing this object.
-  ParseACL getACL() {
+  ParseACL/*!*/ getACL() {
     if (_getObjectData().containsKey(keyVarAcl)) {
       return _getObjectData()[keyVarAcl];
     } else {
