@@ -167,11 +167,11 @@ abstract class ParseBase {
     return _getObjectData().containsValue(value);
   }
 
-  bool containsKey(Object key) {
+  bool containsKey(String key) {
     return _getObjectData().containsKey(key);
   }
 
-  dynamic operator [](Object key) {
+  dynamic operator [](String key) {
     return get<dynamic>(key);
   }
 
