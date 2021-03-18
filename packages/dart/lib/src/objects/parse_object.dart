@@ -34,15 +34,10 @@ class ParseObject extends ParseBase implements ParseCloneable {
   ParseClient _client;
 
   /// Gets an object from the server using it's [String] objectId
-  Future<ParseResponse> getObject(String objectId) async {
+  Future<ParseResponse> getObject(String/*!*/ objectId) async {
     try {
-      String uri = _path;
-
-      if (objectId != null) {
-        uri += '/$objectId';
-      }
-
-      final Uri url = getSanitisedUri(_client, '$uri');
+      final String uri = '$_path/$objectId';
+      final Uri url = getSanitisedUri(_client, uri);
 
       final ParseNetworkResponse result = await _client.get(url.toString());
       return handleResponse<ParseObject>(
