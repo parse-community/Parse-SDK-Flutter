@@ -1,6 +1,5 @@
 part of flutter_parse_sdk;
 
-// ignore_for_file: always_specify_types
 class ParseObject extends ParseBase implements ParseCloneable {
   /// Creates a new Parse Object
   ///
@@ -28,10 +27,10 @@ class ParseObject extends ParseBase implements ParseCloneable {
   dynamic clone(Map<String, dynamic> map) =>
       ParseObject.clone(parseClassName)..fromJson(map);
 
-  String _path;
-  String _aggregatepath;
+  String/*!*/ _path;
+  String/*!*/ _aggregatepath;
   bool _debug;
-  ParseClient _client;
+  ParseClient/*!*/ _client;
 
   /// Gets an object from the server using it's [String] objectId
   Future<ParseResponse> getObject(String/*!*/ objectId) async {
@@ -78,7 +77,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
-  Future<ParseResponse> update() async {
+  Future<ParseResponse/*!*/> update() async {
     try {
       final Uri url = getSanitisedUri(_client, '$_path/$objectId');
       final String body = json.encode(toJson(forApiRQ: true));
@@ -96,7 +95,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Saves the current object online
-  Future<ParseResponse> save() async {
+  Future<ParseResponse/*!*/> save() async {
     final ParseResponse childrenResponse = await _saveChildren(this);
     if (childrenResponse.success) {
       ParseResponse response;
