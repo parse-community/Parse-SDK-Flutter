@@ -190,19 +190,17 @@ abstract class ParseBase {
   /// To set an int, call setType<int> and an int will be saved
   /// [bool] forceUpdate is always true, if unsure as to whether an item is
   /// needed or not, set to false
-  void set<T>(String key, T value, {bool forceUpdate = true}) {
-    if (value != null) {
-      if (_getObjectData().containsKey(key)) {
-        if (_getObjectData()[key] == value && !forceUpdate) {
-          return;
-        }
-        _getObjectData()[key] =
-            ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
-      } else {
-        _getObjectData()[key] = value;
+  void set<T>(String/*!*/ key, T value, {bool forceUpdate = true}) {
+    if (_getObjectData().containsKey(key)) {
+      if (_getObjectData()[key] == value && !forceUpdate) {
+        return;
       }
-      _unsavedChanges[key] = _getObjectData()[key];
+      _getObjectData()[key] =
+          ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
+    } else {
+      _getObjectData()[key] = value;
     }
+    _unsavedChanges[key] = _getObjectData()[key];
   }
 
   ///Set the [ParseACL] governing this object.
