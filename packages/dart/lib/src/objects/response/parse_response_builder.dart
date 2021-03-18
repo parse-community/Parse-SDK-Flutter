@@ -12,27 +12,21 @@ class _ParseResponseBuilder {
       dynamic object, ParseNetworkResponse apiResponse, ParseApiRQ type) {
     final ParseResponse parseResponse = ParseResponse();
     final bool returnAsResult = shouldReturnAsABaseResult(type);
-    if (apiResponse != null) {
-      parseResponse.statusCode = apiResponse.statusCode;
+    parseResponse.statusCode = apiResponse.statusCode;
 
-      if (isUnsuccessfulResponse(apiResponse)) {
-        return buildErrorResponse(parseResponse, apiResponse);
-      } else if (isHealthCheck(apiResponse)) {
-        parseResponse.success = true;
-        return parseResponse;
-      } else if (isSuccessButNoResults(apiResponse)) {
-        return buildSuccessResponseWithNoResults(
-            parseResponse, 1, 'Successful request, but no results found');
-      } else if (returnAsResult) {
-        return _handleSuccessWithoutParseObject(
-            parseResponse, object, apiResponse.data);
-      } else {
-        return _handleSuccess<T>(parseResponse, object, apiResponse.data, type);
-      }
-    } else {
-      parseResponse.error = ParseError(
-          message: 'Error reaching server, or server response was null');
+    if (isUnsuccessfulResponse(apiResponse)) {
+      return buildErrorResponse(parseResponse, apiResponse);
+    } else if (isHealthCheck(apiResponse)) {
+      parseResponse.success = true;
       return parseResponse;
+    } else if (isSuccessButNoResults(apiResponse)) {
+      return buildSuccessResponseWithNoResults(
+          parseResponse, 1, 'Successful request, but no results found');
+    } else if (returnAsResult) {
+      return _handleSuccessWithoutParseObject(
+          parseResponse, object, apiResponse.data);
+    } else {
+      return _handleSuccess<T>(parseResponse, object, apiResponse.data, type);
     }
   }
 
