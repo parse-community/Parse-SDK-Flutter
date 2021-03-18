@@ -2,7 +2,6 @@ part of flutter_parse_sdk;
 
 abstract class ParseBase {
   String/*!*/ parseClassName;
-  Type type;
   final bool _dirty = false; // reserved property
   final Map<String, dynamic> _unsavedChanges = Map<String, dynamic>();
   final Map<String, dynamic> _savingChanges = Map<String, dynamic>();
