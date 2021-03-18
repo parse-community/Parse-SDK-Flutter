@@ -90,18 +90,18 @@ class _ParseResponseBuilder {
           response.result = results;
           response.count = results.length;
         } else {
-          final List<T> items = _handleMultipleResults<T>(object, results);
+          final List<T/*!*/> items = _handleMultipleResults<T/*!*/>(object, results);
           response.results = items;
           response.result = items;
           response.count = items.length;
         }
       } else if (map != null && map.length == 2 && map.containsKey('count')) {
-        final List<int> results = <int>[map['count']];
+        final List<int/*!*/> results = <int/*!*/>[map['count']];
         response.results = results;
         response.result = results;
         response.count = map['count'];
       } else {
-        final T item = _handleSingleResult<T>(object, map, false);
+        final T item = _handleSingleResult<T/*!*/>(object, map, false);
         response.count = 1;
         response.result = item;
         response.results = <T>[item];
@@ -112,8 +112,8 @@ class _ParseResponseBuilder {
   }
 
   /// Handles a response with a multiple result object
-  List<T> _handleMultipleResults<T>(T object, List<dynamic> data) {
-    final List<T> resultsList = <T>[];
+  List<T/*!*/> _handleMultipleResults<T>(T/*!*/ object, List<dynamic> data) {
+    final List<T/*!*/> resultsList = <T>[];
     for (dynamic value in data) {
       resultsList.add(_handleSingleResult<T>(object, value, true));
     }
@@ -122,7 +122,7 @@ class _ParseResponseBuilder {
 
   /// Handles a response with a single result object
   T _handleSingleResult<T>(
-      T object, Map<String, dynamic> map, bool createNewObject) {
+      T/*!*/ object, Map<String, dynamic>/*!*/ map, bool createNewObject) {
     if (createNewObject && object is ParseCloneable) {
       return object.clone(map);
     } else if (object is ParseObject) {
