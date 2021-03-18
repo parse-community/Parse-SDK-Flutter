@@ -34,10 +34,7 @@ void logAPIResponse(
 void logRequest(
     String appName, String className, String type, String uri, String body) {
   String requestString = ' \n';
-  String name = appName;
-  if (name.isNotEmpty) {
-    name = '$appName ';
-  }
+  final String name = appName != null ? '$appName ' : '';
   requestString += '----\n${name}API Request ($className : $type) :';
   requestString += '\nUri: $uri';
   requestString += '\nBody: $body';
