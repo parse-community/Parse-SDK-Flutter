@@ -27,14 +27,15 @@ class ParseInstallation extends ParseObject {
   static String _currentInstallationId;
 
   //Getters/setters
-  Map<String, dynamic> get acl => super.get<Map<String, dynamic>>(keyVarAcl);
+  Map<String, dynamic> /*!*/ get acl => super
+      .get<Map<String, dynamic>>(keyVarAcl, defaultValue: <String, dynamic>{});
 
   set acl(Map<String, dynamic> acl) =>
       set<Map<String, dynamic>>(keyVarAcl, acl);
 
-  String get deviceToken => super.get<String>(keyDeviceToken);
+  String/*?*/ get deviceToken => super.get<String>(keyDeviceToken);
 
-  set deviceToken(String deviceToken) =>
+  set deviceToken(String/*!*/ deviceToken) =>
       set<String>(keyDeviceToken, deviceToken);
 
   String get deviceType => super.get<String>(keyDeviceType);
@@ -53,7 +54,7 @@ class ParseInstallation extends ParseObject {
   String get parseVersion => super.get<String>(keyParseVersion);
 
   static Future<bool> isCurrent(ParseInstallation installation) async {
-    _currentInstallationId ??= (await _getFromLocalStore()).installationId;
+    _currentInstallationId ??= (await _getFromLocalStore())?.installationId;
     return _currentInstallationId != null &&
         installation.installationId == _currentInstallationId;
   }
