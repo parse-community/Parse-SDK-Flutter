@@ -335,7 +335,6 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   void forgetLocalSession() {
     ParseCoreData().sessionId = null;
-    ParseCoreData().setSessionId(null);
   }
 
   /// Delete the local user data.
