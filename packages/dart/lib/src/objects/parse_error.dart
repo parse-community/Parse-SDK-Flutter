@@ -7,14 +7,13 @@ class ParseError {
       this.message = 'Unknown error',
       this.exception,
       bool debug = false}) {
-    type = exceptions[code];
+    type = _exceptions[code];
     if (debug) {
       print(toString());
     }
   }
 
-  // ignore: always_specify_types
-  Map<int, String> exceptions = {
+  Map<int, String> _exceptions = {
     -1: 'UnknownError',
 
     // SDK errors / Errors
@@ -68,7 +67,7 @@ class ParseError {
     252: 'UnsupportedService'
   };
 
-  final int code;
+  final int/*!*/ code;
   final String message;
   final Exception exception;
   String type;
