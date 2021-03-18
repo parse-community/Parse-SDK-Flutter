@@ -60,9 +60,7 @@ class ParseInstallation extends ParseObject {
 
   /// Gets the current installation from storage
   static Future<ParseInstallation> currentInstallation() async {
-    ParseInstallation installation = await _getFromLocalStore();
-    installation ??= await _createInstallation();
-    return installation;
+    return (await _getFromLocalStore()) ?? (await _createInstallation());
   }
 
   /// Updates the installation with current device data
