@@ -21,11 +21,6 @@ class ParseFile extends ParseFileBase {
   File file;
 
   Future<ParseFile> loadStorage() async {
-    if (name == null) {
-      file = null;
-      return this;
-    }
-
     final File possibleFile = File('${ParseCoreData().fileDirectory}/$name');
     // ignore: avoid_slow_async_io
     final bool exists = await possibleFile.exists();
