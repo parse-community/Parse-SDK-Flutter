@@ -119,10 +119,6 @@ abstract class ParseBase {
   String toString() => json.encode(toJson());
 
   dynamic fromJson(Map<String, dynamic> objectData) {
-    if (objectData == null) {
-      return this;
-    }
-
     objectData.forEach((String key, dynamic value) {
       if (key == parseClassName || key == '__type') {
         // NO OP
