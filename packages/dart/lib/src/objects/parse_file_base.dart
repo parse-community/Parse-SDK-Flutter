@@ -5,8 +5,8 @@ abstract class ParseFileBase extends ParseObject {
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFileBase(
-      {@required String name,
-      String url,
+      {@required String/*!*/ name,
+      String/*?*/ url,
       bool debug,
       ParseClient client,
       bool autoSendSessionId})
@@ -16,14 +16,16 @@ abstract class ParseFileBase extends ParseObject {
             client: client) {
     _path = '/files/$name';
     this.name = name;
-    this.url = url;
+    if(url != null)
+      this.url = url;
+
   }
 
   String get name => super.get<String>(keyVarName);
-  set name(String name) => set<String>(keyVarName, name);
+  set name(String/*!*/ name) => set<String>(keyVarName, name);
 
-  String get url => super.get<String>(keyVarURL);
-  set url(String url) => set<String>(keyVarURL, url);
+  String/*?*/ get url => super.get<String>(keyVarURL);
+  set url(String/*!*/ url) => set<String>(keyVarURL, url);
 
   bool get saved => url != null;
 
