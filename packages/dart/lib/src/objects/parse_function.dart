@@ -28,7 +28,8 @@ class ParseCloudFunction extends ParseObject {
   ///
   /// To add the parameters, create an object and call [set](value to set)
   Future<ParseResponse> execute(
-      {Map<String, dynamic> parameters, Map<String, String> headers}) async {
+      {Map<String, dynamic> parameters,
+      Map<String, String> headers = const <String, String>{}}) async {
     final String uri = '${ParseCoreData().serverUrl}$_path';
     if (parameters != null) {
       _setObjectData(parameters);
@@ -48,7 +49,8 @@ class ParseCloudFunction extends ParseObject {
   ///
   /// To add the parameters, create an object and call [set](value to set)
   Future<ParseResponse> executeObjectFunction<T extends ParseObject>(
-      {Map<String, dynamic> parameters, Map<String, String> headers}) async {
+      {Map<String, dynamic> parameters,
+      Map<String, String> headers = const <String, String>{}}) async {
     final String uri = '${ParseCoreData().serverUrl}$_path';
     if (parameters != null) {
       _setObjectData(parameters);
