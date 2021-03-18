@@ -6,7 +6,7 @@ class _XXTeaEncoder extends Converter<Map<String, dynamic>, String> {
   final String key;
 
   @override
-  String convert(Map<String, dynamic> input) =>
+  String/*!*/ convert(Map<String, dynamic> input) =>
       xxtea.encryptToString(json.encode(input), key);
 }
 
