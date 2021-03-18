@@ -235,10 +235,10 @@ class ParseInstallation extends ParseObject {
 
     if (apiResponse.success) {
       final ParseObject installation = apiResponse.result;
-      return Future<List<dynamic>>.value(
-          installation.get<List<dynamic>>('channels'));
+      return Future<List<dynamic>>.value(installation
+          .get<List<dynamic>>('channels', defaultValue: <dynamic>[]));
     } else {
-      return null;
+      return <String>[];
     }
   }
 }
