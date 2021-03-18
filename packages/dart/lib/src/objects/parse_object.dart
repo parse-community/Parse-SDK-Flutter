@@ -315,28 +315,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Removes an element from an Array
-  @Deprecated('Prefer to use the setRemove() method in save()')
-  Future<ParseResponse> remove(String key, dynamic values) async {
-    if (key != null) {
-      return await _sortArrays(ParseApiRQ.remove, 'Remove', key, values);
-    } else {
-      return null;
-    }
-  }
-
-  /// Removes an element from an Array
   void setRemove(String key, dynamic value) {
     _arrayOperation('Remove', key, <dynamic>[value]);
-  }
-
-  /// Remove multiple elements from an array of an object
-  @Deprecated('Prefer to use the setRemoveAll() method in save()')
-  Future<ParseResponse> removeAll(String key, List<dynamic> values) async {
-    if (key != null) {
-      return await _sortArrays(ParseApiRQ.removeAll, 'Remove', key, values);
-    } else {
-      return null;
-    }
   }
 
   /// Remove multiple elements from an array of an object
@@ -345,28 +325,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Add a multiple elements to an array of an object
-  @Deprecated('Prefer to use the setAddAll() method in save()')
-  Future<ParseResponse> addAll(String key, List<dynamic> values) async {
-    if (key != null) {
-      return await _sortArrays(ParseApiRQ.addAll, 'Add', key, values);
-    } else {
-      return null;
-    }
-  }
-
-  /// Add a multiple elements to an array of an object
   void setAddAll(String key, List<dynamic> values) {
     _arrayOperation('Add', key, values);
-  }
-
-  /// Add a multiple elements to an array of an object, but only when they are unique
-  @Deprecated('Prefer to use the setAddAll() method in save()')
-  Future<ParseResponse> addUnique(String key, List<dynamic> values) async {
-    if (key != null) {
-      return await _sortArrays(ParseApiRQ.addUnique, 'AddUnique', key, values);
-    } else {
-      return null;
-    }
   }
 
   void setAddUnique(String key, dynamic value) {
@@ -376,16 +336,6 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Add a multiple elements to an array of an object
   void setAddAllUnique(String key, List<dynamic> values) {
     _arrayOperation('AddUnique', key, values);
-  }
-
-  /// Add a single element to an array of an object
-  @Deprecated('Prefer to use the setAdd() method in save()')
-  Future<ParseResponse> add(String key, dynamic values) async {
-    if (key != null) {
-      return await _sortArrays(ParseApiRQ.add, 'Add', key, values);
-    } else {
-      return null;
-    }
   }
 
   /// Add a single element to an array of an object
@@ -401,41 +351,11 @@ class ParseObject extends ParseBase implements ParseCloneable {
     _arrayOperation('RemoveRelation', key, values);
   }
 
-  /// Can be used to add arrays to a given type
-  Future<ParseResponse> _sortArrays(ParseApiRQ apiRQType, String arrayAction,
-      String key, List<dynamic> values) async {
-    try {
-      if (objectId != null) {
-        final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-        final String body =
-            '{\"$key\":{\"__op\":\"$arrayAction\",\"objects\":${json.encode(parseEncode(values))}}}';
-        final ParseNetworkResponse result =
-            await _client.put(url.toString(), data: body);
-        return handleResponse<ParseObject>(
-            this, result, apiRQType, _debug, parseClassName);
-      } else {
-        return null;
-      }
-    } on Exception catch (e) {
-      return handleException(e, apiRQType, _debug, parseClassName);
-    }
-  }
-
   /// Used in array Operations in save() method
   void _arrayOperation(String arrayAction, String key, List<dynamic> values) {
     // TODO(yulingtianxia): Array operations should be incremental. Merge add and remove operation.
     set<Map<String, dynamic>>(
         key, <String, dynamic>{'__op': arrayAction, 'objects': values});
-  }
-
-  /// Increases a num of an object by x amount
-  @Deprecated('Prefer to use the setIncrement() method in save()')
-  Future<ParseResponse> increment(String key, num amount) async {
-    if (key != null) {
-      return await _increment(ParseApiRQ.increment, 'Increment', key, amount);
-    } else {
-      return null;
-    }
   }
 
   /// Increases a num of an object by x amount
@@ -445,39 +365,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Decreases a num of an object by x amount
-  @Deprecated('Prefer to use the setDecrement() method in save()')
-  Future<ParseResponse> decrement(String key, num amount) async {
-    if (key != null) {
-      return await _increment(ParseApiRQ.decrement, 'Increment', key, -amount);
-    } else {
-      return null;
-    }
-  }
-
-  /// Decreases a num of an object by x amount
   void setDecrement(String key, num amount) {
     set<Map<String, dynamic>>(
         key, <String, dynamic>{'__op': 'Increment', 'amount': -amount});
-  }
-
-  /// Can be used to add arrays to a given type
-  Future<ParseResponse> _increment(
-      ParseApiRQ apiRQType, String countAction, String key, num amount) async {
-    try {
-      if (objectId != null) {
-        final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-        final String body =
-            '{\"$key\":{\"__op\":\"$countAction\",\"amount\":$amount}}';
-        final ParseNetworkResponse result =
-            await _client.put(url.toString(), data: body);
-        return handleResponse<ParseObject>(
-            this, result, apiRQType, _debug, parseClassName);
-      } else {
-        return null;
-      }
-    } on Exception catch (e) {
-      return handleException(e, apiRQType, _debug, parseClassName);
-    }
   }
 
   /// Can be used set an objects variable to undefined rather than null
