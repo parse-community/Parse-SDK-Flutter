@@ -496,11 +496,7 @@ class QueryBuilder<T extends ParseObject> {
   String getLimiters(Map<String, dynamic> map) {
     String result = '';
     map.forEach((String key, dynamic value) {
-      if (result != null) {
-        result = result + '&$key=$value';
-      } else {
-        result = '&$key=$value';
-      }
+      result = result + '&$key=$value';
     });
     return result;
   }
@@ -509,7 +505,7 @@ class QueryBuilder<T extends ParseObject> {
   String getLimitersRelational(Map<String, dynamic> map) {
     String result = '';
     map.forEach((String key, dynamic value) {
-      if (result != null) {
+      if (result.isNotEmpty) {
         result = result + ',\"$key":$value';
       } else {
         result = '\"$key\":$value';

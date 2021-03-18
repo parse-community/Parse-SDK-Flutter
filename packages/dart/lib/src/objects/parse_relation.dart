@@ -30,7 +30,7 @@ class ParseRelation<T extends ParseObject> {
 
   Map<String, dynamic> toJson() => <String, String>{
         '__type': keyRelation,
-        'className': _objects?.first?.parseClassName,
+        'className': _objects?.first.parseClassName,
         'objects': parseEncode(_objects?.toList())
       };
 
