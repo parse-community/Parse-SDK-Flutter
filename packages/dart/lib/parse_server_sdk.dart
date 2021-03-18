@@ -60,7 +60,6 @@ part 'src/storage/xxtea_codec.dart';
 part 'src/utils/parse_date_format.dart';
 part 'src/utils/parse_decoder.dart';
 part 'src/utils/parse_encoder.dart';
-part 'src/utils/parse_file_extensions.dart';
 part 'src/utils/parse_live_list.dart';
 part 'src/utils/parse_logger.dart';
 part 'src/utils/parse_login_helpers.dart';
