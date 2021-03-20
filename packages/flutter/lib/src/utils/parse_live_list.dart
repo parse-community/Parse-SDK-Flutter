@@ -235,25 +235,16 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
     if (stream != null) {
       _streamSubscription = stream().listen(
         (T data) {
-          if (widget != null) {
-            setState(() {
-              _snapshot = sdk.ParseLiveListElementSnapshot<T>(
-                  loadedData: data, preLoadedData: data);
-            });
-          } else {
+          setState(() {
             _snapshot = sdk.ParseLiveListElementSnapshot<T>(
                 loadedData: data, preLoadedData: data);
-          }
+          });
         },
         onError: (Object error) {
           if (error is sdk.ParseError) {
-            if (widget != null) {
-              setState(() {
-                _snapshot = sdk.ParseLiveListElementSnapshot<T>(error: error);
-              });
-            } else {
+            setState(() {
               _snapshot = sdk.ParseLiveListElementSnapshot<T>(error: error);
-            }
+            });
           }
         },
         cancelOnError: false,
