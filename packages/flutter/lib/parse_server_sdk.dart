@@ -43,25 +43,25 @@ class Parse extends sdk.Parse
     String appId,
     String serverUrl, {
     bool debug = false,
-    String appName,
-    String appVersion,
-    String appPackageName,
-    String locale,
-    String liveQueryUrl,
-    String clientKey,
-    String masterKey,
-    String sessionId,
+    String? appName,
+    String? appVersion,
+    String? appPackageName,
+    String? locale,
+    String? liveQueryUrl,
+    String? clientKey,
+    String? masterKey,
+    String? sessionId,
     bool autoSendSessionId = true,
-    SecurityContext securityContext,
-    sdk.CoreStore coreStore,
-    Map<String, sdk.ParseObjectConstructor> registeredSubClassMap,
-    sdk.ParseUserConstructor parseUserConstructor,
-    sdk.ParseFileConstructor parseFileConstructor,
-    List<int> liveListRetryIntervals,
-    sdk.ParseConnectivityProvider connectivityProvider,
-    String fileDirectory,
-    Stream<void> appResumedStream,
-    sdk.ParseClientCreator clientCreator,
+    SecurityContext? securityContext,
+    sdk.CoreStore? coreStore,
+    Map<String, sdk.ParseObjectConstructor>? registeredSubClassMap,
+    sdk.ParseUserConstructor? parseUserConstructor,
+    sdk.ParseFileConstructor? parseFileConstructor,
+    List<int>? liveListRetryIntervals,
+    sdk.ParseConnectivityProvider? connectivityProvider,
+    String? fileDirectory,
+    Stream<void>? appResumedStream,
+    sdk.ParseClientCreator? clientCreator,
   }) async {
     if (appName == null || appVersion == null || appPackageName == null) {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -151,61 +151,61 @@ Future<String> dbDirectory() async {
 class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
   CoreStoreSembastImp._();
 
-  static sdk.CoreStoreSembastImp _sembastImp;
+  static sdk.CoreStoreSembastImp? _sembastImp;
 
   static Future<sdk.CoreStore> getInstance(String dbPath,
-      {DatabaseFactory factory, String password}) async {
-    _sembastImp ??= await sdk.CoreStoreSembastImp.getInstance(
+      {DatabaseFactory? factory, String? password}) async {
+    _sembastImp ??= await (sdk.CoreStoreSembastImp.getInstance(
         await dbDirectory(),
         factory: factory,
-        password: password);
+        password: password) as FutureOr<sdk.CoreStoreSembastImp?>);
     return CoreStoreSembastImp._();
   }
 
   @override
-  Future<bool> clear() => _sembastImp.clear();
+  Future<bool> clear() => _sembastImp!.clear();
 
   @override
-  Future<bool> containsKey(String key) => _sembastImp.containsKey(key);
+  Future<bool> containsKey(String key) => _sembastImp!.containsKey(key);
 
   @override
-  Future<dynamic> get(String key) => _sembastImp.get(key);
+  Future<dynamic> get(String key) => _sembastImp!.get(key);
 
   @override
-  Future<bool> getBool(String key) => _sembastImp.getBool(key);
+  Future<bool?> getBool(String key) => _sembastImp!.getBool(key);
 
   @override
-  Future<double> getDouble(String key) => _sembastImp.getDouble(key);
+  Future<double?> getDouble(String key) => _sembastImp!.getDouble(key);
 
   @override
-  Future<int> getInt(String key) => _sembastImp.getInt(key);
+  Future<int?> getInt(String key) => _sembastImp!.getInt(key);
 
   @override
-  Future<String> getString(String key) => _sembastImp.getString(key);
+  Future<String?> getString(String key) => _sembastImp!.getString(key);
 
   @override
-  Future<List<String>> getStringList(String key) =>
-      _sembastImp.getStringList(key);
+  Future<List<String>?> getStringList(String key) =>
+      _sembastImp!.getStringList(key);
 
   @override
-  Future<void> remove(String key) => _sembastImp.remove(key);
+  Future<void> remove(String key) => _sembastImp!.remove(key);
 
   @override
   Future<void> setBool(String key, bool value) =>
-      _sembastImp.setBool(key, value);
+      _sembastImp!.setBool(key, value);
 
   @override
   Future<void> setDouble(String key, double value) =>
-      _sembastImp.setDouble(key, value);
+      _sembastImp!.setDouble(key, value);
 
   @override
-  Future<void> setInt(String key, int value) => _sembastImp.setInt(key, value);
+  Future<void> setInt(String key, int value) => _sembastImp!.setInt(key, value);
 
   @override
   Future<void> setString(String key, String value) =>
-      _sembastImp.setString(key, value);
+      _sembastImp!.setString(key, value);
 
   @override
   Future<void> setStringList(String key, List<String> values) =>
-      _sembastImp.setStringList(key, values);
+      _sembastImp!.setStringList(key, values);
 }

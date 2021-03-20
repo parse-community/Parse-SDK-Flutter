@@ -3,15 +3,15 @@ part of flutter_parse_sdk_flutter;
 class CoreStoreSharedPrefsImp implements sdk.CoreStore {
   CoreStoreSharedPrefsImp._internal(this._store);
 
-  static CoreStoreSharedPrefsImp _instance;
+  static CoreStoreSharedPrefsImp? _instance;
 
-  static Future<sdk.CoreStore/*!*/> getInstance({SharedPreferences store}) async {
+  static Future<sdk.CoreStore> getInstance({SharedPreferences? store}) async {
     if (_instance == null) {
       store ??= await SharedPreferences.getInstance();
       _instance = CoreStoreSharedPrefsImp._internal(store);
     }
 
-    return _instance;
+    return _instance!;
   }
 
   final SharedPreferences _store;
@@ -32,30 +32,29 @@ class CoreStoreSharedPrefsImp implements sdk.CoreStore {
   }
 
   @override
-  Future<bool> getBool(String key) async {
+  Future<bool?> getBool(String key) async {
     return _store.getBool(key);
   }
 
   @override
-  Future<double> getDouble(String key) async {
+  Future<double?> getDouble(String key) async {
     return _store.getDouble(key);
   }
 
   @override
-  Future<int> getInt(String key) async {
+  Future<int?> getInt(String key) async {
     return _store.getInt(key);
   }
 
   @override
-  Future<String> getString(String key) async {
+  Future<String?> getString(String key) async {
     return _store.getString(key);
   }
 
   @override
-  Future<List<String>> getStringList(String key) async {
+  Future<List<String>?> getStringList(String key) async {
     return _store.getStringList(key);
   }
-
 
   @override
   Future<void> remove(String key) async {
