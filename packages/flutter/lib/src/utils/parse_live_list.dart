@@ -92,24 +92,19 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       listeningIncludes: listeningIncludes,
       lazyLoading: lazyLoading,
       preloadedColumns: preloadedColumns,
-    ).then((sdk.ParseLiveList<T> value) {
-      if (value.size > 0) {
-        setState(() {
-          noData = false;
-        });
-      } else {
-        setState(() {
-          noData = true;
-        });
-      }
+    ).then((sdk.ParseLiveList<T> livelist) {
       setState(() {
-        _liveList = value;
+        _noData = livelist.size == 0;
+        _liveList = livelist;
         _liveList.stream
             .listen((sdk.ParseLiveListEvent<sdk.ParseObject> event) {
           if (event is sdk.ParseLiveListAddEvent) {
             if (_animatedListKey.currentState != null)
               _animatedListKey.currentState
                   .insertItem(event.index, duration: widget.duration);
+            setState(() {
+              _noData = livelist.size == 0;
+            });
           } else if (event is sdk.ParseLiveListDeleteEvent) {
             _animatedListKey.currentState.removeItem(
                 event.index,
@@ -126,15 +121,9 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                       preLoadedData: () => event.object,
                     ),
                 duration: widget.duration);
-            if (value.size > 0) {
-              setState(() {
-                noData = false;
-              });
-            } else {
-              setState(() {
-                noData = true;
-              });
-            }
+            setState(() {
+              _noData = livelist.size == 0;
+            });
           }
         });
       });
@@ -146,15 +135,25 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
   final ChildBuilder<T> removedItemBuilder;
-  bool noData = false;
+  bool _noData = false;
 
   @override
   Widget build(BuildContext context) {
     return _liveList == null
         ? widget.listLoadingElement ?? Container()
-        : noData
-            ? widget.queryEmptyElement ?? Container()
-            : buildAnimatedList();
+        : Stack(
+            children: <Widget>[
+              if (widget.queryEmptyElement != null)
+                AnimatedOpacity(
+                  opacity: _noData ? 1 : 0,
+                  duration: widget.duration,
+                  child: widget.queryEmptyElement,
+                ),
+              // if (_noData && widget.queryEmptyElement != null)
+              //   widget.queryEmptyElement,
+              buildAnimatedList()
+            ],
+          );
   }
 
   @override
