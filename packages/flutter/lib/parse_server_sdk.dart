@@ -145,7 +145,11 @@ class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
     if (_sembastImp == null) {
       String dbDirectory = '';
       if (!sdk.parseIsWeb &&
-          (Platform.isIOS || Platform.isAndroid || Platform.isMacOS))
+          (Platform.isIOS ||
+              Platform.isAndroid ||
+              Platform.isMacOS ||
+              Platform.isLinux ||
+              Platform.isWindows))
         dbDirectory = (await getApplicationDocumentsDirectory()).path;
       final String dbPath = path.join('$dbDirectory/parse', 'parse.db');
       _sembastImp ??= await sdk.CoreStoreSembastImp.getInstance(dbPath,
