@@ -65,7 +65,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
     } else if (snapshot.hasData) {
       child = ListTile(
         title: Text(
-          snapshot.loadedData!.get(sdk.keyVarObjectId),
+          snapshot.loadedData!.get<String>(sdk.keyVarObjectId)!,
         ),
       );
     } else {
@@ -255,7 +255,7 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject >
     }
   }
 
-  sdk.ParseLiveListElementSnapshot<T> _snapshot;
+  late sdk.ParseLiveListElementSnapshot<T> _snapshot;
 
   StreamSubscription<T>? _streamSubscription;
 

@@ -74,7 +74,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
     } else if (snapshot.hasData) {
       child = ListTile(
         title: Text(
-          snapshot.loadedData!.get(sdk.keyVarObjectId),
+          snapshot.loadedData!.get<String>(sdk.keyVarObjectId)!,
         ),
       );
     } else {

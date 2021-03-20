@@ -57,7 +57,7 @@ class CoreStoreSharedPrefsImp implements sdk.CoreStore {
   }
 
   @override
-  Future<void> remove(String key) async {
+  Future<bool> remove(String key) async {
     return _store.remove(key);
   }
 
