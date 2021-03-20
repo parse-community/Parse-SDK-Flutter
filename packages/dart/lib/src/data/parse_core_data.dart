@@ -76,12 +76,12 @@ class ParseCoreData {
   String masterKey;
   String clientKey;
   String sessionId;
-  bool /*!*/ autoSendSessionId;
+  /*late*/bool /*!*/ autoSendSessionId;
   SecurityContext securityContext;
-  bool /*!*/ debug;
-  CoreStore/*!*/ storage;
+  /*late*/bool /*!*/ debug;
+  /*late*/CoreStore/*!*/ storage;
   ParseSubClassHandler _subClassHandler;
-  List<int> /*!*/ liveListRetryIntervals;
+  /*late*/List<int> /*!*/ liveListRetryIntervals;
   ParseConnectivityProvider connectivityProvider;
   String fileDirectory;
   Stream<void> appResumedStream;
