@@ -133,7 +133,7 @@ class LiveQueryClient {
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _sendSessionId =
-        autoSendSessionId ?? ParseCoreData().autoSendSessionId ?? true;
+        autoSendSessionId ?? ParseCoreData().autoSendSessionId;
     _liveQueryURL = ParseCoreData().liveQueryURL;
     assert(_liveQueryURL != null,
         'liveQueryUrl is not set. For how to setup Live Queries, see https://github.com/parse-community/Parse-SDK-Flutter/tree/master/packages/flutter#live-queries.');
