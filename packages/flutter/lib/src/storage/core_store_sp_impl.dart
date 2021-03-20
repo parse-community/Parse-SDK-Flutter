@@ -5,8 +5,7 @@ class CoreStoreSharedPrefsImp implements sdk.CoreStore {
 
   static CoreStoreSharedPrefsImp _instance;
 
-  static Future<sdk.CoreStore> getInstance(
-      {SharedPreferences store, String password = 'flutter_sdk'}) async {
+  static Future<sdk.CoreStore> getInstance({SharedPreferences store}) async {
     if (_instance == null) {
       store ??= await SharedPreferences.getInstance();
       _instance = CoreStoreSharedPrefsImp._internal(store);

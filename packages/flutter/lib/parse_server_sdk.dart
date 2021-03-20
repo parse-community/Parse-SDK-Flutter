@@ -85,8 +85,7 @@ class Parse extends sdk.Parse
       sessionId: sessionId,
       autoSendSessionId: autoSendSessionId,
       securityContext: securityContext,
-      coreStore: coreStore ??
-          await CoreStoreSharedPrefsImp.getInstance(password: masterKey),
+      coreStore: coreStore ?? await CoreStoreSharedPrefsImp.getInstance(),
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
