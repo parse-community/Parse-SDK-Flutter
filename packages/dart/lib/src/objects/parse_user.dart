@@ -174,7 +174,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
                 '`ParseUser().signUp()` failed, because the email is not set. If you want to allow signUp without a set email, you should run `ParseUser().signUp(allowWithoutEmail = true)`');
             return true;
           }());
-          return null;
+          throw '`signUp` failed, because `emailAddress` of ParseUser was not provided and `allowWithoutEmail` was `false`';
         } else {
           assert(() {
             print(
