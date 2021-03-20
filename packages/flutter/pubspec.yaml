@@ -18,7 +18,7 @@ dependencies:
 #      path: packages/dart
 
   # Networking
-  dio: ^4.0.0-prev2
+  dio: ^4.0.0-prev3
   connectivity: ^3.0.3 # only used in the flutter part
 
   #Database
