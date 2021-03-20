@@ -58,8 +58,6 @@ Due to Cross-origin resource sharing (CORS) restrictions, this requires adding `
 When running directly via docker, set the env var `PARSE_SERVER_ALLOW_HEADERS=X-Parse-Installation-Id`.
 When running via express, set [ParseServerOptions](https://parseplatform.org/parse-server/api/master/ParseServerOptions.html) `allowHeaders: ['X-Parse-Installation-Id']`.
 
-Be aware that for web ParseInstallation does include app name, version or package identifier automatically. You should manually provide this data as described [here](https://github.com/parse-community/Parse-SDK-Flutter/blob/master/docs/migrate-1-0-28.md#optional-provide-app-information-on-web);
-
 #### Network client
 By default, this SDK uses the `ParseHTTPClient`.
 Another option is use `ParseDioClient`. This client supports the most features (for example a progress callback at the file upload), but a benchmark has shown, that dio is slower than http on web.
@@ -69,7 +67,7 @@ you can provide a custom `ParseClientCreator` at the initialization of the SDK.
 ```dart
 await Parse().initialize(
   //...
-  clientCreator: ({bool sendSessionId, SecurityContext securityContext}) => ParseDioClient(sendSessionId: sendSessionId, securityContext: securityContext),
+  clientCreator: ({bool? sendSessionId, SecurityContext? securityContext}) => ParseDioClient(sendSessionId: sendSessionId, securityContext: securityContext),
 );
 ```
 
