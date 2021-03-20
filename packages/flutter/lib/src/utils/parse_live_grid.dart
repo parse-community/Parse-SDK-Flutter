@@ -125,8 +125,6 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
 
   final sdk.QueryBuilder<T> query;
   sdk.ParseLiveList<T> _liveGrid;
-  final GlobalKey<AnimatedListState> _animatedListKey =
-      GlobalKey<AnimatedListState>();
   final ChildBuilder<T> removedItemBuilder;
   bool noData = false;
 
@@ -147,7 +145,6 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   }
 
   Widget buildAnimatedGrid() {
-    AnimationController controller;
     Animation<double> boxAnimation;
     boxAnimation = Tween<double>(
       begin: 0.0,
