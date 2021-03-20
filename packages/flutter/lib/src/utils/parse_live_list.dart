@@ -154,7 +154,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         ? widget.listLoadingElement ?? Container()
         : noData
             ? widget.queryEmptyElement ?? Container()
-            : buildAnimatedList();
+            : buildAnimatedList(_liveList);
   }
 
   @override
@@ -164,7 +164,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
     }
   }
 
-  Widget buildAnimatedList() {
+  Widget buildAnimatedList(sdk.ParseLiveList<T> liveList) {
     return AnimatedList(
         key: _animatedListKey,
         physics: widget.scrollPhysics,
@@ -174,15 +174,15 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         primary: widget.primary,
         reverse: widget.reverse,
         shrinkWrap: widget.shrinkWrap,
-        initialItemCount: _liveList?.size,
+        initialItemCount: liveList.size,
         itemBuilder:
             (BuildContext context, int index, Animation<double> animation) {
           return ParseLiveListElementWidget<T>(
             key: ValueKey<String>(
-                _liveList?.getIdentifier(index) ?? '_NotFound'),
-            stream: () => _liveList?.getAt(index),
-            loadedData: () => _liveList?.getLoadedAt(index),
-            preLoadedData: () => _liveList?.getPreLoadedAt(index),
+                liveList.getIdentifier(index) ?? '_NotFound'),
+            stream: () => liveList.getAt(index),
+            loadedData: () => liveList.getLoadedAt(index),
+            preLoadedData: () => liveList.getPreLoadedAt(index),
             sizeFactor: animation,
             duration: widget.duration,
             childBuilder:
