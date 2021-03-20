@@ -77,9 +77,8 @@ class Parse extends sdk.Parse
       appName: appName,
       appVersion: appVersion,
       appPackageName: appPackageName,
-      locale: locale ?? sdk.parseIsWeb
-          ? ui.window.locale.toString()
-          : Platform.localeName,
+      locale: locale ??
+          (sdk.parseIsWeb ? ui.window.locale.toString() : Platform.localeName),
       liveQueryUrl: liveQueryUrl,
       clientKey: clientKey,
       masterKey: masterKey,
