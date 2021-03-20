@@ -141,7 +141,7 @@ class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
   static sdk.CoreStoreSembastImp _sembastImp;
 
   static Future<sdk.CoreStore> getInstance(
-      {DatabaseFactory factory, String password = 'flutter_sdk'}) async {
+      {DatabaseFactory factory, String password}) async {
     if (_sembastImp == null) {
       String dbDirectory = '';
       if (!sdk.parseIsWeb &&
