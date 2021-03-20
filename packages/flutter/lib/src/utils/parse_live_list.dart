@@ -233,7 +233,9 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
   _ParseLiveListElementWidgetState(sdk.DataGetter<T> loadedDataGetter,
       sdk.DataGetter<T> preLoadedDataGetter, sdk.StreamGetter<T> stream) {
     _snapshot = sdk.ParseLiveListElementSnapshot<T>(
-        loadedData: loadedDataGetter(), preLoadedData: preLoadedDataGetter());
+        loadedData: loadedDataGetter != null ? loadedDataGetter() : null,
+        preLoadedData:
+            preLoadedDataGetter != null ? preLoadedDataGetter() : null);
     if (stream != null) {
       _streamSubscription = stream().listen(
         (T data) {
