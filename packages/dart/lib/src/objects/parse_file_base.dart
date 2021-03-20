@@ -24,8 +24,8 @@ abstract class ParseFileBase extends ParseObject {
   String get name => super.get<String>(keyVarName);
   set name(String/*!*/ name) => set<String>(keyVarName, name);
 
-  String/*?*/ get url => super.get<String>(keyVarURL);
-  set url(String/*!*/ url) => set<String>(keyVarURL, url);
+  String get url => super.get<String>(keyVarURL);
+  set url(String url) => set<String>(keyVarURL, url);
 
   bool get saved => url != null;
 

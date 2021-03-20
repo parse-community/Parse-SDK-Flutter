@@ -33,9 +33,9 @@ class ParseInstallation extends ParseObject {
   set acl(Map<String, dynamic> acl) =>
       set<Map<String, dynamic>>(keyVarAcl, acl);
 
-  String/*?*/ get deviceToken => super.get<String>(keyDeviceToken);
+  String get deviceToken => super.get<String>(keyDeviceToken);
 
-  set deviceToken(String/*!*/ deviceToken) =>
+  set deviceToken(String deviceToken) =>
       set<String>(keyDeviceToken, deviceToken);
 
   String get deviceType => super.get<String>(keyDeviceType);
