@@ -153,6 +153,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       end: 1.0,
     ).animate(
       CurvedAnimation(
+        // TODO: AnimationController is always null, so this breaks
         parent: widget.animationController,
         curve: const Interval(
           0,
