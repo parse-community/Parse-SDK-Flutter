@@ -35,7 +35,7 @@ abstract class ParseClient {
   });
 
   Future<ParseNetworkByteResponse> getBytes(
-    String path, {
+    String/*!*/ path, {
     ParseNetworkOptions options,
     ProgressCallback onReceiveProgress,
   });
