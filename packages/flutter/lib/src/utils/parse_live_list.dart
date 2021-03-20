@@ -146,7 +146,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
   final ChildBuilder<T> removedItemBuilder;
-  bool noData = false;
+  bool noData = true;
 
   @override
   Widget build(BuildContext context) {
