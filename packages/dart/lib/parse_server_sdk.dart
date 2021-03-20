@@ -84,25 +84,25 @@ class Parse {
     String appId,
     String serverUrl, {
     bool debug = false,
-    String appName,
-    String appVersion,
-    String appPackageName,
-    String locale,
-    String liveQueryUrl,
-    String clientKey,
-    String masterKey,
-    String sessionId,
+    String? appName,
+    String? appVersion,
+    String? appPackageName,
+    String? locale,
+    String? liveQueryUrl,
+    String? clientKey,
+    String? masterKey,
+    String? sessionId,
     bool autoSendSessionId = true,
-    SecurityContext securityContext,
-    CoreStore coreStore,
-    Map<String, ParseObjectConstructor> registeredSubClassMap,
-    ParseUserConstructor parseUserConstructor,
-    ParseFileConstructor parseFileConstructor,
-    List<int> liveListRetryIntervals,
-    ParseConnectivityProvider connectivityProvider,
-    String fileDirectory,
-    Stream<void> appResumedStream,
-    ParseClientCreator clientCreator,
+    SecurityContext? securityContext,
+    CoreStore? coreStore,
+    Map<String, ParseObjectConstructor>? registeredSubClassMap,
+    ParseUserConstructor? parseUserConstructor,
+    ParseFileConstructor? parseFileConstructor,
+    List<int>? liveListRetryIntervals,
+    ParseConnectivityProvider? connectivityProvider,
+    String? fileDirectory,
+    Stream<void>? appResumedStream,
+    ParseClientCreator? clientCreator,
   }) async {
     final String url = removeTrailingSlash(serverUrl);
 
@@ -138,8 +138,8 @@ class Parse {
 
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
-  Future<ParseResponse/*!*/ > healthCheck(
-      {bool debug, ParseClient client, bool sendSessionIdByDefault}) async {
+  Future<ParseResponse > healthCheck(
+      {bool? debug, ParseClient? client, bool? sendSessionIdByDefault}) async {
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
 
     final ParseClient _client = client ??

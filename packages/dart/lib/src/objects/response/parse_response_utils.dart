@@ -51,7 +51,7 @@ bool isUnsuccessfulResponse(ParseNetworkResponse apiResponse) =>
 
 bool isSuccessButNoResults(ParseNetworkResponse apiResponse) {
   final dynamic decodedResponse = jsonDecode(apiResponse.data);
-  List<dynamic> results;
+  List<dynamic>? results;
   if (decodedResponse is Map<String, dynamic>) {
     results = decodedResponse['results'];
   } else if (decodedResponse is List<dynamic>) {

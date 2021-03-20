@@ -6,7 +6,7 @@ class ParseMergeTool {
     if (previous == null) {
       return values;
     }
-    String previousAction = 'Set';
+    String? previousAction = 'Set';
     if (previous is Map) {
       previousAction = previous['__op'];
     }
@@ -32,7 +32,7 @@ class ParseMergeTool {
 
   // Add operation Merge
   dynamic _mergeWithPreviousAdd(
-      String previousAction, dynamic previous, dynamic values) {
+      String? previousAction, dynamic previous, dynamic values) {
     if (previousAction == 'Set') {
       if (previous is List) {
         return List<dynamic>.from(previous)..addAll(values['objects']);
@@ -68,7 +68,7 @@ class ParseMergeTool {
 
   // Remove operation Merge
   dynamic _mergeWithPreviousRemove(
-      String previousAction, dynamic previous, dynamic values) {
+      String? previousAction, dynamic previous, dynamic values) {
     if (previousAction == 'Set') {
       return previous;
     }
@@ -100,7 +100,7 @@ class ParseMergeTool {
 
   // Increment operation Merge
   dynamic _mergeWithPreviousIncrement(
-      String previousAction, dynamic previous, dynamic values) {
+      String? previousAction, dynamic previous, dynamic values) {
     if (previousAction == 'Set') {
       if (previous is num) {
         values['amount'] += previous;
@@ -131,7 +131,7 @@ class ParseMergeTool {
 
   // AddUnique operation Merge
   dynamic _mergeWithPreviousAddUnique(
-      String previousAction, dynamic previous, dynamic values) {
+      String? previousAction, dynamic previous, dynamic values) {
     if (previousAction == 'Set') {
       if (previous is List) {
         return _applyToValueAddUnique(previous, values['objects']);
@@ -164,7 +164,7 @@ class ParseMergeTool {
 
   // AddRelation operation Merge
   dynamic _mergeWithPreviousAddRelation(
-      String previousAction, dynamic previous, dynamic values) {
+      String? previousAction, dynamic previous, dynamic values) {
     if (previousAction == 'AddRelation') {
       if (values['objects'].length == 1) {
         previous['objects'].add(values['objects'].first);
@@ -196,7 +196,7 @@ class ParseMergeTool {
 
   // RemoveRelation operation Merge
   dynamic _mergeWithPreviousRemoveRelation(
-      String previousAction, dynamic previous, dynamic values) {
+      String? previousAction, dynamic previous, dynamic values) {
     if (previousAction == 'RemoveRelation') {
       if (values['objects'].length == 1) {
         previous['objects'].add(values['objects'].first);

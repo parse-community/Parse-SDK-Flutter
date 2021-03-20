@@ -6,9 +6,9 @@ class ParseCoreData {
 
   ParseCoreData._init(this.applicationId, this.serverUrl);
 
-  static ParseCoreData _instance;
+  static late ParseCoreData _instance;
 
-  static ParseCoreData/*!*/ get instance => _instance;
+  static ParseCoreData get instance => _instance;
 
   /// Creates an instance of Parse Server
   ///
@@ -17,26 +17,26 @@ class ParseCoreData {
   static Future<void> init(
     String appId,
     String serverUrl, {
-    bool /*!*/ debug,
-    String appName,
-    String appVersion,
-    String appPackageName,
-    String locale,
-    String liveQueryUrl,
-    String masterKey,
-    String clientKey,
-    String sessionId,
-    bool /*!*/ autoSendSessionId,
-    SecurityContext securityContext,
-    CoreStore store,
-    Map<String, ParseObjectConstructor> registeredSubClassMap,
-    ParseUserConstructor parseUserConstructor,
-    ParseFileConstructor parseFileConstructor,
-    List<int> liveListRetryIntervals,
-    ParseConnectivityProvider connectivityProvider,
-    String fileDirectory,
-    Stream<void> appResumedStream,
-    ParseClientCreator clientCreator,
+    required bool debug,
+    String? appName,
+    String? appVersion,
+    String? appPackageName,
+    String? locale,
+    String? liveQueryUrl,
+    String? masterKey,
+    String? clientKey,
+    String? sessionId,
+    required bool autoSendSessionId,
+    SecurityContext? securityContext,
+    CoreStore? store,
+    Map<String, ParseObjectConstructor>? registeredSubClassMap,
+    ParseUserConstructor? parseUserConstructor,
+    ParseFileConstructor? parseFileConstructor,
+    List<int>? liveListRetryIntervals,
+    ParseConnectivityProvider? connectivityProvider,
+    String? fileDirectory,
+    Stream<void>? appResumedStream,
+    ParseClientCreator? clientCreator,
   }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
@@ -65,31 +65,31 @@ class ParseCoreData {
     _instance.fileDirectory = fileDirectory;
     _instance.appResumedStream = appResumedStream;
     _instance.clientCreator = clientCreator ??
-        ({bool sendSessionId, SecurityContext securityContext}) =>
+        (({required bool sendSessionId, SecurityContext? securityContext}) =>
             ParseHTTPClient(
-                sendSessionId: sendSessionId, securityContext: securityContext);
+                sendSessionId: sendSessionId, securityContext: securityContext));
   }
 
   String applicationId;
   String serverUrl;
-  String appName;
-  String appVersion;
-  String appPackageName;
-  String locale;
-  String liveQueryURL;
-  String masterKey;
-  String clientKey;
-  String sessionId;
-  /*late*/bool /*!*/ autoSendSessionId;
-  SecurityContext securityContext;
-  /*late*/bool /*!*/ debug;
-  /*late*/CoreStore/*!*/ storage;
-  ParseSubClassHandler _subClassHandler;
-  /*late*/List<int> /*!*/ liveListRetryIntervals;
-  ParseConnectivityProvider connectivityProvider;
-  String fileDirectory;
-  Stream<void> appResumedStream;
-  ParseClientCreator clientCreator;
+  String? appName;
+  String? appVersion;
+  String? appPackageName;
+  String? locale;
+  String? liveQueryURL;
+  String? masterKey;
+  String? clientKey;
+  String? sessionId;
+  late bool autoSendSessionId;
+  SecurityContext? securityContext;
+  late bool debug;
+  late CoreStore storage;
+  late ParseSubClassHandler _subClassHandler;
+  late List<int> liveListRetryIntervals;
+  ParseConnectivityProvider? connectivityProvider;
+  String? fileDirectory;
+  Stream<void>? appResumedStream;
+  late ParseClientCreator clientCreator;
 
   void registerSubClass(
       String className, ParseObjectConstructor objectConstructor) {
@@ -104,25 +104,25 @@ class ParseCoreData {
     _subClassHandler.registerFileSubClass(parseFileConstructor);
   }
 
-  ParseObject createObject(String/*!*/ classname) {
+  ParseObject createObject(String classname) {
     return _subClassHandler.createObject(classname);
   }
 
   ParseUser createParseUser(
-      String username, String password, String emailAddress,
-      {String sessionToken, bool debug, ParseClient client}) {
+      String? username, String? password, String? emailAddress,
+      {String? sessionToken, bool? debug, ParseClient? client}) {
     return _subClassHandler.createParseUser(username, password, emailAddress,
         sessionToken: sessionToken, debug: debug, client: client);
   }
 
-  ParseFileBase createFile({String url, String name}) =>
+  ParseFileBase createFile({String? url, String? name}) =>
       _subClassHandler.createFile(name: name, url: url);
 
   /// Sets the current sessionId.
   ///
   /// This is generated when a users logs in, or calls currentUser to update
   /// their keys
-  void setSessionId(String /*!*/ sessionId) {
+  void setSessionId(String sessionId) {
     this.sessionId = sessionId;
   }
 

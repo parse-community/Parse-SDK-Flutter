@@ -4,7 +4,7 @@ part of flutter_parse_sdk;
 ///
 /// Debug can be set in 2 places, one global param in the Parse.initialize, and
 /// then can be overwritten class by class
-bool isDebugEnabled({bool objectLevelDebug}) {
+bool isDebugEnabled({bool? objectLevelDebug}) {
   return objectLevelDebug ?? ParseCoreData().debug;
 }
 
@@ -25,7 +25,7 @@ dynamic convertValueToCorrectType(dynamic value) {
 
 /// Sanitises a url
 Uri getSanitisedUri(ParseClient client, String pathToAppend,
-    {Map<String, dynamic> queryParams, String query}) {
+    {Map<String, dynamic>? queryParams, String? query}) {
   final Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
 
   final Uri url = Uri(
@@ -41,7 +41,7 @@ Uri getSanitisedUri(ParseClient client, String pathToAppend,
 
 /// Sanitises a url
 Uri getCustomUri(ParseClient client, String path,
-    {Map<String, dynamic> queryParams, String query}) {
+    {Map<String, dynamic>? queryParams, String? query}) {
   final Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
 
   final Uri url = Uri(
@@ -67,7 +67,7 @@ String removeTrailingSlash(String serverUrl) {
 
 Future<ParseResponse> batchRequest(
     List<dynamic> requests, List<ParseObject> objects,
-    {ParseClient client, bool debug}) async {
+    {ParseClient? client, bool? debug}) async {
   debug = isDebugEnabled(objectLevelDebug: debug);
   client = client ??
       ParseCoreData().clientCreator(
@@ -86,6 +86,6 @@ Future<ParseResponse> batchRequest(
   }
 }
 
-Stream<T> _createStreamError<T>(Object/*!*/ error) async* {
+Stream<T> _createStreamError<T>(Object error) async* {
   throw error;
 }

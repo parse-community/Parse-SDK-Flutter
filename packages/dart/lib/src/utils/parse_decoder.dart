@@ -42,7 +42,7 @@ dynamic parseDecode(dynamic value) {
     return value;
   }
 
-  final Map<String, dynamic> map = value;
+  final Map<String, dynamic> map = value as Map<String, dynamic>;
 
   if (!map.containsKey('__type') && !map.containsKey('className')) {
     return _convertJSONObjectToMap(map);

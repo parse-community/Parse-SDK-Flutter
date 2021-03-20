@@ -67,10 +67,10 @@ class ParseError {
     252: 'UnsupportedService'
   };
 
-  final int/*!*/ code;
+  final int code;
   final String message;
-  final Exception exception;
-  String type;
+  final Exception? exception;
+  String? type;
 
   @override
   String toString() {

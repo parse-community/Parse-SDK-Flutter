@@ -6,7 +6,7 @@ class QueryBuilder<T extends ParseObject> {
   QueryBuilder(this.object) : super();
 
   QueryBuilder.name(String classname)
-      : this(ParseCoreData.instance.createObject(classname));
+      : this(ParseCoreData.instance.createObject(classname) as T?);
 
   QueryBuilder.or(this.object, List<QueryBuilder<T>> list) {
     String query = '"\$or":[';
@@ -33,7 +33,7 @@ class QueryBuilder<T extends ParseObject> {
   static const String _NO_OPERATOR_NEEDED = 'NO_OP';
   static const String _SINGLE_QUERY = 'SINGLE_QUERY';
 
-  T object;
+  T? object;
   List<MapEntry<String, dynamic>> queries = <MapEntry<String, dynamic>>[];
   final Map<String, dynamic> limiters = Map<String, dynamic>();
 
@@ -286,7 +286,7 @@ class QueryBuilder<T extends ParseObject> {
   // Add a constraint to the query that requires a particular key's value match another QueryBuilder
   void whereMatchesQuery<E extends ParseObject>(String column, QueryBuilder<E> query) {
     final String inQuery =
-        query._buildQueryRelational(query.object.parseClassName);
+        query._buildQueryRelational(query.object!.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$inQuery\":$inQuery}'));
@@ -295,7 +295,7 @@ class QueryBuilder<T extends ParseObject> {
   //Add a constraint to the query that requires a particular key's value does not match another QueryBuilder
   void whereDoesNotMatchQuery<E extends ParseObject>(String column, QueryBuilder<E> query) {
     final String inQuery =
-        query._buildQueryRelational(query.object.parseClassName);
+        query._buildQueryRelational(query.object!.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
@@ -315,7 +315,7 @@ class QueryBuilder<T extends ParseObject> {
     }
 
     final String inQuery =
-        query._buildQueryRelationalKey(query.object.parseClassName, keyInQuery);
+        query._buildQueryRelationalKey(query.object!.parseClassName, keyInQuery);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$select\":$inQuery}'));
@@ -335,7 +335,7 @@ class QueryBuilder<T extends ParseObject> {
     }
 
     final String inQuery =
-        query._buildQueryRelationalKey(query.object.parseClassName, keyInQuery);
+        query._buildQueryRelationalKey(query.object!.parseClassName, keyInQuery);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$dontSelect\":$inQuery}'));
@@ -345,8 +345,8 @@ class QueryBuilder<T extends ParseObject> {
   ///
   /// Make sure to call this after defining your queries
   Future<ParseResponse> query<T extends ParseObject>(
-      {ProgressCallback progressCallback}) async {
-    return object.query<T>(
+      {ProgressCallback? progressCallback}) async {
+    return object!.query<T>(
       buildQuery(),
       progressCallback: progressCallback,
     );
@@ -355,12 +355,12 @@ class QueryBuilder<T extends ParseObject> {
   Future<ParseResponse> distinct<T extends ParseObject>(
       String className) async {
     final String queryString = 'distinct=$className';
-    return object.distinct<T>(queryString);
+    return object!.distinct<T>(queryString);
   }
 
   ///Counts the number of objects that match this query
   Future<ParseResponse> count() async {
-    return object.query(_buildQueryCount());
+    return object!.query(_buildQueryCount());
   }
 
   /// Builds the query for Parse

@@ -7,20 +7,20 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class ParseHTTPClient extends ParseClient {
   ParseHTTPClient(
-      {bool/*!*/ sendSessionId = false, SecurityContext securityContext}) {
+      {bool sendSessionId = false, SecurityContext? securityContext}) {
     _client = _ParseHTTPClient(
       sendSessionId: sendSessionId,
       securityContext: securityContext,
     );
   }
 
-  _ParseHTTPClient _client;
+  late _ParseHTTPClient _client;
 
   @override
   Future<ParseNetworkResponse> get(
     String path, {
-    ParseNetworkOptions options,
-    ProgressCallback onReceiveProgress,
+    ParseNetworkOptions? options,
+    ProgressCallback? onReceiveProgress,
   }) async {
     final http.Response response = await _client.get(
       Uri.parse(path),
@@ -33,8 +33,8 @@ class ParseHTTPClient extends ParseClient {
   @override
   Future<ParseNetworkByteResponse> getBytes(
     String path, {
-    ParseNetworkOptions options,
-    ProgressCallback onReceiveProgress,
+    ParseNetworkOptions? options,
+    ProgressCallback? onReceiveProgress,
   }) async {
     final http.Response response = await _client.get(
       Uri.parse(path),
@@ -47,8 +47,8 @@ class ParseHTTPClient extends ParseClient {
   @override
   Future<ParseNetworkResponse> put(
     String path, {
-    String data,
-    ParseNetworkOptions options,
+    String? data,
+    ParseNetworkOptions? options,
   }) async {
     final http.Response response = await _client.put(
       Uri.parse(path),
@@ -62,8 +62,8 @@ class ParseHTTPClient extends ParseClient {
   @override
   Future<ParseNetworkResponse> post(
     String path, {
-    String data,
-    ParseNetworkOptions options,
+    String? data,
+    ParseNetworkOptions? options,
   }) async {
     final http.Response response = await _client.post(
       Uri.parse(path),
@@ -77,9 +77,9 @@ class ParseHTTPClient extends ParseClient {
   @override
   Future<ParseNetworkResponse> postBytes(
     String path, {
-    Stream<List<int>> data,
-    ParseNetworkOptions options,
-    ProgressCallback onSendProgress,
+    Stream<List<int>>? data,
+    ParseNetworkOptions? options,
+    ProgressCallback? onSendProgress,
   }) async {
     final http.Response response = await _client.post(
       Uri.parse(path),
@@ -94,7 +94,7 @@ class ParseHTTPClient extends ParseClient {
 
   @override
   Future<ParseNetworkResponse> delete(String path,
-      {ParseNetworkOptions options}) async {
+      {ParseNetworkOptions? options}) async {
     final http.Response response = await _client.delete(
       Uri.parse(path),
       headers: options?.headers,
@@ -107,7 +107,7 @@ class ParseHTTPClient extends ParseClient {
 /// Creates a custom version of HTTP Client that has Parse Data Preset
 class _ParseHTTPClient extends http.BaseClient {
   _ParseHTTPClient(
-      {bool/*!*/ sendSessionId = false, SecurityContext securityContext})
+      {bool sendSessionId = false, SecurityContext? securityContext})
       : _sendSessionId = sendSessionId,
         _client = securityContext != null
             ? IOClient(HttpClient(context: securityContext))
@@ -117,7 +117,7 @@ class _ParseHTTPClient extends http.BaseClient {
   final bool _sendSessionId;
   final String _userAgent = '$keyLibraryName $keySdkVersion';
   ParseCoreData parseCoreData = ParseCoreData();
-  Map<String, String>/*?*/ additionalHeaders;
+  Map<String, String>? additionalHeaders;
 
   /// Overrides the call method for HTTP Client and adds custom headers
   @override
@@ -129,16 +129,16 @@ class _ParseHTTPClient extends http.BaseClient {
     if (_sendSessionId &&
         parseCoreData.sessionId != null &&
         request.headers[keyHeaderSessionToken] == null)
-      request.headers[keyHeaderSessionToken] = parseCoreData.sessionId;
+      request.headers[keyHeaderSessionToken] = parseCoreData.sessionId!;
 
     if (parseCoreData.clientKey != null)
-      request.headers[keyHeaderClientKey] = parseCoreData.clientKey;
+      request.headers[keyHeaderClientKey] = parseCoreData.clientKey!;
     if (parseCoreData.masterKey != null)
-      request.headers[keyHeaderMasterKey] = parseCoreData.masterKey;
+      request.headers[keyHeaderMasterKey] = parseCoreData.masterKey!;
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
-    if (additionalHeaders != null && additionalHeaders.isNotEmpty) {
-      additionalHeaders
+    if (additionalHeaders != null && additionalHeaders!.isNotEmpty) {
+      additionalHeaders!
           .forEach((String key, String value) => request.headers[key] = value);
     }
 

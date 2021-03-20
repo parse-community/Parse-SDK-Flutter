@@ -7,7 +7,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// [bool] debug will overwrite the current default debug settings and
   /// [ParseHttpClient] can be overwritten to create your own HTTP Client
   ParseObject(String className,
-      {bool debug, ParseClient client, bool autoSendSessionId})
+      {bool? debug, ParseClient? client, bool? autoSendSessionId})
       : super() {
     parseClassName = className;
     _path = '$keyEndPointClasses$className';
@@ -27,13 +27,13 @@ class ParseObject extends ParseBase implements ParseCloneable {
   dynamic clone(Map<String, dynamic> map) =>
       ParseObject.clone(parseClassName)..fromJson(map);
 
-  /*late*/String/*!*/ _path;
-  /*late*/String/*!*/ _aggregatepath;
-  bool _debug;
-  /*late*/ParseClient/*!*/ _client;
+  late String _path;
+  late String _aggregatepath;
+  late bool _debug;
+  late ParseClient _client;
 
   /// Gets an object from the server using it's [String] objectId
-  Future<ParseResponse> getObject(String/*!*/ objectId) async {
+  Future<ParseResponse> getObject(String objectId) async {
     try {
       final String uri = '$_path/$objectId';
       final Uri url = getSanitisedUri(_client, uri);
@@ -77,7 +77,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
-  Future<ParseResponse/*!*/> update() async {
+  Future<ParseResponse> update() async {
     try {
       final Uri url = getSanitisedUri(_client, '$_path/$objectId');
       final String body = json.encode(toJson(forApiRQ: true));
@@ -95,10 +95,10 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Saves the current object online
-  Future<ParseResponse/*!*/> save() async {
+  Future<ParseResponse> save() async {
     final ParseResponse childrenResponse = await _saveChildren(this);
     if (childrenResponse.success) {
-      ParseResponse response;
+      ParseResponse? response;
       if (objectId == null) {
         response = await create();
       } else if (_isDirty(false)) {
@@ -172,10 +172,10 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final ParseResponse response = await batchRequest(requests, chunk);
         totalResponse.success &= response.success;
         if (response.success) {
-          totalResponse.results.addAll(response.results);
+          totalResponse.results!.addAll(response.results!);
           totalResponse.count += response.count;
           for (int i = 0; i < response.count; i++) {
-            if (response.results[i] is ParseError) {
+            if (response.results![i] is ParseError) {
               // Batch request succeed, but part of batch failed.
               chunk[i]._revertSavingChanges();
             } else {
@@ -409,7 +409,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
   /// Can be used to create custom queries
   Future<ParseResponse> query<T extends ParseObject>(String query,
-      {ProgressCallback progressCallback}) async {
+      {ProgressCallback? progressCallback}) async {
     try {
       final Uri url = getSanitisedUri(_client, '$_path', query: query);
       final ParseNetworkResponse result = await _client.get(
@@ -436,7 +436,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
   /// Deletes the current object locally and online
   Future<ParseResponse> delete<T extends ParseObject>(
-      {String id, String path}) async {
+      {String? id, String? path}) async {
     try {
       path ??= _path;
       id ??= objectId;
