@@ -25,7 +25,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.preloadedColumns,
   }) : super(key: key);
 
-  final sdk.QueryBuilder<T> query;
+  final sdk.QueryBuilder<T>/*!*/ query;
   final Widget listLoadingElement;
   final Widget queryEmptyElement;
   final Duration duration;
@@ -115,7 +115,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                 event.index,
                 (BuildContext context, Animation<double> animation) =>
                     ParseLiveListElementWidget<T>(
-                      key: ValueKey<String>(event.object?.get<String>(
+                      key: ValueKey<String/*!*/>(event.object.get<String>(
                           sdk.keyVarObjectId,
                           defaultValue: 'removingItem')),
                       childBuilder: widget.childBuilder ??
@@ -145,7 +145,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   sdk.ParseLiveList<T> _liveList;
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
-  final ChildBuilder<T> removedItemBuilder;
+  final ChildBuilder<T>/*!*/ removedItemBuilder;
   bool noData = true;
 
   @override
@@ -200,7 +200,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   }
 }
 
-class ParseLiveListElementWidget<T extends sdk.ParseObject>
+class ParseLiveListElementWidget<T extends sdk.ParseObject/*!*/>
     extends StatefulWidget {
   const ParseLiveListElementWidget(
       {Key key,
@@ -213,8 +213,8 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
       : super(key: key);
 
   final sdk.StreamGetter<T> stream;
-  final sdk.DataGetter<T> loadedData;
-  final sdk.DataGetter<T> preLoadedData;
+  final sdk.DataGetter<T/*!*/> loadedData;
+  final sdk.DataGetter<T/*!*/> preLoadedData;
   final Animation<double> sizeFactor;
   final Duration duration;
   final ChildBuilder<T> childBuilder;
@@ -226,7 +226,7 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
   }
 }
 
-class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
+class _ParseLiveListElementWidgetState<T extends sdk.ParseObject /*!*/ >
     extends State<ParseLiveListElementWidget<T>>
     with SingleTickerProviderStateMixin {
   _ParseLiveListElementWidgetState(sdk.DataGetter<T> loadedDataGetter,
@@ -255,7 +255,7 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
     }
   }
 
-  sdk.ParseLiveListElementSnapshot<T> _snapshot;
+  sdk.ParseLiveListElementSnapshot<T>/*!*/ _snapshot;
 
   StreamSubscription<T> _streamSubscription;
 
