@@ -126,15 +126,17 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   final sdk.QueryBuilder<T> query;
   sdk.ParseLiveList<T> _liveGrid;
   final ChildBuilder<T> removedItemBuilder;
-  bool noData = false;
+  bool noData = true;
 
   @override
   Widget build(BuildContext context) {
-    return _liveGrid == null
-        ? widget.gridLoadingElement ?? Container()
-        : noData
-            ? widget.queryEmptyElement ?? Container()
-            : buildAnimatedGrid();
+    if (_liveGrid == null) {
+      return widget.gridLoadingElement ?? Container();
+    }
+    if (noData) {
+      return widget.queryEmptyElement ?? Container();
+    }
+    return buildAnimatedGrid(_liveGrid);
   }
 
   @override
@@ -144,7 +146,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     }
   }
 
-  Widget buildAnimatedGrid() {
+  Widget buildAnimatedGrid(sdk.ParseLiveList<T> liveGrid) {
     Animation<double> boxAnimation;
     boxAnimation = Tween<double>(
       begin: 0.0,
@@ -160,7 +162,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       ),
     );
     return GridView.builder(
-        itemCount: _liveGrid?.size,
+        itemCount: liveGrid.size,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: widget.crossAxisCount,
             crossAxisSpacing: widget.crossAxisSpacing,
@@ -171,11 +173,10 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
           int index,
         ) {
           return ParseLiveListElementWidget<T>(
-            key: ValueKey<String>(
-                _liveGrid?.getIdentifier(index) ?? '_NotFound'),
-            stream: () => _liveGrid?.getAt(index),
-            loadedData: () => _liveGrid?.getLoadedAt(index),
-            preLoadedData: () => _liveGrid?.getPreLoadedAt(index),
+            key: ValueKey<String>(liveGrid.getIdentifier(index)),
+            stream: () => liveGrid.getAt(index),
+            loadedData: () => liveGrid.getLoadedAt(index),
+            preLoadedData: () => liveGrid.getPreLoadedAt(index),
             sizeFactor: boxAnimation,
             duration: widget.duration,
             childBuilder:
