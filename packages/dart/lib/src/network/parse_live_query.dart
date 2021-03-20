@@ -160,13 +160,13 @@ class LiveQueryClient {
   }
 
   parse_web_socket.WebSocket _webSocket;
-  bool/*!*/ _debug;
+  /*late*/bool/*!*/ _debug;
   bool _sendSessionId;
   WebSocketChannel _channel;
   String _liveQueryURL;
   bool _connecting = false;
   StreamController<LiveQueryClientEvent> _clientEventStreamController;
-  Stream<LiveQueryClientEvent>/*!*/ _clientEventStream;
+  /*late*/Stream<LiveQueryClientEvent>/*!*/ _clientEventStream;
   LiveQueryReconnectingController/*!*/ reconnectingController;
 
   final Map<int, Subscription> _requestSubscription = <int, Subscription>{};
