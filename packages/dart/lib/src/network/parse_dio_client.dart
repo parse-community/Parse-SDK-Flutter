@@ -150,7 +150,8 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) {
-    options ??= dio.Options(headers: Map<String, dynamic>());
+    options ??= dio.Options();
+    options.headers ??= <String, dynamic>{};
     if (!identical(0, 0.0)) {
       options.headers![keyHeaderUserAgent] = _userAgent;
     }
