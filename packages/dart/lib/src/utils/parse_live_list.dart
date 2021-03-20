@@ -441,8 +441,7 @@ class ParseLiveList<T extends ParseObject> {
   String getIdentifier(int index) {
     if (index < _list.length) {
       return _list[index].object!.get<String>(keyVarObjectId)! +
-              _list[index].object!.get<DateTime>(keyVarUpdatedAt).toString() ??
-          '';
+              _list[index].object!.get<DateTime>(keyVarUpdatedAt).toString();
     }
     return 'NotFound';
   }
