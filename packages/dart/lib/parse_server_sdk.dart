@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:dio/dio.dart' hide Options;
 import 'package:meta/meta.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:parse_server_sdk/src/network/parse_http_client.dart';
