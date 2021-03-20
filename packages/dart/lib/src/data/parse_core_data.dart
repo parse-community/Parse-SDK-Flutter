@@ -63,7 +63,10 @@ class ParseCoreData {
     _instance.connectivityProvider = connectivityProvider;
     _instance.fileDirectory = fileDirectory;
     _instance.appResumedStream = appResumedStream;
-    _instance.clientCreator = clientCreator;
+    _instance.clientCreator = clientCreator ??
+        ({bool sendSessionId, SecurityContext securityContext}) =>
+            ParseHTTPClient(
+                sendSessionId: sendSessionId, securityContext: securityContext);
   }
 
   String applicationId;
@@ -85,10 +88,7 @@ class ParseCoreData {
   ParseConnectivityProvider connectivityProvider;
   String fileDirectory;
   Stream<void> appResumedStream;
-  ParseClientCreator /*!*/ clientCreator = (
-          {bool sendSessionId, SecurityContext securityContext}) =>
-      ParseHTTPClient(
-          sendSessionId: sendSessionId, securityContext: securityContext);
+  ParseClientCreator clientCreator;
 
   void registerSubClass(
       String className, ParseObjectConstructor objectConstructor) {
