@@ -180,8 +180,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         itemBuilder:
             (BuildContext context, int index, Animation<double> animation) {
           return ParseLiveListElementWidget<T>(
-            key: ValueKey<String>(
-                liveList.getIdentifier(index) ?? '_NotFound'),
+            key: ValueKey<String>(liveList.getIdentifier(index)),
             stream: () => liveList.getAt(index),
             loadedData: () => liveList.getLoadedAt(index),
             preLoadedData: () => liveList.getPreLoadedAt(index),
