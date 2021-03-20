@@ -150,11 +150,13 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
 
   @override
   Widget build(BuildContext context) {
-    return _liveList == null
-        ? widget.listLoadingElement ?? Container()
-        : noData
-            ? widget.queryEmptyElement ?? Container()
-            : buildAnimatedList(_liveList);
+    if (_liveList == null) {
+      return widget.listLoadingElement ?? Container();
+    }
+    if (noData) {
+      return widget.queryEmptyElement ?? Container();
+    }
+    return buildAnimatedList(_liveList);
   }
 
   @override
