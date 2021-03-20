@@ -23,47 +23,43 @@ class CoreStoreSharedPrefsImp implements sdk.CoreStore {
 
   @override
   Future<bool> containsKey(String key) async {
-    return Future<bool>.value(_store.containsKey(key));
+    return _store.containsKey(key);
   }
 
   @override
   Future<dynamic> get(String key) async {
-    return await _store.get(key);
+    return _store.get(key);
   }
 
   @override
   Future<bool> getBool(String key) async {
-    final bool storedItem = await _store.get(key);
-    return storedItem;
+    return _store.getBool(key);
   }
 
   @override
   Future<double> getDouble(String key) async {
-    final double storedItem = await _store.get(key);
-    return storedItem;
+    return _store.getDouble(key);
   }
 
   @override
   Future<int> getInt(String key) async {
-    final int storedItem = await _store.get(key);
-    return storedItem;
+    return _store.getInt(key);
   }
 
   @override
   Future<String> getString(String key) async {
-    final String storedItem = await _store.get(key);
-    return storedItem;
+    return _store.getString(key);
   }
 
   @override
   Future<List<String>> getStringList(String key) async {
-    final List<String> storedItem = await _store.get(key);
-    return storedItem;
+    return _store.getStringList(key);
   }
+
 
   @override
   Future<void> remove(String key) async {
-    return await _store.remove(key);
+    return _store.remove(key);
   }
 
   @override
