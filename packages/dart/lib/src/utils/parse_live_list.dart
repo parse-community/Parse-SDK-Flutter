@@ -3,8 +3,8 @@ part of flutter_parse_sdk;
 // ignore_for_file: invalid_use_of_protected_member
 class ParseLiveList<T extends ParseObject> {
   ParseLiveList._(this._query, this._listeningIncludes, this._lazyLoading,
-      {List<String> preloadedColumns = const <String>[]})
-      : _preloadedColumns = preloadedColumns {
+      {List<String>? preloadedColumns})
+      : _preloadedColumns = preloadedColumns ?? const <String>[] {
     _debug = isDebugEnabled();
   }
 
@@ -13,7 +13,7 @@ class ParseLiveList<T extends ParseObject> {
     bool? listenOnAllSubItems,
     List<String>? listeningIncludes,
     bool lazyLoading = true,
-    List<String> preloadedColumns = const <String>[],
+    List<String>? preloadedColumns,
   }) {
     final ParseLiveList<T> parseLiveList = ParseLiveList<T>._(
       _query,
@@ -22,7 +22,7 @@ class ParseLiveList<T extends ParseObject> {
               _query.limiters['include']?.toString().split(',') ?? <String>[])
           : _toIncludeMap(listeningIncludes ?? <String>[]),
       lazyLoading,
-      preloadedColumns: preloadedColumns,
+      preloadedColumns: preloadedColumns ?? const <String>[],
     );
 
     return parseLiveList._init().then((_) {
