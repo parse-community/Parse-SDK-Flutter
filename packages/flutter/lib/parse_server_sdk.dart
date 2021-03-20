@@ -135,26 +135,30 @@ class Parse extends sdk.Parse
   }
 }
 
+Future<String> dbDirectory() async {
+  String dbDirectory = '';
+  if (!sdk.parseIsWeb &&
+      (Platform.isIOS ||
+          Platform.isAndroid ||
+          Platform.isMacOS ||
+          Platform.isLinux ||
+          Platform.isWindows)) {
+    dbDirectory = (await getApplicationDocumentsDirectory()).path;
+  }
+  return path.join('$dbDirectory/parse', 'parse.db');
+}
+
 class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
   CoreStoreSembastImp._();
 
   static sdk.CoreStoreSembastImp _sembastImp;
 
-  static Future<sdk.CoreStore> getInstance(
+  static Future<sdk.CoreStore> getInstance(String dbPath,
       {DatabaseFactory factory, String password}) async {
-    if (_sembastImp == null) {
-      String dbDirectory = '';
-      if (!sdk.parseIsWeb &&
-          (Platform.isIOS ||
-              Platform.isAndroid ||
-              Platform.isMacOS ||
-              Platform.isLinux ||
-              Platform.isWindows))
-        dbDirectory = (await getApplicationDocumentsDirectory()).path;
-      final String dbPath = path.join('$dbDirectory/parse', 'parse.db');
-      _sembastImp ??= await sdk.CoreStoreSembastImp.getInstance(dbPath,
-          factory: factory, password: password);
-    }
+    _sembastImp ??= await sdk.CoreStoreSembastImp.getInstance(
+        await dbDirectory(),
+        factory: factory,
+        password: password);
     return CoreStoreSembastImp._();
   }
 
