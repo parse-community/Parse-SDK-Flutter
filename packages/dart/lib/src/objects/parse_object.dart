@@ -27,10 +27,10 @@ class ParseObject extends ParseBase implements ParseCloneable {
   dynamic clone(Map<String, dynamic> map) =>
       ParseObject.clone(parseClassName)..fromJson(map);
 
-  String/*!*/ _path;
-  String/*!*/ _aggregatepath;
+  /*late*/String/*!*/ _path;
+  /*late*/String/*!*/ _aggregatepath;
   bool _debug;
-  ParseClient/*!*/ _client;
+  /*late*/ParseClient/*!*/ _client;
 
   /// Gets an object from the server using it's [String] objectId
   Future<ParseResponse> getObject(String/*!*/ objectId) async {
