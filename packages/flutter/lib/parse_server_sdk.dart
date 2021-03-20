@@ -103,18 +103,16 @@ class Parse extends sdk.Parse
 
   @override
   Future<sdk.ParseConnectivityResult> checkConnectivity() async {
-    //Connectivity works differently on web
-    if (!sdk.parseIsWeb) {
-      switch (await Connectivity().checkConnectivity()) {
-        case ConnectivityResult.wifi:
-          return sdk.ParseConnectivityResult.wifi;
-        case ConnectivityResult.mobile:
-          return sdk.ParseConnectivityResult.mobile;
-        case ConnectivityResult.none:
-          return sdk.ParseConnectivityResult.none;
-      }
+    switch (await Connectivity().checkConnectivity()) {
+      case ConnectivityResult.wifi:
+        return sdk.ParseConnectivityResult.wifi;
+      case ConnectivityResult.mobile:
+        return sdk.ParseConnectivityResult.mobile;
+      case ConnectivityResult.none:
+        return sdk.ParseConnectivityResult.none;
+      default:
+        return sdk.ParseConnectivityResult.wifi;
     }
-    return sdk.ParseConnectivityResult.wifi;
   }
 
   @override
