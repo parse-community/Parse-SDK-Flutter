@@ -39,7 +39,7 @@ class Parse extends sdk.Parse
   /// [appName], [appVersion] and [appPackageName] are automatically set on Android and IOS, if they are not defined. You should provide a value on web.
   /// [fileDirectory] is not used on web
   @override
-  Future<Parse> initialize(
+  Future<sdk.Parse> initialize(
     String appId,
     String serverUrl, {
     bool debug = false,
