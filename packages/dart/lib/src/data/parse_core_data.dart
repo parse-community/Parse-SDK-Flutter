@@ -52,9 +52,10 @@ class ParseCoreData {
     _instance.sessionId = sessionId;
     _instance.autoSendSessionId = autoSendSessionId;
     _instance.securityContext = securityContext;
-    _instance.liveListRetryIntervals = liveListRetryIntervals ?? parseIsWeb
-        ? <int>[0, 500, 1000, 2000, 5000]
-        : <int>[0, 500, 1000, 2000, 5000, 10000];
+    _instance.liveListRetryIntervals = liveListRetryIntervals ??
+        (parseIsWeb
+            ? <int>[0, 500, 1000, 2000, 5000]
+            : <int>[0, 500, 1000, 2000, 5000, 10000]);
     _instance._subClassHandler = ParseSubClassHandler(
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,

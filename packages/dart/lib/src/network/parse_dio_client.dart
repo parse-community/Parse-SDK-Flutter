@@ -31,7 +31,7 @@ class ParseDioClient extends ParseClient {
           data: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-          data: error.response?.data, statusCode: error.response?.statusCode);
+          data: error.response?.data, statusCode: error.response.statusCode);
     }
   }
 
@@ -51,7 +51,7 @@ class ParseDioClient extends ParseClient {
           bytes: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
       return ParseNetworkByteResponse(
-          data: error.response?.data, statusCode: error.response?.statusCode);
+          data: error.response?.data, statusCode: error.response.statusCode);
     }
   }
 
@@ -68,7 +68,7 @@ class ParseDioClient extends ParseClient {
           data: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-          data: error.response?.data, statusCode: error.response?.statusCode);
+          data: error.response?.data, statusCode: error.response.statusCode);
     }
   }
 
@@ -85,7 +85,7 @@ class ParseDioClient extends ParseClient {
           data: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-          data: error.response?.data, statusCode: error.response?.statusCode);
+          data: error.response?.data, statusCode: error.response.statusCode);
     }
   }
 
@@ -105,7 +105,7 @@ class ParseDioClient extends ParseClient {
           data: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-          data: error.response?.data, statusCode: error.response?.statusCode);
+          data: error.response?.data, statusCode: error.response.statusCode);
     }
   }
 
@@ -121,7 +121,7 @@ class ParseDioClient extends ParseClient {
           data: dioResponse.data, statusCode: dioResponse.statusCode);
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-          data: error.response?.data, statusCode: error.response?.statusCode);
+          data: error.response?.data, statusCode: error.response.statusCode);
     }
   }
 }

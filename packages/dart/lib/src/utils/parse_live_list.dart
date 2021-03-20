@@ -441,7 +441,7 @@ class ParseLiveList<T extends ParseObject> {
   String getIdentifier(int index) {
     if (index < _list.length) {
       return _list[index].object.get<String>(keyVarObjectId) +
-              _list[index].object.get<DateTime>(keyVarUpdatedAt)?.toString() ??
+              _list[index].object.get<DateTime>(keyVarUpdatedAt).toString() ??
           '';
     }
     return 'NotFound';
@@ -566,7 +566,7 @@ class ParseLiveListElement<T extends ParseObject/*!*/> {
 
   Stream<T> get stream => _streamController.stream;
 
-  T get object => _object?.clone(_object?.toJson(full: true));
+  T get object => _object?.clone(_object.toJson(full: true));
 
   Map<PathKey, dynamic> _toSubscriptionMap(Map<String, dynamic> map) {
     final Map<PathKey, dynamic> result = Map<PathKey, dynamic>();
@@ -631,7 +631,7 @@ class ParseLiveListElement<T extends ParseObject/*!*/> {
             parentObject[currentKey.key] = newObject;
             if (!_streamController.isClosed) {
               _streamController
-                  .add(_object?.clone(_object?.toJson(full: true)));
+                  .add(_object?.clone(_object.toJson(full: true)));
               //Resubscribe subitems
               // TODO(any): only resubscribe on changed pointers
               _unsubscribe(path);
@@ -653,7 +653,7 @@ class ParseLiveListElement<T extends ParseObject/*!*/> {
     _object = value;
     _unsubscribe(_updatedSubItems);
     _subscribe();
-    _streamController.add(_object?.clone(_object?.toJson(full: true)));
+    _streamController.add(_object?.clone(_object.toJson(full: true)));
   }
 
   bool get loaded => _loaded;
@@ -667,7 +667,7 @@ class ParseLiveListElement<T extends ParseObject/*!*/> {
     if (loaded) {
       _subscriptionQueue.whenComplete(() async {
         await _updateSubItems(_object, _updatedSubItems);
-//        _streamController.add(_object?.clone(_object?.toJson(full: true)));
+//        _streamController.add(_object?.clone(_object.toJson(full: true)));
       });
     }
   }
