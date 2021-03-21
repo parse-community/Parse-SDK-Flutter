@@ -31,7 +31,7 @@ class CoreStoreSembastImp implements CoreStore {
       }());
       final Database db = await factory.openDatabase(dbPath,
           codec: !parseIsWeb
-              ? getXXTeaSembastCodec(password: password = 'flutter_sdk')
+              ? getXXTeaSembastCodec(password: password ?? 'flutter_sdk')
               : null);
       _instance =
           CoreStoreSembastImp._internal(db, StoreRef<String, String>.main());
