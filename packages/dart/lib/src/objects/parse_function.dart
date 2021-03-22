@@ -6,9 +6,9 @@ class ParseCloudFunction extends ParseObject {
   /// {https://docs.parseplatform.org/cloudcode/guide/}
   ParseCloudFunction(
     this.functionName, {
-    bool debug,
-    ParseClient client,
-    bool autoSendSessionId,
+    bool? debug,
+    ParseClient? client,
+    bool? autoSendSessionId,
   }) : super(
           functionName,
           client: client,
@@ -22,13 +22,14 @@ class ParseCloudFunction extends ParseObject {
 
   @override
   // ignore: overridden_fields
-  String _path;
+  late String _path;
 
   /// Executes a cloud function
   ///
   /// To add the parameters, create an object and call [set](value to set)
   Future<ParseResponse> execute(
-      {Map<String, dynamic> parameters, Map<String, String> headers}) async {
+      {Map<String, dynamic>? parameters,
+      Map<String, String> headers = const <String, String>{}}) async {
     final String uri = '${ParseCoreData().serverUrl}$_path';
     if (parameters != null) {
       _setObjectData(parameters);
@@ -48,7 +49,8 @@ class ParseCloudFunction extends ParseObject {
   ///
   /// To add the parameters, create an object and call [set](value to set)
   Future<ParseResponse> executeObjectFunction<T extends ParseObject>(
-      {Map<String, dynamic> parameters, Map<String, String> headers}) async {
+      {Map<String, dynamic>? parameters,
+      Map<String, String> headers = const <String, String>{}}) async {
     final String uri = '${ParseCoreData().serverUrl}$_path';
     if (parameters != null) {
       _setObjectData(parameters);

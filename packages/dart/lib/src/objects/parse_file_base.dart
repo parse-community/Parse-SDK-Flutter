@@ -5,25 +5,27 @@ abstract class ParseFileBase extends ParseObject {
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFileBase(
-      {@required String name,
-      String url,
-      bool debug,
-      ParseClient client,
-      bool autoSendSessionId})
+      {required String name,
+      String? url,
+      bool? debug,
+      ParseClient? client,
+      bool? autoSendSessionId})
       : super(keyFileClassname,
             debug: debug,
             autoSendSessionId: autoSendSessionId,
             client: client) {
     _path = '/files/$name';
     this.name = name;
-    this.url = url;
+    if(url != null)
+      this.url = url;
+
   }
 
-  String get name => super.get<String>(keyVarName);
+  String get name => super.get<String>(keyVarName)!;
   set name(String name) => set<String>(keyVarName, name);
 
-  String get url => super.get<String>(keyVarURL);
-  set url(String url) => set<String>(keyVarURL, url);
+  String? get url => super.get<String>(keyVarURL);
+  set url(String? url) => set<String?>(keyVarURL, url);
 
   bool get saved => url != null;
 
@@ -33,7 +35,7 @@ abstract class ParseFileBase extends ParseObject {
     bool forApiRQ = false,
     bool allowCustomObjectId = false,
   }) =>
-      <String, String>{'__type': keyFile, 'name': name, 'url': url};
+      <String, String?>{'__type': keyFile, 'name': name, 'url': url};
 
   @override
   String toString() => json.encode(toJson(full: true));
@@ -45,7 +47,7 @@ abstract class ParseFileBase extends ParseObject {
   }
 
   /// Uploads a file to Parse Server
-  Future<ParseResponse> upload({ProgressCallback progressCallback});
+  Future<ParseResponse> upload({ProgressCallback? progressCallback});
 
-  Future<ParseFileBase> download({ProgressCallback progressCallback});
+  Future<ParseFileBase> download({ProgressCallback? progressCallback});
 }

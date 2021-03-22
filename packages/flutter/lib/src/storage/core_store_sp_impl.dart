@@ -3,16 +3,15 @@ part of flutter_parse_sdk_flutter;
 class CoreStoreSharedPrefsImp implements sdk.CoreStore {
   CoreStoreSharedPrefsImp._internal(this._store);
 
-  static CoreStoreSharedPrefsImp _instance;
+  static CoreStoreSharedPrefsImp? _instance;
 
-  static Future<sdk.CoreStore> getInstance(
-      {SharedPreferences store, String password = 'flutter_sdk'}) async {
+  static Future<sdk.CoreStore> getInstance({SharedPreferences? store}) async {
     if (_instance == null) {
       store ??= await SharedPreferences.getInstance();
       _instance = CoreStoreSharedPrefsImp._internal(store);
     }
 
-    return _instance;
+    return _instance!;
   }
 
   final SharedPreferences _store;
@@ -24,47 +23,42 @@ class CoreStoreSharedPrefsImp implements sdk.CoreStore {
 
   @override
   Future<bool> containsKey(String key) async {
-    return Future<bool>.value(_store.containsKey(key));
+    return _store.containsKey(key);
   }
 
   @override
   Future<dynamic> get(String key) async {
-    return await _store.get(key);
+    return _store.get(key);
   }
 
   @override
-  Future<bool> getBool(String key) async {
-    final bool storedItem = await _store.get(key);
-    return storedItem;
+  Future<bool?> getBool(String key) async {
+    return _store.getBool(key);
   }
 
   @override
-  Future<double> getDouble(String key) async {
-    final double storedItem = await _store.get(key);
-    return storedItem;
+  Future<double?> getDouble(String key) async {
+    return _store.getDouble(key);
   }
 
   @override
-  Future<int> getInt(String key) async {
-    final int storedItem = await _store.get(key);
-    return storedItem;
+  Future<int?> getInt(String key) async {
+    return _store.getInt(key);
   }
 
   @override
-  Future<String> getString(String key) async {
-    final String storedItem = await _store.get(key);
-    return storedItem;
+  Future<String?> getString(String key) async {
+    return _store.getString(key);
   }
 
   @override
-  Future<List<String>> getStringList(String key) async {
-    final List<String> storedItem = await _store.get(key);
-    return storedItem;
+  Future<List<String>?> getStringList(String key) async {
+    return _store.getStringList(key);
   }
 
   @override
-  Future<void> remove(String key) async {
-    return await _store.remove(key);
+  Future<bool> remove(String key) async {
+    return _store.remove(key);
   }
 
   @override

@@ -9,9 +9,7 @@ dynamic dateTimeEncoder(dynamic item) {
 }
 
 /// Custom json encoder for types related to parse
-dynamic parseEncode(dynamic value, {bool full}) {
-  full ??= false;
-
+dynamic parseEncode(dynamic value, {bool full = false}) {
   if (value is Uint8List) {
     return _encodeUint8List(value);
   }

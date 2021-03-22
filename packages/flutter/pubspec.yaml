@@ -1,32 +1,37 @@
 name: parse_server_sdk_flutter
 description: Flutter plugin for Parse Server, (https://parseplatform.org), (https://back4app.com)
-version: 2.1.0
+version: 3.0.0
 homepage: https://github.com/phillwiggins/flutter_parse_sdk
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
-  parse_server_sdk: ^2.1.0
+  parse_server_sdk:
+#    path: ../dart
+    git:
+      url: git://github.com/parse-community/Parse-SDK-Flutter.git
+      ref: nullsafety
+      path: packages/dart
 
   # Networking
-  dio: ^3.0.10
-  connectivity: ^2.0.2 # only used in the flutter part
+  dio: ^4.0.0-prev3
+  connectivity: ^3.0.3 # only used in the flutter part
 
   #Database
-  shared_preferences: ^0.5.12+4 # only used in the flutter part
+  shared_preferences: ^2.0.5 # only used in the flutter part
 
   # Utils
-  path_provider: ^1.6.27 # only used in the flutter part
-  package_info: ^0.4.3+4 # only used in the flutter part
-  sembast: ^2.4.9 # required for transitive use only
-  path: ^1.7.0 # required for transitive use only
+  path_provider: ^2.0.1 # only used in the flutter part
+  package_info_plus: ^1.0.0 # only used in the flutter part
+  sembast: ^3.0.0+4 # required for transitive use only
+  path: ^1.8.0 # required for transitive use only
 
 dev_dependencies:
   # Testing
   flutter_test:
     sdk: flutter
-  mockito: ^4.1.4
+  mockito: ^5.0.2

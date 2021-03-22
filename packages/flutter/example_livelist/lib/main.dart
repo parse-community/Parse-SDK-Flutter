@@ -11,9 +11,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool initFailed;
+  bool? initFailed;
 
-  QueryBuilder<ParseObject> _queryBuilder;
+  late QueryBuilder<ParseObject> _queryBuilder;
 
   @override
   void initState() {
@@ -87,14 +87,14 @@ class _MyAppState extends State<MyApp> {
                       children: <Widget>[
                         Flexible(
                           child: Text(
-                              snapshot.loadedData.get<int>('order').toString()),
+                              snapshot.loadedData!.get<int>('order').toString()),
                           flex: 1,
                         ),
                         Flexible(
                           child: Container(
                             alignment: Alignment.center,
                             child: Text(
-                              snapshot.loadedData.get<String>('text'),
+                              snapshot.loadedData!.get<String>('text')!,
                             ),
                           ),
                           flex: 10,
@@ -102,7 +102,7 @@ class _MyAppState extends State<MyApp> {
                       ],
                     ),
                     onLongPress: () {
-                      objectFormKey.currentState.setObject(snapshot.loadedData);
+                      objectFormKey.currentState!.setObject(snapshot.loadedData);
                     },
                   );
                 } else {
@@ -124,17 +124,17 @@ class _MyAppState extends State<MyApp> {
 }
 
 class ObjectForm extends StatefulWidget {
-  const ObjectForm({Key key}) : super(key: key);
+  const ObjectForm({Key? key}) : super(key: key);
 
   @override
   _ObjectFormState createState() => _ObjectFormState();
 }
 
 class _ObjectFormState extends State<ObjectForm> {
-  ParseObject _currentObject;
+  ParseObject? _currentObject;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  void setObject(ParseObject object) {
+  void setObject(ParseObject? object) {
     setState(() {
       _currentObject = object;
     });
@@ -153,19 +153,19 @@ class _ObjectFormState extends State<ObjectForm> {
                   Flexible(
                     flex: 1,
                     child: TextFormField(
-                      initialValue: _currentObject.get<int>('order').toString(),
+                      initialValue: _currentObject!.get<int>('order').toString(),
                       keyboardType: TextInputType.number,
-                      onSaved: (String value) {
-                        _currentObject.set('order', int.parse(value));
+                      onSaved: (String? value) {
+                        _currentObject!.set('order', int.parse(value!));
                       },
                     ),
                   ),
                   Flexible(
                     flex: 10,
                     child: TextFormField(
-                      initialValue: _currentObject.get<String>('text'),
-                      onSaved: (String value) {
-                        _currentObject.set('text', value);
+                      initialValue: _currentObject!.get<String>('text'),
+                      onSaved: (String? value) {
+                        _currentObject!.set('text', value);
                       },
                     ),
                   )
@@ -175,12 +175,12 @@ class _ObjectFormState extends State<ObjectForm> {
                   icon: const Icon(Icons.save),
                   onPressed: () {
                     setState(() {
-                      _formKey.currentState.save();
-                      final ParseObject object = _currentObject;
+                      _formKey.currentState!.save();
+                      final ParseObject? object = _currentObject;
                       //Delay to highlight the animation.
                       Future<void>.delayed(const Duration(seconds: 1))
                           .then((_) {
-                        object.save();
+                        object!.save();
                       });
                       _currentObject = null;
                     });

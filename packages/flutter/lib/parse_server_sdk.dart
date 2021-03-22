@@ -7,7 +7,7 @@ import 'dart:ui' as ui;
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart' as sdk;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -39,32 +39,31 @@ class Parse extends sdk.Parse
   /// [appName], [appVersion] and [appPackageName] are automatically set on Android and IOS, if they are not defined. You should provide a value on web.
   /// [fileDirectory] is not used on web
   @override
-  Future<Parse> initialize(
+  Future<sdk.Parse> initialize(
     String appId,
     String serverUrl, {
     bool debug = false,
-    String appName,
-    String appVersion,
-    String appPackageName,
-    String locale,
-    String liveQueryUrl,
-    String clientKey,
-    String masterKey,
-    String sessionId,
+    String? appName,
+    String? appVersion,
+    String? appPackageName,
+    String? locale,
+    String? liveQueryUrl,
+    String? clientKey,
+    String? masterKey,
+    String? sessionId,
     bool autoSendSessionId = true,
-    SecurityContext securityContext,
-    sdk.CoreStore coreStore,
-    Map<String, sdk.ParseObjectConstructor> registeredSubClassMap,
-    sdk.ParseUserConstructor parseUserConstructor,
-    sdk.ParseFileConstructor parseFileConstructor,
-    List<int> liveListRetryIntervals,
-    sdk.ParseConnectivityProvider connectivityProvider,
-    String fileDirectory,
-    Stream<void> appResumedStream,
-    sdk.ParseClientCreator clientCreator,
+    SecurityContext? securityContext,
+    sdk.CoreStore? coreStore,
+    Map<String, sdk.ParseObjectConstructor>? registeredSubClassMap,
+    sdk.ParseUserConstructor? parseUserConstructor,
+    sdk.ParseFileConstructor? parseFileConstructor,
+    List<int>? liveListRetryIntervals,
+    sdk.ParseConnectivityProvider? connectivityProvider,
+    String? fileDirectory,
+    Stream<void>? appResumedStream,
+    sdk.ParseClientCreator? clientCreator,
   }) async {
-    if (!sdk.parseIsWeb &&
-        (appName == null || appVersion == null || appPackageName == null)) {
+    if (appName == null || appVersion == null || appPackageName == null) {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
       appName ??= packageInfo.appName;
       appVersion ??= packageInfo.version;
@@ -78,17 +77,15 @@ class Parse extends sdk.Parse
       appName: appName,
       appVersion: appVersion,
       appPackageName: appPackageName,
-      locale: locale ?? sdk.parseIsWeb
-          ? ui.window.locale.toString()
-          : Platform.localeName,
+      locale: locale ??
+          (sdk.parseIsWeb ? ui.window.locale.toString() : Platform.localeName),
       liveQueryUrl: liveQueryUrl,
       clientKey: clientKey,
       masterKey: masterKey,
       sessionId: sessionId,
       autoSendSessionId: autoSendSessionId,
       securityContext: securityContext,
-      coreStore: coreStore ??
-          await CoreStoreSharedPrefsImp.getInstance(password: masterKey),
+      coreStore: coreStore ?? await CoreStoreSharedPrefsImp.getInstance(),
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
@@ -106,18 +103,16 @@ class Parse extends sdk.Parse
 
   @override
   Future<sdk.ParseConnectivityResult> checkConnectivity() async {
-    //Connectivity works differently on web
-    if (!sdk.parseIsWeb) {
-      switch (await Connectivity().checkConnectivity()) {
-        case ConnectivityResult.wifi:
-          return sdk.ParseConnectivityResult.wifi;
-        case ConnectivityResult.mobile:
-          return sdk.ParseConnectivityResult.mobile;
-        case ConnectivityResult.none:
-          return sdk.ParseConnectivityResult.none;
-      }
+    switch (await Connectivity().checkConnectivity()) {
+      case ConnectivityResult.wifi:
+        return sdk.ParseConnectivityResult.wifi;
+      case ConnectivityResult.mobile:
+        return sdk.ParseConnectivityResult.mobile;
+      case ConnectivityResult.none:
+        return sdk.ParseConnectivityResult.none;
+      default:
+        return sdk.ParseConnectivityResult.wifi;
     }
-    return sdk.ParseConnectivityResult.wifi;
   }
 
   @override
@@ -140,69 +135,77 @@ class Parse extends sdk.Parse
   }
 }
 
+Future<String> dbDirectory() async {
+  String dbDirectory = '';
+  if (!sdk.parseIsWeb &&
+      (Platform.isIOS ||
+          Platform.isAndroid ||
+          Platform.isMacOS ||
+          Platform.isLinux ||
+          Platform.isWindows)) {
+    dbDirectory = (await getApplicationDocumentsDirectory()).path;
+  }
+  return path.join('$dbDirectory/parse', 'parse.db');
+}
+
 class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
   CoreStoreSembastImp._();
 
-  static sdk.CoreStoreSembastImp _sembastImp;
+  static sdk.CoreStoreSembastImp? _sembastImp;
 
-  static Future<sdk.CoreStore> getInstance(
-      {DatabaseFactory factory, String password = 'flutter_sdk'}) async {
-    if (_sembastImp == null) {
-      String dbDirectory = '';
-      if (!sdk.parseIsWeb &&
-          (Platform.isIOS || Platform.isAndroid || Platform.isMacOS))
-        dbDirectory = (await getApplicationDocumentsDirectory()).path;
-      final String dbPath = path.join('$dbDirectory/parse', 'parse.db');
-      _sembastImp ??= await sdk.CoreStoreSembastImp.getInstance(dbPath,
-          factory: factory, password: password);
-    }
+  static Future<sdk.CoreStore> getInstance(String dbPath,
+      {DatabaseFactory? factory, String? password}) async {
+    _sembastImp ??= await (sdk.CoreStoreSembastImp.getInstance(
+        await dbDirectory(),
+        factory: factory,
+        password: password) as FutureOr<sdk.CoreStoreSembastImp?>);
     return CoreStoreSembastImp._();
   }
 
   @override
-  Future<bool> clear() => _sembastImp.clear();
+  Future<bool> clear() => _sembastImp!.clear();
 
   @override
-  Future<bool> containsKey(String key) => _sembastImp.containsKey(key);
+  Future<bool> containsKey(String key) => _sembastImp!.containsKey(key);
 
   @override
-  Future<dynamic> get(String key) => _sembastImp.get(key);
+  Future<dynamic> get(String key) => _sembastImp!.get(key);
 
   @override
-  Future<bool> getBool(String key) => _sembastImp.getBool(key);
+  Future<bool?> getBool(String key) => _sembastImp!.getBool(key);
 
   @override
-  Future<double> getDouble(String key) => _sembastImp.getDouble(key);
+  Future<double?> getDouble(String key) => _sembastImp!.getDouble(key);
 
   @override
-  Future<int> getInt(String key) => _sembastImp.getInt(key);
+  Future<int?> getInt(String key) => _sembastImp!.getInt(key);
 
   @override
-  Future<String> getString(String key) => _sembastImp.getString(key);
+  Future<String?> getString(String key) => _sembastImp!.getString(key);
 
   @override
-  Future<List<String>> getStringList(String key) =>
-      _sembastImp.getStringList(key);
+  Future<List<String>?> getStringList(String key) =>
+      _sembastImp!.getStringList(key);
 
   @override
-  Future<void> remove(String key) => _sembastImp.remove(key);
+  Future<void> remove(String key) => _sembastImp!.remove(key);
 
   @override
   Future<void> setBool(String key, bool value) =>
-      _sembastImp.setBool(key, value);
+      _sembastImp!.setBool(key, value);
 
   @override
   Future<void> setDouble(String key, double value) =>
-      _sembastImp.setDouble(key, value);
+      _sembastImp!.setDouble(key, value);
 
   @override
-  Future<void> setInt(String key, int value) => _sembastImp.setInt(key, value);
+  Future<void> setInt(String key, int value) => _sembastImp!.setInt(key, value);
 
   @override
   Future<void> setString(String key, String value) =>
-      _sembastImp.setString(key, value);
+      _sembastImp!.setString(key, value);
 
   @override
   Future<void> setStringList(String key, List<String> values) =>
-      _sembastImp.setStringList(key, values);
+      _sembastImp!.setStringList(key, values);
 }

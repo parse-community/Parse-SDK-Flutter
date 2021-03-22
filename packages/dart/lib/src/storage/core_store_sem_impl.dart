@@ -4,10 +4,10 @@ part of flutter_parse_sdk;
 class CoreStoreSembastImp implements CoreStore {
   CoreStoreSembastImp._internal(this._database, this._store);
 
-  static CoreStoreSembastImp _instance;
+  static CoreStoreSembastImp? _instance;
 
   static Future<CoreStore> getInstance(String dbPath,
-      {DatabaseFactory factory, String password = 'flutter_sdk'}) async {
+      {DatabaseFactory? factory, String? password}) async {
     if (_instance == null) {
       factory ??= !parseIsWeb ? databaseFactoryIo : databaseFactoryWeb;
       assert(() {
@@ -30,12 +30,14 @@ class CoreStoreSembastImp implements CoreStore {
         return true;
       }());
       final Database db = await factory.openDatabase(dbPath,
-          codec: !parseIsWeb ? getXXTeaSembastCodec(password: password) : null);
+          codec: !parseIsWeb
+              ? getXXTeaSembastCodec(password: password ?? 'flutter_sdk')
+              : null);
       _instance =
           CoreStoreSembastImp._internal(db, StoreRef<String, String>.main());
     }
 
-    return _instance;
+    return _instance!;
   }
 
   final Database _database;
@@ -43,7 +45,7 @@ class CoreStoreSembastImp implements CoreStore {
 
   @override
   Future<bool> clear() {
-    return _store.drop(_database);
+    return _store.drop(_database) as Future<bool>;
   }
 
   @override
@@ -57,32 +59,32 @@ class CoreStoreSembastImp implements CoreStore {
   }
 
   @override
-  Future<bool> getBool(String key) async {
-    final bool storedItem = await get(key);
+  Future<bool?> getBool(String key) async {
+    final bool? storedItem = await (get(key) as FutureOr<bool?>);
     return storedItem;
   }
 
   @override
-  Future<double> getDouble(String key) async {
-    final double storedItem = await get(key);
+  Future<double?> getDouble(String key) async {
+    final double? storedItem = await (get(key) as FutureOr<double?>);
     return storedItem;
   }
 
   @override
-  Future<int> getInt(String key) async {
-    final int storedItem = await get(key);
+  Future<int?> getInt(String key) async {
+    final int? storedItem = await (get(key) as FutureOr<int?>);
     return storedItem;
   }
 
   @override
-  Future<String> getString(String key) async {
-    final String storedItem = await get(key);
+  Future<String?> getString(String key) async {
+    final String? storedItem = await (get(key) as FutureOr<String?>);
     return storedItem;
   }
 
   @override
-  Future<List<String>> getStringList(String key) async {
-    final List<String> storedItem = await get(key);
+  Future<List<String>?> getStringList(String key) async {
+    final List<String>? storedItem = await (get(key) as FutureOr<List<String>?>);
     return storedItem;
   }
 

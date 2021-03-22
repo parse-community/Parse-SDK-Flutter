@@ -8,9 +8,6 @@ import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 import 'package:mime_type/mime_type.dart';
-import 'package:parse_server_sdk/src/network/parse_http_client.dart';
-import 'package:parse_server_sdk/src/network/parse_websocket.dart'
-    as parse_web_socket;
 import 'package:path/path.dart' as path;
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
@@ -18,6 +15,9 @@ import 'package:sembast_web/sembast_web.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:xxtea/xxtea.dart';
+
+import 'src/network/parse_http_client.dart';
+import 'src/network/parse_websocket.dart' as parse_web_socket;
 
 export 'src/network/parse_dio_client.dart';
 export 'src/network/parse_http_client.dart';
@@ -60,14 +60,12 @@ part 'src/storage/xxtea_codec.dart';
 part 'src/utils/parse_date_format.dart';
 part 'src/utils/parse_decoder.dart';
 part 'src/utils/parse_encoder.dart';
-part 'src/utils/parse_file_extensions.dart';
 part 'src/utils/parse_live_list.dart';
 part 'src/utils/parse_logger.dart';
 part 'src/utils/parse_login_helpers.dart';
 part 'src/utils/parse_utils.dart';
 
 class Parse {
-  ParseCoreData data;
   bool _hasBeenInitialized = false;
 
   /// To initialize Parse Server in your application
@@ -86,25 +84,25 @@ class Parse {
     String appId,
     String serverUrl, {
     bool debug = false,
-    String appName,
-    String appVersion,
-    String appPackageName,
-    String locale,
-    String liveQueryUrl,
-    String clientKey,
-    String masterKey,
-    String sessionId,
+    String? appName,
+    String? appVersion,
+    String? appPackageName,
+    String? locale,
+    String? liveQueryUrl,
+    String? clientKey,
+    String? masterKey,
+    String? sessionId,
     bool autoSendSessionId = true,
-    SecurityContext securityContext,
-    CoreStore coreStore,
-    Map<String, ParseObjectConstructor> registeredSubClassMap,
-    ParseUserConstructor parseUserConstructor,
-    ParseFileConstructor parseFileConstructor,
-    List<int> liveListRetryIntervals,
-    ParseConnectivityProvider connectivityProvider,
-    String fileDirectory,
-    Stream<void> appResumedStream,
-    ParseClientCreator clientCreator,
+    SecurityContext? securityContext,
+    CoreStore? coreStore,
+    Map<String, ParseObjectConstructor>? registeredSubClassMap,
+    ParseUserConstructor? parseUserConstructor,
+    ParseFileConstructor? parseFileConstructor,
+    List<int>? liveListRetryIntervals,
+    ParseConnectivityProvider? connectivityProvider,
+    String? fileDirectory,
+    Stream<void>? appResumedStream,
+    ParseClientCreator? clientCreator,
   }) async {
     final String url = removeTrailingSlash(serverUrl);
 
@@ -140,10 +138,8 @@ class Parse {
 
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
-  Future<ParseResponse> healthCheck(
-      {bool debug, ParseClient client, bool sendSessionIdByDefault}) async {
-    ParseResponse parseResponse;
-
+  Future<ParseResponse > healthCheck(
+      {bool? debug, ParseClient? client, bool? sendSessionIdByDefault}) async {
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
 
     final ParseClient _client = client ??
@@ -158,12 +154,9 @@ class Parse {
     try {
       final ParseNetworkResponse response =
           await _client.get('${ParseCoreData().serverUrl}$keyEndPointHealth');
-      parseResponse =
-          handleResponse<Parse>(null, response, type, _debug, className);
+      return handleResponse<Parse>(null, response, type, _debug, className);
     } on Exception catch (e) {
-      parseResponse = handleException(e, type, _debug, className);
+      return handleException(e, type, _debug, className);
     }
-
-    return parseResponse;
   }
 }
