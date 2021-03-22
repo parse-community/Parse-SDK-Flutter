@@ -11,11 +11,11 @@ dependencies:
     sdk: flutter
 
   parse_server_sdk:
-    path: ../dart
-#    git:
-#      url: git://github.com/parse-community/Parse-SDK-Flutter.git
-#      ref: development
-#      path: packages/dart
+#    path: ../dart
+    git:
+      url: git://github.com/parse-community/Parse-SDK-Flutter.git
+      ref: nullsafety
+      path: packages/dart
 
   # Networking
   dio: ^4.0.0-prev3

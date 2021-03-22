@@ -6,7 +6,6 @@ Changed to the method POST on Login
 Bug fixes
 General improvements
 Updated dependencies
-
 ## 2.0.1
 Fixed network exceptions. [#482](https://github.com/parse-community/Parse-SDK-Flutter/pull/482)
 
