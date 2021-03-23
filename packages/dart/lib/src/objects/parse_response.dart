@@ -1,6 +1,10 @@
 part of flutter_parse_sdk;
 
 class ParseResponse {
+  ParseResponse({
+    this.error,
+  });
+
   bool success = false;
   int statusCode = -1;
 
