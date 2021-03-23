@@ -153,12 +153,12 @@ class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
 
   static sdk.CoreStoreSembastImp? _sembastImp;
 
-  static Future<sdk.CoreStore> getInstance(
+  static Future<CoreStoreSembastImp> getInstance(
       {DatabaseFactory? factory, String? password}) async {
-    _sembastImp ??= await (sdk.CoreStoreSembastImp.getInstance(
+    _sembastImp ??= await sdk.CoreStoreSembastImp.getInstance(
         await dbDirectory(),
         factory: factory,
-        password: password) as FutureOr<sdk.CoreStoreSembastImp?>);
+        password: password);
     return CoreStoreSembastImp._();
   }
 

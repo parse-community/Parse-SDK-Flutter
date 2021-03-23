@@ -6,7 +6,7 @@ class CoreStoreSembastImp implements CoreStore {
 
   static CoreStoreSembastImp? _instance;
 
-  static Future<CoreStore> getInstance(String dbPath,
+  static Future<CoreStoreSembastImp> getInstance(String dbPath,
       {DatabaseFactory? factory, String? password}) async {
     if (_instance == null) {
       factory ??= !parseIsWeb ? databaseFactoryIo : databaseFactoryWeb;
