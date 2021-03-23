@@ -44,8 +44,9 @@ class CoreStoreSembastImp implements CoreStore {
   final StoreRef<String, dynamic> _store;
 
   @override
-  Future<bool> clear() {
-    return _store.drop(_database) as Future<bool>;
+  Future<bool> clear() async {
+    await _store.drop(_database);
+    return Future<bool>.value(true);
   }
 
   @override
@@ -60,31 +61,31 @@ class CoreStoreSembastImp implements CoreStore {
 
   @override
   Future<bool?> getBool(String key) async {
-    final bool? storedItem = await (get(key) as FutureOr<bool?>);
+    final bool? storedItem = await get(key);
     return storedItem;
   }
 
   @override
   Future<double?> getDouble(String key) async {
-    final double? storedItem = await (get(key) as FutureOr<double?>);
+    final double? storedItem = await get(key);
     return storedItem;
   }
 
   @override
   Future<int?> getInt(String key) async {
-    final int? storedItem = await (get(key) as FutureOr<int?>);
+    final int? storedItem = await get(key);
     return storedItem;
   }
 
   @override
   Future<String?> getString(String key) async {
-    final String? storedItem = await (get(key) as FutureOr<String?>);
+    final String? storedItem = await get(key);
     return storedItem;
   }
 
   @override
   Future<List<String>?> getStringList(String key) async {
-    final List<String>? storedItem = await (get(key) as FutureOr<List<String>?>);
+    final List<String>? storedItem = await get(key);
     return storedItem;
   }
 
