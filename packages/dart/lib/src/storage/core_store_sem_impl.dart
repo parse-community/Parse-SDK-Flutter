@@ -46,7 +46,7 @@ class CoreStoreSembastImp implements CoreStore {
   @override
   Future<bool> clear() async {
     await _store.drop(_database);
-    return Future<bool>.value(true);
+    return true;
   }
 
   @override
