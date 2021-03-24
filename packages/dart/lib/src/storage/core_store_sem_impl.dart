@@ -7,7 +7,7 @@ class CoreStoreSembastImp implements CoreStore {
   static CoreStoreSembastImp? _instance;
 
   static Future<CoreStore> getInstance(String dbPath,
-      {DatabaseFactory? factory, String? password}) async {
+      {DatabaseFactory? factory, String password = 'flutter_sdk'}) async {
     if (_instance == null) {
       factory ??= !parseIsWeb ? databaseFactoryIo : databaseFactoryWeb;
       assert(() {
@@ -30,9 +30,7 @@ class CoreStoreSembastImp implements CoreStore {
         return true;
       }());
       final Database db = await factory.openDatabase(dbPath,
-          codec: !parseIsWeb
-              ? getXXTeaSembastCodec(password: password ?? 'flutter_sdk')
-              : null);
+          codec: !parseIsWeb ? getXXTeaSembastCodec(password: password) : null);
       _instance =
           CoreStoreSembastImp._internal(db, StoreRef<String, String>.main());
     }
@@ -60,31 +58,31 @@ class CoreStoreSembastImp implements CoreStore {
 
   @override
   Future<bool?> getBool(String key) async {
-    final bool? storedItem = await (get(key) as FutureOr<bool?>);
+    final bool? storedItem = await (get(key));
     return storedItem;
   }
 
   @override
   Future<double?> getDouble(String key) async {
-    final double? storedItem = await (get(key) as FutureOr<double?>);
+    final double? storedItem = await (get(key));
     return storedItem;
   }
 
   @override
   Future<int?> getInt(String key) async {
-    final int? storedItem = await (get(key) as FutureOr<int?>);
+    final int? storedItem = await (get(key));
     return storedItem;
   }
 
   @override
   Future<String?> getString(String key) async {
-    final String? storedItem = await (get(key) as FutureOr<String?>);
+    final String? storedItem = await (get(key));
     return storedItem;
   }
 
   @override
   Future<List<String>?> getStringList(String key) async {
-    final List<String>? storedItem = await (get(key) as FutureOr<List<String>?>);
+    final List<String>? storedItem = await (get(key));
     return storedItem;
   }
 

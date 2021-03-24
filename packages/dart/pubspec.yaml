@@ -19,7 +19,7 @@ dependencies:
   xxtea: ^2.1.0
 
   # Utils
-  uuid: ^3.0.1
+  uuid: ^3.0.2
   meta: ^1.3.0
   path: ^1.8.0
   mime_type: ^1.0.0

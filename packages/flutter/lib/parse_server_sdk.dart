@@ -151,25 +151,28 @@ Future<String> dbDirectory() async {
 class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
   CoreStoreSembastImp._();
 
-  static sdk.CoreStoreSembastImp? _sembastImp;
+  static sdk.CoreStore? _sembastImp;
 
   static Future<sdk.CoreStore> getInstance(
-      {DatabaseFactory? factory, String? password}) async {
+      {DatabaseFactory? factory, String password = 'flutter_sdk'}) async {
     _sembastImp ??= await (sdk.CoreStoreSembastImp.getInstance(
         await dbDirectory(),
         factory: factory,
-        password: password) as FutureOr<sdk.CoreStoreSembastImp?>);
+        password: password));
     return CoreStoreSembastImp._();
   }
 
   @override
-  Future<bool> clear() => _sembastImp!.clear();
+  Future<bool> clear() async {
+    await _sembastImp!.clear();
+    return Future<bool>.value(true);
+  }
 
   @override
   Future<bool> containsKey(String key) => _sembastImp!.containsKey(key);
 
   @override
-  Future<dynamic> get(String key) => _sembastImp!.get(key);
+  Future<dynamic?> get(String key) => _sembastImp!.get(key);
 
   @override
   Future<bool?> getBool(String key) => _sembastImp!.getBool(key);
