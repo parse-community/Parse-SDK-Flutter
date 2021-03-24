@@ -39,7 +39,7 @@ class Parse extends sdk.Parse
   /// [appName], [appVersion] and [appPackageName] are automatically set on Android and IOS, if they are not defined. You should provide a value on web.
   /// [fileDirectory] is not used on web
   @override
-  Future<sdk.Parse> initialize(
+  Future<Parse> initialize(
     String appId,
     String serverUrl, {
     bool debug = false,
@@ -95,7 +95,7 @@ class Parse extends sdk.Parse
           (!sdk.parseIsWeb ? (await getTemporaryDirectory()).path : null),
       appResumedStream: appResumedStream ?? _appResumedStreamController.stream,
       clientCreator: clientCreator,
-    );
+    ) as Parse;
   }
 
   final StreamController<void> _appResumedStreamController =
@@ -153,26 +153,26 @@ class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
 
   static sdk.CoreStore? _sembastImp;
 
-  static Future<sdk.CoreStore> getInstance(
-      {DatabaseFactory? factory, String password = 'flutter_sdk'}) async {
-    _sembastImp ??= await (sdk.CoreStoreSembastImp.getInstance(
+  static Future<CoreStoreSembastImp> getInstance(
+      {DatabaseFactory? factory, String? password}) async {
+    _sembastImp ??= await sdk.CoreStoreSembastImp.getInstance(
         await dbDirectory(),
         factory: factory,
-        password: password));
+        password: password);
     return CoreStoreSembastImp._();
   }
 
   @override
   Future<bool> clear() async {
     await _sembastImp!.clear();
-    return Future<bool>.value(true);
+    return true;
   }
 
   @override
   Future<bool> containsKey(String key) => _sembastImp!.containsKey(key);
 
   @override
-  Future<dynamic?> get(String key) => _sembastImp!.get(key);
+  Future<dynamic> get(String key) => _sembastImp!.get(key);
 
   @override
   Future<bool?> getBool(String key) => _sembastImp!.getBool(key);
