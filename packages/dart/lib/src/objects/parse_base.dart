@@ -235,7 +235,7 @@ abstract class ParseBase {
   ///
   /// Replicates Android SDK pin process and saves object to storage
   Future<bool> unpin({String? key}) async {
-    if (objectId != null) {
+    if (objectId != null || key != null) {
       await ParseCoreData().getStore().remove(key ?? objectId!);
       return true;
     }
@@ -247,12 +247,12 @@ abstract class ParseBase {
   ///
   /// Replicates Android SDK pin process and saves object to storage
   dynamic fromPin(String objectId) async {
-      final CoreStore coreStore = ParseCoreData().getStore();
-      final String? itemFromStore = await coreStore.getString(objectId);
+    final CoreStore coreStore = ParseCoreData().getStore();
+    final String? itemFromStore = await coreStore.getString(objectId);
 
-      if (itemFromStore != null) {
-        return fromJson(json.decode(itemFromStore));
-      }
+    if (itemFromStore != null) {
+      return fromJson(json.decode(itemFromStore));
+    }
     return null;
   }
 

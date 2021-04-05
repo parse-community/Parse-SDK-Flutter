@@ -448,4 +448,20 @@ class ParseObject extends ParseBase implements ParseCloneable {
       return handleException(e, ParseApiRQ.delete, _debug, parseClassName);
     }
   }
+
+  ///Fetches this object with the data from the server. Call this whenever you want the state of the
+  ///object to reflect exactly what is on the server.
+  Future<ParseObject> fetch() async {
+    if (objectId == null || objectId!.isEmpty) {
+      throw 'can not fetch without a objectId';
+    }
+
+    final ParseResponse response = await this.getObject(this.objectId!);
+
+    if (response.success && response.results != null) {
+      return response.results!.first;
+    } else {
+      return this;
+    }
+  }
 }

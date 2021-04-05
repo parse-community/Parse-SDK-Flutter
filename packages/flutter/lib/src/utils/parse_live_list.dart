@@ -50,7 +50,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   @override
   _ParseLiveListWidgetState<T> createState() => _ParseLiveListWidgetState<T>(
         query: query,
-        removedItemBuilder: removedItemBuilder!,
+        removedItemBuilder: removedItemBuilder,
         listenOnAllSubItems: listenOnAllSubItems,
         listeningIncludes: listeningIncludes,
         lazyLoading: lazyLoading,
@@ -145,7 +145,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   sdk.ParseLiveList<T>? _liveList;
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
-  final ChildBuilder<T> removedItemBuilder;
+  final ChildBuilder<T>? removedItemBuilder;
   bool noData = true;
 
   @override
@@ -226,7 +226,7 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
   }
 }
 
-class _ParseLiveListElementWidgetState<T extends sdk.ParseObject >
+class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveListElementWidget<T>>
     with SingleTickerProviderStateMixin {
   _ParseLiveListElementWidgetState(sdk.DataGetter<T>? loadedDataGetter,

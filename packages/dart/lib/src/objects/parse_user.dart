@@ -24,10 +24,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
           autoSendSessionId: true,
           debug: debug,
         ) {
-    this.username = username;
-    this.emailAddress = emailAddress;
-    this.password = password;
-    this.sessionToken = sessionToken;
+    if (username != null) this.username = username;
+    if (emailAddress != null) this.emailAddress = emailAddress;
+    if (password != null) this.password = password;
+    if (sessionToken != null) this.sessionToken = sessionToken;
   }
 
   ParseUser.forQuery() : super(keyClassUser);
@@ -51,8 +51,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   set password(String? password) {
     if (_password != password) {
       _password = password;
-      if (password != null)
-        _unsavedChanges[keyVarPassword] = password;
+      if (password != null) _unsavedChanges[keyVarPassword] = password;
     }
   }
 
@@ -111,7 +110,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   ///
   /// Uses token to get the latest version of the user. Prefer this to [getCurrentUserFromServer]
   /// if using custom ParseUser object
-  Future<ParseResponse?> getUpdatedUser({bool? debug, ParseClient? client}) async {
+  Future<ParseResponse> getUpdatedUser(
+      {bool? debug, ParseClient? client}) async {
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
     final ParseClient _client = client ??
         ParseCoreData().clientCreator(
@@ -120,7 +120,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
     // We can't get the current user and session without a sessionId
     if ((ParseCoreData().sessionId == null) && (sessionToken == null)) {
-      return null;
+      ///return null;
+      throw 'can not get the current user and session without a sessionId';
     }
 
     final Map<String, String> headers = <String, String>{};
@@ -192,7 +193,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
           options: ParseNetworkOptions(headers: <String, String>{
             keyHeaderRevocableSession: '1',
             if (installationId != null && !doNotSendInstallationID)
-                  keyHeaderInstallationId: installationId,
+              keyHeaderInstallationId: installationId,
           }),
           data: body);
 
@@ -274,7 +275,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Set [doNotSendInstallationID] to 'true' in order to prevent the SDK from sending the installationID to the Server.
   /// This option is especially useful if you are running you application on web and you don't have permission to add 'X-Parse-Installation-Id' as an allowed header on your parse-server.
   static Future<ParseResponse> loginWith(String provider, Object authData,
-      {bool doNotSendInstallationID = false, String? username, String? password, String? email}) async {
+      {bool doNotSendInstallationID = false,
+      String? username,
+      String? password,
+      String? email}) async {
     final ParseUser user = ParseUser.createUser(username, password, email);
     final ParseResponse response = await user._loginWith(provider, authData,
         doNotSendInstallationID: doNotSendInstallationID);
