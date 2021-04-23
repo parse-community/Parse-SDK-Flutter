@@ -2,8 +2,8 @@ part of flutter_parse_sdk;
 
 class ParseSession extends ParseObject implements ParseCloneable {
   ParseSession({
-    bool debug,
-    ParseClient client,
+    bool? debug,
+    ParseClient? client,
   }) : super(
           keyClassSession,
           client: client,
@@ -15,18 +15,18 @@ class ParseSession extends ParseObject implements ParseCloneable {
     return fromJson(map);
   }
 
-  String get sessionToken => super.get<String>(keyVarSessionToken);
+  String get sessionToken => super.get<String>(keyVarSessionToken)!;
 
-  ParseObject get user => super.get<ParseObject>(keyVarUser);
+  ParseObject get user => super.get<ParseObject>(keyVarUser)!;
 
   Map<String, dynamic> get createdWith =>
-      super.get<Map<String, dynamic>>(keyVarCreatedWith);
+      super.get<Map<String, dynamic>>(keyVarCreatedWith)!;
 
-  bool get restricted => super.get<bool>(keyVarRestricted);
+  bool get restricted => super.get<bool>(keyVarRestricted)!;
 
-  DateTime get expiresAt => super.get<DateTime>(keyVarExpiresAt);
+  DateTime get expiresAt => super.get<DateTime>(keyVarExpiresAt)!;
 
-  String get installationId => super.get<String>(keyVarInstallationId);
+  String get installationId => super.get<String>(keyVarInstallationId)!;
 
   set installationId(String installationId) =>
       set<String>(keyVarInstallationId, installationId);

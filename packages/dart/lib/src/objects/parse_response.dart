@@ -1,6 +1,10 @@
 part of flutter_parse_sdk;
 
 class ParseResponse {
+  ParseResponse({
+    this.error,
+  });
+
   bool success = false;
   int statusCode = -1;
 
@@ -12,7 +16,7 @@ class ParseResponse {
 
   /// All results stored as a list - Even if only one response is returned
   // ignore: always_specify_types
-  List results;
+  List? results;
   int count = 0;
-  ParseError error;
+  ParseError? error;
 }

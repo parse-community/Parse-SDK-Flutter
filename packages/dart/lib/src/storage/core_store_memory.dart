@@ -19,27 +19,27 @@ class CoreStoreMemoryImp implements CoreStore {
   }
 
   @override
-  Future<bool> getBool(String key) async {
+  Future<bool?> getBool(String key) async {
     return _data[key];
   }
 
   @override
-  Future<double> getDouble(String key) async {
+  Future<double?> getDouble(String key) async {
     return _data[key];
   }
 
   @override
-  Future<int> getInt(String key) async {
+  Future<int?> getInt(String key) async {
     return _data[key];
   }
 
   @override
-  Future<String> getString(String key) async {
+  Future<String?> getString(String key) async {
     return _data[key];
   }
 
   @override
-  Future<List<String>> getStringList(String key) async {
+  Future<List<String>?> getStringList(String key) async {
     return _data[key];
   }
 

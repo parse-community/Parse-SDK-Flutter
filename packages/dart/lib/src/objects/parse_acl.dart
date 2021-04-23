@@ -8,10 +8,10 @@ part of flutter_parse_sdk;
 class ParseACL {
   ///Creates an ACL where only the provided user has access.
   ///[owner] The only user that can read or write objects governed by this ACL.
-  ParseACL({ParseUser owner}) {
+  ParseACL({ParseUser? owner}) {
     if (owner != null) {
-      setReadAccess(userId: owner.objectId, allowed: true);
-      setWriteAccess(userId: owner.objectId, allowed: true);
+      setReadAccess(userId: owner.objectId!, allowed: true);
+      setWriteAccess(userId: owner.objectId!, allowed: true);
     }
   }
 
@@ -21,7 +21,9 @@ class ParseACL {
 
   /// Helper for setting stuff
   void _setPermissionsIfNonEmpty(
-      {@required String userId, bool readPermission, bool writePermission}) {
+      {required String userId,
+      required bool readPermission,
+      required bool writePermission}) {
     if (!(readPermission || writePermission)) {
       _permissionsById.remove(userId);
     } else {
@@ -36,7 +38,7 @@ class ParseACL {
   }
 
   ///Set whether the public is allowed to read this object.
-  void setPublicReadAccess({@required bool allowed}) {
+  void setPublicReadAccess({required bool allowed}) {
     setReadAccess(userId: _publicKEY, allowed: allowed);
   }
 
@@ -46,15 +48,12 @@ class ParseACL {
   }
 
   ///Set whether the public is allowed to write this object.
-  void setPublicWriteAccess({@required bool allowed}) {
+  void setPublicWriteAccess({required bool allowed}) {
     setWriteAccess(userId: _publicKEY, allowed: allowed);
   }
 
   ///Set whether the given user id is allowed to read this object.
-  void setReadAccess({@required String userId, bool allowed = true}) {
-    if (userId == null) {
-      throw 'cannot setReadAccess for null userId';
-    }
+  void setReadAccess({required String userId, bool allowed = true}) {
     final bool writePermission = getWriteAccess(userId: userId);
     _setPermissionsIfNonEmpty(
         userId: userId,
@@ -65,19 +64,12 @@ class ParseACL {
   /// Get whether the given user id is *explicitly* allowed to read this object. Even if this returns
   /// [false], the user may still be able to access it if getPublicReadAccess returns
   /// [true] or a role  that the user belongs to has read access.
-  bool getReadAccess({@required String userId}) {
-    if (userId == null) {
-      throw 'cannot getReadAccess for null userId';
-    }
-    final _ACLPermissions _permissions = _permissionsById[userId];
-    return _permissions != null && _permissions.getReadPermission();
+  bool getReadAccess({required String userId}) {
+    return _permissionsById[userId]?.readPermission ?? false;
   }
 
   ///Set whether the given user id is allowed to write this object.
-  void setWriteAccess({@required String userId, bool allowed = true}) {
-    if (userId == null) {
-      throw 'cannot setWriteAccess for null userId';
-    }
+  void setWriteAccess({required String userId, bool allowed = true}) {
     final bool readPermission = getReadAccess(userId: userId);
     _setPermissionsIfNonEmpty(
         userId: userId,
@@ -88,12 +80,8 @@ class ParseACL {
   ///Get whether the given user id is *explicitly* allowed to write this object. Even if this
   ///returns [false], the user may still be able to write it if getPublicWriteAccess returns
   ///[true] or a role that the user belongs to has write access.
-  bool getWriteAccess({@required String userId}) {
-    if (userId == null) {
-      throw 'cannot getWriteAccess for null userId';
-    }
-    final _ACLPermissions _permissions = _permissionsById[userId];
-    return _permissions != null && _permissions.getWritePermission();
+  bool getWriteAccess({required String userId}) {
+    return _permissionsById[userId]?.writePermission ?? false;
   }
 
   Map<String, dynamic> toJson() {
@@ -129,22 +117,12 @@ class _ACLPermissions {
   final bool _readPermission;
   final bool _writePermission;
 
-  bool getReadPermission() {
-    return _readPermission;
-  }
+  bool get readPermission => _readPermission;
 
-  bool getWritePermission() {
-    return _writePermission;
-  }
+  bool get writePermission => _writePermission;
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = <String, dynamic>{};
-    if (_readPermission) {
-      map[_keyReadPermission] = true;
-    }
-    if (_writePermission) {
-      map[_keyWritePermission] = true;
-    }
-    return map;
-  }
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        _keyReadPermission: _readPermission,
+        _keyWritePermission: _writePermission
+      };
 }
