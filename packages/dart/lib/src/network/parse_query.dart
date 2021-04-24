@@ -530,7 +530,7 @@ class QueryBuilder<T extends ParseObject> {
   Future<List<T>> find() async {
     ParseResponse parseResponse = await query();
     if (parseResponse.success) {
-      return (parseResponse.results ?? <T>[]) as List<T>;
+      return parseResponse.results?.map((e) => e as T).toList() ?? <T>[];
     }
     throw parseResponse.error ?? ParseError();
   }
