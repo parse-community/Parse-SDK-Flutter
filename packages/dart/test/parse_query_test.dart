@@ -1,13 +1,15 @@
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
 
-class MockClient extends Mock implements ParseClient {}
+import 'parse_query_test.mocks.dart';
 
+@GenerateMocks([ParseClient])
 void main() {
   group('queryBuilder', () {
     test('whereRelatedTo', () async {
-      final MockClient client = MockClient();
+      final MockParseClient client = MockParseClient();
 
       await Parse().initialize(
         'appId',
@@ -27,11 +29,31 @@ void main() {
           QueryBuilder<ParseObject>(ParseObject('_User', client: client));
       queryBuilder.whereRelatedTo('likes', 'Post', '8TOXdXf3tz');
 
-      when(client.data).thenReturn(ParseCoreData());
-      await queryBuilder.query();
+      when(client.get(
+        any,
+        options: anyNamed("options"),
+        onReceiveProgress: anyNamed("onReceiveProgress"),
+      )).thenAnswer((_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data:
+              "{\"results\":[{\"objectId\":\"eT9muOxBTJ\",\"username\":\"test\",\"createdAt\":\"2021-04-23T13:46:06.092Z\",\"updatedAt\":\"2021-04-23T13:46:23.586Z\",\"ACL\":{\"*\":{\"read\":true},\"eT9muOxBTJ\":{\"read\":true,\"write\":true}}}]}"));
 
-      final Uri result =
-          Uri.parse(verify(client.get(captureAny!)).captured.single);
+      ParseResponse response = await queryBuilder.query();
+
+      expect(response.results?.first, isA<ParseObject>());
+
+      ParseObject parseObject = response.results?.first;
+
+      expect(parseObject.get<String>(keyVarUsername), "test");
+      expect(parseObject.objectId, "eT9muOxBTJ");
+      expect(parseObject.createdAt, DateTime.parse("2021-04-23T13:46:06.092Z"));
+      expect(parseObject.updatedAt, DateTime.parse("2021-04-23T13:46:23.586Z"));
+
+      final Uri result = Uri.parse(verify(client.get(
+        captureAny,
+        options: anyNamed("options"),
+        onReceiveProgress: anyNamed("onReceiveProgress"),
+      )).captured.single);
 
       expect(result.path, '/classes/_User');
 
