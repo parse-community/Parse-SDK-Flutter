@@ -11,18 +11,18 @@ dependencies:
     sdk: flutter
 
   # Uncomment for Release version
-  parse_server_sdk:   ^3.0.0
+  #parse_server_sdk:   ^3.0.0
 
   # Uncomment for local testing
   #parse_server_sdk:
   #   path: ../dart
 
   # Uncomment for test with Github Branch
-  #parse_server_sdk:
-  #  git:
-  #    url: git://github.com/parse-community/Parse-SDK-Flutter.git
-  #    ref: nullsafety
-  #    path: packages/dart
+  parse_server_sdk:
+    git:
+      url: https://github.com/gcostaapps/Parse-SDK-Flutter.git
+      ref: nullsafety
+      path: packages/dart
 
   # Networking
   dio: ^4.0.0
