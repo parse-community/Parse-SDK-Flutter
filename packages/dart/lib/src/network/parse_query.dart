@@ -513,4 +513,25 @@ class QueryBuilder<T extends ParseObject> {
     });
     return result;
   }
+
+  /// Find the first object that satisfies the query.
+  /// Returns null, if no object is found.
+  Future<T>? first() async {
+    ParseResponse parseResponse =
+        await (QueryBuilder.copy(this)..setLimit(1)).query();
+    if (parseResponse.success) {
+      return parseResponse.results?.first;
+    }
+    throw parseResponse.error ?? ParseError();
+  }
+
+  /// Find the objects that satisfy the query.
+  /// Returns an empty list if no objects are found.
+  Future<List<T>> find() async {
+    ParseResponse parseResponse = await query();
+    if (parseResponse.success) {
+      return parseResponse.results?.map((e) => e as T).toList() ?? <T>[];
+    }
+    throw parseResponse.error ?? ParseError();
+  }
 }

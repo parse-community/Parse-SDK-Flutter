@@ -377,6 +377,8 @@ class ParseLiveList<T extends ParseObject> {
             oldObject: _list[i].object, paths: _includePaths);
         if (after(_list[i].object, object) == null) {
           _list[i].object = object.clone(object.toJson(full: true));
+          _eventStreamController.sink.add(ParseLiveListUpdateEvent<T>(
+              i, object.clone(object.toJson(full: true))));
         } else {
           _list.removeAt(i).dispose();
           _eventStreamController.sink.add(ParseLiveListDeleteEvent<T>(
@@ -740,6 +742,11 @@ abstract class ParseLiveListEvent<T extends ParseObject> {
 class ParseLiveListAddEvent<T extends ParseObject>
     extends ParseLiveListEvent<T> {
   ParseLiveListAddEvent(int index, T object) : super(index, object);
+}
+
+class ParseLiveListUpdateEvent<T extends ParseObject>
+    extends ParseLiveListEvent<T> {
+  ParseLiveListUpdateEvent(int index, T object) : super(index, object);
 }
 
 class ParseLiveListDeleteEvent<T extends ParseObject>
