@@ -2,9 +2,11 @@ part of flutter_parse_sdk;
 
 // ignore_for_file: always_specify_types
 class ParseRelation<T extends ParseObject> {
-  ParseRelation({required ParseObject parent, required String key}) {
+  ParseRelation({required ParseObject parent, required String key, String? targetClass, ParseClient? client}) {
     _parent = parent;
     _key = key;
+    _client = client;
+    _targetClass = targetClass;
     _parentObjectId = parent.objectId!;
   }
 
@@ -24,8 +26,10 @@ class ParseRelation<T extends ParseObject> {
   //For offline caching, we keep track of every object we've known to be in the relation.
   Set<T>? _knownObjects = Set<T>();
 
+  ParseClient? _client;
+
   QueryBuilder getQuery() {
-    return QueryBuilder(ParseObject(_targetClass!))
+    return QueryBuilder(ParseObject(_targetClass!, client: _client))
       ..whereRelatedTo(_key, _parent!.parseClassName, _parentObjectId);
   }
 
