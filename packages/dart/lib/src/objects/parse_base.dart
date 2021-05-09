@@ -131,7 +131,7 @@ abstract class ParseBase {
       } else if (key == keyVarObjectId) {
         _getObjectData()[keyVarObjectId] = value;
       } else if (key == keyVarCreatedAt) {
-        if (keyVarCreatedAt is String) {
+        if (value is String) {
           _getObjectData()[keyVarCreatedAt] = _parseDateFormat.parse(value);
         } else {
           _getObjectData()[keyVarCreatedAt] = value;
