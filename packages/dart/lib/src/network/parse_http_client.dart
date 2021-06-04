@@ -16,6 +16,11 @@ class ParseHTTPClient extends ParseClient {
 
   late _ParseHTTPClient _client;
 
+  Map<String, String>? get additionalHeaders => _client.additionalHeaders;
+
+  set additionalHeaders(Map<String, String>? additionalHeaders) =>
+      _client.additionalHeaders = additionalHeaders;
+
   @override
   Future<ParseNetworkResponse> get(
     String path, {
