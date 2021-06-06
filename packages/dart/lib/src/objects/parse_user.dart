@@ -474,7 +474,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
         handleResponse<ParseUser>(user, response, type, debug, className);
 
     final Map<String, dynamic> responseData = jsonDecode(response.data);
-    if (responseData.containsKey(keyVarObjectId)) {
+    if (responseData.containsKey(keyParamSessionToken)) {
       user.sessionToken = responseData[keyParamSessionToken];
       ParseCoreData().setSessionId(user.sessionToken);
     }
