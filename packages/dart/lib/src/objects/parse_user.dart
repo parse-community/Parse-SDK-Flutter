@@ -444,19 +444,20 @@ class ParseUser extends ParseObject implements ParseCloneable {
       return handleException(e, ParseApiRQ.getAll, _debug, keyClassUser);
     }
   }
-
   static Future<dynamic> _getUserFromLocalStore(
-      {ParseCloneable cloneable}) async {
+      {ParseCloneable? cloneable}) async {
     final CoreStore coreStore = ParseCoreData().getStore();
-    final String userJson = await coreStore.getString(keyParseStoreUser);
+    final String? userJson = await coreStore.getString(keyParseStoreUser);
 
     if (userJson != null) {
       final Map<String, dynamic> userMap = json.decode(userJson);
       if (cloneable != null) {
         return cloneable.clone(userMap);
       } else {
-        ParseCoreData().setSessionId(userMap[keyParamSessionToken]);
-        return parseDecode(userMap);
+        if (userMap.containsKey(keyParamSessionToken)) {
+          ParseCoreData().setSessionId(userMap[keyParamSessionToken]);
+          return parseDecode(userMap);
+        }
       }
     }
 
