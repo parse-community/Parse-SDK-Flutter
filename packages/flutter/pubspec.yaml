@@ -20,13 +20,13 @@ dependencies:
   # Uncomment for test with Github Branch
   #parse_server_sdk:
   #  git:
-  #    url: git://github.com/parse-community/Parse-SDK-Flutter.git
+  #    url: https://github.com/parse-community/Parse-SDK-Flutter.git
   #    ref: nullsafety
   #    path: packages/dart
 
   # Networking
   dio: ^4.0.0
-  connectivity: ^3.0.3 # only used in the flutter part
+  connectivity_plus: ^1.0.1 # only used in the flutter part
 
   #Database
   shared_preferences: ^2.0.5 # only used in the flutter part

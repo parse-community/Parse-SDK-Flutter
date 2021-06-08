@@ -265,56 +265,58 @@ class ParseLiveList<T extends ParseObject> {
 
     for (String key in paths.keys) {
       if (object.containsKey(key)) {
-        ParseObject includedObject = object.get<ParseObject>(key)!;
-        //If the object is not fetched
-        if (!includedObject.containsKey(keyVarUpdatedAt)) {
-          //See if oldObject contains key
-          if (oldObject != null && oldObject.containsKey(key)) {
-            includedObject = oldObject.get<ParseObject>(key)!;
-            //If the object is not fetched || the ids don't match / the pointer changed
-            if (!includedObject.containsKey(keyVarUpdatedAt) ||
-                includedObject.objectId !=
-                    object.get<ParseObject>(key)!.objectId) {
-              includedObject = object.get<ParseObject>(key)!;
+        ParseObject? includedObject = object.get<ParseObject>(key);
+        if(includedObject != null){
+          //If the object is not fetched
+          if (!includedObject.containsKey(keyVarUpdatedAt)) {
+            //See if oldObject contains key
+            if (oldObject != null && oldObject.containsKey(key)) {
+              includedObject = oldObject.get<ParseObject>(key)!;
+              //If the object is not fetched || the ids don't match / the pointer changed
+              if (!includedObject.containsKey(keyVarUpdatedAt) ||
+                  includedObject.objectId !=
+                      object.get<ParseObject>(key)!.objectId) {
+                includedObject = object.get<ParseObject>(key)!;
+                //fetch from web including sub objects
+                //same as down there
+                final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
+                    ParseObject>(ParseObject(includedObject.parseClassName))
+                  ..whereEqualTo(keyVarObjectId, includedObject.objectId)
+                  ..includeObject(_toIncludeStringList(paths[key]));
+                loadingNodes.add(queryBuilder
+                    .query()
+                    .then<void>((ParseResponse parseResponse) {
+                  if (parseResponse.success &&
+                      parseResponse.results!.length == 1) {
+                    // ignore: deprecated_member_use_from_same_package
+                    object[key] = parseResponse.results![0];
+                  }
+                }));
+                continue;
+              } else {
+                // ignore: deprecated_member_use_from_same_package
+                object[key] = includedObject;
+                //recursion
+                loadingNodes
+                    .add(_loadIncludes(includedObject, paths: paths[key]));
+                continue;
+              }
+            } else {
               //fetch from web including sub objects
-              //same as down there
+              //same as up there
               final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
                   ParseObject>(ParseObject(includedObject.parseClassName))
                 ..whereEqualTo(keyVarObjectId, includedObject.objectId)
                 ..includeObject(_toIncludeStringList(paths[key]));
-              loadingNodes.add(queryBuilder
-                  .query()
-                  .then<void>((ParseResponse parseResponse) {
-                if (parseResponse.success &&
-                    parseResponse.results!.length == 1) {
+              loadingNodes.add(
+                  queryBuilder.query().then<void>((ParseResponse parseResponse) {
+                if (parseResponse.success && parseResponse.results!.length == 1) {
                   // ignore: deprecated_member_use_from_same_package
                   object[key] = parseResponse.results![0];
                 }
               }));
               continue;
-            } else {
-              // ignore: deprecated_member_use_from_same_package
-              object[key] = includedObject;
-              //recursion
-              loadingNodes
-                  .add(_loadIncludes(includedObject, paths: paths[key]));
-              continue;
             }
-          } else {
-            //fetch from web including sub objects
-            //same as up there
-            final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
-                ParseObject>(ParseObject(includedObject.parseClassName))
-              ..whereEqualTo(keyVarObjectId, includedObject.objectId)
-              ..includeObject(_toIncludeStringList(paths[key]));
-            loadingNodes.add(
-                queryBuilder.query().then<void>((ParseResponse parseResponse) {
-              if (parseResponse.success && parseResponse.results!.length == 1) {
-                // ignore: deprecated_member_use_from_same_package
-                object[key] = parseResponse.results![0];
-              }
-            }));
-            continue;
           }
         } else {
           //recursion
