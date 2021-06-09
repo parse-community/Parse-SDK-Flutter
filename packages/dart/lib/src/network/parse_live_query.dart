@@ -126,31 +126,34 @@ class LiveQueryReconnectingController {
 class LiveQueryClient {
   factory LiveQueryClient() => _getInstance();
 
-  LiveQueryClient._internal({bool? debug, bool? autoSendSessionId}) {
+  LiveQueryClient._internal(this._liveQueryURL,
+      {bool? debug, bool? autoSendSessionId}) {
     _clientEventStreamController = StreamController<LiveQueryClientEvent>();
     _clientEventStream =
         _clientEventStreamController.stream.asBroadcastStream();
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _sendSessionId =
-        autoSendSessionId ?? ParseCoreData().autoSendSessionId;
-    _liveQueryURL = ParseCoreData().liveQueryURL;
-    assert(_liveQueryURL != null,
-        'liveQueryUrl is not set. For how to setup Live Queries, see https://github.com/parse-community/Parse-SDK-Flutter/tree/master/packages/flutter#live-queries.');
-    if (_liveQueryURL!.contains('https')) {
-      _liveQueryURL = _liveQueryURL!.replaceAll('https', 'wss');
-    } else if (_liveQueryURL!.contains('http')) {
-      _liveQueryURL = _liveQueryURL!.replaceAll('http', 'ws');
-    }
+    _sendSessionId = autoSendSessionId ?? ParseCoreData().autoSendSessionId;
 
     reconnectingController = LiveQueryReconnectingController(
         () => reconnect(userInitialized: false), getClientEventStream, _debug);
   }
   static LiveQueryClient get instance => _getInstance();
   static LiveQueryClient? _instance;
-  static LiveQueryClient _getInstance(
-      {bool? debug, bool? autoSendSessionId}) {
-    _instance ??= LiveQueryClient._internal(
+  static LiveQueryClient _getInstance({bool? debug, bool? autoSendSessionId}) {
+    String? liveQueryURL = ParseCoreData().liveQueryURL;
+    if (liveQueryURL == null) {
+      assert(false,
+          'liveQueryUrl is not set. For how to setup Live Queries, see https://github.com/parse-community/Parse-SDK-Flutter/tree/master/packages/flutter#live-queries.');
+      liveQueryURL = "";
+    } else {
+      if (liveQueryURL.contains('https')) {
+        liveQueryURL = liveQueryURL.replaceAll('https', 'wss');
+      } else if (liveQueryURL.contains('http')) {
+        liveQueryURL = liveQueryURL.replaceAll('http', 'ws');
+      }
+    }
+    _instance ??= LiveQueryClient._internal(liveQueryURL,
         debug: debug, autoSendSessionId: autoSendSessionId);
     return _instance!;
   }
@@ -163,7 +166,7 @@ class LiveQueryClient {
   late bool _debug;
   late bool _sendSessionId;
   WebSocketChannel? _channel;
-  String? _liveQueryURL;
+  final String _liveQueryURL;
   bool _connecting = false;
   late StreamController<LiveQueryClientEvent> _clientEventStreamController;
   late Stream<LiveQueryClientEvent> _clientEventStream;
@@ -256,7 +259,7 @@ class LiveQueryClient {
     _connecting = true;
 
     try {
-      _webSocket = await parse_web_socket.WebSocket.connect(_liveQueryURL!);
+      _webSocket = await parse_web_socket.WebSocket.connect(_liveQueryURL);
       _connecting = false;
       if (_webSocket != null &&
           _webSocket!.readyState == parse_web_socket.WebSocket.OPEN) {
