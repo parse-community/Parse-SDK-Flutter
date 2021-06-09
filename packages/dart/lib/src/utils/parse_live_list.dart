@@ -263,51 +263,19 @@ class ParseLiveList<T extends ParseObject> {
     final List<Future<void>> loadingNodes = <Future<void>>[];
 
     for (String key in paths.keys) {
-      ParseObject? keyInObject = object.get<ParseObject>(key);
-      if (keyInObject != null) {
+      if (object.containsKey(key)) {
         ParseObject? includedObject = object.get<ParseObject>(key);
         if (includedObject != null) {
           //If the object is not fetched
           if (!includedObject.containsKey(keyVarUpdatedAt)) {
             //See if oldObject contains key
-            if (oldObject != null) {
-              ParseObject? keyInOld = oldObject.get<ParseObject>(key);
-              if (keyInOld != null) {
-                includedObject = keyInOld;
-
-                //If the object is not fetched || the ids don't match / the pointer changed
-                if (!includedObject.containsKey(keyVarUpdatedAt) ||
-                    includedObject.objectId != keyInObject.objectId) {
-                  includedObject = keyInObject;
-                  //fetch from web including sub objects
-                  //same as down there
-                  final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
-                      ParseObject>(ParseObject(includedObject.parseClassName))
-                    ..whereEqualTo(keyVarObjectId, includedObject.objectId)
-                    ..includeObject(_toIncludeStringList(paths[key]));
-                  loadingNodes.add(queryBuilder
-                      .query()
-                      .then<void>((ParseResponse parseResponse) {
-                    List<dynamic>? results = parseResponse.results;
-                    if (parseResponse.success &&
-                        results != null &&
-                        results.length == 1) {
-                      // ignore: deprecated_member_use_from_same_package
-                      object[key] = results[0];
-                    }
-                  }));
-                  continue;
-                } else {
-                  // ignore: deprecated_member_use_from_same_package
-                  object[key] = includedObject;
-                  //recursion
-                  loadingNodes
-                      .add(_loadIncludes(includedObject, paths: paths[key]));
-                  continue;
-                }
-              } else {
+            ParseObject? keyInOld = oldObject?.get<ParseObject>(key);
+            if (keyInOld != null) {
+              //If the object is not fetched || the ids don't match / the pointer changed
+              if (!keyInOld.containsKey(keyVarUpdatedAt) ||
+                  includedObject.objectId != keyInOld.objectId) {
                 //fetch from web including sub objects
-                //same as up there
+                //same as down there
                 final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
                     ParseObject>(ParseObject(includedObject.parseClassName))
                   ..whereEqualTo(keyVarObjectId, includedObject.objectId)
@@ -319,12 +287,36 @@ class ParseLiveList<T extends ParseObject> {
                   if (parseResponse.success &&
                       results != null &&
                       results.length == 1) {
-                    // ignore: deprecated_member_use_from_same_package
                     object[key] = results[0];
                   }
                 }));
                 continue;
+              } else {
+                includedObject = keyInOld;
+                object[key] = includedObject;
+                //recursion
+                loadingNodes
+                    .add(_loadIncludes(includedObject, paths: paths[key]));
+                continue;
               }
+            } else {
+              //fetch from web including sub objects
+              //same as up there
+              final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<
+                  ParseObject>(ParseObject(includedObject.parseClassName))
+                ..whereEqualTo(keyVarObjectId, includedObject.objectId)
+                ..includeObject(_toIncludeStringList(paths[key]));
+              loadingNodes.add(queryBuilder
+                  .query()
+                  .then<void>((ParseResponse parseResponse) {
+                List<dynamic>? results = parseResponse.results;
+                if (parseResponse.success &&
+                    results != null &&
+                    results.length == 1) {
+                  object[key] = results[0];
+                }
+              }));
+              continue;
             }
           }
         } else {
