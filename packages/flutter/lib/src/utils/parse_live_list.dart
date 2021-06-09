@@ -3,6 +3,9 @@ part of flutter_parse_sdk_flutter;
 typedef ChildBuilder<T extends sdk.ParseObject> = Widget Function(
     BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot);
 
+typedef StreamGetter<T extends sdk.ParseObject> = Stream<T> Function();
+typedef DataGetter<T extends sdk.ParseObject> = T Function();
+
 class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   const ParseLiveListWidget({
     Key? key,
@@ -211,9 +214,9 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
       required this.childBuilder})
       : super(key: key);
 
-  final sdk.StreamGetter<T>? stream;
-  final sdk.DataGetter<T>? loadedData;
-  final sdk.DataGetter<T>? preLoadedData;
+  final StreamGetter<T>? stream;
+  final DataGetter<T>? loadedData;
+  final DataGetter<T>? preLoadedData;
   final Animation<double> sizeFactor;
   final Duration duration;
   final ChildBuilder<T> childBuilder;
@@ -228,8 +231,8 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
 class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveListElementWidget<T>>
     with SingleTickerProviderStateMixin {
-  _ParseLiveListElementWidgetState(sdk.DataGetter<T>? loadedDataGetter,
-      sdk.DataGetter<T>? preLoadedDataGetter, sdk.StreamGetter<T>? stream) {
+  _ParseLiveListElementWidgetState(DataGetter<T>? loadedDataGetter,
+      DataGetter<T>? preLoadedDataGetter, StreamGetter<T>? stream) {
     _snapshot = sdk.ParseLiveListElementSnapshot<T>(
         loadedData: loadedDataGetter != null ? loadedDataGetter() : null,
         preLoadedData:

@@ -778,9 +778,6 @@ class ParseLiveListDeleteEvent<T extends ParseObject>
   ParseLiveListDeleteEvent(int index, T object) : super(index, object);
 }
 
-typedef StreamGetter<T extends ParseObject> = Stream<T> Function();
-typedef DataGetter<T extends ParseObject> = T Function();
-
 class ParseLiveListElementSnapshot<T extends ParseObject> {
   ParseLiveListElementSnapshot(
       {this.loadedData, this.error, this.preLoadedData});
