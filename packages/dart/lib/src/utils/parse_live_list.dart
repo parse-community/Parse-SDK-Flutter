@@ -590,11 +590,12 @@ class ParseLiveListElement<T extends ParseObject> {
 
   void _subscribe() {
     _subscriptionQueue.whenComplete(() async {
-      if (_updatedSubItems.isNotEmpty && _object != null) {
+      T? object = _object;
+      if (_updatedSubItems.isNotEmpty && object != null) {
         final List<Future<void>> tasks = <Future<void>>[];
         for (PathKey key in _updatedSubItems.keys) {
-          tasks.add(_subscribeSubItem(_object!, key,
-              _object!.get<ParseObject>(key.key)!, _updatedSubItems[key]));
+          tasks.add(_subscribeSubItem(object, key,
+              object.get<ParseObject>(key.key), _updatedSubItems[key]));
         }
         await Future.wait(tasks);
       }
@@ -612,12 +613,12 @@ class ParseLiveListElement<T extends ParseObject> {
   }
 
   Future<void> _subscribeSubItem(ParseObject parentObject, PathKey currentKey,
-      ParseObject subObject, Map<PathKey, dynamic> path) async {
-    if (_liveQuery != null) {
+      ParseObject? subObject, Map<PathKey, dynamic> path) async {
+    if (_liveQuery != null && subObject != null) {
       final List<Future<void>> tasks = <Future<void>>[];
       for (PathKey key in path.keys) {
         tasks.add(_subscribeSubItem(
-            subObject, key, subObject.get<ParseObject>(key.key)!, path[key]));
+            subObject, key, subObject.get<ParseObject>(key.key), path[key]));
       }
       final QueryBuilder<ParseObject> queryBuilder =
           QueryBuilder<ParseObject>(subObject)
@@ -641,7 +642,7 @@ class ParseLiveListElement<T extends ParseObject> {
               _unsubscribe(path);
               for (PathKey key in path.keys) {
                 tasks.add(_subscribeSubItem(newObject, key,
-                    newObject.get<ParseObject>(key.key)!, path[key]));
+                    newObject.get<ParseObject>(key.key), path[key]));
               }
             }
             await Future.wait(tasks);
