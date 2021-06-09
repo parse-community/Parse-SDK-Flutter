@@ -61,8 +61,9 @@ class LiveQueryReconnectingController {
           break;
         case LiveQueryClientEvent.USER_DISCONNECTED:
           _userDisconnected = true;
-          if (_currentTimer != null) {
-            _currentTimer!.cancel();
+          Timer? currentTimer = _currentTimer;
+          if (currentTimer != null) {
+            currentTimer.cancel();
             _currentTimer = null;
           }
           break;
