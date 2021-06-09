@@ -308,9 +308,11 @@ class ParseLiveList<T extends ParseObject> {
                   ParseObject>(ParseObject(includedObject.parseClassName))
                 ..whereEqualTo(keyVarObjectId, includedObject.objectId)
                 ..includeObject(_toIncludeStringList(paths[key]));
-              loadingNodes.add(
-                  queryBuilder.query().then<void>((ParseResponse parseResponse) {
-                if (parseResponse.success && parseResponse.results!.length == 1) {
+              loadingNodes.add(queryBuilder
+                  .query()
+                  .then<void>((ParseResponse parseResponse) {
+                if (parseResponse.success &&
+                    parseResponse.results!.length == 1) {
                   // ignore: deprecated_member_use_from_same_package
                   object[key] = parseResponse.results![0];
                 }
@@ -445,7 +447,7 @@ class ParseLiveList<T extends ParseObject> {
   String getIdentifier(int index) {
     if (index < _list.length) {
       return _list[index].object!.get<String>(keyVarObjectId)! +
-              _list[index].object!.get<DateTime>(keyVarUpdatedAt).toString();
+          _list[index].object!.get<DateTime>(keyVarUpdatedAt).toString();
     }
     return 'NotFound';
   }
