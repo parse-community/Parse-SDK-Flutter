@@ -1,6 +1,6 @@
 name: parse_server_sdk_flutter
 description: Flutter plugin for Parse Server, (https://parseplatform.org), (https://back4app.com)
-version: 3.0.0
+version: 3.0.1
 homepage: https://github.com/phillwiggins/flutter_parse_sdk
 
 environment:
@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
 
   # Uncomment for Release version
-  parse_server_sdk:   ^3.0.0
+  parse_server_sdk:   ^3.0.1
 
   # Uncomment for local testing
   #parse_server_sdk:

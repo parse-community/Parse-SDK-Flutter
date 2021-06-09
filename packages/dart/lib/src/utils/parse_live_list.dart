@@ -165,7 +165,7 @@ class ParseLiveList<T extends ParseObject> {
     LiveQuery()
         .client
         .subscribe<T>(QueryBuilder<T>.copy(_query),
-            copyObject: _query.object!.clone(_query.object!.toJson()))
+            copyObject: _query.object.clone(_query.object.toJson()))
         .then((Subscription<T> subscription) {
       _liveQuerySubscription = subscription;
 
@@ -266,7 +266,7 @@ class ParseLiveList<T extends ParseObject> {
     for (String key in paths.keys) {
       if (object.containsKey(key)) {
         ParseObject? includedObject = object.get<ParseObject>(key);
-        if(includedObject != null){
+        if (includedObject != null) {
           //If the object is not fetched
           if (!includedObject.containsKey(keyVarUpdatedAt)) {
             //See if oldObject contains key

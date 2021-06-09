@@ -347,7 +347,7 @@ class LiveQueryClient {
       'op': 'subscribe',
       'requestId': subscription.requestId,
       'query': <String, dynamic>{
-        'className': query.object!.parseClassName,
+        'className': query.object.parseClassName,
         'where': _whereMap,
         if (keysToReturn != null && keysToReturn.isNotEmpty)
           'fields': keysToReturn
