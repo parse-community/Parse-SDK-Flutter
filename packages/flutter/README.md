@@ -14,7 +14,7 @@ This is a work in progress and we are consistently updating it. Please let us kn
 To install, either add to your pubspec.yaml
 ```yml
 dependencies:  
-    parse_server_sdk_flutter: ^3.0.0
+    parse_server_sdk_flutter: ^3.0.1
 ```
 or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
 
