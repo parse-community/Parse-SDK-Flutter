@@ -44,8 +44,7 @@ class ParseLiveList<T extends ParseObject> {
   int get nextID => _nextID++;
 
   /// is object1 listed after object2?
-  /// can return null
-  bool? after(T? object1, T? object2) {
+  bool? after(T object1, T object2) {
     List<String> fields = <String>[];
 
     if (_query.limiters.containsKey('order')) {
@@ -58,8 +57,8 @@ class ParseLiveList<T extends ParseObject> {
         reverse = true;
         key = key.substring(1);
       }
-      final dynamic val1 = object1!.get<dynamic>(key);
-      final dynamic val2 = object2!.get<dynamic>(key);
+      final dynamic val1 = object1.get<dynamic>(key);
+      final dynamic val2 = object2.get<dynamic>(key);
 
       if (val1 == null && val2 == null) {
         break;
@@ -357,7 +356,8 @@ class ParseLiveList<T extends ParseObject> {
       await _loadIncludes(object, paths: _includePaths);
     }
     for (int i = 0; i < _list.length; i++) {
-      if (after(object, _list[i].object) != true) {
+      T? other = _list[i].object;
+      if (other != null && after(object, other) != true) {
         _list.insert(
             i,
             ParseLiveListElement<T>(object,
