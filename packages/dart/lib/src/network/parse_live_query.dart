@@ -183,26 +183,29 @@ class LiveQueryClient {
   }
 
   int readyState() {
-    if (_webSocket != null) {
-      return _webSocket!.readyState;
+    parse_web_socket.WebSocket? webSocket = _webSocket;
+    if (webSocket != null) {
+      return webSocket.readyState;
     }
     return parse_web_socket.WebSocket.CONNECTING;
   }
 
   Future<dynamic> disconnect({bool userInitialized = false}) async {
-    if (_webSocket != null &&
-        _webSocket!.readyState == parse_web_socket.WebSocket.OPEN) {
+    parse_web_socket.WebSocket? webSocket = _webSocket;
+    if (webSocket != null &&
+        webSocket.readyState == parse_web_socket.WebSocket.OPEN) {
       if (_debug) {
         print('$_printConstLiveQuery: Socket closed');
       }
-      await _webSocket!.close();
+      await webSocket.close();
       _webSocket = null;
     }
-    if (_channel != null && _channel!.sink != null) {
+    WebSocketChannel? channel = _channel;
+    if (channel != null) {
       if (_debug) {
         print('$_printConstLiveQuery: close');
       }
-      await _channel!.sink.close();
+      await channel.sink.close();
       _channel = null;
     }
     _requestSubscription.values.toList().forEach((Subscription subscription) {
@@ -237,11 +240,12 @@ class LiveQueryClient {
       'op': 'unsubscribe',
       'requestId': subscription.requestId,
     };
-    if (_channel != null && _channel!.sink != null) {
+    WebSocketChannel? channel = _channel;
+    if (channel != null) {
       if (_debug) {
         print('$_printConstLiveQuery: UnsubscribeMessage: $unsubscribeMessage');
       }
-      _channel!.sink.add(jsonEncode(unsubscribeMessage));
+      channel.sink.add(jsonEncode(unsubscribeMessage));
       subscription._enabled = false;
       _requestSubscription.remove(subscription.requestId);
     }
@@ -262,10 +266,11 @@ class LiveQueryClient {
     _connecting = true;
 
     try {
-      _webSocket = await parse_web_socket.WebSocket.connect(_liveQueryURL);
+      parse_web_socket.WebSocket webSocket =
+          await parse_web_socket.WebSocket.connect(_liveQueryURL);
+      _webSocket = webSocket;
       _connecting = false;
-      if (_webSocket != null &&
-          _webSocket!.readyState == parse_web_socket.WebSocket.OPEN) {
+      if (webSocket.readyState == parse_web_socket.WebSocket.OPEN) {
         if (_debug) {
           print('$_printConstLiveQuery: Socket opened');
         }
@@ -275,8 +280,9 @@ class LiveQueryClient {
         }
         return Future<void>.value(null);
       }
-      _channel = _webSocket!.createWebSocketChannel();
-      _channel!.stream.listen((dynamic message) {
+      WebSocketChannel channel = webSocket.createWebSocketChannel();
+      _channel = channel;
+      channel.stream.listen((dynamic message) {
         _handleMessage(message);
       }, onDone: () {
         _clientEventStreamController.sink
@@ -308,7 +314,8 @@ class LiveQueryClient {
   }
 
   void _connectLiveQuery() {
-    if (_channel == null || _channel!.sink == null) {
+    WebSocketChannel? channel = _channel;
+    if (channel == null) {
       return;
     }
     //The connect message is sent from a client to the LiveQuery server.
@@ -318,19 +325,21 @@ class LiveQueryClient {
       'applicationId': ParseCoreData().applicationId
     };
 
-    if (_sendSessionId && ParseCoreData().sessionId != null) {
-      connectMessage['sessionToken'] = ParseCoreData().sessionId!;
+    if (_sendSessionId) {
+      String? sessionId = ParseCoreData().sessionId;
+      if (sessionId != null) {
+        connectMessage['sessionToken'] = sessionId;
+      }
     }
-
-    if (ParseCoreData().clientKey != null)
-      connectMessage['clientKey'] = ParseCoreData().clientKey!;
-    if (ParseCoreData().masterKey != null)
-      connectMessage['masterKey'] = ParseCoreData().masterKey!;
+    String? clientKey = ParseCoreData().clientKey;
+    String? masterKey = ParseCoreData().masterKey;
+    if (clientKey != null) connectMessage['clientKey'] = clientKey;
+    if (masterKey != null) connectMessage['masterKey'] = masterKey;
 
     if (_debug) {
       print('$_printConstLiveQuery: ConnectMessage: $connectMessage');
     }
-    _channel!.sink.add(jsonEncode(connectMessage));
+    channel.sink.add(jsonEncode(connectMessage));
   }
 
   void _subscribeLiveQuery(Subscription subscription) {
@@ -367,7 +376,7 @@ class LiveQueryClient {
       print('$_printConstLiveQuery: SubscribeMessage: $subscribeMessage');
     }
 
-    _channel!.sink.add(jsonEncode(subscribeMessage));
+    _channel?.sink.add(jsonEncode(subscribeMessage));
   }
 
   void _handleMessage(String message) {
@@ -394,22 +403,25 @@ class LiveQueryClient {
       return;
     }
     if (subscription.eventCallbacks.containsKey(actionData['op'])) {
-      if (actionData.containsKey('object')) {
-        final Map<String, dynamic> map = actionData['object'];
-        final String? className = map['className'];
-        if (className == keyClassUser) {
-          subscription.eventCallbacks[actionData['op']]!(
-              (subscription.copyObject ??
+      Function? eventCallback = subscription.eventCallbacks[actionData['op']];
+      if (eventCallback != null) {
+        if (actionData.containsKey('object')) {
+          final Map<String, dynamic> map = actionData['object'];
+          final String? className = map['className'];
+          if (className != null) {
+            if (className == keyClassUser) {
+              eventCallback((subscription.copyObject ??
                       ParseCoreData.instance.createParseUser(null, null, null))
                   .fromJson(map));
-        } else {
-          subscription.eventCallbacks[actionData['op']]!(
-              (subscription.copyObject ??
-                      ParseCoreData.instance.createObject(className!))
+            } else {
+              eventCallback((subscription.copyObject ??
+                      ParseCoreData.instance.createObject(className))
                   .fromJson(map));
+            }
+          }
+        } else {
+          eventCallback(actionData);
         }
-      } else {
-        subscription.eventCallbacks[actionData['op']]!(actionData);
       }
     }
   }
