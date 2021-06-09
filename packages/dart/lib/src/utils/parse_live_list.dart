@@ -133,7 +133,7 @@ class ParseLiveList<T extends ParseObject> {
     if (_debug)
       print('ParseLiveList: lazyLoading is ${_lazyLoading ? 'on' : 'off'}');
     if (_lazyLoading) {
-      final List<String> keys = _preloadedColumns;
+      final List<String> keys = _preloadedColumns.toList();
       if (_lazyLoading && query.limiters.containsKey('order'))
         keys.addAll(
           query.limiters['order'].toString().split(',').map((String string) {
@@ -480,12 +480,11 @@ class ParseLiveList<T extends ParseObject> {
 }
 
 class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
-  ParseLiveElement(T object,
-      {bool loaded = false, List<String>? includeObject})
+  ParseLiveElement(T object, {bool loaded = false, List<String>? includeObject})
       : super(object,
-      loaded: loaded,
-      updatedSubItems:
-      ParseLiveList._toIncludeMap(includeObject ?? <String>[])) {
+            loaded: loaded,
+            updatedSubItems:
+                ParseLiveList._toIncludeMap(includeObject ?? <String>[])) {
     _includes = ParseLiveList._toIncludeMap(includeObject ?? <String>[]);
     queryBuilder = QueryBuilder<T>(object.clone(<String, dynamic>{}))
       ..whereEqualTo(keyVarObjectId, object.objectId);
