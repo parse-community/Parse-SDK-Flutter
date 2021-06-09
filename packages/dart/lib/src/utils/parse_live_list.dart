@@ -375,11 +375,13 @@ class ParseLiveList<T extends ParseObject> {
 
   Future<void> _objectUpdated(T object) async {
     for (int i = 0; i < _list.length; i++) {
-      if (_list[i].object!.get<String>(keyVarObjectId) ==
-          object.get<String>(keyVarObjectId)) {
+      T? other = _list[i].object;
+      if (other != null &&
+          other.get<String>(keyVarObjectId) ==
+              object.get<String>(keyVarObjectId)) {
         await _loadIncludes(object,
             oldObject: _list[i].object, paths: _includePaths);
-        if (after(_list[i].object, object) == null) {
+        if (after(other, object) == null) {
           _list[i].object = object.clone(object.toJson(full: true));
           _eventStreamController.sink.add(ParseLiveListUpdateEvent<T>(
               i, object.clone(object.toJson(full: true))));
