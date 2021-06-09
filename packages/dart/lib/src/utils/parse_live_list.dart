@@ -614,7 +614,8 @@ class ParseLiveListElement<T extends ParseObject> {
 
   Future<void> _subscribeSubItem(ParseObject parentObject, PathKey currentKey,
       ParseObject? subObject, Map<PathKey, dynamic> path) async {
-    if (_liveQuery != null && subObject != null) {
+    LiveQuery? liveQuery = _liveQuery;
+    if (liveQuery != null && subObject != null) {
       final List<Future<void>> tasks = <Future<void>>[];
       for (PathKey key in path.keys) {
         tasks.add(_subscribeSubItem(
@@ -624,7 +625,7 @@ class ParseLiveListElement<T extends ParseObject> {
           QueryBuilder<ParseObject>(subObject)
             ..whereEqualTo(keyVarObjectId, subObject.objectId);
 
-      tasks.add(_liveQuery!.client
+      tasks.add(liveQuery.client
           .subscribe(queryBuilder)
           .then((Subscription<ParseObject> subscription) {
         currentKey.subscription = subscription;
