@@ -154,9 +154,11 @@ class LiveQueryClient {
         liveQueryURL = liveQueryURL.replaceAll('http', 'ws');
       }
     }
-    _instance ??= LiveQueryClient._internal(liveQueryURL,
-        debug: debug, autoSendSessionId: autoSendSessionId);
-    return _instance!;
+    LiveQueryClient instance = _instance ??
+        LiveQueryClient._internal(liveQueryURL,
+            debug: debug, autoSendSessionId: autoSendSessionId);
+    _instance ??= instance;
+    return instance;
   }
 
   Stream<LiveQueryClientEvent> get getClientEventStream {
