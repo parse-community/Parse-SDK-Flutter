@@ -3,6 +3,7 @@ part of flutter_parse_sdk;
 // ignore_for_file: always_specify_types
 class ParseRelation<T extends ParseObject> {
   ParseRelation({required ParseObject parent, required String key}) {
+    _targetClass = parent.get<ParseRelation>(key)!.getTargetClass;
     _parent = parent;
     _key = key;
     _parentObjectId = parent.objectId!;
@@ -40,6 +41,8 @@ class ParseRelation<T extends ParseObject> {
     _knownObjects!.remove(object);
     _parent!.removeRelation(_key, _knownObjects!.toList());
   }
+
+  String get getTargetClass => _targetClass ?? '';
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         '__type': keyRelation,

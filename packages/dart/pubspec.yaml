@@ -1,6 +1,6 @@
 name: parse_server_sdk
 description: Dart plugin for Parse Server, (https://parseplatform.org), (https://back4app.com)
-version: 3.0.0
+version: 3.1.0
 homepage: https://github.com/phillwiggins/flutter_parse_sdk
 
 environment:
@@ -10,11 +10,11 @@ dependencies:
 
   # Networking
   dio: ^4.0.0
-  http: ^0.13.1
-  web_socket_channel: ^2.0.0
+  http: ^0.13.3
+  web_socket_channel: ^2.1.0
 
   #Database
-  sembast: ^3.0.1
+  sembast: ^3.1.0+2
   sembast_web: ^2.0.0+2
   xxtea: ^2.1.0
 
@@ -26,6 +26,6 @@ dependencies:
 
 dev_dependencies:
   # Testing
-  build_runner: ^2.0.1
-  mockito: ^5.0.4
-  test: ^1.16.8
+  build_runner: ^2.0.4
+  mockito: ^5.0.10
+  test: ^1.17.7

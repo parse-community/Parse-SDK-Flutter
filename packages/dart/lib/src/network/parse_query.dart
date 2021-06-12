@@ -113,10 +113,10 @@ class QueryBuilder<T extends ParseObject> {
       {bool caseSensitive = false}) {
     if (caseSensitive) {
       queries.add(MapEntry<String, dynamic>(
-          _SINGLE_QUERY, '\"$column\":{\"\$regex\": \"$query^\"}'));
+          _SINGLE_QUERY, '\"$column\":{\"\$regex\": \"$query\$\"}'));
     } else {
       queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
-          '\"$column\":{\"\$regex\": \"$query^\", \"\$options\": \"i\"}'));
+          '\"$column\":{\"\$regex\": \"$query\$\", \"\$options\": \"i\"}'));
     }
   }
 
@@ -224,11 +224,14 @@ class QueryBuilder<T extends ParseObject> {
   /// Powerful search for containing whole words. This search is much quicker than regex and can search for whole words including wether they are case sensitive or not.
   /// This search can also order by the score of the search
   void whereContainsWholeWord(String column, String query,
-      {bool caseSensitive = false, bool orderByScore = true}) {
+      {bool caseSensitive = false,
+      bool orderByScore = false,
+      bool diacriticSensitive = false}) {
     queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
-        '\"$column\":{\"\$text\":{\"\$search\":{\"\$term\": \"$query\", \"\$caseSensitive\": $caseSensitive }}}'));
+        '\"$column\":{\"\$text\":{\"\$search\":{\"\$term\": \"$query\", \"\$caseSensitive\": $caseSensitive , \"\$diacriticSensitive\": $diacriticSensitive }}}'));
     if (orderByScore) {
-      orderByDescending('score');
+      orderByAscending('\$score');
+      keysToReturn(['\$score']);
     }
   }
 
@@ -283,8 +286,22 @@ class QueryBuilder<T extends ParseObject> {
         '\"$column\":{\"\$within\":{\"\$box\": [{\"__type\": \"GeoPoint\",\"latitude\":$latitudeS,\"longitude\":$longitudeS},{\"__type\": \"GeoPoint\",\"latitude\":$latitudeN,\"longitude\":$longitudeN}]}}'));
   }
 
-  // Add a constraint to the query that requires a particular key's value match another QueryBuilder
-  void whereMatchesQuery<E extends ParseObject>(String column, QueryBuilder<E> query) {
+  /// Return an object with key coordinates be contained within and on the bounds of a given polygon.
+  /// Supports closed and open (last point is connected to first) paths
+  /// Polygon must have at least 3 points
+  void whereWithinPolygon(String column, List<ParseGeoPoint> points) {
+    if (points.length < 3)
+      throw ArgumentError('Polygon must have at least 3 points');
+    Map<String, dynamic> dictionary = <String, dynamic>{};
+    dictionary['\$polygon'] = points.map((e) => e.toJson()).toList();
+
+    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
+        '\"$column\":{\"\$geoWithin\":${jsonEncode(dictionary)}}'));
+  }
+
+  /// Add a constraint to the query that requires a particular key's value match another QueryBuilder
+  void whereMatchesQuery<E extends ParseObject>(
+      String column, QueryBuilder<E> query) {
     final String inQuery =
         query._buildQueryRelational(query.object!.parseClassName);
 
@@ -292,8 +309,9 @@ class QueryBuilder<T extends ParseObject> {
         _SINGLE_QUERY, '\"$column\":{\"\$inQuery\":$inQuery}'));
   }
 
-  //Add a constraint to the query that requires a particular key's value does not match another QueryBuilder
-  void whereDoesNotMatchQuery<E extends ParseObject>(String column, QueryBuilder<E> query) {
+  ///Add a constraint to the query that requires a particular key's value does not match another QueryBuilder
+  void whereDoesNotMatchQuery<E extends ParseObject>(
+      String column, QueryBuilder<E> query) {
     final String inQuery =
         query._buildQueryRelational(query.object!.parseClassName);
 
@@ -301,7 +319,7 @@ class QueryBuilder<T extends ParseObject> {
         _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
   }
 
-  // Add a constraint to the query that requires a particular key's value matches a value for a key in the results of another ParseQuery.
+  /// Add a constraint to the query that requires a particular key's value matches a value for a key in the results of another ParseQuery.
   void whereMatchesKeyInQuery<E extends ParseObject>(
       String column, String keyInQuery, QueryBuilder<E> query) {
     if (query.queries.isEmpty) {
@@ -314,14 +332,14 @@ class QueryBuilder<T extends ParseObject> {
       throw ArgumentError('include is not allowed');
     }
 
-    final String inQuery =
-        query._buildQueryRelationalKey(query.object!.parseClassName, keyInQuery);
+    final String inQuery = query._buildQueryRelationalKey(
+        query.object!.parseClassName, keyInQuery);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$select\":$inQuery}'));
   }
 
-  // Add a constraint to the query that requires a particular key's value does not match any value for a key in the results of another ParseQuery
+  /// Add a constraint to the query that requires a particular key's value does not match any value for a key in the results of another ParseQuery
   void whereDoesNotMatchKeyInQuery<E extends ParseObject>(
       String column, String keyInQuery, QueryBuilder<E> query) {
     if (query.queries.isEmpty) {
@@ -334,8 +352,8 @@ class QueryBuilder<T extends ParseObject> {
       throw ArgumentError('include is not allowed');
     }
 
-    final String inQuery =
-        query._buildQueryRelationalKey(query.object!.parseClassName, keyInQuery);
+    final String inQuery = query._buildQueryRelationalKey(
+        query.object!.parseClassName, keyInQuery);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$dontSelect\":$inQuery}'));
