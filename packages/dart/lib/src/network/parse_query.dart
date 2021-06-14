@@ -225,7 +225,7 @@ class QueryBuilder<T extends ParseObject> {
   /// This search can also order by the score of the search
   void whereContainsWholeWord(String column, String query,
       {bool caseSensitive = false,
-      bool orderByScore = false,
+      bool orderByScore = true,
       bool diacriticSensitive = false}) {
     queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
         '\"$column\":{\"\$text\":{\"\$search\":{\"\$term\": \"$query\", \"\$caseSensitive\": $caseSensitive , \"\$diacriticSensitive\": $diacriticSensitive }}}'));
