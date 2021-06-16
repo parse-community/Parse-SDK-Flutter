@@ -288,7 +288,6 @@ class QueryBuilder<T extends ParseObject> {
         '\"$column\":{\"\$within\":{\"\$box\": [{\"__type\": \"GeoPoint\",\"latitude\":$latitudeS,\"longitude\":$longitudeS},{\"__type\": \"GeoPoint\",\"latitude\":$latitudeN,\"longitude\":$longitudeN}]}}'));
   }
 
-
   /// Return an object with key coordinates be contained within and on the bounds of a given polygon.
   /// Supports closed and open (last point is connected to first) paths
   /// Polygon must have at least 3 points
@@ -335,8 +334,8 @@ class QueryBuilder<T extends ParseObject> {
       throw ArgumentError('include is not allowed');
     }
 
-    final String inQuery = query._buildQueryRelationalKey(
-        query.object!.parseClassName, keyInQuery);
+    final String inQuery =
+        query._buildQueryRelationalKey(query.object.parseClassName, keyInQuery);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$select\":$inQuery}'));
@@ -355,8 +354,8 @@ class QueryBuilder<T extends ParseObject> {
       throw ArgumentError('include is not allowed');
     }
 
-    final String inQuery = query._buildQueryRelationalKey(
-        query.object!.parseClassName, keyInQuery);
+    final String inQuery =
+        query._buildQueryRelationalKey(query.object.parseClassName, keyInQuery);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$dontSelect\":$inQuery}'));
