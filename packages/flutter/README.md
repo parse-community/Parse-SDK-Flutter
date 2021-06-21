@@ -11,13 +11,7 @@ Hi, this is a Flutter plugin that allows communication with a Parse Server, (htt
 This is a work in progress and we are consistently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project. (Even if it is just to improve our documentation)
 
 ## Getting Started
-To install, either add to your pubspec.yaml
-```yml
-dependencies:  
-    parse_server_sdk_flutter: ^3.1.0
-```
-or clone this repository and add to your project. As this is an early development with multiple contributors, it is probably best to download/clone and keep updating as an when a new feature is added.
-
+To install, either add [dependency in your pubspec.yaml file](https://pub.dev/packages/parse_server_sdk_flutter/install).
 
 Once you have the library added to your project, upon first call to your app (Similar to what your application class would be) add the following...
 
@@ -329,6 +323,7 @@ The features available are:-
  * WithinKilometers
  * WithinRadians
  * WithinGeoBox
+ * WithinPolygon
  * MatchesQuery
  * DoesNotMatchQuery
  * MatchesKeyInQuery

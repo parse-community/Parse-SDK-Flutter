@@ -10,12 +10,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Uncomment for Release version
-  parse_server_sdk: ^3.1.0
+  #Uncomment for Release version
+  #parse_server_sdk: ^3.1.0
 
   # Uncomment for local testing
-  #parse_server_sdk:
-  #   path: ../dart
+  parse_server_sdk:
+     path: ../dart
 
   # Uncomment for test with Github Branch
   #parse_server_sdk:
@@ -41,4 +41,4 @@ dev_dependencies:
   # Testing
   flutter_test:
     sdk: flutter
-  mockito: ^5.0.2
+  mockito: ^5.0.10
