@@ -1,43 +1,43 @@
 part of flutter_parse_sdk;
 
 typedef ParseClientCreator = ParseClient Function(
-    {bool sendSessionId, SecurityContext securityContext});
+    {required bool sendSessionId, SecurityContext? securityContext});
 
 abstract class ParseClient {
   Future<ParseNetworkResponse> get(
     String path, {
-    ParseNetworkOptions options,
-    ProgressCallback onReceiveProgress,
+    ParseNetworkOptions? options,
+    ProgressCallback? onReceiveProgress,
   });
 
   Future<ParseNetworkResponse> put(
     String path, {
-    String data,
-    ParseNetworkOptions options,
+    String? data,
+    ParseNetworkOptions? options,
   });
 
   Future<ParseNetworkResponse> post(
     String path, {
-    String data,
-    ParseNetworkOptions options,
+    String? data,
+    ParseNetworkOptions? options,
   });
 
   Future<ParseNetworkResponse> postBytes(
     String path, {
-    Stream<List<int>> data,
-    ParseNetworkOptions options,
-    ProgressCallback onSendProgress,
+    Stream<List<int> >? data,
+    ParseNetworkOptions? options,
+    ProgressCallback? onSendProgress,
   });
 
   Future<ParseNetworkResponse> delete(
     String path, {
-    ParseNetworkOptions options,
+    ParseNetworkOptions? options,
   });
 
   Future<ParseNetworkByteResponse> getBytes(
     String path, {
-    ParseNetworkOptions options,
-    ProgressCallback onReceiveProgress,
+    ParseNetworkOptions? options,
+    ProgressCallback? onReceiveProgress,
   });
 
   // Future<ParseNetworkByteResponse> putBytes(
@@ -79,24 +79,24 @@ abstract class ParseClient {
 typedef ProgressCallback = void Function(int count, int total);
 
 class ParseNetworkResponse {
-  final String data;
-  final int statusCode;
-
   ParseNetworkResponse({
-    this.data,
+    required this.data,
     this.statusCode = -1,
   });
+
+  final String data;
+  final int statusCode;
 }
 
 class ParseNetworkByteResponse extends ParseNetworkResponse {
-  final List<int> bytes;
-
   ParseNetworkByteResponse({
     this.bytes,
     final String data = 'byte response',
-    final int statusCode,
+    final int statusCode = -1,
   }) : super(
           data: data,
           statusCode: statusCode,
         );
+
+  final List<int>? bytes;
 }

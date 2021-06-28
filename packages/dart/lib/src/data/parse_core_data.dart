@@ -6,7 +6,7 @@ class ParseCoreData {
 
   ParseCoreData._init(this.applicationId, this.serverUrl);
 
-  static ParseCoreData _instance;
+  static late ParseCoreData _instance;
 
   static ParseCoreData get instance => _instance;
 
@@ -17,116 +17,79 @@ class ParseCoreData {
   static Future<void> init(
     String appId,
     String serverUrl, {
-    bool debug,
-    String appName,
-    String appVersion,
-    String appPackageName,
-    String locale,
-    String liveQueryUrl,
-    String masterKey,
-    String clientKey,
-    String sessionId,
-    bool autoSendSessionId,
-    SecurityContext securityContext,
-    CoreStore store,
-    Map<String, ParseObjectConstructor> registeredSubClassMap,
-    ParseUserConstructor parseUserConstructor,
-    ParseFileConstructor parseFileConstructor,
-    List<int> liveListRetryIntervals,
-    ParseConnectivityProvider connectivityProvider,
-    String fileDirectory,
-    Stream<void> appResumedStream,
-    ParseClientCreator clientCreator,
+    required bool debug,
+    String? appName,
+    String? appVersion,
+    String? appPackageName,
+    String? locale,
+    String? liveQueryUrl,
+    String? masterKey,
+    String? clientKey,
+    String? sessionId,
+    required bool autoSendSessionId,
+    SecurityContext? securityContext,
+    CoreStore? store,
+    Map<String, ParseObjectConstructor>? registeredSubClassMap,
+    ParseUserConstructor? parseUserConstructor,
+    ParseFileConstructor? parseFileConstructor,
+    List<int>? liveListRetryIntervals,
+    ParseConnectivityProvider? connectivityProvider,
+    String? fileDirectory,
+    Stream<void>? appResumedStream,
+    ParseClientCreator? clientCreator,
   }) async {
     _instance = ParseCoreData._init(appId, serverUrl);
 
-    _instance.storage ??= store ?? CoreStoreMemoryImp();
-
-    if (debug != null) {
-      _instance.debug = debug;
-    }
-    if (appName != null) {
-      _instance.appName = appName;
-    }
-    if (appVersion != null) {
-      _instance.appVersion = appVersion;
-    }
-    if (appPackageName != null) {
-      _instance.appPackageName = appPackageName;
-    }
-    if (locale != null) {
-      _instance.locale = locale;
-    }
-    if (liveQueryUrl != null) {
-      _instance.liveQueryURL = liveQueryUrl;
-    }
-    if (clientKey != null) {
-      _instance.clientKey = clientKey;
-    }
-    if (masterKey != null) {
-      _instance.masterKey = masterKey;
-    }
-    if (sessionId != null) {
-      _instance.sessionId = sessionId;
-    }
-    if (autoSendSessionId != null) {
-      _instance.autoSendSessionId = autoSendSessionId;
-    }
-    if (securityContext != null) {
-      _instance.securityContext = securityContext;
-    }
-    if (liveListRetryIntervals != null) {
-      _instance.liveListRetryIntervals = liveListRetryIntervals;
-    } else {
-      _instance.liveListRetryIntervals = parseIsWeb
-          ? <int>[0, 500, 1000, 2000, 5000]
-          : <int>[0, 500, 1000, 2000, 5000, 10000];
-    }
-
+    _instance.storage = store ?? CoreStoreMemoryImp();
+    _instance.debug = debug;
+    _instance.appName = appName;
+    _instance.appVersion = appVersion;
+    _instance.appPackageName = appPackageName;
+    _instance.locale = locale;
+    _instance.liveQueryURL = liveQueryUrl;
+    _instance.clientKey = clientKey;
+    _instance.masterKey = masterKey;
+    _instance.sessionId = sessionId;
+    _instance.autoSendSessionId = autoSendSessionId;
+    _instance.securityContext = securityContext;
+    _instance.liveListRetryIntervals = liveListRetryIntervals ??
+        (parseIsWeb
+            ? <int>[0, 500, 1000, 2000, 5000]
+            : <int>[0, 500, 1000, 2000, 5000, 10000]);
     _instance._subClassHandler = ParseSubClassHandler(
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
     );
-    if (connectivityProvider != null) {
-      _instance.connectivityProvider = connectivityProvider;
-    }
-
-    if (fileDirectory != null) {
-      _instance.fileDirectory = fileDirectory;
-    }
-
-    if (appResumedStream != null) {
-      _instance.appResumedStream = appResumedStream;
-    }
-
-    if (clientCreator != null) {
-      _instance.clientCreator = clientCreator;
-    }
+    _instance.connectivityProvider = connectivityProvider;
+    _instance.fileDirectory = fileDirectory;
+    _instance.appResumedStream = appResumedStream;
+    _instance.clientCreator = clientCreator ??
+        (({required bool sendSessionId, SecurityContext? securityContext}) =>
+            ParseHTTPClient(
+                sendSessionId: sendSessionId, securityContext: securityContext));
   }
 
-  String appName;
-  String appVersion;
-  String appPackageName;
   String applicationId;
-  String locale;
   String serverUrl;
-  String liveQueryURL;
-  String masterKey;
-  String clientKey;
-  String sessionId;
-  bool autoSendSessionId;
-  SecurityContext securityContext;
-  bool debug;
-  CoreStore storage;
-  ParseSubClassHandler _subClassHandler;
-  List<int> liveListRetryIntervals;
-  ParseConnectivityProvider connectivityProvider;
-  String fileDirectory;
-  Stream<void> appResumedStream;
-  ParseClientCreator clientCreator =
-      ({bool sendSessionId, SecurityContext securityContext}) => ParseHTTPClient(
-          sendSessionId: sendSessionId, securityContext: securityContext);
+  String? appName;
+  String? appVersion;
+  String? appPackageName;
+  String? locale;
+  String? liveQueryURL;
+  String? masterKey;
+  String? clientKey;
+  String? sessionId;
+  late bool autoSendSessionId;
+  SecurityContext? securityContext;
+  late bool debug;
+  late CoreStore storage;
+  late ParseSubClassHandler _subClassHandler;
+  late List<int> liveListRetryIntervals;
+  ParseConnectivityProvider? connectivityProvider;
+  String? fileDirectory;
+  Stream<void>? appResumedStream;
+  late ParseClientCreator clientCreator;
 
   void registerSubClass(
       String className, ParseObjectConstructor objectConstructor) {
@@ -146,13 +109,13 @@ class ParseCoreData {
   }
 
   ParseUser createParseUser(
-      String username, String password, String emailAddress,
-      {String sessionToken, bool debug, ParseClient client}) {
+      String? username, String? password, String? emailAddress,
+      {String? sessionToken, bool? debug, ParseClient? client}) {
     return _subClassHandler.createParseUser(username, password, emailAddress,
         sessionToken: sessionToken, debug: debug, client: client);
   }
 
-  ParseFileBase createFile({String url, String name}) =>
+  ParseFileBase createFile({String? url, String? name}) =>
       _subClassHandler.createFile(name: name, url: url);
 
   /// Sets the current sessionId.

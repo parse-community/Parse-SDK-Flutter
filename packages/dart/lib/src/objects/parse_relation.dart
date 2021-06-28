@@ -2,43 +2,54 @@ part of flutter_parse_sdk;
 
 // ignore_for_file: always_specify_types
 class ParseRelation<T extends ParseObject> {
-  ParseRelation({ParseObject parent, String key}) {
+  ParseRelation({required ParseObject parent, required String key}) {
+    if (!parent.containsKey(key)) {
+      throw 'Invalid Relation key name';
+    }
+    _targetClass = parent.get<ParseRelation>(key)!.getTargetClass;
     _parent = parent;
     _key = key;
+    _parentObjectId = parent.objectId!;
   }
 
-  String _targetClass;
-  ParseObject _parent;
-  String _key;
-  Set<T> _objects = Set<T>();
+  ParseRelation.fromJson(Map<String, dynamic> map) {
+    _knownObjects = parseDecode(map['objects']);
+    _targetClass = map['className'];
+  }
+
+  //The owning object of this ParseRelation
+  ParseObject? _parent;
+  // The object Id of the parent.
+  String _parentObjectId = '';
+  //The className of the target objects.
+  String? _targetClass;
+  //The key of the relation in the parent object.
+  String _key = '';
+  //For offline caching, we keep track of every object we've known to be in the relation.
+  Set<T>? _knownObjects = Set<T>();
 
   QueryBuilder getQuery() {
-    return QueryBuilder(ParseObject(_targetClass));
+    return QueryBuilder(ParseObject(_targetClass!))
+      ..whereRelatedTo(_key, _parent!.parseClassName, _parentObjectId);
   }
 
   void add(T object) {
-    if (object != null) {
-      _targetClass = object.parseClassName;
-      _objects.add(object);
-      _parent.addRelation(_key, _objects.toList());
-    }
+    _targetClass = object.parseClassName;
+    _knownObjects!.add(object);
+    _parent!.addRelation(_key, _knownObjects!.toList());
   }
 
   void remove(T object) {
-    if (object != null) {
-      _targetClass = object.parseClassName;
-      _objects.remove(object);
-      _parent.removeRelation(_key, _objects.toList());
-    }
+    _targetClass = object.parseClassName;
+    _knownObjects!.remove(object);
+    _parent!.removeRelation(_key, _knownObjects!.toList());
   }
 
-  Map<String, dynamic> toJson() => <String, String>{
-        '__type': keyRelation,
-        'className': _objects?.first?.parseClassName,
-        'objects': parseEncode(_objects?.toList())
-      };
+  String get getTargetClass => _targetClass ?? '';
 
-  ParseRelation<T> fromJson(Map<String, dynamic> map) => ParseRelation<T>()
-    .._objects = parseDecode(map['objects'])
-    .._targetClass = map['className'];
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        '__type': keyRelation,
+        'className': _targetClass,
+        'objects': parseEncode(_knownObjects?.toList())
+      };
 }

@@ -11,7 +11,10 @@ install:
 
 script:
   - (cd packages/dart && pub get)
+  - (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
   - (cd packages/dart && pub run test)
+  - (cd packages/flutter && flutter pub remove parse_server_sdk)
+  - (cd packages/flutter && flutter pub add parse_server_sdk --path ../dart)
   - (cd packages/flutter && flutter pub get)
   - (cd packages/flutter && flutter test --no-pub test/)
 
