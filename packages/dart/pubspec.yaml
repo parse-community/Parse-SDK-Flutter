@@ -25,6 +25,6 @@ dependencies:
 
 dev_dependencies:
   # Testing
-  build_runner: ^2.0.4
+  build_runner: ^2.0.5
   mockito: ^5.0.10
-  test: ^1.17.7
+  test: ^1.17.9
