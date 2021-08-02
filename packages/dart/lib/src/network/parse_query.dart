@@ -536,7 +536,7 @@ class QueryBuilder<T extends ParseObject> {
 
   /// Find the first object that satisfies the query.
   /// Returns null, if no object is found.
-  Future<T>? first() async {
+  Future<T?> first() async {
     ParseResponse parseResponse =
         await (QueryBuilder.copy(this)..setLimit(1)).query();
     if (parseResponse.success) {
