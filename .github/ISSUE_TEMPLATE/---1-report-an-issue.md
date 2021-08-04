@@ -14,10 +14,10 @@ assignees: ''
     Thanks for contributing to Parse Swift!
 -->
 
-- [ ] I am not disclosing a [vulnerability](https://github.com/parse-community/Parse-Swift/security/policy).
+- [ ] I am not disclosing a [vulnerability](https://github.com/parse-community/Parse-SDK-Flutter/security/policy).
 - [ ] I am not just asking a [question](https://github.com/parse-community/.github/blob/main/SUPPORT.md).
-- [ ] I have searched through [existing issues](https://github.com/parse-community/Parse-Swift/issues?q=is%3Aissue).
-- [ ] I can reproduce the issue with the [latest version of Parse Swift](https://github.com/parse-community/Parse-Swift/releases). <!-- We don't investigate issues for outdated releases. -->
+- [ ] I have searched through [existing issues](https://github.com/parse-community/Parse-SDK-Flutter/issues?q=is%3Aissue).
+- [ ] I can reproduce the issue with the [latest version of the Parse Android SDK](https://github.com/parse-community/Parse-SDK-Flutter/releases). <!-- We don't investigate issues for outdated releases. -->
 - [ ] I can reproduce the issue with the [latest version of Parse Server](https://github.com/parse-community/parse-server/releases).
 
 ### Issue Description
@@ -32,23 +32,19 @@ assignees: ''
 ### Expected Outcome
 <!-- What outcome, for example query result, did you expect? -->
 
-### Failing Test Case / Pull Request
+### Pull Request
 <!--
     Check one of the following boxes [x] if you added a PR and add the link.
-    See the contribution guide for guidance, if you get stuck please do ask for help:
-    https://github.com/parse-community/Parse-Swift/blob/main/CONTRIBUTING.md
+    If you need any guidance please do ask.
 -->
 
-- [ ] 🤩 I submitted a PR with a fix and a test case.
-- [ ] 🧐 I submitted a PR with a failing test case.
+- [ ] 🤩 I submitted a PR with a fix.
 
 ###  Environment
 <!-- Be specific with versions, don't use "latest" or semver ranges like "~x.y.z" or "^x.y.z". -->
 
-Parse Swift
+Parse Flutter SDK
 - SDK version: `FILL_THIS_OUT`
-- Operating system (iOS, macOS, watchOS, etc.): `FILL_THIS_OUT`
-- Operating system version: `FILL_THIS_OUT`
 
 Server
 - Parse Server version: `FILL_THIS_OUT`
