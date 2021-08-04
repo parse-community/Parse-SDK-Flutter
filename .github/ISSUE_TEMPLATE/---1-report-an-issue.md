@@ -17,7 +17,7 @@ assignees: ''
 - [ ] I am not disclosing a [vulnerability](https://github.com/parse-community/Parse-SDK-Flutter/security/policy).
 - [ ] I am not just asking a [question](https://github.com/parse-community/.github/blob/main/SUPPORT.md).
 - [ ] I have searched through [existing issues](https://github.com/parse-community/Parse-SDK-Flutter/issues?q=is%3Aissue).
-- [ ] I can reproduce the issue with the [latest version of the Parse Android SDK](https://github.com/parse-community/Parse-SDK-Flutter/releases). <!-- We don't investigate issues for outdated releases. -->
+- [ ] I can reproduce the issue with the [latest version of the Parse Flutter SDK](https://github.com/parse-community/Parse-SDK-Flutter/releases). <!-- We don't investigate issues for outdated releases. -->
 - [ ] I can reproduce the issue with the [latest version of Parse Server](https://github.com/parse-community/parse-server/releases).
 
 ### Issue Description
