@@ -11,7 +11,7 @@ assignees: ''
 <!--
     Please check all of the following boxes [x] before submitting your issue.
     Click the "Preview" tab for better readability.
-    Thanks for contributing to Parse Swift!
+    Thanks for contributing to the Parse Flutter SDK!
 -->
 
 - [ ] I am not disclosing a [vulnerability](https://github.com/parse-community/Parse-SDK-Flutter/security/policy).
@@ -45,6 +45,8 @@ assignees: ''
 
 Parse Flutter SDK
 - SDK version: `FILL_THIS_OUT`
+- Operating system: `FILL_THIS_OUT`
+- Operating system version: `FILL_THIS_OUT`
 
 Server
 - Parse Server version: `FILL_THIS_OUT`
