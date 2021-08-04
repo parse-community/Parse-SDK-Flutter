@@ -11,12 +11,12 @@ assignees: ''
 <!--
     Check all of the following boxes [x] before submitting your issue.
     Click the "Preview" tab for better readability.
-    Thanks for contributing to Parse Swift!
+    Thanks for contributing to the Parse Android SDK!
 -->
 
-- [ ] I am not disclosing a [vulnerability](https://github.com/parse-community/Parse-Swift/security/policy).
+- [ ] I am not disclosing a [vulnerability](https://github.com/parse-community/Parse-SDK-Flutter/security/policy).
 - [ ] I am not just asking a [question](https://github.com/parse-community/.github/blob/main/SUPPORT.md).
-- [ ] I have searched through [existing issues](https://github.com/parse-community/Parse-Swift/issues?q=is%3Aissue).
+- [ ] I have searched through [existing issues](https://github.com/parse-community/Parse-SDK-Flutter/issues?q=is%3Aissue).
 
 ### Current Limitation
 <!-- Which current limitation is the feature or enhancement addressing? -->
