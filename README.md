@@ -1,5 +1,7 @@
 # Parse SDK for Flutter / Dart
 
+[![Build Status](https://app.travis-ci.com/parse-community/Parse-SDK-Flutter.svg?branch=master)](https://app.travis-ci.com/parse-community/Parse-SDK-Flutter)
+
 [![Backers on Open Collective](https://opencollective.com/parse-server/backers/badge.svg)][open-collective-link]
 [![Sponsors on Open Collective](https://opencollective.com/parse-server/sponsors/badge.svg)][open-collective-link]
 [![License](https://img.shields.io/badge/license-BSD-lightgrey.svg)](https://github.com/parse-community/Parse-SDK-Android/blob/master/LICENSE)
