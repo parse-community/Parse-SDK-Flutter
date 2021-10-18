@@ -1,24 +1,30 @@
-<p align="center">
-    <img alt="Parse Logo" src="https://parseplatform.org/img/logo.svg" width="500">
-  </a>
-</p>
+# Parse SDK for Flutter / Dart
+
+[![Build Status](https://app.travis-ci.com/parse-community/Parse-SDK-Flutter.svg?branch=master)](https://app.travis-ci.com/parse-community/Parse-SDK-Flutter)
+
+[![Backers on Open Collective](https://opencollective.com/parse-server/backers/badge.svg)][open-collective-link]
+[![Sponsors on Open Collective](https://opencollective.com/parse-server/sponsors/badge.svg)][open-collective-link]
+[![License](https://img.shields.io/badge/license-BSD-lightgrey.svg)](https://github.com/parse-community/Parse-SDK-Android/blob/master/LICENSE)
+[![Forum](https://img.shields.io/discourse/https/community.parseplatform.org/topics.svg)](https://community.parseplatform.org/c/parse-server)
+[![Twitter Follow](https://img.shields.io/twitter/follow/ParsePlatform.svg?label=Follow%20us%20on%20Twitter&style=social)](https://twitter.com/intent/follow?screen_name=ParsePlatform)
 
 ---
 
-This repository contains packages that allow communication with a Parse Server, 
-(https://parseplatform.org) either hosted on your own server or another, 
-like (http://Back4App.com).
-
-This is a work in progress and we are consistently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project. (Even if it is just to improve our documentation)
+A library that gives you access to the powerful Parse Server backend from your Flutter app. For more information about Parse and its features, see [the website](https://parseplatform.org/), [getting started][guide], and [blog](https://blog.parseplatform.org/).
 
 ## Packages 
 
-These are the available packages in this repository.
+These packages are available in this repository:
 
-| Plugin | Pub | explanation|
-|--------|-----|------------|
-| [parse_server_sdk](./packages/dart) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk.svg)](https://pub.dev/packages/parse_server_sdk) | a dart package that lets you communicate with the parse server |
-| [parse_server_sdk_flutter](./packages/flutter) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter) | a flutter package that lets you communicate with the parse server |
+| Package                                        | Pub                                                                                      | Description     |
+|------------------------------------------------|------------------------------------------------------------------------------------------|-----------------|
+| [parse_server_sdk](./packages/dart)            | [![pub package](https://img.shields.io/pub/v/parse_server_sdk.svg)](pub-dart)            | Dart package    |
+| [parse_server_sdk_flutter](./packages/flutter) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](pub-flutter) | Flutter package |
 
-### Author:-
-This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
+## Author
+This project was originally authored by Phill Wiggins and since transferred to Parse Platform.
+
+[guide]: http://docs.parseplatform.org/android/guide/
+[open-collective-link]: https://opencollective.com/parse-server
+[pub-dart]: https://pub.dev/packages/parse_server_sdk
+[pub-flutter]: https://pub.dev/packages/parse_server_sdk_flutter
