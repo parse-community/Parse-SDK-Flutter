@@ -9,9 +9,9 @@ assignees: ''
 
 ### New Feature / Enhancement Checklist
 <!--
-    Check all of the following boxes [x] before submitting your issue.
+    Check every following box [x] before submitting your issue.
     Click the "Preview" tab for better readability.
-    Thanks for contributing to the Parse Android SDK!
+    Thanks for contributing to Parse Platform!
 -->
 
 - [ ] I am not disclosing a [vulnerability](https://github.com/parse-community/Parse-SDK-Flutter/security/policy).
@@ -29,6 +29,3 @@ assignees: ''
 
 ### Alternatives / Workarounds
 <!-- Which alternatives or workarounds exist currently? -->
-
-### 3rd Party References
-<!-- Have you seen a similar functionality provided somewhere else? -->
