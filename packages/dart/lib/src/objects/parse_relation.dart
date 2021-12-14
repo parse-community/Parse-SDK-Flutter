@@ -29,7 +29,7 @@ class ParseRelation<T extends ParseObject> {
   Set<T>? _knownObjects = Set<T>();
 
   QueryBuilder getQuery() {
-    return QueryBuilder(ParseObject(_targetClass!))
+    return QueryBuilder(ParseCoreData.instance.createObject(_targetClass!))
       ..whereRelatedTo(_key, _parent!.parseClassName, _parentObjectId);
   }
 
