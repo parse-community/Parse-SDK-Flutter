@@ -11,11 +11,11 @@ dependencies:
     sdk: flutter
 
   #Uncomment for Release version
-  parse_server_sdk: ^3.1.0
+  #parse_server_sdk: ^3.1.0
 
   # Uncomment for local testing
-  #parse_server_sdk:
-  #   path: ../dart
+  parse_server_sdk:
+     path: ../dart
 
   # Uncomment for test with Github Branch
   #parse_server_sdk:
@@ -38,6 +38,9 @@ dependencies:
   sembast: ^3.2.0
   sembast_web: ^2.0.1+1
   path: ^1.8.0 # required for transitive use only
+
+dependency_overrides:
+  path: ^1.8.1 # required for transitive use only
 
 dev_dependencies:
   # Testing
