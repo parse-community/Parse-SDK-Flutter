@@ -8,23 +8,23 @@ environment:
 
 dependencies:
   # Networking
-  dio: ^4.0.0
+  dio: ^4.0.6
   http: ^0.13.4
   web_socket_channel: ^2.1.0
 
   #Database
-  sembast: ^3.1.1
+  sembast: ^3.2.0
   sembast_web: ^2.0.1+1
   xxtea: ^2.1.0
 
   # Utils
-  uuid: ^3.0.5
+  uuid: ^3.0.6
   meta: ^1.7.0
-  path: ^1.8.0
+  path: ^1.8.1
   mime_type: ^1.0.0
 
 dev_dependencies:
   # Testing
-  build_runner: ^2.1.4
-  mockito: ^5.0.16
-  test: ^1.18.2
+  build_runner: ^2.1.10
+  mockito: ^5.1.0
+  test: ^1.21.0
