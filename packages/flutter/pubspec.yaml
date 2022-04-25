@@ -18,9 +18,15 @@ dependencies:
   #   path: ../dart
 
   # Uncomment for test with Github Branch
+#  parse_server_sdk:
+#    git:
+#      url: https://github.com/parse-community/Parse-SDK-Flutter.git
+#      ref: development
+#      path: packages/dart
+
   parse_server_sdk:
     git:
-      url: https://github.com/parse-community/Parse-SDK-Flutter.git
+      url: https://github.com/RodrigoSMarques/Parse-SDK-Flutter.git
       ref: development
       path: packages/dart
 
