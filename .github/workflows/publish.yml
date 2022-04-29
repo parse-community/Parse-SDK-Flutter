@@ -23,6 +23,7 @@ jobs:
           refreshToken: ${{ secrets.PUBLISH_OAUTH_REFRESH_TOKEN }}
           relativePath: packages/dart
           format: true
+          dryRunOnly: true # Just temporary for testing
 
       - name: Publish the flutter package
         uses: k-paxian/dart-package-publisher@v1.3
@@ -32,3 +33,4 @@ jobs:
           flutter: true
           relativePath: packages/flutter
           format: true
+          dryRunOnly: true # Just temporary for testing
