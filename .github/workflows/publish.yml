@@ -1,0 +1,34 @@
+# This workflow publishes the dart and the flutter package to pub.dev, when a new release
+# or pre-release is published on GitHub.
+#
+# Just before publishing, the code is formatted.
+
+name: publish-release
+on:
+  release:
+    types:
+      - published # Triggering when either a release or a pre-release has been published
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+
+      - name: Publish the dart package
+        uses: k-paxian/dart-package-publisher@v1.3
+        with:
+          accessToken: ${{ secrets.PUBLISH_OAUTH_ACCESS_TOKEN  }}
+          refreshToken: ${{ secrets.PUBLISH_OAUTH_REFRESH_TOKEN }}
+          relativePath: packages/dart
+          format: true
+
+      - name: Publish the flutter package
+        uses: k-paxian/dart-package-publisher@v1.3
+        with:
+          accessToken: ${{ secrets.PUBLISH_OAUTH_ACCESS_TOKEN  }}
+          refreshToken: ${{ secrets.PUBLISH_OAUTH_REFRESH_TOKEN }}
+          flutter: true
+          relativePath: packages/flutter
+          format: true
