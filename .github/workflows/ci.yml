@@ -64,15 +64,14 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        channel: [stable]
-    name: Test flutter (${{ matrix.os }}, ${{ matrix.channel }})
+    name: Test flutter (${{ matrix.os }})
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Setup flutter (channel ${{ matrix.channel }})
+      - name: Setup flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: ${{ matrix.channel }}
+          channel: 'stable'
           cache: true
       - name: Install dependencies
         run: |
@@ -88,15 +87,14 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        channel: [stable]
-    name: Test dart (${{ matrix.os }}, ${{ matrix.channel }})
+    name: Test dart (${{ matrix.os }})
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Setup dart (channel ${{ matrix.channel }})
+      - name: Setup dart
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: ${{ matrix.channel }}
+          sdk: 'stable'
       - name: Install dependencies
         run: dart pub get --directory packages/dart
       - name: Run build_runner
