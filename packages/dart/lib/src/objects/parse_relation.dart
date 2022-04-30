@@ -26,7 +26,7 @@ class ParseRelation<T extends ParseObject> {
   //The key of the relation in the parent object.
   String _key = '';
   //For offline caching, we keep track of every object we've known to be in the relation.
-  Set<T>? _knownObjects = Set<T>();
+  Set<T>? _knownObjects = <T>{};
 
   QueryBuilder getQuery() {
     return QueryBuilder(ParseObject(_targetClass!))

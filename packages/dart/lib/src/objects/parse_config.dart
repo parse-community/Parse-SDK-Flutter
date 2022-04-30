@@ -30,7 +30,7 @@ class ParseConfig extends ParseObject {
     try {
       final String uri = '${ParseCoreData().serverUrl}/config';
       final String body =
-          '{\"params\":{\"$key\": ${json.encode(parseEncode(value))}}}';
+          '{"params":{"$key": ${json.encode(parseEncode(value))}}}';
       final ParseNetworkResponse result = await _client.put(uri, data: body);
       return handleResponse<ParseConfig>(
           this, result, ParseApiRQ.addConfig, _debug, parseClassName);

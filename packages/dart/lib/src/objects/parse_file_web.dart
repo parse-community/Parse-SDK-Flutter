@@ -53,7 +53,7 @@ class ParseWebFile extends ParseFileBase {
           mime(url ?? name) ?? 'application/octet-stream',
     };
     try {
-      final String uri = ParseCoreData().serverUrl + '$_path';
+      final String uri = ParseCoreData().serverUrl + _path;
       final ParseNetworkResponse response = await _client.postBytes(
         uri,
         options: ParseNetworkOptions(headers: headers),

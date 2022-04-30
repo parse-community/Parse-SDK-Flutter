@@ -8,7 +8,7 @@ import 'package:flutter_plugin_example/data/repositories/diet_plan/contract_prov
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage(this._dietPlanProvider);
+  const HomePage(this._dietPlanProvider, {Key key}) : super(key: key);
 
   final DietPlanProviderContract _dietPlanProvider;
 
@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
             automaticallyImplyLeading: false,
             title: const Text('Parse Server demo'),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                   child: const Text('Logout',
                       style: TextStyle(fontSize: 17.0, color: Colors.white)),
                   onPressed: () async {

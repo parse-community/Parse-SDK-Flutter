@@ -10,7 +10,7 @@ import '../repository_mock_utils.dart';
 // ignore_for_file: invalid_use_of_protected_member
 void main() {
   DietPlanProviderContract repository;
-  SharedPreferences.setMockInitialValues(Map<String, String>());
+  SharedPreferences.setMockInitialValues(<String, String>{});
 
   Future<DietPlanProviderContract> getRepository() async {
     repository ??= DietPlanProviderApi();
@@ -49,7 +49,7 @@ void main() {
 
     test('addAll DietPlan from API', () async {
       // Given
-      final List<DietPlan> actual = List<DietPlan>();
+      final List<DietPlan> actual = <DietPlan>[];
       final DietPlan item1 = getDummyDietPlan();
       item1['objectId'] = null;
       item1.protein = 5;
@@ -117,7 +117,7 @@ void main() {
     });
 
     test('getAll DietPlan from API', () async {
-      final List<DietPlan> actual = List<DietPlan>();
+      final List<DietPlan> actual = <DietPlan>[];
 
       final DietPlan item1 = getDummyDietPlan();
       item1['objectId'] = null;
@@ -162,7 +162,7 @@ void main() {
 
     test('updateAll DietPlan from API', () async {
       // Given
-      final List<DietPlan> actual = List<DietPlan>();
+      final List<DietPlan> actual = <DietPlan>[];
 
       final DietPlan item1 = getDummyDietPlan();
       item1['objectId'] = null;
