@@ -29,13 +29,12 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
-        - name: Setup dart
-          uses: dart-lang/setup-dart@v1
-        - name: Lint
-          run: dart format --output=none --set-exit-if-changed packages/dart
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed packages/dart
   check-code-analysis-flutter:
     name: Code analysis (flutter)
     timeout-minutes: 5
