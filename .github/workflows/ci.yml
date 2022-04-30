@@ -48,35 +48,17 @@ jobs:
         uses: dart-lang/setup-dart@v1
       - name: Analyze code
         run: dart analyze packages/dart
-  check-dart:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        sdk: [stable]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup dart
-        uses: dart-lang/setup-dart@v1
-        with:
-          sdk: ${{ matrix.sdk }}
-      - name: Install dependencies
-        run: dart pub get --directory packages/dart
-      - name: Run build_runner
-        run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
-      - name: Run tests
-        run: (cd packages/dart && dart test)
   check-flutter:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         channel: [stable]
+    name: Test flutter (${{ matrix.os }}, ${{ matrix.channel }})
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Setup flutter
+      - name: Setup flutter (channel ${{ matrix.channel }})
         uses: subosito/flutter-action@v2
         with:
           channel: ${{ matrix.channel }}
@@ -90,3 +72,23 @@ jobs:
           flutter pub get
       - name: Run tests
         run: (cd packages/flutter && flutter test)
+  check-dart:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        channel: [stable]
+    name: Test dart (${{ matrix.os }}, ${{ matrix.channel }})
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup dart (channel ${{ matrix.channel }})
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.channel }}
+      - name: Install dependencies
+        run: dart pub get --directory packages/dart
+      - name: Run build_runner
+        run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
+      - name: Run tests
+        run: (cd packages/dart && dart test)
