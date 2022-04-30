@@ -62,7 +62,7 @@ abstract class ParseClient {
   //   ParseNetworkOptions options,
   // });
 
-  @deprecated
+  @Deprecated("Use ParseCoreData() instead.")
   ParseCoreData get data => ParseCoreData();
 }
 

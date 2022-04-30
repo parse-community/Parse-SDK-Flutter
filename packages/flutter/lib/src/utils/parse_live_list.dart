@@ -232,8 +232,7 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
 }
 
 class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
-    extends State<ParseLiveListElementWidget<T>>
-    with SingleTickerProviderStateMixin {
+    extends State<ParseLiveListElementWidget<T>> {
   _ParseLiveListElementWidgetState(DataGetter<T>? loadedDataGetter,
       DataGetter<T>? preLoadedDataGetter, StreamGetter<T>? stream) {
     _snapshot = sdk.ParseLiveListElementSnapshot<T>(
@@ -284,7 +283,6 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
       sizeFactor: widget.sizeFactor,
       child: AnimatedSize(
         duration: widget.duration,
-        vsync: this,
         child: widget.childBuilder(context, _snapshot),
       ),
     );

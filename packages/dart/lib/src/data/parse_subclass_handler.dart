@@ -12,30 +12,34 @@ class ParseSubClassHandler {
       {Map<String, ParseObjectConstructor>? registeredSubClassMap,
       ParseUserConstructor? parseUserConstructor,
       ParseFileConstructor? parseFileConstructor}) {
-    _subClassMap =
-        registeredSubClassMap ?? Map<String, ParseObjectConstructor>();
+    _subClassMap = registeredSubClassMap ?? <String, ParseObjectConstructor>{};
     _parseUserConstructor = parseUserConstructor;
-    if (parseFileConstructor != null)
+    if (parseFileConstructor != null) {
       _parseFileConstructor = parseFileConstructor;
+    }
   }
 
   late Map<String, ParseObjectConstructor> _subClassMap;
   ParseUserConstructor? _parseUserConstructor;
-  ParseFileConstructor _parseFileConstructor = ({String? name, String? url}) {
+  ParseFileConstructor _parseFileConstructor = defaultParseFileConstructor;
+
+  static ParseFileBase defaultParseFileConstructor(
+      {String? name, String? url}) {
     if (parseIsWeb) {
       return ParseWebFile(null, name: name!, url: url);
     } else {
       return ParseFile(null, name: name, url: url);
     }
-  };
+  }
 
   void registerSubClass(
       String className, ParseObjectConstructor objectConstructor) {
     if (className != keyClassUser &&
         className != keyClassInstallation &&
         className != keyClassSession &&
-        className != keyFileClassname)
+        className != keyFileClassname) {
       _subClassMap[className] = objectConstructor;
+    }
   }
 
   void registerUserSubClass(ParseUserConstructor parseUserConstructor) {

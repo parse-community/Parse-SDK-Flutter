@@ -9,7 +9,7 @@ List<dynamic> _convertJSONArrayToList(List<dynamic> array) {
 }
 
 Map<String, dynamic> _convertJSONObjectToMap(Map<String, dynamic> object) {
-  final Map<String, dynamic> map = Map<String, dynamic>();
+  final Map<String, dynamic> map = <String, dynamic>{};
   object.forEach((String key, dynamic value) {
     map.putIfAbsent(key, () => parseDecode(value));
   });
@@ -38,7 +38,7 @@ dynamic parseDecode(dynamic value) {
     return value;
   }
 
-  if (!(value is Map)) {
+  if (value is! Map) {
     return value;
   }
 

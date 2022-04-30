@@ -13,7 +13,7 @@ class ParseError {
     }
   }
 
-  Map<int, String> _exceptions = {
+  static const Map<int, String> _exceptions = {
     -1: 'UnknownError',
 
     // SDK errors / Errors

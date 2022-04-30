@@ -3,11 +3,11 @@ part of flutter_parse_sdk;
 abstract class ParseBase {
   String parseClassName = 'ParseBase';
   final bool _dirty = false; // reserved property
-  final Map<String, dynamic> _unsavedChanges = Map<String, dynamic>();
-  final Map<String, dynamic> _savingChanges = Map<String, dynamic>();
+  final Map<String, dynamic> _unsavedChanges = <String, dynamic>{};
+  final Map<String, dynamic> _savingChanges = <String, dynamic>{};
 
   /// Stores all the values of a class
-  Map<String, dynamic> _objectData = Map<String, dynamic>();
+  Map<String, dynamic> _objectData = <String, dynamic>{};
 
   /// Returns [String] objectId
   String? get objectId => get<String>(keyVarObjectId);
@@ -27,7 +27,7 @@ abstract class ParseBase {
     }
 
     if (considerChildren) {
-      return _areChildrenDirty(Set<dynamic>());
+      return _areChildrenDirty(<dynamic>{});
     }
     return false;
   }
