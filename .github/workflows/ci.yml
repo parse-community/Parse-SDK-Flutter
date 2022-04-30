@@ -24,6 +24,30 @@ jobs:
           cache: true
       - name: Lint
         run: flutter format --output=none --set-exit-if-changed packages/flutter
+  check-code-analysis-flutter:
+    name: Code analysis (flutter)
+    timeout-minutes: 5
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          cache: true
+      - name: Analyze code
+        run: flutter analyze packages/flutter
+  check-code-analysis-dart:
+    name: Code analysis (dart)
+    timeout-minutes: 5
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: Analyze code
+        run: dart analyze packages/dart
   check-dart:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -41,8 +65,6 @@ jobs:
         run: dart pub get --directory packages/dart
       - name: Run build_runner
         run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
-      - name: Analyze project source
-        run: dart analyze packages/dart
       - name: Run tests
         run: (cd packages/dart && dart test)
   check-flutter:
@@ -58,6 +80,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: ${{ matrix.channel }}
+          cache: true
       - name: Install dependencies
         run: |
           (cd packages/dart && flutter pub get)
@@ -65,7 +88,5 @@ jobs:
           flutter pub remove parse_server_sdk
           flutter pub add parse_server_sdk --path ../dart
           flutter pub get
-      - name: Analyze project source
-        run: flutter analyze packages/flutter
       - name: Run tests
         run: (cd packages/flutter && flutter test)
