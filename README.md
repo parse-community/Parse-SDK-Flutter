@@ -1,6 +1,8 @@
 # Parse SDK for Flutter / Dart
 
-[![Build Status](https://app.travis-ci.com/parse-community/Parse-SDK-Flutter.svg?branch=master)](https://app.travis-ci.com/parse-community/Parse-SDK-Flutter)
+---
+
+[![Build Status](https://github.com/parse-community/Parse-SDK-Flutter/workflows/ci/badge.svg?branch=master)](https://github.com/parse-community/Parse-SDK-Flutter/actions?query=workflow%3Aci+branch%3Amaster)
 
 [![Backers on Open Collective](https://opencollective.com/parse-server/backers/badge.svg)][open-collective-link]
 [![Sponsors on Open Collective](https://opencollective.com/parse-server/sponsors/badge.svg)][open-collective-link]
@@ -18,8 +20,8 @@ These packages are available in this repository:
 
 | Package                                        | Pub                                                                                      | Description     |
 |------------------------------------------------|------------------------------------------------------------------------------------------|-----------------|
-| [parse_server_sdk](./packages/dart)            | [![pub package](https://img.shields.io/pub/v/parse_server_sdk.svg)](pub-dart)            | Dart package    |
-| [parse_server_sdk_flutter](./packages/flutter) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](pub-flutter) | Flutter package |
+| [parse_server_sdk](./packages/dart)            | [![pub package](https://img.shields.io/pub/v/parse_server_sdk.svg)][pub-dart]            | Dart package    |
+| [parse_server_sdk_flutter](./packages/flutter) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)][pub-flutter] | Flutter package |
 
 ## Author
 This project was originally authored by Phill Wiggins and since transferred to Parse Platform.
