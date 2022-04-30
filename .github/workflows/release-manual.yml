@@ -1,0 +1,53 @@
+name: release-manual
+on:
+  release:
+    types:
+      - published
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Dry run dart package
+        uses: k-paxian/dart-package-publisher@v1.3
+        id: try-dart
+        with:
+          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
+          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
+          relativePath: packages/dart
+          format: true
+          dryRunOnly: true
+      - name: Dry run flutter package
+        uses: k-paxian/dart-package-publisher@v1.3
+        id: try-flutter
+        with:
+          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
+          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
+          flutter: true
+          relativePath: packages/flutter
+          format: true
+          dryRunOnly: true
+      - name: Check outputs
+        run: ${{steps.try-dart.outputs.success}} && ${{steps.try-flutter.outputs.success}}
+  release:
+    runs-on: ubuntu-latest
+    needs: dry-run
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Publish dart package
+        uses: k-paxian/dart-package-publisher@v1.3
+        with:
+          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
+          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
+          relativePath: packages/dart
+          format: true
+      - name: Publish flutter package
+        uses: k-paxian/dart-package-publisher@v1.3
+        with:
+          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
+          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
+          flutter: true
+          relativePath: packages/flutter
+          format: true
