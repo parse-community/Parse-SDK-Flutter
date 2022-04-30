@@ -11,8 +11,8 @@ on:
     branches:
       - "**"
 jobs:
-  check-lint:
-    name: Lint
+  check-lint-flutter:
+    name: Lint (flutter)
     timeout-minutes: 5
     runs-on: ubuntu-18.04
     steps:
@@ -24,6 +24,18 @@ jobs:
           cache: true
       - name: Lint
         run: flutter format --output=none --set-exit-if-changed packages/flutter
+  check-lint-dart:
+    name: Lint (flutter)
+    timeout-minutes: 5
+    runs-on: ubuntu-18.04
+    steps:
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed packages/dart
   check-code-analysis-flutter:
     name: Code analysis (flutter)
     timeout-minutes: 5
