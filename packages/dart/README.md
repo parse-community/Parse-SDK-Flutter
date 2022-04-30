@@ -2,7 +2,7 @@
 
 ---
 
-This library gives you access to the powerful Parse Server backend from your Dart app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org).
+This library gives you access to the powerful Parse Server backend from your Dart app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org). The Flutter package was moved [here](https://pub.dev/packages/parse_server_sdk_flutter). If you are using Flutter see [this guide](https://github.com/parse-community/Parse-SDK-Flutter/blob/release/2.0.0/docs/migrate-2-0-0.md) for how to migrate.
 
 ---
 
