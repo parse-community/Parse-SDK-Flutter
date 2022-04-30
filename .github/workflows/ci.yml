@@ -11,52 +11,105 @@ on:
     branches:
       - "**"
 jobs:
-  check-dart:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        sdk: [stable, beta, dev]
+  check-lint-flutter:
+    name: Lint (flutter)
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          cache: true
+      - name: Lint
+        run: flutter format --output=none --set-exit-if-changed packages/flutter
+  check-lint-dart:
+    name: Lint (dart)
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup dart
         uses: dart-lang/setup-dart@v1
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed packages/dart
+  check-code-analysis-flutter:
+    name: Code analysis (flutter)
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
         with:
-          sdk: ${{ matrix.sdk }}
+          cache: true
+      - name: Install dependencies
+        run: |
+          cd packages/dart
+          flutter pub get
+          cd ../..
+          cd packages/flutter
+          flutter pub remove parse_server_sdk
+          flutter pub add parse_server_sdk --path ../dart
+          flutter pub get
+      - name: Analyze code
+        run: flutter analyze packages/flutter
+  check-code-analysis-dart:
+    name: Code analysis (dart)
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
       - name: Install dependencies
         run: dart pub get --directory packages/dart
-      - name: Run build_runner
-        run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
-      - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed packages/dart
-      - name: Analyze project source
+      - name: Analyze code
         run: dart analyze packages/dart
-      - name: Run tests
-        run: (cd packages/dart && dart test)
   check-flutter:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        channel: [stable, beta, dev]
+      fail-fast: false
+    name: Test flutter (${{ matrix.os }})
     steps:
-      - name: Checkout the code
+      - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: ${{ matrix.channel }}
+          cache: true
       - name: Install dependencies
         run: |
-          (cd packages/dart && flutter pub get)
+          cd packages/dart
+          flutter pub get
+          cd ../..
           cd packages/flutter
           flutter pub remove parse_server_sdk
           flutter pub add parse_server_sdk --path ../dart
           flutter pub get
-      - name: Verify formatting
-        run: flutter format --output=none --set-exit-if-changed packages/flutter
-      - name: Analyze project source
-        run: flutter analyze packages/flutter
       - name: Run tests
         run: (cd packages/flutter && flutter test)
+  check-dart:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+      fail-fast: false
+    name: Test dart (${{ matrix.os }})
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: Install dependencies
+        run: dart pub get --directory packages/dart
+      - name: Run build_runner
+        run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
+      - name: Run tests
+        run: (cd packages/dart && dart test)
