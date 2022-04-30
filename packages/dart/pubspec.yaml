@@ -4,7 +4,7 @@ version: 3.1.0
 homepage: https://github.com/phillwiggins/flutter_parse_sdk
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   # Networking
@@ -24,6 +24,7 @@ dependencies:
   mime_type: ^1.0.0
 
 dev_dependencies:
+  lints: ^1.0.1
   # Testing
   build_runner: ^2.0.5
   mockito: ^5.0.10
