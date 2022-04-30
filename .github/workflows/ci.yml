@@ -33,8 +33,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup dart
         uses: dart-lang/setup-dart@v1
-      - name: Install dependencies
-        run: dart pub get --directory packages/dart
       - name: Lint
         run: dart format --output=none --set-exit-if-changed packages/dart
   check-code-analysis-flutter:
@@ -66,6 +64,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup dart
         uses: dart-lang/setup-dart@v1
+      - name: Install dependencies
+        run: dart pub get --directory packages/dart
       - name: Analyze code
         run: dart analyze packages/dart
   check-flutter:
