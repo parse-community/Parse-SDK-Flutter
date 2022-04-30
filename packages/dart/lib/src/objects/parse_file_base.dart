@@ -16,9 +16,7 @@ abstract class ParseFileBase extends ParseObject {
             client: client) {
     _path = '/files/$name';
     this.name = name;
-    if(url != null)
-      this.url = url;
-
+    if (url != null) this.url = url;
   }
 
   String get name => super.get<String>(keyVarName)!;

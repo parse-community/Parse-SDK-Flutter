@@ -128,7 +128,8 @@ class ParseDioClient extends ParseClient {
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset
 class _ParseDioClient with dio.DioMixin implements dio.Dio {
-  _ParseDioClient({bool sendSessionId = false, SecurityContext? securityContext})
+  _ParseDioClient(
+      {bool sendSessionId = false, SecurityContext? securityContext})
       : _sendSessionId = sendSessionId {
     options = dio.BaseOptions();
     httpClientAdapter = createHttpClientAdapter(securityContext);
@@ -168,8 +169,8 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
     if (additionalHeaders != null && additionalHeaders!.isNotEmpty) {
-      additionalHeaders!
-          .forEach((String key, String value) => options!.headers![key] = value);
+      additionalHeaders!.forEach(
+          (String key, String value) => options!.headers![key] = value);
     }
 
     if (parseCoreData.debug) {

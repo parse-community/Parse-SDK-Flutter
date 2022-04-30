@@ -21,7 +21,9 @@ void main() {
     const String objectIdPrefix = '12345abc';
     final DietPlan item1 = getDummyDietPlan()..objectId = '${objectIdPrefix}0';
     final DietPlan item2 = getDummyDietPlan()..objectId = '${objectIdPrefix}1';
-    final List<DietPlan> mockList = List<DietPlan>()..add(item1)..add(item2);
+    final List<DietPlan> mockList = List<DietPlan>()
+      ..add(item1)
+      ..add(item2);
 
     when(repositoryApi.add(any)).thenAnswer((_) async =>
         Future<ApiResponse>.value(
