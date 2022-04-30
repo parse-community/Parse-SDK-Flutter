@@ -52,11 +52,12 @@ jobs:
           flutter pub get
           cd ../..
           cd packages/flutter
+          echo "publish_to: none" >> pubspec.yaml
           flutter pub remove parse_server_sdk
           flutter pub add parse_server_sdk --path ../dart
           flutter pub get
       - name: Analyze code
-        run: flutter analyze packages/flutter
+        run: flutter analyze packages/flutter --no-fatal-infos
   check-code-analysis-dart:
     name: Code analysis (dart)
     timeout-minutes: 5
