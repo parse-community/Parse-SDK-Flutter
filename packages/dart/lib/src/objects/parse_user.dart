@@ -449,6 +449,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       return handleException(e, ParseApiRQ.getAll, _debug, keyClassUser);
     }
   }
+
   static Future<dynamic> _getUserFromLocalStore(
       {ParseCloneable? cloneable}) async {
     final CoreStore coreStore = ParseCoreData().getStore();

@@ -86,8 +86,9 @@ class _MyAppState extends State<MyApp> {
                     title: Row(
                       children: <Widget>[
                         Flexible(
-                          child: Text(
-                              snapshot.loadedData!.get<int>('order').toString()),
+                          child: Text(snapshot.loadedData!
+                              .get<int>('order')
+                              .toString()),
                           flex: 1,
                         ),
                         Flexible(
@@ -102,7 +103,8 @@ class _MyAppState extends State<MyApp> {
                       ],
                     ),
                     onLongPress: () {
-                      objectFormKey.currentState!.setObject(snapshot.loadedData);
+                      objectFormKey.currentState!
+                          .setObject(snapshot.loadedData);
                     },
                   );
                 } else {
@@ -153,7 +155,8 @@ class _ObjectFormState extends State<ObjectForm> {
                   Flexible(
                     flex: 1,
                     child: TextFormField(
-                      initialValue: _currentObject!.get<int>('order').toString(),
+                      initialValue:
+                          _currentObject!.get<int>('order').toString(),
                       keyboardType: TextInputType.number,
                       onSaved: (String? value) {
                         _currentObject!.set('order', int.parse(value!));
