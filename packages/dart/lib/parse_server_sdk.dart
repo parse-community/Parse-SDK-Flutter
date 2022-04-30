@@ -139,7 +139,7 @@ class Parse {
 
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
-  Future<ParseResponse > healthCheck(
+  Future<ParseResponse> healthCheck(
       {bool? debug, ParseClient? client, bool? sendSessionIdByDefault}) async {
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);
 

@@ -67,7 +67,8 @@ class ParseCoreData {
     _instance.clientCreator = clientCreator ??
         (({required bool sendSessionId, SecurityContext? securityContext}) =>
             ParseHTTPClient(
-                sendSessionId: sendSessionId, securityContext: securityContext));
+                sendSessionId: sendSessionId,
+                securityContext: securityContext));
   }
 
   String applicationId;
