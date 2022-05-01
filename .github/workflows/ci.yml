@@ -130,4 +130,3 @@ jobs:
           files: ./lcov.info
           fail_ci_if_error: true
           verbose: true
-          dry_run: true
