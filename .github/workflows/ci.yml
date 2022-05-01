@@ -115,7 +115,7 @@ jobs:
           cache: true
       - name: Install dependencies
         run: tools/flutter-dependencies.sh
-      - name: Create coverage
+      - name: Create code coverage
         run: |
           (cd packages/dart && 
             flutter test --no-pub --coverage &&
@@ -124,10 +124,10 @@ jobs:
           (cd packages/flutter && flutter test --no-pub --coverage &&
             escapedPath="$(echo `pwd` | sed 's/\//\\\//g')"
             sed "s/^SF:lib/SF:$escapedPath\/lib/g" coverage/lcov.info >> "../../lcov.info")
-      - uses: codecov/codecov-action@v2
+      - name: Upload code coverage
+        uses: codecov/codecov-action@v2
         with:
           files: ./lcov.info
-          flags: unittests
           fail_ci_if_error: true
           verbose: true
           dry_run: true
