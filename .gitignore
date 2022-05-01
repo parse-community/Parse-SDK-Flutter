@@ -105,6 +105,7 @@ unlinked_spec.ds
 
 # Coverage
 coverage/
+lcov.info
 
 # Symbols
 app.*.symbols
