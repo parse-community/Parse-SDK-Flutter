@@ -103,9 +103,6 @@ jobs:
         run: (cd packages/dart && dart test)
   coverage:
     runs-on: ubuntu-latest
-    needs:
-      - check-dart
-      - check-flutter
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -118,10 +115,11 @@ jobs:
       - name: Create code coverage
         run: |
           (cd packages/dart && 
-            flutter test --no-pub --coverage &&
+            (flutter test --no-pub --coverage || true) &&
             escapedPath="$(echo `pwd` | sed 's/\//\\\//g')"
             sed "s/^SF:lib/SF:$escapedPath\/lib/g" coverage/lcov.info >> "../../lcov.info")
-          (cd packages/flutter && flutter test --no-pub --coverage &&
+          (cd packages/flutter &&
+            (flutter test --no-pub --coverage || true) &&
             escapedPath="$(echo `pwd` | sed 's/\//\\\//g')"
             sed "s/^SF:lib/SF:$escapedPath\/lib/g" coverage/lcov.info >> "../../lcov.info")
       - name: Upload code coverage
