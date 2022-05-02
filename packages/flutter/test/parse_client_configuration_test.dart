@@ -5,6 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   SharedPreferences.setMockInitialValues(Map<String, String>());
 
+  test("fail", () {
+    expect(true, false);
+  });
+
   test('testBuilder', () async {
     await Parse().initialize('appId', 'serverUrl',
         clientKey: 'clientKey',
