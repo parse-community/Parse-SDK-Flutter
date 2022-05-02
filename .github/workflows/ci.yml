@@ -112,6 +112,6 @@ jobs:
         uses: codecov/codecov-action@v2
         if: ${{ always() }}
         with:
-          directory: packages/dart/coverage/test
+          files: packages/dart/coverage/test/*.json
           fail_ci_if_error: false
           verbose: true
