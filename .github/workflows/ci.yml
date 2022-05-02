@@ -95,7 +95,6 @@ jobs:
         with:
           files: packages/flutter/coverage/lcov-full.info
           fail_ci_if_error: true
-          verbose: true
   check-dart:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -126,4 +125,3 @@ jobs:
         with:
           files: packages/dart/coverage/lcov.info
           fail_ci_if_error: true
-          verbose: true
