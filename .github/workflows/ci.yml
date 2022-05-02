@@ -85,7 +85,7 @@ jobs:
         run: (cd packages/flutter && flutter test --coverage)
       - name: Upload code coverage
         uses: codecov/codecov-action@v2
-        if: always
+        if: ${{ always() }}
         with:
           files: packages/flutter/coverage/lcov.info
           fail_ci_if_error: false
@@ -108,10 +108,10 @@ jobs:
         run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
       - name: Run tests
         run: (cd packages/dart && dart test --coverage=coverage)
-      # - name: Upload code coverage
-      #   uses: codecov/codecov-action@v2
-      #   if: always
-      #   with:
-      #     directory: packages/dart/coverage
-      #     fail_ci_if_error: false
-      #     verbose: true
+      - name: Upload code coverage
+        uses: codecov/codecov-action@v2
+        if: ${{ always() }}
+        with:
+          directory: packages/dart/coverage
+          fail_ci_if_error: false
+          verbose: true
