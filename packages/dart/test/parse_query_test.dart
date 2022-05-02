@@ -7,9 +7,6 @@ import 'parse_query_test.mocks.dart';
 
 @GenerateMocks([ParseClient])
 void main() {
-  test("fail", () {
-    expect(true, false);
-  });
   group('queryBuilder', () {
     test('whereRelatedTo', () async {
       final MockParseClient client = MockParseClient();
