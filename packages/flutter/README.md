@@ -52,6 +52,19 @@ Due to Cross-origin resource sharing (CORS) restrictions, this requires adding `
 When running directly via docker, set the env var `PARSE_SERVER_ALLOW_HEADERS=X-Parse-Installation-Id`.
 When running via express, set [ParseServerOptions](https://parseplatform.org/parse-server/api/master/ParseServerOptions.html) `allowHeaders: ['X-Parse-Installation-Id']`.
 
+#### Desktop Support (macOS)
+Due to security entitlements posed by the macOS framework, connecting to the Web and sharing data requires adding the following lines to code :
+```
+<key>com.apple.security.network.client</key>
+<true/>
+```
+to the following files:
+```
+/macOS/Runner/Release.entitlements
+/macOS/Runner/DebugProfile.entitlements
+```
+to help the Parse SDK for Flutter communicate with the Web to access the server and send/retrive data.
+
 #### Network client
 By default, this SDK uses the `ParseHTTPClient`.
 Another option is use `ParseDioClient`. This client supports the most features (for example a progress callback at the file upload), but a benchmark has shown, that dio is slower than http on web.
@@ -266,7 +279,7 @@ This method returns an `Future` that either resolves in an error (equivalent of 
 
 Choosing between `query()` and `find()` comes down to personal preference. Both methods can be used for querying a `ParseQuery`, just the output method differs.
 
-Similar to `find()` the `QueryBuilder` also has a function called `Future<T>? first()`. Just like `find()` `first()` is just a convenience method that makes querying the first object satisfying the query simpler. `first()` returns an `Future`, that resoles in an error or the first object matching the query. In case no object satisfies the query, the result will be `null`.
+Similar to `find()` the `QueryBuilder` also has a function called `Future<T?> first()`. Just like `find()` `first()` is just a convenience method that makes querying the first object satisfying the query simpler. `first()` returns an `Future`, that resoles in an error or the first object matching the query. In case no object satisfies the query, the result will be `null`.
 
 ## Complex queries
 You can create complex queries to really put your database to the test:
