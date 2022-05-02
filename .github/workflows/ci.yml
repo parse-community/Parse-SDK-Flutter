@@ -84,14 +84,14 @@ jobs:
       - name: Run tests
         run: (cd packages/flutter && flutter test --coverage)
       - name: Convert code coverage
-        if: ${{ always() }}
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         working-directory: packages/flutter
         run: |
           escapedPath="$(echo `pwd` | sed 's/\//\\\//g')"
           sed "s/^SF:lib/SF:$escapedPath\/lib/g" coverage/lcov.info > coverage/lcov-full.info
       - name: Upload code coverage
         uses: codecov/codecov-action@v2
-        if: ${{ always() }}
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/flutter/coverage/lcov-full.info
           fail_ci_if_error: true
@@ -115,14 +115,14 @@ jobs:
       - name: Run tests
         run: (cd packages/dart && dart test --coverage=coverage)
       - name: Convert code coverage
-        if: ${{ always() }}
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         working-directory: packages/dart
         run: |
           dart pub global activate coverage
           dart pub global run coverage:format_coverage -i coverage/test -o coverage/lcov.info --lcov --packages=.packages --report-on=lib
       - name: Upload code coverage
         uses: codecov/codecov-action@v2
-        if: ${{ always() }}
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/dart/coverage/lcov.info
           fail_ci_if_error: true
