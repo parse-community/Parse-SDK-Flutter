@@ -113,5 +113,5 @@ jobs:
         if: ${{ always() }}
         with:
           files: packages/dart/coverage/test/parse_query_test.dart.vm.json
-          fail_ci_if_error: false
+          fail_ci_if_error: true
           verbose: true
