@@ -1,3 +1,15 @@
+## 3.2.0
+Bug fixes:
+    * #717 - Old version of connectivity_plus package
+    * #714 - package_info_plus not work in web
+    * #712 - MissingPluginException (No implementation found for method getAll)
+    * #696 - ParseRelation#query - Unhandled Exception: type 'ParseObject' is not a subtype of type
+    * #679 - Error in progressCallback
+    * #661 - first: Correct return type
+    * #653 - ParseLiveListWidget MongoError
+Updated dependencies versions
+Documentation update
+
 ## 3.1.0
 Bug fixes
 General improvements
