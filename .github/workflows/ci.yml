@@ -84,6 +84,7 @@ jobs:
       - name: Run tests
         run: (cd packages/flutter && flutter test --coverage)
       - name: Convert code coverage
+        # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         working-directory: packages/flutter
         run: |
@@ -91,6 +92,7 @@ jobs:
           sed "s/^SF:lib/SF:$escapedPath\/lib/g" coverage/lcov.info > coverage/lcov-full.info
       - name: Upload code coverage
         uses: codecov/codecov-action@v2
+        # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/flutter/coverage/lcov-full.info
@@ -114,6 +116,7 @@ jobs:
       - name: Run tests
         run: (cd packages/dart && dart test --coverage=coverage)
       - name: Convert code coverage
+        # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         working-directory: packages/dart
         run: |
@@ -121,6 +124,7 @@ jobs:
           dart pub global run coverage:format_coverage -i coverage/test -o coverage/lcov.info --lcov --packages=.packages --report-on=lib
       - name: Upload code coverage
         uses: codecov/codecov-action@v2
+        # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/dart/coverage/lcov.info
