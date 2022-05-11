@@ -164,6 +164,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     );
     return GridView.builder(
         itemCount: liveGrid.size,
+        scrollDirection:widget.scrollDirection,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: widget.crossAxisCount,
             crossAxisSpacing: widget.crossAxisSpacing,
