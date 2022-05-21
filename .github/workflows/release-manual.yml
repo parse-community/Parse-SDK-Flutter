@@ -24,8 +24,8 @@ jobs:
         with:
           accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
           refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
-          flutter: true
           relativePath: packages/flutter
+          flutter: true
           format: true
           dryRunOnly: true
       - name: Check outputs
@@ -43,11 +43,13 @@ jobs:
           refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
           relativePath: packages/dart
           format: true
+          dryRunOnly: true
       - name: Publish flutter package
         uses: k-paxian/dart-package-publisher@v1.3
         with:
           accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
           refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
-          flutter: true
           relativePath: packages/flutter
+          flutter: true
           format: true
+          dryRunOnly: true
