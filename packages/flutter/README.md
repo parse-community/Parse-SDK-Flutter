@@ -39,7 +39,7 @@ This library gives you access to the powerful Parse Server backend from your Flu
 
 ## Getting Started
 
-To install, either add [dependency in your pubspec.yaml file](https://pub.dev/packages/parse_server_sdk_flutter/install).
+To install add the dependency to your [pubspec.yaml](https://pub.dev/packages/parse_server_sdk_flutter/install) file.
 
 Once you have the library added to your project, upon first call to your app (Similar to what your application class would be) add the following...
 
