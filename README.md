@@ -9,7 +9,7 @@
 [![Sponsors on Open Collective](https://opencollective.com/parse-server/sponsors/badge.svg)][open-collective-link]
 [![License](https://img.shields.io/badge/license-BSD-lightgrey.svg)](https://github.com/parse-community/Parse-SDK-Android/blob/master/LICENSE)
 [![Forum](https://img.shields.io/discourse/https/community.parseplatform.org/topics.svg)](https://community.parseplatform.org/c/parse-server)
-[![Twitter Follow](https://img.shields.io/twitter/follow/ParsePlatform.svg?label=Follow%20us%20on%20Twitter&style=social)](https://twitter.com/intent/follow?screen_name=ParsePlatform)
+[![Twitter Follow](https://img.shields.io/twitter/follow/ParsePlatform.svg?label=Follow%20us&style=social)](https://twitter.com/intent/follow?screen_name=ParsePlatform)
 
 ---
 
@@ -19,11 +19,9 @@ These libraries give you access to the powerful Parse Server backend from your D
 
 These packages are available in this repository:
 
-| Name                                           | Pub                                                                                      | Description     |
-|------------------------------------------------|------------------------------------------------------------------------------------------|-----------------|
-| [parse_server_sdk](./packages/dart)            | [![pub package](https://img.shields.io/pub/v/parse_server_sdk.svg)][pub-dart]            | Dart package    |
-| [parse_server_sdk_flutter](./packages/flutter) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)][pub-flutter] | Flutter package |
+| Type    | Name                                           | Pub                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|---------|------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Dart    | [parse_server_sdk](./packages/dart)            | [![pub package](https://img.shields.io/pub/v/parse_server_sdk.svg)](https://pub.dev/packages/parse_server_sdk) [![likes](https://badges.bar/parse_server_sdk/likes)](https://pub.dev/packages/parse_server_sdk/score) [![popularity](https://badges.bar/parse_server_sdk/popularity)](https://pub.dev/packages/parse_server_sdk/score) [![pub points](https://badges.bar/parse_server_sdk/pub%20points)](https://pub.dev/packages/parse_server_sdk/score)                                                                 |
+| Flutter | [parse_server_sdk_flutter](./packages/flutter) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter) [![likes](https://badges.bar/parse_server_sdk_flutter/likes)](https://pub.dev/packages/parse_server_sdk_flutter/score) [![popularity](https://badges.bar/parse_server_sdk_flutter/popularity)](https://pub.dev/packages/parse_server_sdk_flutter/score) [![pub points](https://badges.bar/parse_server_sdk_flutter/pub%20points)](https://pub.dev/packages/parse_server_sdk_flutter/score) |
 
 [open-collective-link]: https://opencollective.com/parse-server
-[pub-dart]: https://pub.dev/packages/parse_server_sdk
-[pub-flutter]: https://pub.dev/packages/parse_server_sdk_flutter
