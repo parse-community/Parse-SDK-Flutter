@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  #Uncomment for Release version
+  # Uncomment for Release version
   parse_server_sdk: ^3.1.1
 
   # Uncomment for local testing
