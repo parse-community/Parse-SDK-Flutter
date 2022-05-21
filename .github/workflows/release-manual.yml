@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Dry run dart package
-        uses: k-paxian/dart-package-publisher@v1.3
+        uses: k-paxian/dart-package-publisher@v1.4
         id: try-dart
         with:
           accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
@@ -22,7 +22,7 @@ jobs:
           format: true
           dryRunOnly: true
       - name: Dry run flutter package
-        uses: k-paxian/dart-package-publisher@v1.3
+        uses: k-paxian/dart-package-publisher@v1.4
         id: try-flutter
         with:
           accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
@@ -39,7 +39,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Publish dart package
-        uses: k-paxian/dart-package-publisher@v1.3
+        uses: k-paxian/dart-package-publisher@v1.4
         with:
           accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
           refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
@@ -47,7 +47,7 @@ jobs:
           format: true
           dryRunOnly: true
       - name: Publish flutter package
-        uses: k-paxian/dart-package-publisher@v1.3
+        uses: k-paxian/dart-package-publisher@v1.4
         with:
           accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
           refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
