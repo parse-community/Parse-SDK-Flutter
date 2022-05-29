@@ -32,7 +32,7 @@ jobs:
           refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
           relativePath: packages/dart
           format: true
-          dryRunOnly: true
+          dryRunOnly: false
       - name: Publish flutter package
         if: github.event.inputs.package == 'flutter'
         uses: k-paxian/dart-package-publisher@v1.4
@@ -42,4 +42,4 @@ jobs:
           relativePath: packages/flutter
           flutter: true
           format: true
-          dryRunOnly: true
+          dryRunOnly: false
