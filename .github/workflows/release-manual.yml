@@ -1,52 +1,40 @@
+# Trigger this workflow to manually create a release of the flutter package.
+
 name: release-manual
 on:
-  release:
-    types:
-      - published
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Reference (tag / SHA):'
+        required: true
+        default: ''
+      package:
+        description: 'Package'
+        required: true
+        default: ''
+        type: choice
+        options:
+        - dart
+        - flutter
 jobs:
-  # dry-run:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     dart_dry_run_success: ${{ steps.try-dart.outputs.success }}
-  #     flutter_dry_run_success: ${{ steps.try-flutter.outputs.success }}
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
-  #     - name: Dry run dart package
-  #       uses: k-paxian/dart-package-publisher@v1.4
-  #       id: try-dart
-  #       with:
-  #         accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
-  #         refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
-  #         relativePath: packages/dart
-  #         format: true
-  #         dryRunOnly: true
-  #     - name: Dry run flutter package
-  #       uses: k-paxian/dart-package-publisher@v1.4
-  #       id: try-flutter
-  #       with:
-  #         accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
-  #         refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
-  #         relativePath: packages/flutter
-  #         flutter: true
-  #         format: true
-  #         dryRunOnly: true
   release:
     runs-on: ubuntu-latest
-    # needs: dry-run
-    # if: needs.dry-run.outputs.dart_dry_run_success && needs.dry-run.outputs.flutter_dry_run_success
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref }}
       - name: Publish dart package
+        if: github.event.inputs.package == 'dart'
         uses: k-paxian/dart-package-publisher@v1.4
         with:
           accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
           refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
           relativePath: packages/dart
           format: true
-          dryRunOnly: true
+          dryRunOnly: false
       - name: Publish flutter package
+        if: github.event.inputs.package == 'flutter'
         uses: k-paxian/dart-package-publisher@v1.4
         with:
           accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
@@ -54,4 +42,4 @@ jobs:
           relativePath: packages/flutter
           flutter: true
           format: true
-          dryRunOnly: true
+          dryRunOnly: false
