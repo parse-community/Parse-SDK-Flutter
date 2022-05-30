@@ -1,7 +1,7 @@
 name: release-automated
 on:
   release:
-    types: [created]
+    types: [ published ]
 jobs:
   release:
     runs-on: ubuntu-latest
