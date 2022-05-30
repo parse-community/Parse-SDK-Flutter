@@ -79,11 +79,11 @@ class _ParseResponseBuilder {
           }
         }
       }
-    } else if (result is Map) {
-      final Map<String, dynamic> map = result as Map<String, dynamic>;
+    } else if (result is Map<String, dynamic>) {
+      final Map<String, dynamic> map = result;
       if (object is Parse) {
         response.result = map;
-      } else if (map != null && map.length == 1 && map.containsKey('results')) {
+      } else if (map.length == 1 && map.containsKey('results')) {
         final List<dynamic> results = map['results'];
         if (results[0] is String) {
           response.results = results;
@@ -95,7 +95,7 @@ class _ParseResponseBuilder {
           response.result = items;
           response.count = items.length;
         }
-      } else if (map != null && map.length == 2 && map.containsKey('count')) {
+      } else if (map.length == 2 && map.containsKey('count')) {
         final List<int> results = <int>[map['count']];
         response.results = results;
         response.result = results;
@@ -127,7 +127,7 @@ class _ParseResponseBuilder {
       return object.clone(map);
     } else if (object is ParseObject) {
       // Merge unsaved changes and response.
-      final Map<String, dynamic> unsaved = Map<String, dynamic>();
+      final Map<String, dynamic> unsaved = <String, dynamic>{};
       unsaved.addAll(object._unsavedChanges);
       unsaved.forEach((String k, dynamic v) {
         if (map[k] != null && map[k] != v) {
@@ -145,6 +145,6 @@ class _ParseResponseBuilder {
   }
 
   bool isHealthCheck(ParseNetworkResponse apiResponse) {
-    return <String>['{\"status\":\"ok\"}', 'OK'].contains(apiResponse.data);
+    return <String>['{"status":"ok"}', 'OK'].contains(apiResponse.data);
   }
 }

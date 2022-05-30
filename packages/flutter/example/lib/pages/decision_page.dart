@@ -7,6 +7,8 @@ import 'home_page.dart';
 import 'login_page.dart';
 
 class DecisionPage extends StatefulWidget {
+  const DecisionPage({Key key}) : super(key: key);
+
   @override
   _DecisionPageState createState() => _DecisionPageState();
 }
@@ -26,20 +28,18 @@ class _DecisionPageState extends State<DecisionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              _showLogo(),
-              const SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: Text(_parseServerState),
-              ),
-            ],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            _showLogo(),
+            const SizedBox(
+              height: 20,
+            ),
+            Center(
+              child: Text(_parseServerState),
+            ),
+          ],
         ),
       ),
     );
@@ -69,7 +69,7 @@ class _DecisionPageState extends State<DecisionPage> {
         if (user != null) {
           _redirectToPage(context, HomePage(DietPlanProviderApi()));
         } else {
-          _redirectToPage(context, LoginPage());
+          _redirectToPage(context, const LoginPage());
         }
       } else {
         setState(() {

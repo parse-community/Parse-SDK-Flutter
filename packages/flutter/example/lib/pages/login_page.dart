@@ -1,10 +1,14 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/model/user.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
-enum FormMode { LOGIN, SIGNUP }
+enum FormMode { login, signUp }
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({Key key}) : super(key: key);
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -17,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   String _errorMessage;
 
   // Initial form is login form
-  FormMode _formMode = FormMode.LOGIN;
+  FormMode _formMode = FormMode.login;
   bool _isLoading;
 
   // Check if form is valid before perform login or signup
@@ -41,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
 
       ParseResponse response;
       try {
-        if (_formMode == FormMode.LOGIN) {
+        if (_formMode == FormMode.login) {
           response = await user.login();
           print('Signed in');
         } else {
@@ -52,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
           _isLoading = false;
         });
         if (response.success) {
-          if (_formMode == FormMode.LOGIN) {
+          if (_formMode == FormMode.login) {
             Navigator.pop(context, true);
           }
         } else {
@@ -82,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
     _formKey.currentState.reset();
     _errorMessage = '';
     setState(() {
-      _formMode = FormMode.SIGNUP;
+      _formMode = FormMode.signUp;
     });
   }
 
@@ -90,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
     _formKey.currentState.reset();
     _errorMessage = '';
     setState(() {
-      _formMode = FormMode.LOGIN;
+      _formMode = FormMode.login;
     });
   }
 
@@ -116,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    return Container(
+    return const SizedBox(
       height: 0.0,
       width: 0.0,
     );
@@ -213,13 +217,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _showSecondaryButton() {
-    return FlatButton(
-      child: _formMode == FormMode.LOGIN
+    return TextButton(
+      child: _formMode == FormMode.login
           ? const Text('Create an account',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
           : const Text('Have an account? Sign in',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
-      onPressed: _formMode == FormMode.LOGIN
+      onPressed: _formMode == FormMode.login
           ? _changeFormToSignUp
           : _changeFormToLogin,
     );
@@ -230,12 +234,14 @@ class _LoginPageState extends State<LoginPage> {
         padding: const EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
         child: SizedBox(
           height: 40.0,
-          child: RaisedButton(
-            elevation: 5.0,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0)),
-            color: Colors.blue,
-            child: _formMode == FormMode.LOGIN
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.blue,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0)),
+              elevation: 5.0,
+            ),
+            child: _formMode == FormMode.login
                 ? const Text('Login',
                     style: TextStyle(fontSize: 20.0, color: Colors.white))
                 : const Text('Create account',

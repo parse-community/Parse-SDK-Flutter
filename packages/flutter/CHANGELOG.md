@@ -1,3 +1,9 @@
+## [3.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.1...flutter-3.1.2)
+
+### Refactoring
+
+* fix analyzer code style warnings ([#733](https://github.com/parse-community/Parse-SDK-Flutter/issues/733))
+
 ## [3.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/V3.1.0...flutter-3.1.1) (2022-05-29)
 
 ### Bug Fixes

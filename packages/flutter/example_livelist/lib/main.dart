@@ -3,9 +3,11 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 import 'application_constants.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -21,10 +23,11 @@ class _MyAppState extends State<MyApp> {
     initData().then((bool success) {
       setState(() {
         initFailed = !success;
-        if (success)
+        if (success) {
           _queryBuilder = QueryBuilder<ParseObject>(ParseObject('Test'))
             ..orderByAscending('order')
             ..whereNotEqualTo('show', false);
+        }
       });
     }).catchError((dynamic _) {
       setState(() {

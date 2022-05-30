@@ -133,13 +133,16 @@ class _ParseHTTPClient extends http.BaseClient {
     request.headers[keyHeaderApplicationId] = parseCoreData.applicationId;
     if (_sendSessionId &&
         parseCoreData.sessionId != null &&
-        request.headers[keyHeaderSessionToken] == null)
+        request.headers[keyHeaderSessionToken] == null) {
       request.headers[keyHeaderSessionToken] = parseCoreData.sessionId!;
+    }
 
-    if (parseCoreData.clientKey != null)
+    if (parseCoreData.clientKey != null) {
       request.headers[keyHeaderClientKey] = parseCoreData.clientKey!;
-    if (parseCoreData.masterKey != null)
+    }
+    if (parseCoreData.masterKey != null) {
       request.headers[keyHeaderMasterKey] = parseCoreData.masterKey!;
+    }
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
     if (additionalHeaders != null && additionalHeaders!.isNotEmpty) {

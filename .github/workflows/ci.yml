@@ -121,7 +121,7 @@ jobs:
         working-directory: packages/dart
         run: |
           dart pub global activate coverage
-          dart pub global run coverage:format_coverage -i coverage/test -o coverage/lcov.info --lcov --packages=.packages --report-on=lib
+          dart pub global run coverage:format_coverage -i coverage/test -o coverage/lcov.info --lcov --packages=.dart_tool/package_config.json --report-on=lib
       - name: Upload code coverage
         uses: codecov/codecov-action@v2
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.

@@ -130,7 +130,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
 
     try {
-      final Uri url = getSanitisedUri(_client, '$keyEndPointUserName');
+      final Uri url = getSanitisedUri(_client, keyEndPointUserName);
       final ParseNetworkResponse response = await _client.get(
         url.toString(),
         options: ParseNetworkOptions(headers: headers),
@@ -185,7 +185,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
         }
       }
 
-      final Uri url = getSanitisedUri(_client, '$path');
+      final Uri url = getSanitisedUri(_client, path);
       final String body = json.encode(toJson(forApiRQ: true));
       _saveChanges();
       final String? installationId = await _getInstallationId();
@@ -219,7 +219,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
         keyVarPassword: password!
       };
       final String? installationId = await _getInstallationId();
-      final Uri url = getSanitisedUri(_client, '$keyEndPointLogin');
+      final Uri url = getSanitisedUri(_client, keyEndPointLogin);
       _saveChanges();
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
@@ -245,7 +245,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
       {bool doNotSendInstallationID = false}) async {
     forgetLocalSession();
     try {
-      final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
+      final Uri url = getSanitisedUri(_client, keyEndPointUsers);
       const Uuid uuid = Uuid();
       final String? installationId = await _getInstallationId();
 
@@ -290,7 +290,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   Future<ParseResponse> _loginWith(String provider, Object authData,
       {bool doNotSendInstallationID = false}) async {
     try {
-      final Uri url = getSanitisedUri(_client, '$keyEndPointUsers');
+      final Uri url = getSanitisedUri(_client, keyEndPointUsers);
       final String? installationId = await _getInstallationId();
       final Map<String, dynamic> body = toJson(forApiRQ: true);
       body['authData'] = <String, dynamic>{provider: authData};
@@ -324,7 +324,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
 
     try {
-      final Uri url = getSanitisedUri(_client, '$keyEndPointLogout');
+      final Uri url = getSanitisedUri(_client, keyEndPointLogout);
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
         options: ParseNetworkOptions(
@@ -440,7 +440,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
             securityContext: ParseCoreData().securityContext);
 
     try {
-      final Uri url = getSanitisedUri(_client, '$path');
+      final Uri url = getSanitisedUri(_client, path);
       final ParseNetworkResponse response = await _client.get(url.toString());
       final ParseResponse parseResponse = handleResponse<ParseUser>(
           emptyUser, response, ParseApiRQ.getAll, _debug, keyClassUser);

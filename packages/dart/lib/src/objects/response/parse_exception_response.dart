@@ -24,5 +24,4 @@ ParseResponse buildParseResponseWithException(Exception exception) {
 
   return ParseResponse(
       error: ParseError(message: exception.toString(), exception: exception));
-  ;
 }
