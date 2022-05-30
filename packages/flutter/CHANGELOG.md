@@ -4,6 +4,10 @@
 
 * update example app to use Android embedding v2 ([#722](https://github.com/parse-community/Parse-SDK-Flutter/issues/722)) ([e092189](https://github.com/parse-community/Parse-SDK-Flutter/commit/e092189cb666c25b3e2c9dbbf95316e9cfa88e72))
 
+### Refactoring
+
+* fix analyzer code style warnings ([#733](https://github.com/parse-community/Parse-SDK-Flutter/issues/733))
+
 # [3.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/V3.0.0...V3.1.0) (2021-06-28)
 
 ### Bug Fixes

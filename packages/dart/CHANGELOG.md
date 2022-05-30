@@ -5,6 +5,10 @@
 * General improvements
 * Updated dependencies
 
+### Refactoring
+
+* fix analyzer code style warnings ([#733](https://github.com/parse-community/Parse-SDK-Flutter/issues/733))
+
 # [3.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/2.1.0...V3.0.0) (2021-04-14)
 
 ### Bug Fixes
