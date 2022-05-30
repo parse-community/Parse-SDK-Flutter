@@ -26,7 +26,7 @@ class DietPlanProviderDB implements DietPlanProviderContract {
 
   @override
   Future<ApiResponse> addAll(List<DietPlan> items) async {
-    final List<DietPlan> itemsInDb = List<DietPlan>();
+    final List<DietPlan> itemsInDb = <DietPlan>[];
 
     for (final DietPlan item in items) {
       final ApiResponse response = await add(item);
@@ -45,9 +45,9 @@ class DietPlanProviderDB implements DietPlanProviderContract {
 
   @override
   Future<ApiResponse> getAll() async {
-    final List<DietPlan> foodItems = List<DietPlan>();
+    final List<DietPlan> foodItems = <DietPlan>[];
 
-    final List<SortOrder> sortOrders = List<SortOrder>();
+    final List<SortOrder> sortOrders = <SortOrder>[];
     sortOrders.add(SortOrder(keyName));
     final Finder finder = Finder(sortOrders: sortOrders);
     final List<RecordSnapshot<String, Map<String, dynamic>>> records =
@@ -82,7 +82,7 @@ class DietPlanProviderDB implements DietPlanProviderContract {
 
   @override
   Future<ApiResponse> getNewerThan(DateTime date) async {
-    final List<DietPlan> foodItems = List<DietPlan>();
+    final List<DietPlan> foodItems = <DietPlan>[];
 
     final Finder finder = Finder(
         filter:
@@ -113,7 +113,7 @@ class DietPlanProviderDB implements DietPlanProviderContract {
 
   @override
   Future<ApiResponse> updateAll(List<DietPlan> items) async {
-    final List<DietPlan> updatedItems = List<DietPlan>();
+    final List<DietPlan> updatedItems = <DietPlan>[];
 
     for (final DietPlan item in items) {
       final ApiResponse response = await update(item);
@@ -145,7 +145,7 @@ class DietPlanProviderDB implements DietPlanProviderContract {
   }
 
   Map<String, dynamic> convertItemToStorageMap(DietPlan item) {
-    final Map<String, dynamic> values = Map<String, dynamic>();
+    final Map<String, dynamic> values = <String, dynamic>{};
     // ignore: invalid_use_of_protected_member
     values['value'] = json.jsonEncode(item.toJson(full: true));
     values[keyVarObjectId] = item.objectId;

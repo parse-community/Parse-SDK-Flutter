@@ -13,7 +13,7 @@ class DietPlanProviderApi implements DietPlanProviderContract {
 
   @override
   Future<ApiResponse> addAll(List<DietPlan> items) async {
-    final List<DietPlan> responses = List<DietPlan>();
+    final List<DietPlan> responses = <DietPlan>[];
 
     for (final DietPlan item in items) {
       final ApiResponse response = await add(item);
@@ -57,7 +57,7 @@ class DietPlanProviderApi implements DietPlanProviderContract {
 
   @override
   Future<ApiResponse> updateAll(List<DietPlan> items) async {
-    final List<DietPlan> responses = List<DietPlan>();
+    final List<DietPlan> responses = <DietPlan>[];
 
     for (final DietPlan item in items) {
       final ApiResponse response = await update(item);
