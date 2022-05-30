@@ -1,6 +1,6 @@
-## [3.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/V3.1.0...dart-3.1.1)
+## [3.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/V3.1.0...dart-3.1.1) (2022-05-30)
 
-### Refactor
+### Refactors
 
 * fix analyzer code style warnings ([#733](https://github.com/parse-community/Parse-SDK-Flutter/issues/733))
 
