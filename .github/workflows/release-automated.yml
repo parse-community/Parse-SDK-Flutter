@@ -1,0 +1,29 @@
+name: release-automated
+on:
+  release:
+    types: [ published ]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Publish dart package
+        if: ${{ startsWith(github.ref_name, 'dart') }}
+        uses: k-paxian/dart-package-publisher@v1.4
+        with:
+          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
+          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
+          relativePath: packages/dart
+          format: true
+          dryRunOnly: false
+      - name: Publish flutter package
+        if: ${{ startsWith(github.ref_name, 'flutter') }}
+        uses: k-paxian/dart-package-publisher@v1.4
+        with:
+          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
+          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
+          relativePath: packages/flutter
+          flutter: true
+          format: true
+          dryRunOnly: false

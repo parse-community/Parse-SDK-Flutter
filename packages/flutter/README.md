@@ -1,17 +1,45 @@
-<p align="center">
-  <img src="https://parseplatform.org/img/logo.svg" alt="Parse Logo" width="250" style="text-align:center; ">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png" alt="Flutter Logo" width="250" style="text-align:center;">
-</p>
+![parse-repository-header-sdk-flutter](https://user-images.githubusercontent.com/5673677/166121333-2a144ce3-95bc-45d6-8840-d5b2885f2046.png)
 
 ---
 
-## Parse For Flutter! 
-Hi, this is a Flutter plugin that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like (http://Back4App.com).
+This library gives you access to the powerful Parse Server backend from your Flutter app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org).
 
-This is a work in progress and we are consistently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project. (Even if it is just to improve our documentation)
+---
+
+- [Getting Started](#getting-started)
+    - [Web support](#web-support)
+    - [Network client](#network-client)
+- [Objects](#objects)
+- [Custom Objects](#custom-objects)
+- [Add new values to objects](#add-new-values-to-objects)
+- [Save objects using pins](#save-objects-using-pins)
+- [Storage](#storage)
+- [Increment Counter Values](#increment-counter-values)
+- [Array Operator](#array-operator)
+- [Queries](#queries)
+  - [Alternative Query Methods](#alternative-query-methods)
+- [Complex Queries](#complex-queries)
+- [Relational queries](#relational-queries)
+- [Counting Objects](#counting-objects)
+- [Live Queries](#live-queries)
+- [ParseLiveList](#parselivelist)
+    - [General Use](#general-use)
+  - [Include Sub-Objects](#include-sub-objects)
+  - [Lazy Loading](#lazy-loading)
+- [Users](#users)
+- [Facebook, OAuth and 3rd Party Login/User](#facebook-oauth-and-3rd-party-loginuser)
+- [Security for Objects - ParseACL](#security-for-objects---parseacl)
+- [Config](#config)
+- [Cloud Functions](#cloud-functions)
+- [Relation](#relation)
+- [File](#file)
+- [Other Features](#other-features)
+
+---
 
 ## Getting Started
-To install, either add [dependency in your pubspec.yaml file](https://pub.dev/packages/parse_server_sdk_flutter/install).
+
+To install add the dependency to your [pubspec.yaml](https://pub.dev/packages/parse_server_sdk_flutter/install) file.
 
 Once you have the library added to your project, upon first call to your app (Similar to what your application class would be) add the following...
 
@@ -200,7 +228,8 @@ The storage method is defined in the parameter __coreStore__ in  Parse().initial
 
 Check sample code for options
 
-## Increment Counter values in objects
+## Increment Counter Values
+
 Retrieve it, call
 
 ```dart
@@ -216,7 +245,8 @@ var response = dietPlan.save()
 
 ```
 
-## Array Operator in objects
+## Array Operator
+
 Retrieve it, call
 
 ```dart
@@ -272,7 +302,7 @@ if (response.success) {
 }
 ```
 
-### Alternative query methods
+### Alternative Query Methods
 
 The standard query method `query()` returns a `ParseResponse` that contains the result or the error. As an alternative, you can also use `Future<List<T>> find()` for receiving options.
 This method returns an `Future` that either resolves in an error (equivalent of the error in the `ParseResponse`) or an `List` containing the queried objects. One difference, you should be aware of, is the fact, that `Future<List<T>> find()` will return an empty list instead of the 'No results' error you receive in case no object matches you query.
@@ -281,7 +311,8 @@ Choosing between `query()` and `find()` comes down to personal preference. Both 
 
 Similar to `find()` the `QueryBuilder` also has a function called `Future<T?> first()`. Just like `find()` `first()` is just a convenience method that makes querying the first object satisfying the query simpler. `first()` returns an `Future`, that resoles in an error or the first object matching the query. In case no object satisfies the query, the result will be `null`.
 
-## Complex queries
+## Complex Queries
+
 You can create complex queries to really put your database to the test:
 
 ```dart
@@ -631,7 +662,8 @@ ParseLiveListWidget<ParseObject>(
   duration: Duration(seconds: 1),
 );
 ```
-### included Sub-Objects
+### Include Sub-Objects
+
 By default, ParseLiveQuery will provide you with all the objects you included in your Query like this:
 ```dart
 queryBuilder.includeObject(/*List of all the included sub-objects*/);
@@ -641,7 +673,8 @@ To activate listening for updates on all included objects, add `listenOnAllSubIt
 If you want ParseLiveList to listen for updates on only some sub-objects, use `listeningIncludes: const <String>[/*all the included sub-objects*/]` instead.
 Just as QueryBuilder, ParseLiveList supports nested sub-objects too.
 
-### Lazy loading
+### Lazy Loading
+
 By default, ParseLiveList lazy loads the content.
 You can avoid that by setting `lazyLoading: false`.
 In case you want to use lazyLoading but you need some columns to be preloaded, you can provide a list of `preloadedColumns`.
@@ -944,7 +977,8 @@ someParseObject.set("image", parseFile);
 await someParseObject.save();
 ```
 
-## Other Features of this library
+## Other Features
+
 Main:
 * Installation (View the example application)
 * GeoPoints (View the example application)
@@ -959,8 +993,5 @@ User:
 
 Objects:
 * Create new object
-* Extend Parse Object and create local objects that can be saved and retreived
+* Extend Parse Object and create local objects that can be saved and retrieved
 * Queries
-
-## Author:-
-This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com

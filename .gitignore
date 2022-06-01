@@ -103,8 +103,12 @@ unlinked_spec.ds
 # macOS
 **/macos/Flutter/GeneratedPluginRegistrant.swift
 
+# Linux
+**/linux/flutter/ephemeral
+
 # Coverage
 coverage/
+lcov.info
 
 # Symbols
 app.*.symbols

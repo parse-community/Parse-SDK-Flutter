@@ -49,7 +49,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Gets all objects from this table - Limited response at the moment
   Future<ParseResponse> getAll() async {
     try {
-      final Uri url = getSanitisedUri(_client, '$_path');
+      final Uri url = getSanitisedUri(_client, _path);
       final ParseNetworkResponse result = await _client.get(url.toString());
       return handleResponse<ParseObject>(
           this, result, ParseApiRQ.getAll, _debug, parseClassName);
@@ -61,7 +61,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Creates a new object and saves it online
   Future<ParseResponse> create({bool allowCustomObjectId = false}) async {
     try {
-      final Uri url = getSanitisedUri(_client, '$_path');
+      final Uri url = getSanitisedUri(_client, _path);
       final String body = json.encode(toJson(
         forApiRQ: true,
         allowCustomObjectId: allowCustomObjectId,
@@ -118,10 +118,10 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   Future<ParseResponse> _saveChildren(dynamic object) async {
-    final Set<ParseObject> uniqueObjects = Set<ParseObject>();
-    final Set<ParseFileBase> uniqueFiles = Set<ParseFileBase>();
-    if (!_collectionDirtyChildren(object, uniqueObjects, uniqueFiles,
-        Set<ParseObject>(), Set<ParseObject>())) {
+    final Set<ParseObject> uniqueObjects = <ParseObject>{};
+    final Set<ParseFileBase> uniqueFiles = <ParseFileBase>{};
+    if (!_collectionDirtyChildren(
+        object, uniqueObjects, uniqueFiles, <ParseObject>{}, <ParseObject>{})) {
       final ParseResponse response = ParseResponse();
       return response;
     }
@@ -279,7 +279,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       /* Check for cycles of new objects.  Any such cycle means it will be
       impossible to save this collection of objects, so throw an exception. */
       if (object.objectId != null) {
-        seenNew = Set<ParseObject>();
+        seenNew = <ParseObject>{};
       } else {
         if (seenNew.contains(object)) {
           // TODO(yulingtianxia): throw an error?
@@ -385,7 +385,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     try {
       if (objectId != null) {
         final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-        final String body = '{\"$key\":{\"__op\":\"Delete\"}}';
+        final String body = '{"$key":{"__op":"Delete"}}';
         final ParseNetworkResponse result =
             await _client.put(url.toString(), data: body);
         final ParseResponse response = handleResponse<ParseObject>(
@@ -411,7 +411,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   Future<ParseResponse> query<T extends ParseObject>(String query,
       {ProgressCallback? progressCallback}) async {
     try {
-      final Uri url = getSanitisedUri(_client, '$_path', query: query);
+      final Uri url = getSanitisedUri(_client, _path, query: query);
       final ParseNetworkResponse result = await _client.get(
         url.toString(),
         onReceiveProgress: progressCallback,
@@ -425,7 +425,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
   Future<ParseResponse> distinct<T extends ParseObject>(String query) async {
     try {
-      final Uri url = getSanitisedUri(_client, '$_aggregatepath', query: query);
+      final Uri url = getSanitisedUri(_client, _aggregatepath, query: query);
       final ParseNetworkResponse result = await _client.get(url.toString());
       return handleResponse<T>(
           this, result, ParseApiRQ.query, _debug, parseClassName);
@@ -456,7 +456,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       throw 'can not fetch without a objectId';
     }
 
-    final ParseResponse response = await this.getObject(this.objectId!);
+    final ParseResponse response = await getObject(objectId!);
 
     if (response.success && response.results != null) {
       return response.results!.first;

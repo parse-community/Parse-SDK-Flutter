@@ -24,7 +24,7 @@ abstract class ParseClient {
 
   Future<ParseNetworkResponse> postBytes(
     String path, {
-    Stream<List<int> >? data,
+    Stream<List<int>>? data,
     ParseNetworkOptions? options,
     ProgressCallback? onSendProgress,
   });
@@ -62,7 +62,7 @@ abstract class ParseClient {
   //   ParseNetworkOptions options,
   // });
 
-  @deprecated
+  @Deprecated("Use ParseCoreData() instead.")
   ParseCoreData get data => ParseCoreData();
 }
 

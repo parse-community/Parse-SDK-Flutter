@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -16,7 +18,7 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 void main() {
   _setTargetPlatformForDesktop();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 void _setTargetPlatformForDesktop() {
@@ -33,6 +35,8 @@ void _setTargetPlatformForDesktop() {
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -56,7 +60,7 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
+        body: const Center(
           //child: Text(text),
           child: DecisionPage(),
           //child: HomePage(),

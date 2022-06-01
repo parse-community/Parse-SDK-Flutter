@@ -3,7 +3,7 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  SharedPreferences.setMockInitialValues(Map<String, String>());
+  SharedPreferences.setMockInitialValues(<String, String>{});
 
   test('testBuilder', () async {
     await Parse().initialize('appId', 'serverUrl',

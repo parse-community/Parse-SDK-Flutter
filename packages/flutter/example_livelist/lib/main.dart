@@ -3,9 +3,11 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 import 'application_constants.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -21,10 +23,11 @@ class _MyAppState extends State<MyApp> {
     initData().then((bool success) {
       setState(() {
         initFailed = !success;
-        if (success)
+        if (success) {
           _queryBuilder = QueryBuilder<ParseObject>(ParseObject('Test'))
             ..orderByAscending('order')
             ..whereNotEqualTo('show', false);
+        }
       });
     }).catchError((dynamic _) {
       setState(() {
@@ -86,8 +89,9 @@ class _MyAppState extends State<MyApp> {
                     title: Row(
                       children: <Widget>[
                         Flexible(
-                          child: Text(
-                              snapshot.loadedData!.get<int>('order').toString()),
+                          child: Text(snapshot.loadedData!
+                              .get<int>('order')
+                              .toString()),
                           flex: 1,
                         ),
                         Flexible(
@@ -102,7 +106,8 @@ class _MyAppState extends State<MyApp> {
                       ],
                     ),
                     onLongPress: () {
-                      objectFormKey.currentState!.setObject(snapshot.loadedData);
+                      objectFormKey.currentState!
+                          .setObject(snapshot.loadedData);
                     },
                   );
                 } else {
@@ -153,7 +158,8 @@ class _ObjectFormState extends State<ObjectForm> {
                   Flexible(
                     flex: 1,
                     child: TextFormField(
-                      initialValue: _currentObject!.get<int>('order').toString(),
+                      initialValue:
+                          _currentObject!.get<int>('order').toString(),
                       keyboardType: TextInputType.number,
                       onSaved: (String? value) {
                         _currentObject!.set('order', int.parse(value!));

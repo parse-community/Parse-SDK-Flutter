@@ -115,8 +115,9 @@ class LiveQueryReconnectingController {
         _currentTimer = null;
         _reconnect();
       });
-      if (debug)
+      if (debug) {
         print('$DEBUG_TAG: Retrytimer set to ${retryInterval[_retryState]}ms');
+      }
       if (_retryState < retryInterval.length - 1) {
         _retryState++;
       }
@@ -212,9 +213,10 @@ class LiveQueryClient {
       subscription._enabled = false;
     });
     _connecting = false;
-    if (userInitialized)
+    if (userInitialized) {
       _clientEventStreamController.sink
           .add(LiveQueryClientEvent.USER_DISCONNECTED);
+    }
   }
 
   Future<Subscription<T>> subscribe<T extends ParseObject>(
@@ -353,7 +355,7 @@ class LiveQueryClient {
     final String _where = query.buildQuery().replaceAll('where=', '');
 
     //Convert where condition to Map
-    Map<String, dynamic> _whereMap = Map<String, dynamic>();
+    Map<String, dynamic> _whereMap = <String, dynamic>{};
     if (_where != '') {
       _whereMap = json.decode(_where);
     }
