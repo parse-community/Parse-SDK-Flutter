@@ -4,7 +4,7 @@ version: 3.2.0
 homepage: https://github.com/parse-community/Parse-SDK-Flutter
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   # Networking
@@ -27,6 +27,7 @@ dependency_overrides:
   path: ^1.8.1 # required for transitive use only
 
 dev_dependencies:
+  lints: ^1.0.1
   # Testing
   build_runner: ^2.1.10
   mockito: ^5.1.0

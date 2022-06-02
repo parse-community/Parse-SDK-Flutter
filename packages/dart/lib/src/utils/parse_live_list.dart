@@ -130,11 +130,12 @@ class ParseLiveList<T extends ParseObject> {
 
   Future<ParseResponse> _runQuery() async {
     final QueryBuilder<T> query = QueryBuilder<T>.copy(_query);
-    if (_debug)
+    if (_debug) {
       print('ParseLiveList: lazyLoading is ${_lazyLoading ? 'on' : 'off'}');
+    }
     if (_lazyLoading) {
       final List<String> keys = _preloadedColumns.toList();
-      if (_lazyLoading && query.limiters.containsKey('order'))
+      if (_lazyLoading && query.limiters.containsKey('order')) {
         keys.addAll(
           query.limiters['order'].toString().split(',').map((String string) {
             if (string.startsWith('-')) {
@@ -143,8 +144,9 @@ class ParseLiveList<T extends ParseObject> {
             return string;
           }),
         );
-      if (keys.isNotEmpty) query.keysToReturn(keys);
-    }
+      if (keys.isNotEmpty) {
+        query.keysToReturn(keys);
+      }
     return await query.query<T>();
   }
 
@@ -557,7 +559,7 @@ class ParseLiveListElement<T extends ParseObject> {
       {bool loaded = false, Map<String, dynamic>? updatedSubItems})
       : _loaded = loaded {
     _updatedSubItems =
-        _toSubscriptionMap(updatedSubItems ?? Map<String, dynamic>());
+        _toSubscriptionMap(updatedSubItems ?? <String, dynamic>{});
     if (_updatedSubItems.isNotEmpty) {
       _liveQuery = LiveQuery();
       _subscribe();
@@ -576,7 +578,7 @@ class ParseLiveListElement<T extends ParseObject> {
   T get object => _object.clone(_object.toJson(full: true));
 
   Map<PathKey, dynamic> _toSubscriptionMap(Map<String, dynamic> map) {
-    final Map<PathKey, dynamic> result = Map<PathKey, dynamic>();
+    final Map<PathKey, dynamic> result = <PathKey, dynamic>{};
     for (String key in map.keys) {
       result.putIfAbsent(PathKey(key), () => _toSubscriptionMap(map[key]));
     }
@@ -584,7 +586,7 @@ class ParseLiveListElement<T extends ParseObject> {
   }
 
   Map<String, dynamic> _toKeyMap(Map<PathKey, dynamic> map) {
-    final Map<String, dynamic> result = Map<String, dynamic>();
+    final Map<String, dynamic> result = <String, dynamic>{};
     for (PathKey key in map.keys) {
       result.putIfAbsent(key.key, () => _toKeyMap(map[key]));
     }

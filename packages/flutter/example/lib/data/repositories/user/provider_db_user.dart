@@ -82,7 +82,7 @@ class UserProviderDB implements UserProviderContract {
   void logout(User user) {}
 
   Map<String, dynamic> convertItemToStorageMap(User item) {
-    final Map<String, dynamic> values = Map<String, dynamic>();
+    final Map<String, dynamic> values = <String, dynamic>{};
     // ignore: invalid_use_of_protected_member
     values['value'] = json.jsonEncode(item.toJson(full: true));
     values[keyVarObjectId] = item.objectId;

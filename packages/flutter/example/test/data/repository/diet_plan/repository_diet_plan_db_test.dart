@@ -11,7 +11,7 @@ import '../repository_mock_utils.dart';
 
 void main() {
   DietPlanProviderContract repository;
-  SharedPreferences.setMockInitialValues(Map<String, String>());
+  SharedPreferences.setMockInitialValues(<String, String>{});
 
   StoreRef<String, Map<String, dynamic>> _getStore(Database database) {
     final StoreRef<String, Map<String, dynamic>> store =
@@ -61,7 +61,7 @@ void main() {
   test('addAll DietPlan from DB', () async {
     // Given
     const String objectIdPrefix = '12345abc';
-    final List<DietPlan> actual = List<DietPlan>();
+    final List<DietPlan> actual = <DietPlan>[];
 
     final DietPlan item1 = getDummyDietPlan();
     item1.objectId = '${objectIdPrefix}0';
@@ -104,7 +104,7 @@ void main() {
     const String objectIdPrefix = '12345abc';
     final DietPlan item1 = getDummyDietPlan()..objectId = '${objectIdPrefix}0';
     final DietPlan item2 = getDummyDietPlan()..objectId = '${objectIdPrefix}1';
-    final List<DietPlan> actual = List<DietPlan>()..add(item1)..add(item2);
+    final List<DietPlan> actual = <DietPlan>[item1, item2];
 
     // When
     final ApiResponse response = await repository.addAll(actual);
@@ -168,7 +168,7 @@ void main() {
     // Given
     const String objectIdPrefix = '12345abc';
 
-    final List<DietPlan> actual = List<DietPlan>();
+    final List<DietPlan> actual = <DietPlan>[];
     final DietPlan item1 = getDummyDietPlan();
     item1.objectId = '${objectIdPrefix}0';
     actual.add(item1);

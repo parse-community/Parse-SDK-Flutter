@@ -1,0 +1,47 @@
+# Trigger this workflow only to manually create a dart/flutter release; this should only be used
+# in extraordinary circumstances, as dart/flutter releases are normally created automatically as
+# part of the automated release workflow.
+
+name: release-manual
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Reference (tag / SHA):'
+        required: true
+        default: ''
+      package:
+        description: 'Package'
+        required: true
+        default: ''
+        type: choice
+        options:
+        - dart
+        - flutter
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref }}
+      - name: Publish dart package
+        if: github.event.inputs.package == 'dart'
+        uses: k-paxian/dart-package-publisher@v1.4
+        with:
+          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
+          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
+          relativePath: packages/dart
+          format: true
+          dryRunOnly: false
+      - name: Publish flutter package
+        if: github.event.inputs.package == 'flutter'
+        uses: k-paxian/dart-package-publisher@v1.4
+        with:
+          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
+          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
+          relativePath: packages/flutter
+          flutter: true
+          format: true
+          dryRunOnly: false

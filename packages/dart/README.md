@@ -1,20 +1,39 @@
-<p align="center">
-  <img src="https://parseplatform.org/img/logo.svg" alt="Parse Logo" width="250">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/f/fe/Dart_programming_language_logo.svg" alt="Dart Logo" width="250">
-</p>
+![parse-repository-header-sdk-dart](https://user-images.githubusercontent.com/5673677/166120960-ea1f58e3-a62b-4770-b541-f64186859339.png)
 
 ---
 
-**This is now a dart package. The Flutter package was moved [here](https://pub.dev/packages/parse_server_sdk_flutter).**
-If you are using flutter you should migrate using [this](https://github.com/parse-community/Parse-SDK-Flutter/blob/release/2.0.0/docs/migrate-2-0-0.md) guide.
+This library gives you access to the powerful Parse Server backend from your Dart app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org). The Flutter package was moved [here](https://pub.dev/packages/parse_server_sdk_flutter). If you are using Flutter see [this guide](https://github.com/parse-community/Parse-SDK-Flutter/blob/release/2.0.0/docs/migrate-2-0-0.md) for how to migrate.
 
-**THIS README IS WORK IN PROGRESS!**
-Help out to improve this README on [GitHub](https://github.com/parse-community/Parse-SDK-Flutter/edit/master/packages/dart/README.md).
+---
 
-## Parse For Dart!
-This is a Dart package that allows communication with a Parse Server, (https://parseplatform.org) either hosted on your own server or another, like (http://Back4App.com).
+- [Getting Started](#getting-started)
+    - [Early Web support](#early-web-support)
+- [Objects](#objects)
+- [Custom Objects](#custom-objects)
+- [Add New Values to Objects](#add-new-values-to-objects)
+- [Save Objects using Pins](#save-objects-using-pins)
+- [Storage](#storage)
+- [Increment Counter Values](#increment-counter-values)
+- [Array Operator in Objects](#array-operator-in-objects)
+- [Queries](#queries)
+  - [Alternative Query Methods](#alternative-query-methods)
+- [Complex Queries](#complex-queries)
+- [Relational queries](#relational-queries)
+- [Counting objects](#counting-objects)
+- [LiveQuery](#livequery)
+- [ParseLiveList](#parselivelist)
+  - [General Use](#general-use)
+  - [Included Sub-Objects](#included-sub-objects)
+- [Users](#users)
+- [Facebook, OAuth and 3rd Party Login/User](#facebook-oauth-and-3rd-party-loginuser)
+- [Security for Objects - ParseACL](#security-for-objects---parseacl)
+- [Config](#config)
+- [Cloud Functions](#cloud-functions)
+- [Relation](#relation)
+- [File](#file)
+- [Other Features](#other-features)
 
-This is a work in progress and we are consistently updating it. Please let us know if you think anything needs changing/adding, and more than ever, please do join in on this project. (Even if it is just to improve our documentation)
+---
 
 ## Getting Started
 
@@ -151,7 +170,7 @@ Providing a `ParseObject` as described above should still work, even if you have
 
 For custom file classes have a lock at [here](#File).
 
-## Add new values to objects
+## Add New Values to Objects
 To add a variable to an object call and retrieve it, call
 
 ```dart
@@ -159,7 +178,8 @@ dietPlan.set<int>('RandomInt', 8);
 var randomInt = dietPlan.get<int>('RandomInt');
 ```
 
-## Save objects using pins
+## Save Objects using Pins
+
 You can now save an object by calling `.pin()` on an instance of an object
 
 ```dart
@@ -173,6 +193,7 @@ var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
 ```
 
 ## Storage
+
 We now have 2 types of storage, secure and unsecure. We currently rely on 2 third party options:
 
 - SharedPreferences
@@ -183,7 +204,8 @@ The storage method is defined in the parameter __coreStore__ in  Parse().initial
 
 Check sample code for options
 
-## Increment Counter values in objects
+## Increment Counter Values
+
 Retrieve it, call
 
 ```dart
@@ -199,7 +221,8 @@ var response = dietPlan.save()
 
 ```
 
-## Array Operator in objects
+## Array Operator in Objects
+
 Retrieve it, call
 
 ```dart
@@ -242,7 +265,7 @@ if (dietPlan.success) {
 }
 ```
 
-### Alternative query methods
+### Alternative Query Methods
 
 The standard query method `query()` returns a `ParseResponse` that contains the result or the error. As an alternative, you can also use `Future<List<T>> find()` for receiving options.
 This method returns an `Future` that either resolves in an error (equivalent of the error in the `ParseResponse`) or an `List` containing the queried objects. One difference, you should be aware of, is the fact, that `Future<List<T>> find()` will return an empty list instead of the 'No results' error you receive in case no object matches you query.
@@ -251,7 +274,7 @@ Choosing between `query()` and `find()` comes down to personal preference. Both 
 
 Similar to `find()` the `QueryBuilder` also has a function called `Future<T?> first()`. Just like `find()` `first()` is just a convenience method that makes querying the first object satisfying the query simpler. `first()` returns an `Future`, that resoles in an error or the first object matching the query. In case no object satisfies the query, the result will be `null`.
 
-## Complex queries
+## Complex Queries
 You can create complex queries to really put your database to the test:
 
 ```dart
@@ -395,7 +418,7 @@ QueryBuilder<ParseObject> groupsWithRoleX =
 var apiResponse = await groupsWithRoleX.query();
 ```
 
-## Counting Objects
+## Counting objects
 If you only care about the number of games played by a particular player:
 
 ```dart
@@ -408,7 +431,8 @@ if (apiResponse.success && apiResponse.result != null) {
 }
 ```
 
-## Live Queries
+## LiveQuery
+
 This tool allows you to subscribe to a QueryBuilder you are interested in. Once subscribed, the server will notify clients
 whenever a ParseObject that matches the QueryBuilder is created or updated, in real-time.
 
@@ -551,7 +575,8 @@ ParseLiveList makes implementing a dynamic List as simple as possible.
 It ships with the ParseLiveList class itself, this class manages all elements of the list, sorts them,
 keeps itself up to date and Notifies you on changes.
 
-### included Sub-Objects
+### Included Sub-Objects
+
 By default, ParseLiveQuery will provide you with all the objects you included in your Query like this:
 ```dart
 queryBuilder.includeObject(/*List of all the included sub-objects*/);
@@ -564,6 +589,7 @@ Just as QueryBuilder, ParseLiveList supports nested sub-objects too.
 **NOTE:** To use this features you have to enable [Live Queries](#live-queries) first.
 
 ## Users
+
 You can create and control users just as normal using this SDK.
 
 To register a user, first create one :
@@ -835,7 +861,9 @@ await someParseObject.save();
 //progressCallback example
 file.upload(progressCallback: (int count, int total) => print("$count of $total"));
 ```
-## Other Features of this library
+
+## Other Features
+
 Main:
 * Installation (View the example application)
 * GeoPoints (View the example application)
@@ -852,6 +880,3 @@ Objects:
 * Create new object
 * Extend Parse Object and create local objects that can be saved and retreived
 * Queries
-
-## Author:-
-This project was authored by Phill Wiggins. You can contact me at phill.wiggins@gmail.com
