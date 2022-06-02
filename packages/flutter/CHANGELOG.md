@@ -1,3 +1,18 @@
+## [3.2.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/V3.1.1...flutter-3.2.0) (2022-06-22)
+
+### Bug Fixes
+* Old version of connectivity_plus package ([#717](https://github.com/parse-community/Parse-SDK-Flutter/issues/717))
+* package_info_plus not work in web ([#714](https://github.com/parse-community/Parse-SDK-Flutter/issues/714))
+* MissingPluginException (No implementation found for method getAll) ([#712](https://github.com/parse-community/Parse-SDK-Flutter/issues/712))
+* Query fails for subclassed Parse object in Parse relation ([#697](https://github.com/parse-community/Parse-SDK-Flutter/issues/697))
+* ParseRelation#query - Unhandled Exception: type 'ParseObject' is not a subtype of type ([#696](https://github.com/parse-community/Parse-SDK-Flutter/issues/696))
+* Error in progressCallback ([#679](https://github.com/parse-community/Parse-SDK-Flutter/issues/679))
+* first: Correct return type ([#661](https://github.com/parse-community/Parse-SDK-Flutter/issues/661))
+* ParseLiveListWidget MongoError ([#653](https://github.com/parse-community/Parse-SDK-Flutter/issues/653))
+
+* General improvements
+* Updated dependencies
+
 ## [3.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.1...flutter-3.1.2) (2022-05-30)
 
 ### Refactors
