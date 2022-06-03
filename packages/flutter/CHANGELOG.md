@@ -10,8 +10,9 @@
 * first: Correct return type ([#661](https://github.com/parse-community/Parse-SDK-Flutter/issues/661))
 * ParseLiveListWidget MongoError ([#653](https://github.com/parse-community/Parse-SDK-Flutter/issues/653))
 
-* General improvements
-* Updated dependencies
+### Features
+
+* upgrade various dependencies
 
 ## [3.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.1...flutter-3.1.2) (2022-05-30)
 
