@@ -1,3 +1,9 @@
+# Unreleased
+
+### Bug Fixes
+
+* <fix description> ([#761](https://github.com/parse-community/Parse-SDK-Flutter/pull/761))
+
 ## [3.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.1...flutter-3.1.2) (2022-05-30)
 
 ### Refactors
