@@ -739,6 +739,13 @@ You can retrieve the ACL list of an object using:
 ParseACL parseACL = parseObject.getACL();
 ```
 
+To set the ACL to `ParseRole` use:
+
+```dart
+parseACL.setReadAccess(userId: "role:ROLE_NAME", allowed: true);
+parseACL.setWriteAccess(userId: "role:ROLE_NAME", allowed: true);
+
+```
 ## Config
 The SDK supports Parse Config. A map of all configs can be grabbed from the server by calling :
 ```dart
