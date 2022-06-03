@@ -81,7 +81,7 @@ When running directly via docker, set the env var `PARSE_SERVER_ALLOW_HEADERS=X-
 When running via express, set [ParseServerOptions](https://parseplatform.org/parse-server/api/master/ParseServerOptions.html) `allowHeaders: ['X-Parse-Installation-Id']`.
 
 #### Desktop Support (macOS)
-Due to security entitlements posed by the macOS framework, connecting to the Web and sharing data requires adding the following lines to code :
+The security entitlements posed by the macOS framework require that your app is granted permission to open outgoing network connections, so that the Parse Flutter SDK can communicate with Parse Server. To grant this permission, add the following lines:
 ```
 <key>com.apple.security.network.client</key>
 <true/>
