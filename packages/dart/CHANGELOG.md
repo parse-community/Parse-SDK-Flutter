@@ -1,11 +1,7 @@
-## [3.2.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/V3.1.1...flutter-3.2.0) (2022-06-22)
+## [3.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/V3.1.1...flutter-3.1.2) (2022-06-06)
 
 ### Bug Fixes
 
-* old version of `connectivity_plus package` ([#717](https://github.com/parse-community/Parse-SDK-Flutter/issues/717))
-* dependency `package_info_plus` does not work in web ([#714](https://github.com/parse-community/Parse-SDK-Flutter/issues/714))
-* missing plugin exception, no implementation found for method `getAll` ([#712](https://github.com/parse-community/Parse-SDK-Flutter/issues/712))
-* query fails for subclassed `ParseObject` in `ParseRelation` ([#697](https://github.com/parse-community/Parse-SDK-Flutter/issues/697))
 * unhandled exception in `ParseRelation`, type `ParseObject` is not a subtype of type ([#696](https://github.com/parse-community/Parse-SDK-Flutter/issues/696))
 * error in progress callback ([#679](https://github.com/parse-community/Parse-SDK-Flutter/issues/679))
 * incorrect return type when calling `first()` ([#661](https://github.com/parse-community/Parse-SDK-Flutter/issues/661))
@@ -13,7 +9,7 @@
 
 ### Features
 
-* upgrade various dependencies
+* Upgrade dependencies version
 
 ## [3.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/V3.1.0...dart-3.1.1) (2022-05-30)
 
