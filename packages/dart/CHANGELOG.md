@@ -6,10 +6,7 @@
 * error in progress callback ([#679](https://github.com/parse-community/Parse-SDK-Flutter/issues/679))
 * incorrect return type when calling `first()` ([#661](https://github.com/parse-community/Parse-SDK-Flutter/issues/661))
 * error in `ParseLiveListWidget` when enabling `lazyloading` ([#653](https://github.com/parse-community/Parse-SDK-Flutter/issues/653))
-
-### Features
-
-* Upgrade dependencies version
+* fixes an error that occurs when the logout method is called and the user does not have an access token, for example, after creating an account that must be verified
 
 ## [3.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/V3.1.0...dart-3.1.1) (2022-05-30)
 
