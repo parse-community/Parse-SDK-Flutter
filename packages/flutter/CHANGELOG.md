@@ -1,4 +1,4 @@
-## [3.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/V3.1.2...flutter-3.1.3) (2022-06-06)
+## [3.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.2...flutter-3.1.3) (2022-06-10)
 
 ### Bug Fixes
 
@@ -6,10 +6,7 @@
 * dependency `package_info_plus` does not work in web ([#714](https://github.com/parse-community/Parse-SDK-Flutter/issues/714))
 * missing plugin exception, no implementation found for method `getAll` ([#712](https://github.com/parse-community/Parse-SDK-Flutter/issues/712))
 
-### BREAKING CHANGES
-
-* upgrade various dependencies by major versions; check whether you need to make change to your code if you are using any of these transitive dependencies that have been upgraded: 
-- connectivity_plus
+### Upgrade dependencies
 
 ## [3.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.1...flutter-3.1.2) (2022-05-30)
 
