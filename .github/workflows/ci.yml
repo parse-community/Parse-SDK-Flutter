@@ -83,10 +83,10 @@ jobs:
         with:
           cache: true
       - name: Set file permissions on Ubuntu and MacOS
-        if: matrix.os == "ubuntu-latest" || matrix.os == "macos-latest"
+        if: matrix.os == "ubuntu-latest"
         run: chmod +x tools/flutter-dependencies.sh
       - name: Install dependencies on Ubuntu and MacOS
-        if: matrix.os == "ubuntu-latest" || matrix.os == "macos-latest"
+        if: matrix.os == "ubuntu-latest"
         run: tools/flutter-dependencies.sh
       - name: Install dependencies on Windows
         if: matrix.os == "windows-latest"
