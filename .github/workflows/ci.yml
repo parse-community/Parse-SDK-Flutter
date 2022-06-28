@@ -4,7 +4,6 @@ on:
     branches:
       - "master"
       - "development"
-      - "patch-1"
     paths-ignore:
       - "**/README.md"
       - "docs/**"
