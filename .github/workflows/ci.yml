@@ -46,6 +46,8 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           cache: true
+      - name: Set file permissions
+        run: chmod +x tools/flutter-dependencies.sh
       - name: Install dependencies
         run: |
           echo "publish_to: none" >> packages/flutter/pubspec.yaml
@@ -79,6 +81,8 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           cache: true
+      - name: Set file permissions
+        run: chmod +x tools/flutter-dependencies.sh
       - name: Install dependencies
         run: tools/flutter-dependencies.sh
       - name: Run tests
