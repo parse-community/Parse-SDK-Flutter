@@ -81,6 +81,8 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           cache: true
+      - name: Make executeable flutter-dependencies.sh
+        run: chmod +x tools/flutter-dependencies.sh
       - name: Install dependencies
         run: tools/flutter-dependencies.sh
       - name: Run tests
