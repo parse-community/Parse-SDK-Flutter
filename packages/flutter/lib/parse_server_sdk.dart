@@ -8,8 +8,9 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart' as sdk;
+import 'package:parse_server_sdk_flutter/src/storage/core_store_directory_io.dart'
+    if (dart.library.html) 'package:parse_server_sdk_flutter/src/storage/core_store_directory_web.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -90,8 +91,8 @@ class Parse extends sdk.Parse
       parseFileConstructor: parseFileConstructor,
       liveListRetryIntervals: liveListRetryIntervals,
       connectivityProvider: connectivityProvider ?? this,
-      fileDirectory: fileDirectory ??
-          (!sdk.parseIsWeb ? (await getTemporaryDirectory()).path : null),
+      fileDirectory:
+          fileDirectory ?? (await CoreStoreDirectory().getTempDirectory()),
       appResumedStream: appResumedStream ?? _appResumedStreamController.stream,
       clientCreator: clientCreator,
     ) as Parse;
@@ -136,14 +137,7 @@ class Parse extends sdk.Parse
 
 Future<String> dbDirectory() async {
   String dbDirectory = '';
-  if (!sdk.parseIsWeb &&
-      (Platform.isIOS ||
-          Platform.isAndroid ||
-          Platform.isMacOS ||
-          Platform.isLinux ||
-          Platform.isWindows)) {
-    dbDirectory = (await getApplicationDocumentsDirectory()).path;
-  }
+  dbDirectory = await CoreStoreDirectory().getDatabaseDirectory();
   return path.join('$dbDirectory/parse', 'parse.db');
 }
 

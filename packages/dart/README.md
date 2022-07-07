@@ -272,7 +272,7 @@ This method returns an `Future` that either resolves in an error (equivalent of 
 
 Choosing between `query()` and `find()` comes down to personal preference. Both methods can be used for querying a `ParseQuery`, just the output method differs.
 
-Similar to `find()` the `QueryBuilder` also has a function called `Future<T>? first()`. Just like `find()` `first()` is just a convenience method that makes querying the first object satisfying the query simpler. `first()` returns an `Future`, that resoles in an error or the first object matching the query. In case no object satisfies the query, the result will be `null`.
+Similar to `find()` the `QueryBuilder` also has a function called `Future<T?> first()`. Just like `find()` `first()` is just a convenience method that makes querying the first object satisfying the query simpler. `first()` returns an `Future`, that resoles in an error or the first object matching the query. In case no object satisfies the query, the result will be `null`.
 
 ## Complex Queries
 You can create complex queries to really put your database to the test:
@@ -739,6 +739,13 @@ You can retrieve the ACL list of an object using:
 ParseACL parseACL = parseObject.getACL();
 ```
 
+To set the ACL to `ParseRole` use:
+
+```dart
+parseACL.setReadAccess(userId: "role:ROLE_NAME", allowed: true);
+parseACL.setWriteAccess(userId: "role:ROLE_NAME", allowed: true);
+
+```
 ## Config
 The SDK supports Parse Config. A map of all configs can be grabbed from the server by calling :
 ```dart
