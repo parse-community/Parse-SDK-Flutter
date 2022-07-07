@@ -6,7 +6,7 @@
 * error in progress callback ([#679](https://github.com/parse-community/Parse-SDK-Flutter/issues/679))
 * incorrect return type when calling `first()` ([#661](https://github.com/parse-community/Parse-SDK-Flutter/issues/661))
 * error in `ParseLiveListWidget` when enabling `lazyloading` ([#653](https://github.com/parse-community/Parse-SDK-Flutter/issues/653))
-* Unexpected null value after call user.logout() ([#770](https://github.com/parse-community/Parse-SDK-Flutter/issues/770))
+* unexpected null value after call `user.logout()` ([#770](https://github.com/parse-community/Parse-SDK-Flutter/issues/770))
 
 ## [3.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/V3.1.0...dart-3.1.1) (2022-05-30)
 
