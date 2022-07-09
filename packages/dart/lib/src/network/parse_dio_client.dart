@@ -31,7 +31,7 @@ class ParseDioClient extends ParseClient {
           data: dioResponse.data!, statusCode: dioResponse.statusCode!);
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-        data: error.response?.data ?? 'NetworkError',
+        data: error.response?.data ?? _fallbackErrorData,
         statusCode: error.response!.statusCode!,
       );
     }
@@ -53,7 +53,7 @@ class ParseDioClient extends ParseClient {
           bytes: dioResponse.data, statusCode: dioResponse.statusCode!);
     } on dio.DioError catch (error) {
       return ParseNetworkByteResponse(
-        data: error.response?.data ?? 'NetworkError',
+        data: error.response?.data ?? _fallbackErrorData,
         statusCode: error.response!.statusCode!,
       );
     }
@@ -72,7 +72,7 @@ class ParseDioClient extends ParseClient {
           data: dioResponse.data!, statusCode: dioResponse.statusCode!);
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-        data: error.response?.data ?? 'NetworkError',
+        data: error.response?.data ?? _fallbackErrorData,
         statusCode: error.response!.statusCode!,
       );
     }
@@ -91,7 +91,7 @@ class ParseDioClient extends ParseClient {
           data: dioResponse.data!, statusCode: dioResponse.statusCode!);
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-        data: error.response?.data ?? 'NetworkError',
+        data: error.response?.data ?? _fallbackErrorData,
         statusCode: error.response!.statusCode!,
       );
     }
@@ -113,7 +113,7 @@ class ParseDioClient extends ParseClient {
           data: dioResponse.data!, statusCode: dioResponse.statusCode!);
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-        data: error.response?.data ?? 'NetworkError',
+        data: error.response?.data ?? _fallbackErrorData,
         statusCode: error.response!.statusCode!,
       );
     }
@@ -131,11 +131,13 @@ class ParseDioClient extends ParseClient {
           data: dioResponse.data!, statusCode: dioResponse.statusCode!);
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-        data: error.response?.data ?? 'NetworkError',
+        data: error.response?.data ?? _fallbackErrorData,
         statusCode: error.response!.statusCode!,
       );
     }
   }
+
+  String get _fallbackErrorData => '{$keyError:NetworkError}';
 }
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset
