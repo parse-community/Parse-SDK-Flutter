@@ -137,7 +137,7 @@ class ParseDioClient extends ParseClient {
     }
   }
 
-  String get _fallbackErrorData => '{$keyError:NetworkError}';
+  String get _fallbackErrorData => '{"$keyError":"NetworkError"}';
 }
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset
