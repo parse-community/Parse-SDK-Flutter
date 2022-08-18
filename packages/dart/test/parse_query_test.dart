@@ -96,7 +96,6 @@ void main() {
         options: anyNamed("options"),
         onReceiveProgress: anyNamed("onReceiveProgress"),
       )).captured.single);
-
       expect(result.path, '/classes/TEST_SCHEMA');
 
       final Uri expectedQuery = Uri(
