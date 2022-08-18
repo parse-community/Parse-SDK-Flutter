@@ -86,11 +86,8 @@ void main() {
               '{"results":[{"objectId":"eT9muOxBTK","createdAt":"2022-07-25T13:46:06.092Z","updatedAt":"2022-07-25T13:46:23.586Z","geometry": {"type": "Polygon","coordinates": [[[84.17724609375,-53.69670647530323],[83.1884765625,-54.61025498157913],[84.814453125,-55.14120964449505],[85.67138671875,-54.40614309031968],[84.17724609375,-53.69670647530323]]]}}]}'));
 
       ParseResponse response = await queryBuilder.query();
-
       expect(response.results?.first, isA<ParseObject>());
-
       ParseObject parseObject = response.results?.first;
-
       expect(parseObject.objectId, "eT9muOxBTK");
       expect(parseObject.containsKey("geometry"), true);
 
