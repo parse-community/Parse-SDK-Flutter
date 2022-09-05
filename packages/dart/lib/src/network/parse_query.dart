@@ -303,7 +303,7 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   /// Add a constraint to the query that requires a particular key's coordinates that contains a point
-  void wherePolygonContains(String column,ParseGeoPoint point){
+  void wherePolygonContains(String column, ParseGeoPoint point) {
     final double latitude = point.latitude;
     final double longitude = point.longitude;
 
