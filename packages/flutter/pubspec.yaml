@@ -36,3 +36,19 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.2.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        default_package: parse_server_sdk_flutter
+      ios:
+        default_package: parse_server_sdk_flutter
+      linux:
+        default_package: parse_server_sdk_flutter
+      macos:
+        default_package: parse_server_sdk_flutter
+      web:
+        default_package: parse_server_sdk_flutter
+      windows:
+        default_package: parse_server_sdk_flutter
