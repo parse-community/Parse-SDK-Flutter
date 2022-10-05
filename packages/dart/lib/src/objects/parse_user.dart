@@ -315,7 +315,16 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// server. Will also delete the local user data unless
   /// deleteLocalUserData is false.
   Future<ParseResponse> logout({bool deleteLocalUserData = true}) async {
-    final String sessionId = ParseCoreData().sessionId!;
+    final String? sessionId = ParseCoreData().sessionId;
+
+    if (sessionId == null) {
+      return await _handleResponse(
+          this,
+          ParseNetworkResponse(data: "{}", statusCode: 200),
+          ParseApiRQ.logout,
+          _debug,
+          parseClassName);
+    }
 
     forgetLocalSession();
 

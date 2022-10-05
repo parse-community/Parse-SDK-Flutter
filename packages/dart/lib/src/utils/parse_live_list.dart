@@ -144,7 +144,9 @@ class ParseLiveList<T extends ParseObject> {
           }),
         );
       }
-      query.keysToReturn(keys);
+      if (keys.isNotEmpty) {
+        query.keysToReturn(keys);
+      }
     }
     return await query.query<T>();
   }
