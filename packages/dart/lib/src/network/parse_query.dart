@@ -10,7 +10,18 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   QueryBuilder.or(this.object, List<QueryBuilder<T>> list) {
-    String query = '"\$or":[';
+    _constructorInitialize(query: '"\$or":[', list: list);
+  }
+
+  QueryBuilder.and(this.object, List<QueryBuilder<T>> list) {
+    _constructorInitialize(query: '"\$and":[', list: list);
+  }
+
+  QueryBuilder.nor(this.object, List<QueryBuilder<T>> list) {
+    _constructorInitialize(query: '"\$nor":[', list: list);
+  }
+
+  void _constructorInitialize({required String query, required List<QueryBuilder<T>> list}) {
     for (int i = 0; i < list.length; ++i) {
       if (i > 0) {
         query += ',';
