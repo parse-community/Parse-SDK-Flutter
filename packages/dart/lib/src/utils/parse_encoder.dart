@@ -26,7 +26,7 @@ dynamic parseEncode(dynamic value, {bool full = false}) {
 
   if (value is Map) {
     value.forEach((dynamic k, dynamic v) {
-      value[k] = parseEncode(v, full);
+      value[k] = parseEncode(v, full: full);
     });
   }
 
