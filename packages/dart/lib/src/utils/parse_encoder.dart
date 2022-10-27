@@ -20,7 +20,7 @@ dynamic parseEncode(dynamic value, {bool full = false}) {
 
   if (value is List) {
     return value.map<dynamic>((dynamic value) {
-      return parseEncode(value, full: full);
+      return parseEncode(value, full);
     }).toList();
   }
 
