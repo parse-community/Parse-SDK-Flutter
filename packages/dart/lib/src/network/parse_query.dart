@@ -21,7 +21,8 @@ class QueryBuilder<T extends ParseObject> {
     _constructorInitializer(query: '"\$nor":[', list: list);
   }
 
-  void _constructorInitializer({required String query, required List<QueryBuilder<T>> list}) {
+  void _constructorInitializer(
+      {required String query, required List<QueryBuilder<T>> list}) {
     for (int i = 0; i < list.length; ++i) {
       if (i > 0) {
         query += ',';

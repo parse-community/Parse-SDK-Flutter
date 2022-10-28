@@ -25,7 +25,8 @@ void main() {
         appVersion: 'someAppVersion',
       );
 
-      final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<ParseObject>(ParseObject('_User', client: client));
+      final QueryBuilder<ParseObject> queryBuilder =
+          QueryBuilder<ParseObject>(ParseObject('_User', client: client));
       queryBuilder.whereRelatedTo('likes', 'Post', '8TOXdXf3tz');
 
       when(client.get(
@@ -35,7 +36,7 @@ void main() {
       )).thenAnswer((_) async => ParseNetworkResponse(
           statusCode: 200,
           data:
-          "{\"results\":[{\"objectId\":\"eT9muOxBTJ\",\"username\":\"test\",\"createdAt\":\"2021-04-23T13:46:06.092Z\",\"updatedAt\":\"2021-04-23T13:46:23.586Z\",\"ACL\":{\"*\":{\"read\":true},\"eT9muOxBTJ\":{\"read\":true,\"write\":true}}}]}"));
+              "{\"results\":[{\"objectId\":\"eT9muOxBTJ\",\"username\":\"test\",\"createdAt\":\"2021-04-23T13:46:06.092Z\",\"updatedAt\":\"2021-04-23T13:46:23.586Z\",\"ACL\":{\"*\":{\"read\":true},\"eT9muOxBTJ\":{\"read\":true,\"write\":true}}}]}"));
 
       ParseResponse response = await queryBuilder.query();
 
@@ -58,7 +59,7 @@ void main() {
 
       final Uri expectedQuery = Uri(
           query:
-          'where={"\$relatedTo":{"object":{"__type":"Pointer","className":"Post","objectId":"8TOXdXf3tz"},"key":"likes"}}');
+              'where={"\$relatedTo":{"object":{"__type":"Pointer","className":"Post","objectId":"8TOXdXf3tz"},"key":"likes"}}');
       expect(result.query, expectedQuery.query);
     });
 
@@ -80,9 +81,11 @@ void main() {
       );
 
       ParseObject user = ParseObject("_User", client: client);
-      var firstName = QueryBuilder<ParseObject>(user)..regEx('firstName', "Liam");
+      var firstName = QueryBuilder<ParseObject>(user)
+        ..regEx('firstName', "Liam");
 
-      var lastName = QueryBuilder<ParseObject>(user)..regEx('lastName', "Johnson");
+      var lastName = QueryBuilder<ParseObject>(user)
+        ..regEx('lastName', "Johnson");
 
       QueryBuilder<ParseObject> mainQuery = QueryBuilder.or(
         user,
@@ -96,7 +99,7 @@ void main() {
       )).thenAnswer((_) async => ParseNetworkResponse(
           statusCode: 200,
           data:
-          "{\"results\": [{\"className\": \"_User\",\"objectId\": \"fqx5BECOME\",\"createdAt\": \"2022-10-25T06:04:47.138Z\",\"updatedAt\": \"2022-10-25T06:05:22.328Z\",\"firstName\": \"Liam1\",\"lastName\": \"Johnson1\"},{\"className\": \"_User\",\"objectId\": \"hAtRRYGrUO\",\"createdAt\": \"2022-01-24T15:53:48.396Z\",\"updatedAt\": \"2022-01-25T05:52:01.701Z\",\"firstName\": \"Liam2\",\"lastName\": \"Johnson2\"}]}"));
+              "{\"results\": [{\"className\": \"_User\",\"objectId\": \"fqx5BECOME\",\"createdAt\": \"2022-10-25T06:04:47.138Z\",\"updatedAt\": \"2022-10-25T06:05:22.328Z\",\"firstName\": \"Liam1\",\"lastName\": \"Johnson1\"},{\"className\": \"_User\",\"objectId\": \"hAtRRYGrUO\",\"createdAt\": \"2022-01-24T15:53:48.396Z\",\"updatedAt\": \"2022-01-25T05:52:01.701Z\",\"firstName\": \"Liam2\",\"lastName\": \"Johnson2\"}]}"));
 
       var response = await mainQuery.query();
 
@@ -115,12 +118,11 @@ void main() {
         onReceiveProgress: anyNamed("onReceiveProgress"),
       )).captured.single);
 
-
       expect(result.path, '/classes/_User');
 
       final Uri expectedQuery = Uri(
           query:
-          'where={"\$or":[{"firstName":{"\$regex":"Liam"}},{"lastName":{"\$regex":"Johnson"}}]}');
+              'where={"\$or":[{"firstName":{"\$regex":"Liam"}},{"lastName":{"\$regex":"Johnson"}}]}');
       expect(result.query, expectedQuery.query);
     });
 
@@ -142,7 +144,8 @@ void main() {
       );
 
       ParseObject user = ParseObject("_User", client: client);
-      var firstName = QueryBuilder<ParseObject>(user)..regEx('firstName', "jak");
+      var firstName = QueryBuilder<ParseObject>(user)
+        ..regEx('firstName', "jak");
 
       var lastName = QueryBuilder<ParseObject>(user)..regEx('lastName', "jaki");
 
@@ -158,7 +161,7 @@ void main() {
       )).thenAnswer((_) async => ParseNetworkResponse(
           statusCode: 200,
           data:
-          "{\"results\": [{\"className\": \"_User\",\"objectId\": \"fqx5BECOME\",\"createdAt\": \"2022-10-25T06:04:47.138Z\",\"updatedAt\": \"2022-10-25T06:05:22.328Z\",\"firstName\": \"jak1\",\"lastName\": \"jaki1\"},{\"className\": \"_User\",\"objectId\": \"hAtRRYGrUO\",\"createdAt\": \"2022-01-24T15:53:48.396Z\",\"updatedAt\": \"2022-01-25T05:52:01.701Z\",\"firstName\": \"jak2\",\"lastName\": \"jaki2\"}]}"));
+              "{\"results\": [{\"className\": \"_User\",\"objectId\": \"fqx5BECOME\",\"createdAt\": \"2022-10-25T06:04:47.138Z\",\"updatedAt\": \"2022-10-25T06:05:22.328Z\",\"firstName\": \"jak1\",\"lastName\": \"jaki1\"},{\"className\": \"_User\",\"objectId\": \"hAtRRYGrUO\",\"createdAt\": \"2022-01-24T15:53:48.396Z\",\"updatedAt\": \"2022-01-25T05:52:01.701Z\",\"firstName\": \"jak2\",\"lastName\": \"jaki2\"}]}"));
 
       var response = await mainQuery.query();
 
@@ -177,12 +180,11 @@ void main() {
         onReceiveProgress: anyNamed("onReceiveProgress"),
       )).captured.single);
 
-
       expect(result.path, '/classes/_User');
 
       final Uri expectedQuery = Uri(
           query:
-          'where={"\$and":[{"firstName":{"\$regex":"jak"}},{"lastName":{"\$regex":"jaki"}}]}');
+              'where={"\$and":[{"firstName":{"\$regex":"jak"}},{"lastName":{"\$regex":"jaki"}}]}');
       expect(result.query, expectedQuery.query);
     });
 
@@ -204,9 +206,11 @@ void main() {
       );
 
       ParseObject user = ParseObject("_User", client: client);
-      var firstName = QueryBuilder<ParseObject>(user)..regEx('firstName', "Oliver");
+      var firstName = QueryBuilder<ParseObject>(user)
+        ..regEx('firstName', "Oliver");
 
-      var lastName = QueryBuilder<ParseObject>(user)..regEx('lastName', "Smith");
+      var lastName = QueryBuilder<ParseObject>(user)
+        ..regEx('lastName', "Smith");
 
       QueryBuilder<ParseObject> mainQuery = QueryBuilder.nor(
         user,
@@ -220,7 +224,7 @@ void main() {
       )).thenAnswer((_) async => ParseNetworkResponse(
           statusCode: 200,
           data:
-          "{\"results\": [{\"className\": \"_User\",\"objectId\": \"fqx5BECOME\",\"createdAt\": \"2022-10-25T06:04:47.138Z\",\"updatedAt\": \"2022-10-25T06:05:22.328Z\",\"firstName\": \"Oliver1\",\"lastName\": \"Smith1\"},{\"className\": \"_User\",\"objectId\": \"hAtRRYGrUO\",\"createdAt\": \"2022-01-24T15:53:48.396Z\",\"updatedAt\": \"2022-01-25T05:52:01.701Z\",\"firstName\": \"Oliver2\",\"lastName\": \"Smith2\"}]}"));
+              "{\"results\": [{\"className\": \"_User\",\"objectId\": \"fqx5BECOME\",\"createdAt\": \"2022-10-25T06:04:47.138Z\",\"updatedAt\": \"2022-10-25T06:05:22.328Z\",\"firstName\": \"Oliver1\",\"lastName\": \"Smith1\"},{\"className\": \"_User\",\"objectId\": \"hAtRRYGrUO\",\"createdAt\": \"2022-01-24T15:53:48.396Z\",\"updatedAt\": \"2022-01-25T05:52:01.701Z\",\"firstName\": \"Oliver2\",\"lastName\": \"Smith2\"}]}"));
 
       var response = await mainQuery.query();
 
@@ -239,12 +243,11 @@ void main() {
         onReceiveProgress: anyNamed("onReceiveProgress"),
       )).captured.single);
 
-
       expect(result.path, '/classes/_User');
 
       final Uri expectedQuery = Uri(
           query:
-          'where={"\$nor":[{"firstName":{"\$regex":"Oliver"}},{"lastName":{"\$regex":"Smith"}}]}');
+              'where={"\$nor":[{"firstName":{"\$regex":"Oliver"}},{"lastName":{"\$regex":"Smith"}}]}');
       expect(result.query, expectedQuery.query);
     });
   });
