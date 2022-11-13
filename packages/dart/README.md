@@ -312,7 +312,8 @@ QueryBuilder<ParseObject> mainQuery = QueryBuilder.or(
 
 var apiResponse = await mainQuery.query();
 ```
-and also if you want to find objects that match several queries you can use __QueryBuilder.and__  and If you want to find objects that do not match all queries, you can use __QueryBuilder.nor__
+
+To find objects that match several queries use __QueryBuilder.and__. To find objects that do not match any given query use __QueryBuilder.nor__.
 
 The features available are:-
  * Equals
