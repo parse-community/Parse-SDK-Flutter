@@ -1,3 +1,9 @@
+## [3.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.2...dart-3.1.3) (2022-11-15)
+
+### Bug Fixes
+
+* Custom JSON encoder for List and Map doesn't work correctly in `full` mode ([#788](https://github.com/parse-community/Parse-SDK-Flutter/issues/788))
+
 ## [3.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.1...dart-3.1.2) (2022-07-09)
 
 ### Bug Fixes
