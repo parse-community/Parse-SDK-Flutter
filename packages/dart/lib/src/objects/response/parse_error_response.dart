@@ -5,8 +5,8 @@ ParseResponse buildErrorResponse(
     ParseResponse response, ParseNetworkResponse apiResponse) {
   final Map<String, dynamic> responseData = json.decode(apiResponse.data);
   response.error = ParseError(
-      code: responseData[keyCode] ?? apiResponse.statusCode,
+      code: responseData[keyCode] ?? -1,
       message: responseData[keyError].toString());
-  response.statusCode = responseData[keyCode] ?? apiResponse.statusCode;
+  response.statusCode = responseData[keyCode] ?? -1;
   return response;
 }
