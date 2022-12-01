@@ -218,7 +218,7 @@ class ParseError {
   /// Error code indicating the client was unable to read an input file.
   static const int fileReadError = 601;
 
-  ///  Error code indicating a real error code is unavailable because
+  /// Error code indicating a real error code is unavailable because
   /// we had to use an XDomainRequest object to allow CORS requests in
   /// Internet Explorer, which strips the body from HTTP responses that have
   /// a non-2XX status code.
