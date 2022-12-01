@@ -18,7 +18,7 @@ ParseResponse buildParseResponseWithException(Exception exception) {
         error: ParseError(
       message: errorMessage ?? exception.toString(),
       exception: exception,
-      code: errorCode ?? -1,
+      code: errorCode ?? ParseError.otherCause,
     ));
   }
 
