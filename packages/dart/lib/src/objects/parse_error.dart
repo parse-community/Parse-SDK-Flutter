@@ -38,7 +38,7 @@ class ParseError {
   static const int missingObjectId = 104;
 
   /// Error code indicating an invalid key name. Keys are case-sensitive. They
-  ///  must start with a letter, and a-zA-Z0-9_ are the only valid characters.
+  /// must start with a letter, and a-zA-Z0-9_ are the only valid characters.
   static const int invalidKeyName = 105;
 
   /// Error code indicating a malformed pointer. You should not see this unless
