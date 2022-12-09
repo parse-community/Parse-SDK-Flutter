@@ -342,12 +342,19 @@ class ParseObject extends ParseBase implements ParseCloneable {
     _arrayOperation('Add', key, <dynamic>[value]);
   }
 
-  void addRelation(String key, List<dynamic> values) {
-    _arrayOperation('AddRelation', key, values);
+  void addRelation(String key, ParseRelation relation, List<dynamic> values) {
+    _getObjectData()[key] = relation;
+    Map<String, dynamic> change = {'__op': 'AddRelation', 'objects': values};
+    _unsavedChanges[key] =
+        ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], change);
   }
 
-  void removeRelation(String key, List<dynamic> values) {
-    _arrayOperation('RemoveRelation', key, values);
+  void removeRelation(
+      String key, ParseRelation relation, List<dynamic> values) {
+    _getObjectData()[key] = relation;
+    Map<String, dynamic> change = {'__op': 'RemoveRelation', 'objects': values};
+    _unsavedChanges[key] =
+        ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], change);
   }
 
   /// Used in array Operations in save() method
