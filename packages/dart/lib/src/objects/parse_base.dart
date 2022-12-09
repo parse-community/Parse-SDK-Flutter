@@ -139,8 +139,7 @@ abstract class ParseBase {
       } else if (key == keyVarAcl) {
         _getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
       } else {
-        _getObjectData()[key] =
-            parseDecode(value, key: key, parent: this as ParseObject);
+        _getObjectData()[key] = parseDecode(value);
       }
     });
 
@@ -196,17 +195,12 @@ abstract class ParseBase {
       if (_getObjectData()[key] == value && !forceUpdate) {
         return;
       }
-      if (_getObjectData()[key] is! ParseRelation) {
-        _getObjectData()[key] =
-            ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
-      } else {
-        _unsavedChanges[key] =
-            ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
-      }
+      _getObjectData()[key] =
+          ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
     } else {
       _getObjectData()[key] = value;
-      _unsavedChanges[key] = _getObjectData()[key];
     }
+    _unsavedChanges[key] = _getObjectData()[key];
   }
 
   /// Gets type [T] from objectData

@@ -310,9 +310,6 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
   /// Get the instance of ParseRelation class associated with the given key.
   ParseRelation<T> getRelation<T extends ParseObject>(String key) {
-    if (_getObjectData().containsKey(key)) {
-      return _getObjectData()[key];
-    }
     return ParseRelation<T>(parent: this, key: key);
   }
 

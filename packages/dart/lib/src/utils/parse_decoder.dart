@@ -17,7 +17,7 @@ Map<String, dynamic> _convertJSONObjectToMap(Map<String, dynamic> object) {
 }
 
 /// Decode any type value
-dynamic parseDecode(dynamic value, {String? key, ParseObject? parent}) {
+dynamic parseDecode(dynamic value) {
   if (value is List) {
     return _convertJSONArrayToList(value);
   }
@@ -73,7 +73,7 @@ dynamic parseDecode(dynamic value, {String? key, ParseObject? parent}) {
       case 'Relation':
         // ignore: always_specify_types
         //TODO: bug with custom object relations
-        return ParseRelation.fromJson(map, parent!, key!);
+        return ParseRelation.fromJson(map);
     }
   }
 

@@ -9,55 +9,47 @@ class ParseRelation<T extends ParseObject> {
     _targetClass = parent.get<ParseRelation>(key)!.getTargetClass;
     _parent = parent;
     _key = key;
+    _parentObjectId = parent.objectId!;
   }
 
-  ParseRelation.fromJson(
-      Map<String, dynamic> map, ParseObject parent, String key) {
-    _parent = parent;
-    _key = key;
+  ParseRelation.fromJson(Map<String, dynamic> map) {
+    _knownObjects = parseDecode(map['objects']);
     _targetClass = map['className'];
-    _knownObjects = parseDecode(map['objects']) ?? {};
   }
 
   //The owning object of this ParseRelation
-  late final ParseObject _parent;
+  ParseObject? _parent;
+  // The object Id of the parent.
+  String _parentObjectId = '';
   //The className of the target objects.
-  late final String _targetClass;
+  String? _targetClass;
   //The key of the relation in the parent object.
-  late final String _key;
+  String _key = '';
   //For offline caching, we keep track of every object we've known to be in the relation.
-  late final Set<T> _knownObjects;
+  Set<T>? _knownObjects = <T>{};
 
   QueryBuilder getQuery() {
-    return QueryBuilder(ParseCoreData.instance.createObject(_targetClass))
-      ..whereRelatedTo(_key, _parent.parseClassName, _parent.objectId!);
+    return QueryBuilder(ParseCoreData.instance.createObject(_targetClass!))
+      ..whereRelatedTo(_key, _parent!.parseClassName, _parentObjectId);
   }
 
   void add(T object) {
-    _parent.addRelation(_key, [object]);
-    _knownObjects.add(object);
+    _targetClass = object.parseClassName;
+    _knownObjects!.add(object);
+    _parent!.addRelation(_key, _knownObjects!.toList());
   }
 
   void remove(T object) {
-    _parent.removeRelation(_key, [object]);
-    _knownObjects.remove(object);
+    _targetClass = object.parseClassName;
+    _knownObjects!.remove(object);
+    _parent!.removeRelation(_key, _knownObjects!.toList());
   }
 
-  void addAll(List<T> object) {
-    _parent.addRelation(_key, object);
-    _knownObjects.addAll(object);
-  }
-
-  void removeAll(List<T> object) {
-    _parent.removeRelation(_key, object);
-    _knownObjects.removeAll(object);
-  }
-
-  String get getTargetClass => _targetClass;
+  String get getTargetClass => _targetClass ?? '';
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         '__type': keyRelation,
         'className': _targetClass,
-        'objects': parseEncode(_knownObjects.toList())
+        'objects': parseEncode(_knownObjects?.toList())
       };
 }
