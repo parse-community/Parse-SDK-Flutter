@@ -72,6 +72,7 @@ dynamic parseDecode(dynamic value, {String? key, ParseObject? parent}) {
             latitude: latitude.toDouble(), longitude: longitude.toDouble());
       case 'Relation':
         // ignore: always_specify_types
+        //TODO: bug with custom object relations
         return ParseRelation.fromJson(map, parent!, key!);
     }
   }
