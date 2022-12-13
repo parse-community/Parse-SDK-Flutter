@@ -46,6 +46,10 @@ abstract class ParseFileBase extends ParseObject {
 
   /// Uploads a file to Parse Server
   Future<ParseResponse> upload({ProgressCallback? progressCallback});
+  void cancelUpload([dynamic reason]);
+  void addUploadProgressCallback(ProgressCallback progressCallback);
 
   Future<ParseFileBase> download({ProgressCallback? progressCallback});
+  void cancelDownload([dynamic reason]);
+  void addDownloadProgressCallback(ProgressCallback progressCallback);
 }

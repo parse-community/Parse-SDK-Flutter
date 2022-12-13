@@ -16,6 +16,10 @@ class ParseWebFile extends ParseFileBase {
         );
 
   Uint8List? file;
+  CancelToken? _uploadToken;
+  CancelToken? _downloadToken;
+  ProgressCallback? _uploadProgressCallback;
+  ProgressCallback? _downloadProgressCallback;
 
   @override
   Future<ParseWebFile> download({ProgressCallback? progressCallback}) async {
@@ -23,9 +27,16 @@ class ParseWebFile extends ParseFileBase {
       return this;
     }
 
+    if (_downloadProgressCallback != null) {
+      progressCallback = _downloadProgressCallback;
+    }
+
+    _downloadToken = CancelToken();
+
     final ParseNetworkByteResponse response = await _client.getBytes(
       url!,
       onReceiveProgress: progressCallback,
+      cancelToken: _downloadToken,
     );
     file = response.bytes as Uint8List?;
 
@@ -48,9 +59,16 @@ class ParseWebFile extends ParseFileBase {
           parseClassName);
     }
 
+    if (_uploadProgressCallback != null) {
+      progressCallback = _uploadProgressCallback;
+    }
+
+    _uploadToken = CancelToken();
+
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader:
           mime(url ?? name) ?? 'application/octet-stream',
+      HttpHeaders.contentLengthHeader: '${file!.length}',
     };
     try {
       final String uri = ParseCoreData().serverUrl + _path;
@@ -59,6 +77,7 @@ class ParseWebFile extends ParseFileBase {
         options: ParseNetworkOptions(headers: headers),
         data: Stream<List<int>>.fromIterable(<List<int>>[file!]),
         onSendProgress: progressCallback,
+        cancelToken: _uploadToken,
       );
       if (response.statusCode == 201) {
         final Map<String, dynamic> map = json.decode(response.data);
@@ -70,5 +89,27 @@ class ParseWebFile extends ParseFileBase {
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.upload, _debug, parseClassName);
     }
+  }
+
+  @override
+  void cancelUpload([dynamic reason]) {
+    _uploadToken?.cancel(reason);
+    _uploadToken = null;
+  }
+
+  @override
+  void addUploadProgressCallback(ProgressCallback progressCallback) {
+    _uploadProgressCallback = progressCallback;
+  }
+
+  @override
+  void cancelDownload([dynamic reason]) {
+    _downloadToken?.cancel(reason);
+    _downloadToken = null;
+  }
+
+  @override
+  void addDownloadProgressCallback(ProgressCallback progressCallback) {
+    _downloadProgressCallback = progressCallback;
   }
 }
