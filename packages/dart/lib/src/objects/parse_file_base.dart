@@ -6,14 +6,14 @@ abstract class ParseFileBase extends ParseObject {
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFileBase(
       {required String name,
-        String? url,
-        bool? debug,
-        ParseClient? client,
-        bool? autoSendSessionId})
+      String? url,
+      bool? debug,
+      ParseClient? client,
+      bool? autoSendSessionId})
       : super(keyFileClassname,
-      debug: debug,
-      autoSendSessionId: autoSendSessionId,
-      client: client) {
+            debug: debug,
+            autoSendSessionId: autoSendSessionId,
+            client: client) {
     _path = '/files/$name';
     this.name = name;
     if (url != null) this.url = url;

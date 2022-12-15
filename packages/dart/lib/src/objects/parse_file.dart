@@ -6,17 +6,17 @@ class ParseFile extends ParseFileBase {
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFile(this.file,
       {String? name,
-        String? url,
-        bool? debug,
-        ParseClient? client,
-        bool? autoSendSessionId})
+      String? url,
+      bool? debug,
+      ParseClient? client,
+      bool? autoSendSessionId})
       : super(
-    name: file != null ? path.basename(file.path) : name!,
-    url: url,
-    debug: debug,
-    client: client,
-    autoSendSessionId: autoSendSessionId,
-  );
+          name: file != null ? path.basename(file.path) : name!,
+          url: url,
+          debug: debug,
+          client: client,
+          autoSendSessionId: autoSendSessionId,
+        );
 
   File? file;
   CancelToken? _cancelToken;
@@ -87,7 +87,7 @@ class ParseFile extends ParseFileBase {
 
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader:
-      mime(file!.path) ?? 'application/octet-stream',
+          mime(file!.path) ?? 'application/octet-stream',
       HttpHeaders.contentLengthHeader: '${file!.lengthSync()}',
     };
 

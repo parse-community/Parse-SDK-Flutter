@@ -3,17 +3,17 @@ part of flutter_parse_sdk;
 class ParseWebFile extends ParseFileBase {
   ParseWebFile(this.file,
       {required String name,
-        String? url,
-        bool? debug,
-        ParseClient? client,
-        bool? autoSendSessionId})
+      String? url,
+      bool? debug,
+      ParseClient? client,
+      bool? autoSendSessionId})
       : super(
-    name: name,
-    url: url,
-    debug: debug,
-    client: client,
-    autoSendSessionId: autoSendSessionId,
-  );
+          name: name,
+          url: url,
+          debug: debug,
+          client: client,
+          autoSendSessionId: autoSendSessionId,
+        );
 
   Uint8List? file;
   CancelToken? _cancelToken;
@@ -66,7 +66,8 @@ class ParseWebFile extends ParseFileBase {
 
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader:
-      mime(url ?? name) ?? 'application/octet-stream',
+          mime(url ?? name) ?? 'application/octet-stream',
+      HttpHeaders.contentLengthHeader: '${file!.length}',
     };
     try {
       final String uri = ParseCoreData().serverUrl + _path;
