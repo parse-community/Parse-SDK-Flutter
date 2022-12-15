@@ -3,21 +3,20 @@ part of flutter_parse_sdk;
 class ParseWebFile extends ParseFileBase {
   ParseWebFile(this.file,
       {required String name,
-      String? url,
-      bool? debug,
-      ParseClient? client,
-      bool? autoSendSessionId})
+        String? url,
+        bool? debug,
+        ParseClient? client,
+        bool? autoSendSessionId})
       : super(
-          name: name,
-          url: url,
-          debug: debug,
-          client: client,
-          autoSendSessionId: autoSendSessionId,
-        );
+    name: name,
+    url: url,
+    debug: debug,
+    client: client,
+    autoSendSessionId: autoSendSessionId,
+  );
 
   Uint8List? file;
-  CancelToken? _uploadToken;
-  CancelToken? _downloadToken;
+  CancelToken? _cancelToken;
   ProgressCallback? _uploadProgressCallback;
   ProgressCallback? _downloadProgressCallback;
 
@@ -31,12 +30,12 @@ class ParseWebFile extends ParseFileBase {
       progressCallback = _downloadProgressCallback;
     }
 
-    _downloadToken = CancelToken();
+    _cancelToken = CancelToken();
 
     final ParseNetworkByteResponse response = await _client.getBytes(
       url!,
       onReceiveProgress: progressCallback,
-      cancelToken: _downloadToken,
+      cancelToken: _cancelToken,
     );
     file = response.bytes as Uint8List?;
 
@@ -63,12 +62,11 @@ class ParseWebFile extends ParseFileBase {
       progressCallback = _uploadProgressCallback;
     }
 
-    _uploadToken = CancelToken();
+    _cancelToken = CancelToken();
 
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader:
-          mime(url ?? name) ?? 'application/octet-stream',
-      HttpHeaders.contentLengthHeader: '${file!.length}',
+      mime(url ?? name) ?? 'application/octet-stream',
     };
     try {
       final String uri = ParseCoreData().serverUrl + _path;
@@ -77,7 +75,7 @@ class ParseWebFile extends ParseFileBase {
         options: ParseNetworkOptions(headers: headers),
         data: Stream<List<int>>.fromIterable(<List<int>>[file!]),
         onSendProgress: progressCallback,
-        cancelToken: _uploadToken,
+        cancelToken: _cancelToken,
       );
       if (response.statusCode == 201) {
         final Map<String, dynamic> map = json.decode(response.data);
@@ -91,23 +89,20 @@ class ParseWebFile extends ParseFileBase {
     }
   }
 
+  /// Cancels the current request (upload or download of file).
   @override
-  void cancelUpload([dynamic reason]) {
-    _uploadToken?.cancel(reason);
-    _uploadToken = null;
+  void cancel([dynamic reason]) {
+    _cancelToken?.cancel(reason);
+    _cancelToken = null;
   }
 
+  /// Add Progress Callback for file upload
   @override
   void addUploadProgressCallback(ProgressCallback progressCallback) {
     _uploadProgressCallback = progressCallback;
   }
 
-  @override
-  void cancelDownload([dynamic reason]) {
-    _downloadToken?.cancel(reason);
-    _downloadToken = null;
-  }
-
+  /// Add Progress Callback for file download
   @override
   void addDownloadProgressCallback(ProgressCallback progressCallback) {
     _downloadProgressCallback = progressCallback;

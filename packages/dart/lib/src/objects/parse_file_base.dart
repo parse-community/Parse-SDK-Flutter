@@ -6,14 +6,14 @@ abstract class ParseFileBase extends ParseObject {
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFileBase(
       {required String name,
-      String? url,
-      bool? debug,
-      ParseClient? client,
-      bool? autoSendSessionId})
+        String? url,
+        bool? debug,
+        ParseClient? client,
+        bool? autoSendSessionId})
       : super(keyFileClassname,
-            debug: debug,
-            autoSendSessionId: autoSendSessionId,
-            client: client) {
+      debug: debug,
+      autoSendSessionId: autoSendSessionId,
+      client: client) {
     _path = '/files/$name';
     this.name = name;
     if (url != null) this.url = url;
@@ -46,10 +46,10 @@ abstract class ParseFileBase extends ParseObject {
 
   /// Uploads a file to Parse Server
   Future<ParseResponse> upload({ProgressCallback? progressCallback});
-  void cancelUpload([dynamic reason]);
   void addUploadProgressCallback(ProgressCallback progressCallback);
 
   Future<ParseFileBase> download({ProgressCallback? progressCallback});
-  void cancelDownload([dynamic reason]);
   void addDownloadProgressCallback(ProgressCallback progressCallback);
+
+  void cancel([dynamic reason]);
 }
