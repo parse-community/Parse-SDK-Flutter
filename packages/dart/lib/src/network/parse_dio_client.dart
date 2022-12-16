@@ -40,18 +40,26 @@ class ParseDioClient extends ParseClient {
     String path, {
     ParseNetworkOptions? options,
     ProgressCallback? onReceiveProgress,
+    dynamic cancelToken,
   }) async {
     try {
       final dio.Response<List<int>> dioResponse = await _client.get<List<int>>(
         path,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
         options: _Options(
             headers: options?.headers, responseType: dio.ResponseType.bytes),
       );
       return ParseNetworkByteResponse(
           bytes: dioResponse.data, statusCode: dioResponse.statusCode!);
     } on dio.DioError catch (error) {
-      return ParseNetworkByteResponse(
-          data: error.response?.data, statusCode: error.response!.statusCode!);
+      if (error.response != null) {
+        return ParseNetworkByteResponse(
+            data: error.response?.data,
+            statusCode: error.response!.statusCode!);
+      } else {
+        return _getOtherCaseErrorForParseNetworkResponse(error.error);
+      }
     }
   }
 
@@ -93,20 +101,33 @@ class ParseDioClient extends ParseClient {
   Future<ParseNetworkResponse> postBytes(String path,
       {Stream<List<int>>? data,
       ParseNetworkOptions? options,
-      ProgressCallback? onSendProgress}) async {
+      ProgressCallback? onSendProgress,
+      dynamic cancelToken}) async {
     try {
       final dio.Response<String> dioResponse = await _client.post<String>(
         path,
         data: data,
+        cancelToken: cancelToken,
         options: _Options(headers: options?.headers),
         onSendProgress: onSendProgress,
       );
       return ParseNetworkResponse(
           data: dioResponse.data!, statusCode: dioResponse.statusCode!);
     } on dio.DioError catch (error) {
-      return ParseNetworkResponse(
-          data: error.response?.data, statusCode: error.response!.statusCode!);
+      if (error.response != null) {
+        return ParseNetworkResponse(
+            data: error.response?.data,
+            statusCode: error.response!.statusCode!);
+      } else {
+        return _getOtherCaseErrorForParseNetworkResponse(error.error);
+      }
     }
+  }
+
+  _getOtherCaseErrorForParseNetworkResponse(String error) {
+    return ParseNetworkResponse(
+        data: "{\"code\":${ParseError.otherCause},\"error\":\"$error\"}",
+        statusCode: ParseError.otherCause);
   }
 
   @override

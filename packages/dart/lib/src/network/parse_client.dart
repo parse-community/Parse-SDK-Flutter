@@ -27,6 +27,7 @@ abstract class ParseClient {
     Stream<List<int>>? data,
     ParseNetworkOptions? options,
     ProgressCallback? onSendProgress,
+    dynamic cancelToken,
   });
 
   Future<ParseNetworkResponse> delete(
@@ -38,6 +39,7 @@ abstract class ParseClient {
     String path, {
     ParseNetworkOptions? options,
     ProgressCallback? onReceiveProgress,
+    dynamic cancelToken,
   });
 
   // Future<ParseNetworkByteResponse> putBytes(
