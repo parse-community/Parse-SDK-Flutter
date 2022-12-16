@@ -46,6 +46,7 @@ class ParseDioClient extends ParseClient {
       final dio.Response<List<int>> dioResponse = await _client.get<List<int>>(
         path,
         cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
         options: _Options(
             headers: options?.headers, responseType: dio.ResponseType.bytes),
       );

@@ -20,8 +20,7 @@ class ParseFile extends ParseFileBase {
 
   File? file;
   CancelToken? _cancelToken;
-  ProgressCallback? _uploadProgressCallback;
-  ProgressCallback? _downloadProgressCallback;
+  ProgressCallback? _progressCallback;
 
   Future<ParseFile> loadStorage() async {
     final File possibleFile = File('${ParseCoreData().fileDirectory}/$name');
@@ -46,9 +45,7 @@ class ParseFile extends ParseFileBase {
     file = File('${ParseCoreData().fileDirectory}/$name');
     await file!.create();
 
-    if (_downloadProgressCallback != null) {
-      progressCallback = _downloadProgressCallback;
-    }
+    progressCallback ??= _progressCallback;
 
     _cancelToken = CancelToken();
 
@@ -79,9 +76,7 @@ class ParseFile extends ParseFileBase {
           parseClassName);
     }
 
-    if (_uploadProgressCallback != null) {
-      progressCallback = _uploadProgressCallback;
-    }
+    progressCallback ??= _progressCallback;
 
     _cancelToken = CancelToken();
 
@@ -120,15 +115,9 @@ class ParseFile extends ParseFileBase {
     _cancelToken = null;
   }
 
-  /// Add Progress Callback for file upload
+  /// Add Progress Callback
   @override
-  void addUploadProgressCallback(ProgressCallback progressCallback) {
-    _uploadProgressCallback = progressCallback;
-  }
-
-  /// Add Progress Callback for file download
-  @override
-  void addDownloadProgressCallback(ProgressCallback progressCallback) {
-    _downloadProgressCallback = progressCallback;
+  void progressCallback(ProgressCallback progressCallback) {
+    _progressCallback = progressCallback;
   }
 }

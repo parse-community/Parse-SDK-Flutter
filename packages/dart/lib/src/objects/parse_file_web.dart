@@ -17,8 +17,7 @@ class ParseWebFile extends ParseFileBase {
 
   Uint8List? file;
   CancelToken? _cancelToken;
-  ProgressCallback? _uploadProgressCallback;
-  ProgressCallback? _downloadProgressCallback;
+  ProgressCallback? _progressCallback;
 
   @override
   Future<ParseWebFile> download({ProgressCallback? progressCallback}) async {
@@ -26,9 +25,7 @@ class ParseWebFile extends ParseFileBase {
       return this;
     }
 
-    if (_downloadProgressCallback != null) {
-      progressCallback = _downloadProgressCallback;
-    }
+    progressCallback ??= _progressCallback;
 
     _cancelToken = CancelToken();
 
@@ -58,16 +55,13 @@ class ParseWebFile extends ParseFileBase {
           parseClassName);
     }
 
-    if (_uploadProgressCallback != null) {
-      progressCallback = _uploadProgressCallback;
-    }
+    progressCallback ??= _progressCallback;
 
     _cancelToken = CancelToken();
 
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader:
           mime(url ?? name) ?? 'application/octet-stream',
-      HttpHeaders.contentLengthHeader: '${file!.length}',
     };
     try {
       final String uri = ParseCoreData().serverUrl + _path;
@@ -97,15 +91,9 @@ class ParseWebFile extends ParseFileBase {
     _cancelToken = null;
   }
 
-  /// Add Progress Callback for file upload
+  /// Add Progress Callback
   @override
-  void addUploadProgressCallback(ProgressCallback progressCallback) {
-    _uploadProgressCallback = progressCallback;
-  }
-
-  /// Add Progress Callback for file download
-  @override
-  void addDownloadProgressCallback(ProgressCallback progressCallback) {
-    _downloadProgressCallback = progressCallback;
+  void progressCallback(ProgressCallback progressCallback) {
+    _progressCallback = progressCallback;
   }
 }
