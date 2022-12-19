@@ -1,3 +1,21 @@
+## [3.1.5](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.4...dart-3.1.5) (2022-12-16)
+
+### Bug Fixes
+
+* Add upload / download cancel and progress callback for ParseFile ([#807](https://github.com/parse-community/Parse-SDK-Flutter/issues/807))
+
+## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.3...dart-3.1.4) (2022-12-14)
+
+### Bug Fixes
+
+* SDK crashes due to missing error code property in `ParseNetworkResponse.data` ([#799](https://github.com/parse-community/Parse-SDK-Flutter/issues/799))
+
+## [3.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.2...dart-3.1.3) (2022-11-15)
+
+### Bug Fixes
+
+* Custom JSON encoder for List and Map doesn't work correctly in `full` mode ([#788](https://github.com/parse-community/Parse-SDK-Flutter/issues/788))
+
 ## [3.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.1...dart-3.1.2) (2022-07-09)
 
 ### Bug Fixes
