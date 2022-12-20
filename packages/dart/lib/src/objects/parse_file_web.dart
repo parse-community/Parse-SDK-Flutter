@@ -16,6 +16,8 @@ class ParseWebFile extends ParseFileBase {
         );
 
   Uint8List? file;
+  CancelToken? _cancelToken;
+  ProgressCallback? _progressCallback;
 
   @override
   Future<ParseWebFile> download({ProgressCallback? progressCallback}) async {
@@ -23,9 +25,14 @@ class ParseWebFile extends ParseFileBase {
       return this;
     }
 
+    progressCallback ??= _progressCallback;
+
+    _cancelToken = CancelToken();
+
     final ParseNetworkByteResponse response = await _client.getBytes(
       url!,
       onReceiveProgress: progressCallback,
+      cancelToken: _cancelToken,
     );
     file = response.bytes as Uint8List?;
 
@@ -48,6 +55,10 @@ class ParseWebFile extends ParseFileBase {
           parseClassName);
     }
 
+    progressCallback ??= _progressCallback;
+
+    _cancelToken = CancelToken();
+
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader:
           mime(url ?? name) ?? 'application/octet-stream',
@@ -59,6 +70,7 @@ class ParseWebFile extends ParseFileBase {
         options: ParseNetworkOptions(headers: headers),
         data: Stream<List<int>>.fromIterable(<List<int>>[file!]),
         onSendProgress: progressCallback,
+        cancelToken: _cancelToken,
       );
       if (response.statusCode == 201) {
         final Map<String, dynamic> map = json.decode(response.data);
@@ -70,5 +82,18 @@ class ParseWebFile extends ParseFileBase {
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.upload, _debug, parseClassName);
     }
+  }
+
+  /// Cancels the current request (upload or download of file).
+  @override
+  void cancel([dynamic reason]) {
+    _cancelToken?.cancel(reason);
+    _cancelToken = null;
+  }
+
+  /// Add Progress Callback
+  @override
+  void progressCallback(ProgressCallback progressCallback) {
+    _progressCallback = progressCallback;
   }
 }
