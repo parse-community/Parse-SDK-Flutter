@@ -51,14 +51,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final List<String>? preloadedColumns;
 
   @override
-  _ParseLiveListWidgetState<T> createState() => _ParseLiveListWidgetState<T>(
-        query: query,
-        removedItemBuilder: removedItemBuilder,
-        listenOnAllSubItems: listenOnAllSubItems,
-        listeningIncludes: listeningIncludes,
-        lazyLoading: lazyLoading,
-        preloadedColumns: preloadedColumns,
-      );
+  _ParseLiveListWidgetState<T> createState() => _ParseLiveListWidgetState<T>();
 
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
       BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot) {
@@ -83,24 +76,19 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
 
 class _ParseLiveListWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveListWidget<T>> {
-  _ParseLiveListWidgetState(
-      {required this.query,
-      required this.removedItemBuilder,
-      bool? listenOnAllSubItems,
-      List<String>? listeningIncludes,
-      bool lazyLoading = true,
-      List<String>? preloadedColumns}) {
+  @override
+  void initState() {
     sdk.ParseLiveList.create(
-      query,
-      listenOnAllSubItems: listenOnAllSubItems,
-      listeningIncludes: listeningIncludes,
-      lazyLoading: lazyLoading,
-      preloadedColumns: preloadedColumns,
-    ).then((sdk.ParseLiveList<T> livelist) {
+      widget.query,
+      listenOnAllSubItems: widget.listenOnAllSubItems,
+      listeningIncludes: widget.listeningIncludes,
+      lazyLoading: widget.lazyLoading,
+      preloadedColumns: widget.preloadedColumns,
+    ).then((sdk.ParseLiveList<T> liveList) {
       setState(() {
-        _noData = livelist.size == 0;
-        _liveList = livelist;
-        livelist.stream.listen((sdk.ParseLiveListEvent<sdk.ParseObject> event) {
+        _noData = liveList.size == 0;
+        _liveList = liveList;
+        liveList.stream.listen((sdk.ParseLiveListEvent<sdk.ParseObject> event) {
           final AnimatedListState? animatedListState =
               _animatedListKey.currentState;
           if (animatedListState != null) {
@@ -109,7 +97,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                   duration: widget.duration);
 
               setState(() {
-                _noData = livelist.size == 0;
+                _noData = liveList.size == 0;
               });
             } else if (event is sdk.ParseLiveListDeleteEvent) {
               animatedListState.removeItem(
@@ -128,20 +116,20 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                       ),
                   duration: widget.duration);
               setState(() {
-                _noData = livelist.size == 0;
+                _noData = liveList.size == 0;
               });
             }
           }
         });
       });
     });
+
+    super.initState();
   }
 
-  final sdk.QueryBuilder<T> query;
   sdk.ParseLiveList<T>? _liveList;
   final GlobalKey<AnimatedListState> _animatedListKey =
       GlobalKey<AnimatedListState>();
-  final ChildBuilder<T>? removedItemBuilder;
   bool _noData = true;
 
   @override
@@ -226,22 +214,24 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
 
   @override
   _ParseLiveListElementWidgetState<T> createState() {
-    return _ParseLiveListElementWidgetState<T>(
-        loadedData, preLoadedData, stream);
+    return _ParseLiveListElementWidgetState<T>();
   }
 }
 
 class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveListElementWidget<T>>
     with SingleTickerProviderStateMixin {
-  _ParseLiveListElementWidgetState(DataGetter<T>? loadedDataGetter,
-      DataGetter<T>? preLoadedDataGetter, StreamGetter<T>? stream) {
+  late sdk.ParseLiveListElementSnapshot<T> _snapshot;
+  StreamSubscription<T>? _streamSubscription;
+
+  @override
+  void initState() {
     _snapshot = sdk.ParseLiveListElementSnapshot<T>(
-        loadedData: loadedDataGetter != null ? loadedDataGetter() : null,
+        loadedData: widget.loadedData != null ? widget.loadedData!() : null,
         preLoadedData:
-            preLoadedDataGetter != null ? preLoadedDataGetter() : null);
-    if (stream != null) {
-      _streamSubscription = stream().listen(
+            widget.preLoadedData != null ? widget.preLoadedData!() : null);
+    if (widget.stream != null) {
+      _streamSubscription = widget.stream!().listen(
         (T data) {
           setState(() {
             _snapshot = sdk.ParseLiveListElementSnapshot<T>(
@@ -258,11 +248,9 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
         cancelOnError: false,
       );
     }
+
+    super.initState();
   }
-
-  late sdk.ParseLiveListElementSnapshot<T> _snapshot;
-
-  StreamSubscription<T>? _streamSubscription;
 
   @override
   void setState(VoidCallback fn) {
