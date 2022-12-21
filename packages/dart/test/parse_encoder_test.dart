@@ -8,7 +8,7 @@ void main() {
     // arrange
     await Parse().initialize(
       'appId',
-      'https://test.parse.com',
+      'https://example.com',
       debug: true,
       // to prevent automatic detection
       fileDirectory: 'someDirectory',
