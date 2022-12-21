@@ -204,10 +204,10 @@ void main() {
   test('delete DietPlan from DB', () async {
     // Given
     final DietPlan actual = getDummyDietPlan();
-    await repository.add(actual);
+    repository.add(actual);
 
     // When
-    await repository.remove(actual);
+    repository.remove(actual);
     final ApiResponse response = await repository.getById(actual.objectId);
 
     // Then

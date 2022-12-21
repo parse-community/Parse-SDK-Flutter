@@ -8,10 +8,10 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class WebSocket {
   WebSocket._(this._webSocket);
 
-  static const int CONNECTING = 0;
-  static const int OPEN = 1;
-  static const int CLOSING = 2;
-  static const int CLOSED = 3;
+  static const int connecting = 0;
+  static const int open = 1;
+  static const int closing = 2;
+  static const int closed = 3;
 
   final html.WebSocket _webSocket;
 
