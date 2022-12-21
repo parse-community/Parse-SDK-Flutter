@@ -85,12 +85,32 @@ class ParseInstallation extends ParseObject {
     set<String?>(keyLocaleIdentifier, ParseCoreData().locale);
 
     //Timezone
+    set<String>(keyTimeZone, _getNameLocalTimeZone());
 
     //App info
     set<String?>(keyAppName, ParseCoreData().appName);
     set<String?>(keyAppVersion, ParseCoreData().appVersion);
     set<String?>(keyAppIdentifier, ParseCoreData().appPackageName);
     set<String>(keyParseVersion, keySdkVersion);
+  }
+
+  String _getNameLocalTimeZone() {
+    tz.initializeTimeZones();
+    var locations = tz.timeZoneDatabase.locations;
+
+    int milliseconds = DateTime.now().timeZoneOffset.inMilliseconds;
+    String name = "";
+
+    locations.forEach((key, value) {
+      for (var element in value.zones) {
+        if (element.offset == milliseconds) {
+          name = value.name;
+          break;
+        }
+      }
+    });
+
+    return name;
   }
 
   @override
