@@ -223,7 +223,7 @@ class QueryBuilder<T extends ParseObject> {
     }
   }
 
-  /// Powerful search for containing whole words. This search is much quicker than regex and can search for whole words including weather they are case sensitive or not.
+  /// Powerful search for containing whole words. This search is much quicker than regex and can search for whole words including whether they are case sensitive or not.
   /// This search can also order by the score of the search
   void whereContainsWholeWord(String column, String query,
       {bool caseSensitive = false,
