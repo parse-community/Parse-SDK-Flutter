@@ -57,14 +57,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final double childAspectRatio;
 
   @override
-  _ParseLiveGridWidgetState<T> createState() => _ParseLiveGridWidgetState<T>(
-        query: query,
-        removedItemBuilder: removedItemBuilder,
-        listenOnAllSubItems: listenOnAllSubItems,
-        listeningIncludes: listeningIncludes,
-        lazyLoading: lazyLoading,
-        preloadedColumns: preloadedColumns,
-      );
+  _ParseLiveGridWidgetState<T> createState() => _ParseLiveGridWidgetState<T>();
 
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
       BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot) {
@@ -88,19 +81,17 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
 
 class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveGridWidget<T>> {
-  _ParseLiveGridWidgetState(
-      {required this.query,
-      required this.removedItemBuilder,
-      bool? listenOnAllSubItems,
-      List<String>? listeningIncludes,
-      bool lazyLoading = true,
-      List<String>? preloadedColumns}) {
+  sdk.ParseLiveList<T>? _liveGrid;
+  bool noData = true;
+
+  @override
+  void initState() {
     sdk.ParseLiveList.create(
-      query,
-      listenOnAllSubItems: listenOnAllSubItems,
-      listeningIncludes: listeningIncludes,
-      lazyLoading: lazyLoading,
-      preloadedColumns: preloadedColumns,
+      widget.query,
+      listenOnAllSubItems: widget.listenOnAllSubItems,
+      listeningIncludes: widget.listeningIncludes,
+      lazyLoading: widget.lazyLoading,
+      preloadedColumns: widget.preloadedColumns,
     ).then((sdk.ParseLiveList<T> value) {
       if (value.size > 0) {
         setState(() {
@@ -121,12 +112,9 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         });
       });
     });
-  }
 
-  final sdk.QueryBuilder<T> query;
-  sdk.ParseLiveList<T>? _liveGrid;
-  final ChildBuilder<T>? removedItemBuilder;
-  bool noData = true;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
