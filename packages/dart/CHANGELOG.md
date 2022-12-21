@@ -2,7 +2,7 @@
 
 ### Bug Fixes
 
-* Add and, nor operators in QueryBuilder ([#795](https://github.com/parse-community/Parse-SDK-Flutter/issues/795))
+* Add `and`, `nor` operators in QueryBuilder ([#795](https://github.com/parse-community/Parse-SDK-Flutter/issues/795))
 
 ## [3.1.5](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.4...dart-3.1.5) (2022-12-16)
 
