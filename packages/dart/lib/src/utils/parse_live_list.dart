@@ -200,7 +200,7 @@ class ParseLiveList<T extends ParseObject> {
         .client
         .getClientEventStream
         .listen((LiveQueryClientEvent event) async {
-      if (event == LiveQueryClientEvent.CONNECTED) {
+      if (event == LiveQueryClientEvent.connected) {
         _updateQueue.whenComplete(() async {
           List<Future<void>> tasks = <Future<void>>[];
           final ParseResponse parseResponse = await _runQuery();
@@ -533,7 +533,7 @@ class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
       _subscriptionQueue.whenComplete(() async {
         // ignore: missing_enum_constant_in_switch
         switch (event) {
-          case LiveQueryClientEvent.CONNECTED:
+          case LiveQueryClientEvent.connected:
             final ParseResponse parseResponse = await queryBuilder.query();
             if (parseResponse.success) {
               super.object = parseResponse.result.first;
