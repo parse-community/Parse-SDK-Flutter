@@ -109,7 +109,6 @@ class ParseInstallation extends ParseObject {
         }
       }
     });
-
     return name;
   }
 
