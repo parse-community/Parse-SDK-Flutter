@@ -5,8 +5,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'package:mime_type/mime_type.dart';
