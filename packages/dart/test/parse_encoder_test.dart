@@ -4,7 +4,9 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('should return expectedResult json when json has Nested map and list data.', () async {
+  test(
+      'should return expectedResult json when json has Nested map and list data.',
+      () async {
     // arrange
     await Parse().initialize(
       'appId',
@@ -24,7 +26,8 @@ void main() {
     ParseObject parseObject2 = ParseObject("objectId2");
     parseObject2.objectId = "objectId2";
 
-    parseObject2.setAdd("dataParseObjectList", ["ListText1", "ListText2", "ListText3"]);
+    parseObject2
+        .setAdd("dataParseObjectList", ["ListText1", "ListText2", "ListText3"]);
     parseObject2.setAdd("dataParseObjectMap", {
       'KeyTestMap1': 'ValueTestMap1',
       'KeyTestMap2': 'ValueTestMap2',
@@ -55,7 +58,11 @@ void main() {
             "dataParseObjectMap": {
               "__op": "Add",
               "objects": [
-                {"KeyTestMap1": "ValueTestMap1", "KeyTestMap2": "ValueTestMap2", "KeyTestMap3": "ValueTestMap3"}
+                {
+                  "KeyTestMap1": "ValueTestMap1",
+                  "KeyTestMap2": "ValueTestMap2",
+                  "KeyTestMap3": "ValueTestMap3"
+                }
               ]
             }
           }

@@ -47,7 +47,8 @@ void main() {
               "file": {
                 "__type": "File",
                 "name": "dc7320ee9146ee19aed8997722fd4e3c.bin",
-                "url": "http://ip:port/api/files/myapp/dc7320ee9146ee19aed8997722fd4e3c.bin",
+                "url":
+                    "http://ip:port/api/files/myapp/dc7320ee9146ee19aed8997722fd4e3c.bin",
               },
               "createdAt": "2022-11-14T10:55:56.025Z",
               "updatedAt": "2022-11-14T10:55:56.025Z",
@@ -62,7 +63,8 @@ void main() {
         any,
         options: anyNamed("options"),
         onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(statusCode: 200, data: jsonEncode(desiredOutput)));
+      )).thenAnswer((_) async => ParseNetworkResponse(
+          statusCode: 200, data: jsonEncode(desiredOutput)));
 
       // act
       ParseObject parseObject = await myUserObject.fetch(include: ["img"]);
@@ -77,7 +79,8 @@ void main() {
         "file": {
           "__type": "File",
           "name": "dc7320ee9146ee19aed8997722fd4e3c.bin",
-          "url": "http://ip:port/api/files/myapp/dc7320ee9146ee19aed8997722fd4e3c.bin",
+          "url":
+              "http://ip:port/api/files/myapp/dc7320ee9146ee19aed8997722fd4e3c.bin",
         },
       };
       var objectJsonDesiredOutput = jsonEncode(objectDesiredOutput);
@@ -89,13 +92,18 @@ void main() {
       )).captured.single);
 
       // assert
-      expect(jsonEncode(parseEncode(parseObject.get<ParseObject>('img'), full: true)), objectJsonDesiredOutput);
+      expect(
+          jsonEncode(
+              parseEncode(parseObject.get<ParseObject>('img'), full: true)),
+          objectJsonDesiredOutput);
       expect(parseObject['img'].objectId, "8nGrLj3Mvk");
 
-      expect(Uri.decodeComponent(result.path), '/classes/MyUser/Mn1iJTkWTE?include=img');
+      expect(Uri.decodeComponent(result.path),
+          '/classes/MyUser/Mn1iJTkWTE?include=img');
     });
 
-    test('should return expectedIncludeResult json when use getObject', () async {
+    test('should return expectedIncludeResult json when use getObject',
+        () async {
       // arrange
       ParseObject myUserObject = ParseObject("MyUser", client: client);
       myUserObject.objectId = "Mn1iJTkWTE";
@@ -114,7 +122,8 @@ void main() {
               "file": {
                 "__type": "File",
                 "name": "dc7320ee9146ee19aed8997722fd4e3c.bin",
-                "url": "http://ip:port/api/files/myapp/dc7320ee9146ee19aed8997722fd4e3c.bin",
+                "url":
+                    "http://ip:port/api/files/myapp/dc7320ee9146ee19aed8997722fd4e3c.bin",
               },
               "createdAt": "2022-11-14T10:55:56.025Z",
               "updatedAt": "2022-11-14T10:55:56.025Z",
@@ -129,10 +138,12 @@ void main() {
         any,
         options: anyNamed("options"),
         onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(statusCode: 200, data: jsonEncode(desiredOutput)));
+      )).thenAnswer((_) async => ParseNetworkResponse(
+          statusCode: 200, data: jsonEncode(desiredOutput)));
 
       // act
-      ParseResponse response = await myUserObject.getObject("Mn1iJTkWTE", include: ["img"]);
+      ParseResponse response =
+          await myUserObject.getObject("Mn1iJTkWTE", include: ["img"]);
 
       ParseObject parseObject = response.results?.first;
 
@@ -146,7 +157,8 @@ void main() {
         "file": {
           "__type": "File",
           "name": "dc7320ee9146ee19aed8997722fd4e3c.bin",
-          "url": "http://ip:port/api/files/myapp/dc7320ee9146ee19aed8997722fd4e3c.bin",
+          "url":
+              "http://ip:port/api/files/myapp/dc7320ee9146ee19aed8997722fd4e3c.bin",
         },
       };
       var objectJsonDesiredOutput = jsonEncode(objectDesiredOutput);
@@ -160,10 +172,14 @@ void main() {
       // assert
       expect(response.results?.first, isA<ParseObject>());
 
-      expect(jsonEncode(parseEncode(parseObject.get<ParseObject>('img'), full: true)), objectJsonDesiredOutput);
+      expect(
+          jsonEncode(
+              parseEncode(parseObject.get<ParseObject>('img'), full: true)),
+          objectJsonDesiredOutput);
       expect(parseObject['img'].objectId, "8nGrLj3Mvk");
 
-      expect(Uri.decodeComponent(result.path), '/classes/MyUser/Mn1iJTkWTE?include=img');
+      expect(Uri.decodeComponent(result.path),
+          '/classes/MyUser/Mn1iJTkWTE?include=img');
     });
   });
 }

@@ -29,7 +29,8 @@ void main() {
 
     test('whereRelatedTo', () async {
       // arrange
-      final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<ParseObject>(ParseObject('_User', client: client));
+      final QueryBuilder<ParseObject> queryBuilder =
+          QueryBuilder<ParseObject>(ParseObject('_User', client: client));
       queryBuilder.whereRelatedTo('likes', 'Post', '8TOXdXf3tz');
 
       var desiredOutput = {
@@ -51,7 +52,8 @@ void main() {
         any,
         options: anyNamed("options"),
         onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(statusCode: 200, data: jsonEncode(desiredOutput)));
+      )).thenAnswer((_) async => ParseNetworkResponse(
+          statusCode: 200, data: jsonEncode(desiredOutput)));
 
       // act
       ParseResponse response = await queryBuilder.query();
@@ -74,7 +76,8 @@ void main() {
           "key": "likes"
         },
       };
-      final Uri expectedQuery = Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+      final Uri expectedQuery =
+          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -92,9 +95,11 @@ void main() {
     test('QueryBuilder.or', () async {
       // arrange
       ParseObject user = ParseObject("_User", client: client);
-      var firstName = QueryBuilder<ParseObject>(user)..regEx('firstName', "Liam");
+      var firstName = QueryBuilder<ParseObject>(user)
+        ..regEx('firstName', "Liam");
 
-      var lastName = QueryBuilder<ParseObject>(user)..regEx('lastName', "Johnson");
+      var lastName = QueryBuilder<ParseObject>(user)
+        ..regEx('lastName', "Johnson");
 
       QueryBuilder<ParseObject> mainQuery = QueryBuilder.or(
         user,
@@ -126,7 +131,8 @@ void main() {
         any,
         options: anyNamed("options"),
         onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(statusCode: 200, data: jsonEncode(desiredOutput)));
+      )).thenAnswer((_) async => ParseNetworkResponse(
+          statusCode: 200, data: jsonEncode(desiredOutput)));
 
       // act
       var response = await mainQuery.query();
@@ -149,7 +155,8 @@ void main() {
           }
         ],
       };
-      final Uri expectedQuery = Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+      final Uri expectedQuery =
+          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -167,7 +174,8 @@ void main() {
     test('QueryBuilder.and', () async {
       // arrange
       ParseObject user = ParseObject("_User", client: client);
-      var firstName = QueryBuilder<ParseObject>(user)..regEx('firstName', "jak");
+      var firstName = QueryBuilder<ParseObject>(user)
+        ..regEx('firstName', "jak");
 
       var lastName = QueryBuilder<ParseObject>(user)..regEx('lastName', "jaki");
 
@@ -201,7 +209,8 @@ void main() {
         any,
         options: anyNamed("options"),
         onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(statusCode: 200, data: jsonEncode(desiredOutput)));
+      )).thenAnswer((_) async => ParseNetworkResponse(
+          statusCode: 200, data: jsonEncode(desiredOutput)));
 
       // act
       var response = await mainQuery.query();
@@ -224,7 +233,8 @@ void main() {
           }
         ],
       };
-      final Uri expectedQuery = Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+      final Uri expectedQuery =
+          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -242,9 +252,11 @@ void main() {
     test('QueryBuilder.nor', () async {
       // arrange
       ParseObject user = ParseObject("_User", client: client);
-      var firstName = QueryBuilder<ParseObject>(user)..regEx('firstName', "Oliver");
+      var firstName = QueryBuilder<ParseObject>(user)
+        ..regEx('firstName', "Oliver");
 
-      var lastName = QueryBuilder<ParseObject>(user)..regEx('lastName', "Smith");
+      var lastName = QueryBuilder<ParseObject>(user)
+        ..regEx('lastName', "Smith");
 
       QueryBuilder<ParseObject> mainQuery = QueryBuilder.nor(
         user,
@@ -276,7 +288,8 @@ void main() {
         any,
         options: anyNamed("options"),
         onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(statusCode: 200, data: jsonEncode(desiredOutput)));
+      )).thenAnswer((_) async => ParseNetworkResponse(
+          statusCode: 200, data: jsonEncode(desiredOutput)));
 
       // act
       var response = await mainQuery.query();
@@ -299,7 +312,8 @@ void main() {
           }
         ],
       };
-      final Uri expectedQuery = Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+      final Uri expectedQuery =
+          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
