@@ -95,8 +95,8 @@ class ParseInstallation extends ParseObject {
   }
 
   String _getNameLocalTimeZone() {
-    initializeTimeZones();
-    var locations = timeZoneDatabase.locations;
+    tz.initializeTimeZones();
+    var locations = tz.timeZoneDatabase.locations;
 
     int milliseconds = DateTime.now().timeZoneOffset.inMilliseconds;
     String name = "";
