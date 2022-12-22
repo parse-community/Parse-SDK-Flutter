@@ -7,11 +7,11 @@ class ParseInstallation extends ParseObject {
     ParseClient? client,
     bool? autoSendSessionId,
   }) : super(
-    keyClassInstallation,
-    client: client,
-    autoSendSessionId: autoSendSessionId,
-    debug: debug,
-  );
+          keyClassInstallation,
+          client: client,
+          autoSendSessionId: autoSendSessionId,
+          debug: debug,
+        );
 
   ParseInstallation.forQuery() : super(keyClassUser);
 
@@ -121,7 +121,7 @@ class ParseInstallation extends ParseObject {
     }
 
     final ParseResponse parseResponse =
-    await _create(allowCustomObjectId: allowCustomObjectId);
+        await _create(allowCustomObjectId: allowCustomObjectId);
     if (parseResponse.success && isCurrent) {
       clearUnsavedChanges();
       await saveInStorage(keyParseStoreInstallation);
@@ -150,11 +150,11 @@ class ParseInstallation extends ParseObject {
     final CoreStore coreStore = ParseCoreData().getStore();
 
     final String? installationJson =
-    await coreStore.getString(keyParseStoreInstallation);
+        await coreStore.getString(keyParseStoreInstallation);
 
     if (installationJson != null) {
       final Map<String, dynamic>? installationMap =
-      json.decode(installationJson);
+          json.decode(installationJson);
 
       if (installationMap != null) {
         return ParseInstallation()..fromJson(installationMap);
@@ -252,7 +252,7 @@ class ParseInstallation extends ParseObject {
   Future<List<dynamic>> getSubscribedChannels() async {
     print('getSubscribedChannels');
     final ParseResponse apiResponse =
-    await ParseObject(keyClassInstallation).getObject(objectId!);
+        await ParseObject(keyClassInstallation).getObject(objectId!);
 
     if (apiResponse.success) {
       final ParseObject installation = apiResponse.result;
