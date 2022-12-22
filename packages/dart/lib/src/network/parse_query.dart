@@ -435,20 +435,6 @@ class QueryBuilder<T extends ParseObject> {
     return queryBuilder;
   }
 
-  String concatenateArray(List<String> queries) {
-    String queryBuilder = '';
-
-    for (final String item in queries) {
-      if (item == queries.first) {
-        queryBuilder += item;
-      } else {
-        queryBuilder += ',$item';
-      }
-    }
-
-    return queryBuilder;
-  }
-
   /// Creates a query param using the column, the value and the queryOperator
   /// that the column and value are being queried against
   MapEntry<String, dynamic> _buildQueryWithColumnValueAndOperator(
