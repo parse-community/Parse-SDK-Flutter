@@ -33,9 +33,15 @@ class ParseObject extends ParseBase implements ParseCloneable {
   late ParseClient _client;
 
   /// Gets an object from the server using it's [String] objectId
-  Future<ParseResponse> getObject(String objectId) async {
+  ///
+  /// `List<String>` include refers to other ParseObjects stored as a Pointer
+  Future<ParseResponse> getObject(String objectId,
+      {List<String>? include}) async {
     try {
-      final String uri = '$_path/$objectId';
+      String uri = '$_path/$objectId';
+      if (include != null) {
+        uri = '$uri?include=${concatenateArray(include)}';
+      }
       final Uri url = getSanitisedUri(_client, uri);
 
       final ParseNetworkResponse result = await _client.get(url.toString());
@@ -451,12 +457,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
   ///Fetches this object with the data from the server. Call this whenever you want the state of the
   ///object to reflect exactly what is on the server.
-  Future<ParseObject> fetch() async {
+  ///
+  /// `List<String>` include refers to other ParseObjects stored as a Pointer
+  Future<ParseObject> fetch({List<String>? include}) async {
     if (objectId == null || objectId!.isEmpty) {
       throw 'can not fetch without a objectId';
     }
 
-    final ParseResponse response = await getObject(objectId!);
+    final ParseResponse response = await getObject(objectId!, include: include);
 
     if (response.success && response.results != null) {
       return response.results!.first;
