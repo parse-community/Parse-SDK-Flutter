@@ -70,7 +70,6 @@ abstract class ParseBase {
   }
 
   /// Converts object to [String] in JSON format
-  @protected
   Map<String, dynamic> toJson({
     bool full = false,
     bool forApiRQ = false,
