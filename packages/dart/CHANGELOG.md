@@ -1,3 +1,9 @@
+## [3.1.8](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.7...dart-3.1.8) (2022-12-23)
+
+### Features
+
+* Add `ParseObject.toJson()` to create a JSON representation ([#616](https://github.com/parse-community/Parse-SDK-Flutter/issues/616))
+
 ## [3.1.7](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.6...dart-3.1.7) (2022-12-22)
 
 ### Features
