@@ -38,11 +38,13 @@ class ParseObject extends ParseBase implements ParseCloneable {
   Future<ParseResponse> getObject(String objectId,
       {List<String>? include}) async {
     try {
-      String uri = '$_path/$objectId';
+      String? query;
       if (include != null) {
-        uri = '$uri?include=${concatenateArray(include)}';
+        query = 'include=${concatenateArray(include)}';
       }
-      final Uri url = getSanitisedUri(_client, uri);
+
+      final Uri url =
+          getSanitisedUri(_client, '$_path/$objectId', query: query);
 
       final ParseNetworkResponse result = await _client.get(url.toString());
       return handleResponse<ParseObject>(
