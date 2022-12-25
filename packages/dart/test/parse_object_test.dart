@@ -98,8 +98,7 @@ void main() {
           objectJsonDesiredOutput);
       expect(parseObject['img'].objectId, "8nGrLj3Mvk");
 
-      expect(Uri.decodeComponent(result.path),
-          '/classes/MyUser/Mn1iJTkWTE?include=img');
+      expect(Uri.decodeComponent(result.query), 'include=img');
     });
 
     test('should return expectedIncludeResult json when use getObject',
@@ -178,8 +177,7 @@ void main() {
           objectJsonDesiredOutput);
       expect(parseObject['img'].objectId, "8nGrLj3Mvk");
 
-      expect(Uri.decodeComponent(result.path),
-          '/classes/MyUser/Mn1iJTkWTE?include=img');
+      expect(Uri.decodeComponent(result.query), 'include=img');
     });
   });
 }
