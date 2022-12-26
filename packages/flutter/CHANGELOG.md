@@ -1,3 +1,9 @@
+# [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-3.1.4) (2022-12-26)
+
+### Refactors
+
+* Updated dependencies
+
 ## [3.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.2...flutter-3.1.3) (2022-07-09)
 
 ### Bug Fixes
