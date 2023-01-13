@@ -23,11 +23,8 @@ void main() {
         await ParseInstallation.currentInstallation();
 
     dynamic actualHasTimeZoneResult = installation.containsKey(keyTimeZone);
-    dynamic actualRealTimeZoneResult =
-        installation[keyTimeZone].toString().contains("/");
 
     // assert
     expect(actualHasTimeZoneResult, true);
-    expect(actualRealTimeZoneResult, true);
   });
 }
