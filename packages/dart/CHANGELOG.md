@@ -1,3 +1,9 @@
+## [3.2.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.9...dart-3.2.1) (2023-01-14)
+
+### Bug Fixes
+
+* Time zone data not set in `ParseInstallation` ([#811](https://github.com/parse-community/Parse-SDK-Flutter/pull/811))
+
 ## [3.1.9](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.8...dart-3.1.9) (2022-12-25)
 
 ### Bug Fixes
