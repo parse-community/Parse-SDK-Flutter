@@ -319,7 +319,7 @@ class QueryBuilder<T extends ParseObject> {
     final double latitude = point.latitude;
     final double longitude = point.longitude;
 
-    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_singleQuery,
         '"$column":{"\$geoIntersects":{"\$point":{"__type":"GeoPoint","latitude":$latitude,"longitude":$longitude}}}'));
   }
 
