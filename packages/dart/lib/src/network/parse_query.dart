@@ -10,7 +10,19 @@ class QueryBuilder<T extends ParseObject> {
   }
 
   QueryBuilder.or(this.object, List<QueryBuilder<T>> list) {
-    String query = '"\$or":[';
+    _constructorInitializer(query: '"\$or":[', list: list);
+  }
+
+  QueryBuilder.and(this.object, List<QueryBuilder<T>> list) {
+    _constructorInitializer(query: '"\$and":[', list: list);
+  }
+
+  QueryBuilder.nor(this.object, List<QueryBuilder<T>> list) {
+    _constructorInitializer(query: '"\$nor":[', list: list);
+  }
+
+  void _constructorInitializer(
+      {required String query, required List<QueryBuilder<T>> list}) {
     for (int i = 0; i < list.length; ++i) {
       if (i > 0) {
         query += ',';
@@ -18,7 +30,7 @@ class QueryBuilder<T extends ParseObject> {
       query += '{' + list[i].buildQueries(list[i].queries) + '}';
     }
     query += ']';
-    queries.add(MapEntry<String, dynamic>(_NO_OPERATOR_NEEDED, query));
+    queries.add(MapEntry<String, dynamic>(_noOperatorNeeded, query));
   }
 
   factory QueryBuilder.copy(QueryBuilder<T> query) {
@@ -32,8 +44,8 @@ class QueryBuilder<T extends ParseObject> {
     return copy;
   }
 
-  static const String _NO_OPERATOR_NEEDED = 'NO_OP';
-  static const String _SINGLE_QUERY = 'SINGLE_QUERY';
+  static const String _noOperatorNeeded = 'NO_OP';
+  static const String _singleQuery = 'SINGLE_QUERY';
 
   T object;
   List<MapEntry<String, dynamic>> queries = <MapEntry<String, dynamic>>[];
@@ -103,10 +115,10 @@ class QueryBuilder<T extends ParseObject> {
       {bool caseSensitive = false}) {
     if (caseSensitive) {
       queries.add(MapEntry<String, dynamic>(
-          _SINGLE_QUERY, '"$column":{"\$regex": "^$query"}'));
+          _singleQuery, '"$column":{"\$regex": "^$query"}'));
     } else {
       queries.add(MapEntry<String, dynamic>(
-          _SINGLE_QUERY, '"$column":{"\$regex": "^$query", "\$options": "i"}'));
+          _singleQuery, '"$column":{"\$regex": "^$query", "\$options": "i"}'));
     }
   }
 
@@ -115,17 +127,17 @@ class QueryBuilder<T extends ParseObject> {
       {bool caseSensitive = false}) {
     if (caseSensitive) {
       queries.add(MapEntry<String, dynamic>(
-          _SINGLE_QUERY, '"$column":{"\$regex": "$query\$"}'));
+          _singleQuery, '"$column":{"\$regex": "$query\$"}'));
     } else {
-      queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
-          '"$column":{"\$regex": "$query\$", "\$options": "i"}'));
+      queries.add(MapEntry<String, dynamic>(
+          _singleQuery, '"$column":{"\$regex": "$query\$", "\$options": "i"}'));
     }
   }
 
   /// Returns an object where the [String] column equals [value]
   void whereEqualTo(String column, dynamic value) {
     queries.add(_buildQueryWithColumnValueAndOperator(
-        MapEntry<String, dynamic>(column, value), _NO_OPERATOR_NEEDED));
+        MapEntry<String, dynamic>(column, value), _noOperatorNeeded));
   }
 
   /// Returns an object where the [String] column contains a value less than
@@ -182,7 +194,7 @@ class QueryBuilder<T extends ParseObject> {
 
   /// Retrieves related objets where [String] column is a relation field to the class [String] className
   void whereRelatedTo(String column, String className, String objectId) {
-    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_singleQuery,
         '"\$relatedTo":{"object":{"__type":"Pointer","className":"$className","objectId":"$objectId"},"key":"$column"}'));
   }
 
@@ -216,20 +228,20 @@ class QueryBuilder<T extends ParseObject> {
       {bool caseSensitive = false}) {
     if (caseSensitive) {
       queries.add(MapEntry<String, dynamic>(
-          _SINGLE_QUERY, '"$column":{"\$regex": "$value"}'));
+          _singleQuery, '"$column":{"\$regex": "$value"}'));
     } else {
       queries.add(MapEntry<String, dynamic>(
-          _SINGLE_QUERY, '"$column":{"\$regex": "$value", "\$options": "i"}'));
+          _singleQuery, '"$column":{"\$regex": "$value", "\$options": "i"}'));
     }
   }
 
-  /// Powerful search for containing whole words. This search is much quicker than regex and can search for whole words including wether they are case sensitive or not.
+  /// Powerful search for containing whole words. This search is much quicker than regex and can search for whole words including whether they are case sensitive or not.
   /// This search can also order by the score of the search
   void whereContainsWholeWord(String column, String query,
       {bool caseSensitive = false,
       bool orderByScore = true,
       bool diacriticSensitive = false}) {
-    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_singleQuery,
         '"$column":{"\$text":{"\$search":{"\$term": "$query", "\$caseSensitive": $caseSensitive , "\$diacriticSensitive": $diacriticSensitive }}}'));
     if (orderByScore) {
       orderByAscending('\$score');
@@ -241,7 +253,7 @@ class QueryBuilder<T extends ParseObject> {
   void whereNear(String column, ParseGeoPoint point) {
     final double latitude = point.latitude;
     final double longitude = point.longitude;
-    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_singleQuery,
         '"$column":{"\$nearSphere":{"__type":"GeoPoint","latitude":$latitude,"longitude":$longitude}}'));
   }
 
@@ -251,7 +263,7 @@ class QueryBuilder<T extends ParseObject> {
     final double latitude = point.latitude;
     final double longitude = point.longitude;
 
-    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_singleQuery,
         '"$column":{"\$nearSphere":{"__type":"GeoPoint","latitude":$latitude,"longitude":$longitude},"\$maxDistanceInMiles":$maxDistance}'));
   }
 
@@ -261,7 +273,7 @@ class QueryBuilder<T extends ParseObject> {
     final double latitude = point.latitude;
     final double longitude = point.longitude;
 
-    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_singleQuery,
         '"$column":{"\$nearSphere":{"__type":"GeoPoint","latitude":$latitude,"longitude":$longitude},"\$maxDistanceInKilometers":$maxDistance}'));
   }
 
@@ -271,7 +283,7 @@ class QueryBuilder<T extends ParseObject> {
     final double latitude = point.latitude;
     final double longitude = point.longitude;
 
-    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_singleQuery,
         '"$column":{"\$nearSphere":{"__type":"GeoPoint","latitude":$latitude,"longitude":$longitude},"\$maxDistanceInRadians":$maxDistance}'));
   }
 
@@ -284,7 +296,7 @@ class QueryBuilder<T extends ParseObject> {
     final double latitudeN = northeast.latitude;
     final double longitudeN = northeast.longitude;
 
-    queries.add(MapEntry<String, dynamic>(_SINGLE_QUERY,
+    queries.add(MapEntry<String, dynamic>(_singleQuery,
         '"$column":{"\$within":{"\$box": [{"__type": "GeoPoint","latitude":$latitudeS,"longitude":$longitudeS},{"__type": "GeoPoint","latitude":$latitudeN,"longitude":$longitudeN}]}}'));
   }
 
@@ -299,7 +311,7 @@ class QueryBuilder<T extends ParseObject> {
     dictionary['\$polygon'] = points.map((e) => e.toJson()).toList();
 
     queries.add(MapEntry<String, dynamic>(
-        _SINGLE_QUERY, '"$column":{"\$geoWithin":${jsonEncode(dictionary)}}'));
+        _singleQuery, '"$column":{"\$geoWithin":${jsonEncode(dictionary)}}'));
   }
 
   /// Add a constraint to the query that requires a particular key's coordinates that contains a point
@@ -318,7 +330,7 @@ class QueryBuilder<T extends ParseObject> {
         query._buildQueryRelational(query.object.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
-        _SINGLE_QUERY, '"$column":{"\$inQuery":$inQuery}'));
+        _singleQuery, '"$column":{"\$inQuery":$inQuery}'));
   }
 
   ///Add a constraint to the query that requires a particular key's value does not match another QueryBuilder
@@ -328,7 +340,7 @@ class QueryBuilder<T extends ParseObject> {
         query._buildQueryRelational(query.object.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
-        _SINGLE_QUERY, '"$column":{"\$notInQuery":$inQuery}'));
+        _singleQuery, '"$column":{"\$notInQuery":$inQuery}'));
   }
 
   /// Add a constraint to the query that requires a particular key's value matches a value for a key in the results of another ParseQuery.
@@ -348,7 +360,7 @@ class QueryBuilder<T extends ParseObject> {
         query._buildQueryRelationalKey(query.object.parseClassName, keyInQuery);
 
     queries.add(MapEntry<String, dynamic>(
-        _SINGLE_QUERY, '"$column":{"\$select":$inQuery}'));
+        _singleQuery, '"$column":{"\$select":$inQuery}'));
   }
 
   /// Add a constraint to the query that requires a particular key's value does not match any value for a key in the results of another ParseQuery
@@ -368,7 +380,7 @@ class QueryBuilder<T extends ParseObject> {
         query._buildQueryRelationalKey(query.object.parseClassName, keyInQuery);
 
     queries.add(MapEntry<String, dynamic>(
-        _SINGLE_QUERY, '"$column":{"\$dontSelect":$inQuery}'));
+        _singleQuery, '"$column":{"\$dontSelect":$inQuery}'));
   }
 
   /// Finishes the query and calls the server
@@ -432,20 +444,6 @@ class QueryBuilder<T extends ParseObject> {
     return queryBuilder;
   }
 
-  String concatenateArray(List<String> queries) {
-    String queryBuilder = '';
-
-    for (final String item in queries) {
-      if (item == queries.first) {
-        queryBuilder += item;
-      } else {
-        queryBuilder += ',$item';
-      }
-    }
-
-    return queryBuilder;
-  }
-
   /// Creates a query param using the column, the value and the queryOperator
   /// that the column and value are being queried against
   MapEntry<String, dynamic> _buildQueryWithColumnValueAndOperator(
@@ -454,9 +452,9 @@ class QueryBuilder<T extends ParseObject> {
     final dynamic value =
         convertValueToCorrectType(parseEncode(columnAndValue.value));
 
-    if (queryOperator == _NO_OPERATOR_NEEDED) {
+    if (queryOperator == _noOperatorNeeded) {
       return MapEntry<String, dynamic>(
-          _NO_OPERATOR_NEEDED, '"$key": ${jsonEncode(value)}');
+          _noOperatorNeeded, '"$key": ${jsonEncode(value)}');
     } else {
       String queryString = '"$key":';
       final Map<String, dynamic> queryOperatorAndValueMap = <String, dynamic>{};
@@ -479,15 +477,15 @@ class QueryBuilder<T extends ParseObject> {
     // Run through each query
     for (final MapEntry<String, dynamic> query in queries) {
       // Add queries that don't need sanitizing
-      if (query.key == _NO_OPERATOR_NEEDED || query.key == _SINGLE_QUERY) {
+      if (query.key == _noOperatorNeeded || query.key == _singleQuery) {
         sanitizedQueries
-            .add(MapEntry<String, dynamic>(_NO_OPERATOR_NEEDED, query.value));
+            .add(MapEntry<String, dynamic>(_noOperatorNeeded, query.value));
       }
 
       // Check if query with same column name has been sanitized
       if (!keysAlreadyCompacted.contains(query.key) &&
-          query.key != _NO_OPERATOR_NEEDED &&
-          query.key != _SINGLE_QUERY) {
+          query.key != _noOperatorNeeded &&
+          query.key != _singleQuery) {
         // If not, check that it now has
         keysAlreadyCompacted.add(query.key);
 

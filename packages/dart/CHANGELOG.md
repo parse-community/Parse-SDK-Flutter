@@ -1,3 +1,45 @@
+## [3.1.10](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.9...dart-3.1.10) (2023-01-16)
+
+### Bug Fixes
+
+* Time zone data not set in `ParseInstallation` ([#96](https://github.com/parse-community/Parse-SDK-Flutter/issues/96))
+
+## [3.1.9](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.8...dart-3.1.9) (2022-12-25)
+
+### Bug Fixes
+
+* Include option in `getObject` feature is not working ([#813](https://github.com/parse-community/Parse-SDK-Flutter/issues/813))
+
+## [3.1.8](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.7...dart-3.1.8) (2022-12-23)
+
+### Features
+
+* Add `ParseObject.toJson()` to create a JSON representation ([#616](https://github.com/parse-community/Parse-SDK-Flutter/issues/616))
+
+## [3.1.7](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.6...dart-3.1.7) (2022-12-22)
+
+### Features
+
+* Add `include` option to `getObject` and `fetch` ([#798](https://github.com/parse-community/Parse-SDK-Flutter/issues/798))
+
+## [3.1.6](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.5...dart-3.1.6) (2022-12-21)
+
+### Bug Fixes
+
+* Add `and`, `nor` operators in QueryBuilder ([#795](https://github.com/parse-community/Parse-SDK-Flutter/issues/795))
+
+## [3.1.5](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.4...dart-3.1.5) (2022-12-16)
+
+### Bug Fixes
+
+* Add upload / download cancel and progress callback for ParseFile ([#807](https://github.com/parse-community/Parse-SDK-Flutter/issues/807))
+
+## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.3...dart-3.1.4) (2022-12-14)
+
+### Bug Fixes
+
+* SDK crashes due to missing error code property in `ParseNetworkResponse.data` ([#799](https://github.com/parse-community/Parse-SDK-Flutter/issues/799))
+
 ## [3.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.2...dart-3.1.3) (2022-11-15)
 
 ### Bug Fixes
