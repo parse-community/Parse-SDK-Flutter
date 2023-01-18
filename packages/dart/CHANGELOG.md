@@ -1,3 +1,9 @@
+## [3.1.11](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.10...dart-3.1.11) (2023-01-18)
+
+### Features
+
+* Additional query constraint:`wherePolygonContains`([#777](https://github.com/parse-community/Parse-SDK-Flutter/issues/777))
+
 ## [3.1.10](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.9...dart-3.1.10) (2023-01-16)
 
 ### Bug Fixes
