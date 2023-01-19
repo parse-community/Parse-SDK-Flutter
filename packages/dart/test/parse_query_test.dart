@@ -329,41 +329,77 @@ void main() {
     });
 
     test('wherePolygonContains', () async {
-      final MockParseClient client = MockParseClient();
-
+      // arrange
       final QueryBuilder<ParseObject> queryBuilder =
-      QueryBuilder<ParseObject>(ParseObject('TEST_SCHEMA', client: client));
+          QueryBuilder<ParseObject>(ParseObject('TEST_SCHEMA', client: client));
       double latitude = 84.17724609375;
       double longitude = -53.69670647530323;
       ParseGeoPoint point =
-      ParseGeoPoint(latitude: latitude, longitude: longitude);
+          ParseGeoPoint(latitude: latitude, longitude: longitude);
       queryBuilder.wherePolygonContains("geometry", point);
+
+      var desiredOutput = {
+        "results": [
+          {
+            "objectId": "eT9muOxBTK",
+            "createdAt": "2022-07-25T13:46:06.092Z",
+            "updatedAt": "2022-07-25T13:46:23.586Z",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [84.17724609375, -53.69670647530323],
+                  [83.1884765625, -54.61025498157913],
+                  [84.814453125, -55.14120964449505],
+                  [85.67138671875, -54.40614309031968],
+                  [84.17724609375, -53.69670647530323]
+                ]
+              ]
+            }
+          }
+        ]
+      };
 
       when(client.get(
         any,
         options: anyNamed("options"),
         onReceiveProgress: anyNamed("onReceiveProgress"),
       )).thenAnswer((_) async => ParseNetworkResponse(
-          statusCode: 200,
-          data:
-          '{"results":[{"objectId":"eT9muOxBTK","createdAt":"2022-07-25T13:46:06.092Z","updatedAt":"2022-07-25T13:46:23.586Z","geometry": {"type": "Polygon","coordinates": [[[84.17724609375,-53.69670647530323],[83.1884765625,-54.61025498157913],[84.814453125,-55.14120964449505],[85.67138671875,-54.40614309031968],[84.17724609375,-53.69670647530323]]]}}]}'));
+          statusCode: 200, data: jsonEncode(desiredOutput)));
 
+      // act
       ParseResponse response = await queryBuilder.query();
-      expect(response.results?.first, isA<ParseObject>());
+
       ParseObject parseObject = response.results?.first;
-      expect(parseObject.objectId, "eT9muOxBTK");
-      expect(parseObject.containsKey("geometry"), true);
 
       final Uri result = Uri.parse(verify(client.get(
         captureAny,
         options: anyNamed("options"),
         onReceiveProgress: anyNamed("onReceiveProgress"),
       )).captured.single);
+
+      var queryDesiredOutput = {
+        "geometry": {
+          "\$geoIntersects": {
+            "\$point": {
+              "__type": "GeoPoint",
+              "latitude": latitude,
+              "longitude": longitude
+            }
+          }
+        }
+      };
+      final Uri expectedQuery =
+          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+
+      // assert
+      expect(response.results?.first, isA<ParseObject>());
+
+      expect(parseObject.objectId, "eT9muOxBTK");
+      expect(parseObject.containsKey("geometry"), true);
+
       expect(result.path, '/classes/TEST_SCHEMA');
 
-      final Uri expectedQuery = Uri(
-          query:
-          'where={"geometry":{"\$geoIntersects":{"\$point":{"__type":"GeoPoint","latitude":$latitude,"longitude":$longitude}}}}');
       expect(result.query, expectedQuery.query);
     });
   });
