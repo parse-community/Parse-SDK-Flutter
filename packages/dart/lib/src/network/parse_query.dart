@@ -314,6 +314,15 @@ class QueryBuilder<T extends ParseObject> {
         _singleQuery, '"$column":{"\$geoWithin":${jsonEncode(dictionary)}}'));
   }
 
+  /// Add a constraint to the query that requires a particular key's coordinates that contains a point
+  void wherePolygonContains(String column, ParseGeoPoint point) {
+    final double latitude = point.latitude;
+    final double longitude = point.longitude;
+
+    queries.add(MapEntry<String, dynamic>(_singleQuery,
+        '"$column":{"\$geoIntersects":{"\$point":{"__type":"GeoPoint","latitude":$latitude,"longitude":$longitude}}}'));
+  }
+
   /// Add a constraint to the query that requires a particular key's value match another QueryBuilder
   void whereMatchesQuery<E extends ParseObject>(
       String column, QueryBuilder<E> query) {
