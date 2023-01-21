@@ -369,7 +369,6 @@ void main() {
 
       // act
       ParseResponse response = await queryBuilder.query();
-
       ParseObject parseObject = response.results?.first;
 
       final Uri result = Uri.parse(verify(client.get(
