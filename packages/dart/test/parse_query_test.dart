@@ -30,7 +30,7 @@ void main() {
     test('whereRelatedTo', () async {
       // arrange
       final QueryBuilder<ParseObject> queryBuilder =
-      QueryBuilder<ParseObject>(ParseObject('_User', client: client));
+          QueryBuilder<ParseObject>(ParseObject('_User', client: client));
       queryBuilder.whereRelatedTo('likes', 'Post', '8TOXdXf3tz');
 
       var desiredOutput = {
@@ -77,7 +77,7 @@ void main() {
         },
       };
       final Uri expectedQuery =
-      Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -156,7 +156,7 @@ void main() {
         ],
       };
       final Uri expectedQuery =
-      Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -234,7 +234,7 @@ void main() {
         ],
       };
       final Uri expectedQuery =
-      Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -313,7 +313,7 @@ void main() {
         ],
       };
       final Uri expectedQuery =
-      Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
