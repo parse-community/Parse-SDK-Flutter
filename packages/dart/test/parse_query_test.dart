@@ -394,12 +394,9 @@ void main() {
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
-
       expect(parseObject.objectId, "eT9muOxBTK");
       expect(parseObject.containsKey("geometry"), true);
-
       expect(result.path, '/classes/TEST_SCHEMA');
-
       expect(result.query, expectedQuery.query);
     });
   });
