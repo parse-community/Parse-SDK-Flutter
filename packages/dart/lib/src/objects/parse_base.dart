@@ -139,6 +139,7 @@ abstract class ParseBase {
         _getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
       } else {
         _getObjectData()[key] = parseDecode(value);
+        _unsavedChanges[key] = _getObjectData()[key];
       }
     });
 
