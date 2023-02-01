@@ -2,7 +2,7 @@
 
 ### Bug Fixes
 
-* fix `fromJson` in ParseBase ([#688](https://github.com/parse-community/Parse-SDK-Flutter/issues/688))
+* `ParseObject.fromJson` does not send proper payload to server ([#688](https://github.com/parse-community/Parse-SDK-Flutter/issues/688))
 
 ## [3.1.11](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.10...dart-3.1.11) (2023-01-21)
 
