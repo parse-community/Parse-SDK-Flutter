@@ -117,7 +117,8 @@ abstract class ParseBase {
   @override
   String toString() => json.encode(toJson());
 
-  dynamic fromJson(Map<String, dynamic> objectData) {
+  dynamic fromJson(Map<String, dynamic> objectData,
+      {bool addInUnSaveCheng = false}) {
     objectData.forEach((String key, dynamic value) {
       if (key == parseClassName || key == '__type') {
         // NO OP
@@ -139,7 +140,9 @@ abstract class ParseBase {
         _getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
       } else {
         _getObjectData()[key] = parseDecode(value);
-        _unsavedChanges[key] = _getObjectData()[key];
+        if (addInUnSaveCheng) {
+          _unsavedChanges[key] = _getObjectData()[key];
+        }
       }
     });
 
