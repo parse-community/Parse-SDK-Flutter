@@ -118,11 +118,11 @@ abstract class ParseBase {
   String toString() => json.encode(toJson());
 
   dynamic fromJsonForManualObject(Map<String, dynamic> objectData) {
-    _fromJson(objectData, true);
+    return _fromJson(objectData, true);
   }
 
   dynamic fromJson(Map<String, dynamic> objectData) {
-    _fromJson(objectData, false);
+    return _fromJson(objectData, false);
   }
 
   dynamic _fromJson(Map<String, dynamic> objectData, bool addInUnSave) {
