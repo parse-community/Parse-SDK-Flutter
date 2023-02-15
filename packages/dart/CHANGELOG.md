@@ -1,8 +1,8 @@
-## [3.1.13](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.12...dart-3.1.13) (2023-02-13)
+## [3.1.13](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.12...dart-3.1.13) (2023-02-15)
 
 ### Bug Fixes
 
-* Bug for `user.save()` ([#819](https://github.com/parse-community/Parse-SDK-Flutter/issues/819))
+* `ParseUser.save` fails when user is logged in ([#819](https://github.com/parse-community/Parse-SDK-Flutter/issues/819))
 
 ## [3.1.12](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.11...dart-3.1.12) (2023-02-01)
 
