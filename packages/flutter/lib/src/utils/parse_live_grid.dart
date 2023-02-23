@@ -57,7 +57,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final double childAspectRatio;
 
   @override
-  _ParseLiveGridWidgetState<T> createState() => _ParseLiveGridWidgetState<T>();
+  State<ParseLiveGridWidget<T>> createState() => _ParseLiveGridWidgetState<T>();
 
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
       BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot) {

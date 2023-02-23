@@ -9,7 +9,7 @@ class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -89,19 +89,19 @@ class _MyAppState extends State<MyApp> {
                     title: Row(
                       children: <Widget>[
                         Flexible(
+                          flex: 1,
                           child: Text(snapshot.loadedData!
                               .get<int>('order')
                               .toString()),
-                          flex: 1,
                         ),
                         Flexible(
+                          flex: 10,
                           child: Container(
                             alignment: Alignment.center,
                             child: Text(
                               snapshot.loadedData!.get<String>('text')!,
                             ),
                           ),
-                          flex: 10,
                         ),
                       ],
                     ),
@@ -132,7 +132,7 @@ class ObjectForm extends StatefulWidget {
   const ObjectForm({Key? key}) : super(key: key);
 
   @override
-  _ObjectFormState createState() => _ObjectFormState();
+  State<ObjectForm> createState() => _ObjectFormState();
 }
 
 class _ObjectFormState extends State<ObjectForm> {
