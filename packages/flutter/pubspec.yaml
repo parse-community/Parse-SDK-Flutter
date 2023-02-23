@@ -16,7 +16,7 @@ dependencies:
   #   path: ../dart
 
   # Networking
-  dio: ^4.0.6
+  dio: ^5.0.0
   connectivity_plus: ^3.0.3 # only used in the flutter part
 
   #Database
@@ -27,7 +27,7 @@ dependencies:
   package_info_plus: ^3.0.3 # only used in the flutter part
   sembast: ^3.4.0+6
   sembast_web: ^2.1.0+4
-  path: ^1.8.2 # required for transitive use only
+  path: ^1.8.3 # required for transitive use only
   platform: ^3.1.0
 
 dev_dependencies:
