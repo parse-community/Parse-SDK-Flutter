@@ -161,7 +161,7 @@ class _ParseHTTPClient extends http.BaseClient {
 
   void _logCUrl(http.BaseRequest request) {
     String curlCmd = 'curl';
-    curlCmd += ' -X ' + request.method;
+    curlCmd += ' -X ${request.method}';
     bool compressed = false;
     request.headers.forEach((String name, String value) {
       if (name.toLowerCase() == 'accept-encoding' &&

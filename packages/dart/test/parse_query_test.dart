@@ -77,7 +77,7 @@ void main() {
         },
       };
       final Uri expectedQuery =
-          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+          Uri(query: 'where=${jsonEncode(queryDesiredOutput)}');
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -156,7 +156,7 @@ void main() {
         ],
       };
       final Uri expectedQuery =
-          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+          Uri(query: 'where=${jsonEncode(queryDesiredOutput)}');
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -234,7 +234,7 @@ void main() {
         ],
       };
       final Uri expectedQuery =
-          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+          Uri(query: 'where=${jsonEncode(queryDesiredOutput)}');
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -313,7 +313,7 @@ void main() {
         ],
       };
       final Uri expectedQuery =
-          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+          Uri(query: 'where=${jsonEncode(queryDesiredOutput)}');
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -389,7 +389,7 @@ void main() {
         }
       };
       final Uri expectedQuery =
-          Uri(query: 'where=' + jsonEncode(queryDesiredOutput));
+          Uri(query: 'where=${jsonEncode(queryDesiredOutput)}');
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
