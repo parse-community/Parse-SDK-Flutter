@@ -1,11 +1,17 @@
-import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 class CoreStoreDirectory {
   Future<String> getDatabaseDirectory() async {
-    return (await getApplicationDocumentsDirectory()).path;
+    if (Platform.isIOS) {
+      return (await path_provider.getLibraryDirectory()).path;
+    } else {
+      return (await path_provider.getApplicationDocumentsDirectory()).path;
+    }
   }
 
   Future<String?> getTempDirectory() async {
-    return (await getTemporaryDirectory()).path;
+    return (await path_provider.getTemporaryDirectory()).path;
   }
 }
