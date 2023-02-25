@@ -27,7 +27,7 @@ class ParseDioClient extends ParseClient {
         path,
         options: _Options(headers: options?.headers),
       );
-      
+
       return ParseNetworkResponse(
         data: dioResponse.data!,
         statusCode: dioResponse.statusCode!,
