@@ -1,3 +1,9 @@
+## [3.1.14](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.13...dart-3.1.14) (2023-02-25)
+
+### Refactor
+
+* Upgrade packages and fix warnings in ([#821](https://github.com/parse-community/Parse-SDK-Flutter/issues/821))
+
 ## [3.1.13](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.12...dart-3.1.13) (2023-02-15)
 
 ### Bug Fixes
