@@ -27,11 +27,16 @@ class ParseDioClient extends ParseClient {
         path,
         options: _Options(headers: options?.headers),
       );
+
       return ParseNetworkResponse(
-          data: dioResponse.data!, statusCode: dioResponse.statusCode!);
+        data: dioResponse.data!,
+        statusCode: dioResponse.statusCode!,
+      );
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-          data: error.response?.data, statusCode: error.response!.statusCode!);
+        data: error.response?.data ?? _fallbackErrorData,
+        statusCode: error.response?.statusCode ?? ParseError.otherCause,
+      );
     }
   }
 
@@ -51,12 +56,15 @@ class ParseDioClient extends ParseClient {
             headers: options?.headers, responseType: dio.ResponseType.bytes),
       );
       return ParseNetworkByteResponse(
-          bytes: dioResponse.data, statusCode: dioResponse.statusCode!);
+        bytes: dioResponse.data,
+        statusCode: dioResponse.statusCode!,
+      );
     } on dio.DioError catch (error) {
       if (error.response != null) {
         return ParseNetworkByteResponse(
-            data: error.response?.data,
-            statusCode: error.response!.statusCode!);
+          data: error.response?.data ?? _fallbackErrorData,
+          statusCode: error.response?.statusCode ?? ParseError.otherCause,
+        );
       } else {
         return _getOtherCaseErrorForParseNetworkResponse(error.error);
       }
@@ -72,11 +80,16 @@ class ParseDioClient extends ParseClient {
         data: data,
         options: _Options(headers: options?.headers),
       );
+
       return ParseNetworkResponse(
-          data: dioResponse.data!, statusCode: dioResponse.statusCode!);
+        data: dioResponse.data!,
+        statusCode: dioResponse.statusCode!,
+      );
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-          data: error.response?.data, statusCode: error.response!.statusCode!);
+        data: error.response?.data ?? _fallbackErrorData,
+        statusCode: error.response?.statusCode ?? ParseError.otherCause,
+      );
     }
   }
 
@@ -89,11 +102,16 @@ class ParseDioClient extends ParseClient {
         data: data,
         options: _Options(headers: options?.headers),
       );
+
       return ParseNetworkResponse(
-          data: dioResponse.data!, statusCode: dioResponse.statusCode!);
+        data: dioResponse.data!,
+        statusCode: dioResponse.statusCode!,
+      );
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-          data: error.response?.data, statusCode: error.response!.statusCode!);
+        data: error.response?.data ?? _fallbackErrorData,
+        statusCode: error.response?.statusCode ?? ParseError.otherCause,
+      );
     }
   }
 
@@ -111,13 +129,17 @@ class ParseDioClient extends ParseClient {
         options: _Options(headers: options?.headers),
         onSendProgress: onSendProgress,
       );
+
       return ParseNetworkResponse(
-          data: dioResponse.data!, statusCode: dioResponse.statusCode!);
+        data: dioResponse.data!,
+        statusCode: dioResponse.statusCode!,
+      );
     } on dio.DioError catch (error) {
       if (error.response != null) {
         return ParseNetworkResponse(
-            data: error.response?.data,
-            statusCode: error.response!.statusCode!);
+          data: error.response?.data ?? _fallbackErrorData,
+          statusCode: error.response?.statusCode ?? ParseError.otherCause,
+        );
       } else {
         return _getOtherCaseErrorForParseNetworkResponse(error.error);
       }
@@ -138,13 +160,20 @@ class ParseDioClient extends ParseClient {
         path,
         options: _Options(headers: options?.headers),
       );
+
       return ParseNetworkResponse(
-          data: dioResponse.data!, statusCode: dioResponse.statusCode!);
+        data: dioResponse.data!,
+        statusCode: dioResponse.statusCode!,
+      );
     } on dio.DioError catch (error) {
       return ParseNetworkResponse(
-          data: error.response?.data, statusCode: error.response!.statusCode!);
+        data: error.response?.data ?? _fallbackErrorData,
+        statusCode: error.response?.statusCode ?? ParseError.otherCause,
+      );
     }
   }
+
+  String get _fallbackErrorData => '{"$keyError":"NetworkError"}';
 }
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset
