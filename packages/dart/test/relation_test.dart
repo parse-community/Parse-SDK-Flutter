@@ -5,8 +5,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('Relation', () {
-    test('addRelation', () async {
-      // arrange
+    setUp(() async {
       await Parse().initialize(
         'appId', 'https://test.parse.com',
         debug: true,
@@ -19,7 +18,9 @@ void main() {
         // to prevent automatic detection
         appVersion: 'someAppVersion',
       );
+    });
 
+    test('addRelation', () async {
       var parentObj = {
         "objectId": "mGGxAy3eek",
         "relationKey": {"__type": "Relation", "className": "relationKey"}
@@ -59,21 +60,8 @@ void main() {
       expect(act, expectedResult);
     });
   });
-  test('removeRelation', () async {
-    // arrange
-    await Parse().initialize(
-      'appId', 'https://test.parse.com',
-      debug: true,
-      // to prevent automatic detection
-      fileDirectory: 'someDirectory',
-      // to prevent automatic detection
-      appName: 'appName',
-      // to prevent automatic detection
-      appPackageName: 'somePackageName',
-      // to prevent automatic detection
-      appVersion: 'someAppVersion',
-    );
 
+  test('removeRelation', () async {
     var parentObj = {
       "objectId": "mGGxAy3eek",
       "relationKey": {"__type": "Relation", "className": "relationKey"}
