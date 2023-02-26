@@ -48,6 +48,7 @@ jobs:
           cache: true
       - name: Install dependencies
         run: |
+          dart pub get --directory packages/dart
           echo "publish_to: none" >> packages/flutter/pubspec.yaml
       - name: Analyze code
         run: flutter analyze packages/flutter --no-fatal-infos
