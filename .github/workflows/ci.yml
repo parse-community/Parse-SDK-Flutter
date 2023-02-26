@@ -46,6 +46,9 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           cache: true
+      - name: Install dependencies
+        run: |
+          echo "publish_to: none" >> packages/flutter/pubspec.yaml
       - name: Analyze code
         run: flutter analyze packages/flutter --no-fatal-infos
   check-code-analysis-dart:
