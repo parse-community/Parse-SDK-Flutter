@@ -182,9 +182,14 @@ void main() {
     });
 
     group('getAll()', () {
+      late ParseObject dietPlansObject;
+
+      setUp(() {
+        dietPlansObject = ParseObject("Diet_Plans", client: client);
+      });
+
       test('getAll() should return all objects', () async {
         // arrange
-        ParseObject dietPlansObject = ParseObject("Diet_Plans", client: client);
 
         var desiredOutput = {
           "results": [
@@ -263,7 +268,9 @@ void main() {
         expect(response.results?.first, isA<ParseObject>());
 
         expect(
-            listParseObject.length, equals(desiredOutput["results"]!.length));
+          listParseObject.length,
+          equals(desiredOutput["results"]!.length),
+        );
 
         verify(client.get(
           captureAny,
@@ -275,7 +282,6 @@ void main() {
       });
       test('getAll() should return error', () async {
         // arrange
-        ParseObject dietPlansObject = ParseObject("Diet_Plans", client: client);
 
         final error = Exception('error');
 
