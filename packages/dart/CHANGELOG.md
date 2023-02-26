@@ -1,3 +1,9 @@
+## [3.1.14](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.13...dart-3.1.14) (2023-02-26)
+
+### Bug Fixes
+
+* Dio error object holds a reference to null values ([#774](https://github.com/parse-community/Parse-SDK-Flutter/issues/774))
+
 ## [3.1.13](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.12...dart-3.1.13) (2023-02-15)
 
 ### Bug Fixes
@@ -161,7 +167,7 @@ Bug fixes
 ## 1.0.22
 
 Added dirty children
-Added option of sembast or share_preferences 
+Added option of sembast or share_preferences
 
 ## 1.0.21
 
@@ -183,7 +189,7 @@ Bug fix
 
 ## 1.0.17
 
-LiveQuery fix 
+LiveQuery fix
 Bug fixes
 
 ## 1.0.16
