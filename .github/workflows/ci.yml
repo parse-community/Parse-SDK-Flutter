@@ -48,8 +48,8 @@ jobs:
           cache: true
       - name: Install dependencies
         run: |
-          cd packages/dart && flutter pub get
-          cd packages/flutter && flutter pub get
+          (cd packages/dart; flutter pub get)
+          (cd packages/flutter; flutter pub get)
           echo "publish_to: none" >> packages/flutter/pubspec.yaml
       - name: Analyze code
         run: flutter analyze packages/flutter --no-fatal-infos
