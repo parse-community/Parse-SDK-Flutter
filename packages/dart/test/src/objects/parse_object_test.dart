@@ -306,19 +306,24 @@ void main() {
     });
 
     group('create()', () {
+      late ParseObject dietPlansObject;
+
+      setUp(() {
+        final user = ParseObject(keyClassUser)..objectId = "ELR124r8C";
+        dietPlansObject = ParseObject("Diet_Plans", client: client);
+        dietPlansObject
+          ..set('Name', 'value')
+          ..set('Fat', 15)
+          ..set('user', user)
+          ..set("location", ParseGeoPoint(latitude: 10, longitude: 10));
+      });
+
       test(
           'create() should create new object on the server, return the created '
           'object in ParseResponse results and update the calling object '
           'with the new data (objectId,createdAt). i.e: mutate the object state',
           () async {
         // arrange
-        final user = ParseObject(keyClassUser)..objectId = "ELR124r8C";
-        ParseObject dietPlansObject = ParseObject("Diet_Plans", client: client);
-        dietPlansObject
-          ..set('Name', 'value')
-          ..set('Fat', 15)
-          ..set('user', user)
-          ..set("location", ParseGeoPoint(latitude: 10, longitude: 10));
 
         final resultFromServer = {
           keyVarObjectId: "DLde4rYA8C",
@@ -383,13 +388,6 @@ void main() {
       });
       test('create() should return error', () async {
         // arrange
-        final user = ParseObject(keyClassUser)..objectId = "ELR124r8C";
-        ParseObject dietPlansObject = ParseObject("Diet_Plans", client: client);
-        dietPlansObject
-          ..set('Name', 'value')
-          ..set('Fat', 15)
-          ..set('user', user)
-          ..set("location", ParseGeoPoint(latitude: 10, longitude: 10));
 
         final postData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
         final error = Exception('error');
