@@ -458,8 +458,10 @@ class ParseObject extends ParseBase implements ParseCloneable {
       final isNotValidIdArg = id == null || id.isEmpty;
 
       if (isNotValidObjectId && isNotValidIdArg) {
-        throw "Can't delete a parse object while the objectId property "
-            "and id argument is null or empty";
+        throw Exception(
+          "Can't delete a parse object while the objectId property "
+          "and id argument is null or empty",
+        );
       }
 
       return true;
