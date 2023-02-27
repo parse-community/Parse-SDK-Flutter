@@ -87,7 +87,7 @@ jobs:
       - name: Install dependencies on Windows
         if: matrix.os == 'windows-latest'
         run: |
-          call flutter config --no-analytics
+          flutter config --no-analytics
           start /D .\packages\dart call flutter pub get
           start /D .\packages\flutter call flutter pub get
       - name: Run tests
