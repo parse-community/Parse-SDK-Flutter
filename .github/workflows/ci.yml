@@ -88,8 +88,8 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           flutter config --no-analytics
-          start /D .\packages\dart call flutter pub get
-          start /D .\packages\flutter call flutter pub get
+          start /D .\packages\dart flutter pub get
+          start /D .\packages\flutter flutter pub get
       - name: Run tests
         run: (cd packages/flutter && flutter test --coverage)
       - name: Convert code coverage
