@@ -61,8 +61,7 @@ class CoreStoreDirectory {
     );
 
     await File(libraryDirectoryDatabaseFilePath).create(recursive: true);
-    await databaseFileToMove.copy(libraryDirectoryDatabaseFilePath);
-    await databaseFileToMove.delete();
+    await databaseFileToMove.rename(libraryDirectoryDatabaseFilePath);
   }
 
   Future<String> getTempDirectory() async {
