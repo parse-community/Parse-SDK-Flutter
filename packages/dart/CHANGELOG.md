@@ -2,7 +2,7 @@
 
 ### BREAKING CHANGES
 
-* Upgrades to dio 5.x
+* Upgrades to dio 5.x ([#824](https://github.com/parse-community/Parse-SDK-Flutter/pull/824))
 
 ### Feature
 
