@@ -89,8 +89,7 @@ jobs:
         run: |
           flutter config --no-analytics
           cmd /c "cd packages\dart && flutter pub get"
-          start /D .\packages\dart "" "flutter pub get"
-          start /D .\packages\flutter "" "flutter pub get"
+          cmd /c "cd packages\flutter && flutter pub get"
       - name: Run tests
         run: (cd packages/flutter && flutter test --coverage)
       - name: Convert code coverage
