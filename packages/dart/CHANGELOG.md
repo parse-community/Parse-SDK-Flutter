@@ -1,8 +1,12 @@
-## [3.1.15](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.14...dart-3.1.15) (2023-02-27)
+## [4.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.14...dart-4.0.0) (2023-02-27)
 
-### Refactor
+### BREAKING CHANGES
 
-* Upgrade packages and fix warnings in ([#821](https://github.com/parse-community/Parse-SDK-Flutter/issues/821))
+* Upgrades to dio 5.x
+
+### Feature
+
+* Upgrade various dependencies and fix warnings ([#824](https://github.com/parse-community/Parse-SDK-Flutter/pull/824))
 
 ## [3.1.14](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.13...dart-3.1.14) (2023-02-26)
 
