@@ -40,6 +40,7 @@ void main() {
       final platform = defaultTargetPlatform;
       expect(platform, equals(TargetPlatform.iOS));
     });
+    
     test('getTempDirectory() should return kTemporaryPath', () async {
       final path = await coreStoreDirectory.getTempDirectory();
       expect(path, kTemporaryPath);
