@@ -158,7 +158,6 @@ void main() {
             equals(0), // 0 if this DateTime [isAtSameMomentAs] [other]
             reason: 'last modified date should not change',
           );
-
           expect(
             dbDirectory,
             equals(applicationDocumentsPath),
