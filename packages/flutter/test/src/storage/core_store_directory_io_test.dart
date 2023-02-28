@@ -71,7 +71,6 @@ void main() {
           isFalse,
           reason: 'the old db file should be deleted from app doc dir',
         );
-
         expect(
           dbDirectory,
           equals(libraryPath),
