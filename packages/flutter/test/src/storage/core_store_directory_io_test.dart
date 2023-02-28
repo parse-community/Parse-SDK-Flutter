@@ -109,7 +109,6 @@ void main() {
 
         final dbFileSizeAfter = dbFileInNewPath.lengthSync();
         final dbFileLastModifiedAfter = dbFileInNewPath.lastModifiedSync();
-
         expect(
           dbFileSizeBefore,
           equals(dbFileSizeAfter),
