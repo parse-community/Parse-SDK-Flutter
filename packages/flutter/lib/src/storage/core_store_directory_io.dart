@@ -20,7 +20,7 @@ class CoreStoreDirectory {
   ///
   /// TODO: remove this migration algorithm after at least two major releases
   ///
-  /// the release when this migration added is `3.1.14`
+  /// the release when this migration added is `3.1.4`
   Future<void> _migrateDBFileToLibraryDirectory() async {
     final dbFile = await _getDBFileIfExistsInAppDocDir();
 
