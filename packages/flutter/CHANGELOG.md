@@ -2,7 +2,7 @@
 
 ### Bug Fixes
 
-* Sembast database file not hidden on ios ([#791](https://github.com/parse-community/Parse-SDK-Flutter/issues/791))
+* Parse SDK internal database file `parse.db` is accessible for app user on iOS and may be accidentally deleted ([#826](https://github.com/parse-community/Parse-SDK-Flutter/pull/826))
 
 ## [3.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.2...flutter-3.1.3) (2022-07-09)
 
