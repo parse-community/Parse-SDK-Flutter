@@ -102,7 +102,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
             } else if (event is sdk.ParseLiveListDeleteEvent) {
               animatedListState.removeItem(
                   event.index,
-                      (BuildContext context, Animation<double> animation) =>
+                  (BuildContext context, Animation<double> animation) =>
                       ParseLiveListElementWidget<T>(
                         key: ValueKey<String>(
                             event.object.get<String>(sdk.keyVarObjectId) ??
@@ -129,7 +129,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
 
   sdk.ParseLiveList<T>? _liveList;
   final GlobalKey<AnimatedListState> _animatedListKey =
-  GlobalKey<AnimatedListState>();
+      GlobalKey<AnimatedListState>();
   bool _noData = true;
 
   @override
@@ -180,7 +180,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
             sizeFactor: animation,
             duration: widget.duration,
             childBuilder:
-            widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
+                widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
           );
         });
   }
@@ -197,12 +197,12 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
     extends StatefulWidget {
   const ParseLiveListElementWidget(
       {Key? key,
-        this.stream,
-        this.loadedData,
-        this.preLoadedData,
-        required this.sizeFactor,
-        required this.duration,
-        required this.childBuilder})
+      this.stream,
+      this.loadedData,
+      this.preLoadedData,
+      required this.sizeFactor,
+      required this.duration,
+      required this.childBuilder})
       : super(key: key);
 
   final StreamGetter<T>? stream;
@@ -229,10 +229,10 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
     _snapshot = sdk.ParseLiveListElementSnapshot<T>(
         loadedData: widget.loadedData != null ? widget.loadedData!() : null,
         preLoadedData:
-        widget.preLoadedData != null ? widget.preLoadedData!() : null);
+            widget.preLoadedData != null ? widget.preLoadedData!() : null);
     if (widget.stream != null) {
       _streamSubscription = widget.stream!().listen(
-            (T data) {
+        (T data) {
           setState(() {
             _snapshot = sdk.ParseLiveListElementSnapshot<T>(
                 loadedData: data, preLoadedData: data);

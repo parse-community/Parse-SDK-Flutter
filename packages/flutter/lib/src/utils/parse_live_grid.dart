@@ -158,9 +158,9 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
             mainAxisSpacing: widget.mainAxisSpacing,
             childAspectRatio: widget.childAspectRatio),
         itemBuilder: (
-            BuildContext context,
-            int index,
-            ) {
+          BuildContext context,
+          int index,
+        ) {
           return ParseLiveListElementWidget<T>(
             key: ValueKey<String>(liveGrid.getIdentifier(index)),
             stream: () => liveGrid.getAt(index),
@@ -169,7 +169,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
             sizeFactor: boxAnimation,
             duration: widget.duration,
             childBuilder:
-            widget.childBuilder ?? ParseLiveGridWidget.defaultChildBuilder,
+                widget.childBuilder ?? ParseLiveGridWidget.defaultChildBuilder,
           );
         });
   }
