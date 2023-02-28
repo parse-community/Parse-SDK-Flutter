@@ -545,6 +545,22 @@ void main() {
 
         verifyNoMoreInteractions(client);
       });
+      test('should throw AssertionError if objectId is null', () {
+        dietPlansObject.objectId = null;
+
+        expect(
+          () async => await dietPlansObject.update(),
+          throwsA(isA<AssertionError>()),
+        );
+      });
+      test('should throw AssertionError if objectId is empty', () {
+        dietPlansObject.objectId = '';
+
+        expect(
+          () async => await dietPlansObject.update(),
+          throwsA(isA<AssertionError>()),
+        );
+      });
     });
   });
 }
