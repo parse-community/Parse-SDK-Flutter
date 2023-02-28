@@ -99,17 +99,12 @@ void main() {
           ' and there is db file in the new dir (LibraryDirectory) '
           'the (copy) migration should not work and so the getDatabaseDirectory()'
           'should return the new db dir path (LibraryDirectory)', () async {
-        // arrange
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
         final dbFileInNewPath = create1MBParseDBFileInLibraryPath();
         final dbFileSizeBefore = dbFileInNewPath.lengthSync();
         final dbFileLastModifiedBefore = dbFileInNewPath.lastModifiedSync();
-
-        // act
         final dbDirectory = await coreStoreDirectory.getDatabaseDirectory();
-
-        // assert
         expect(dbFileInNewPath.existsSync(), isTrue);
 
         final dbFileSizeAfter = dbFileInNewPath.lengthSync();
