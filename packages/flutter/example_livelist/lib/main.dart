@@ -9,7 +9,7 @@ class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -46,18 +46,18 @@ class _MyAppState extends State<MyApp> {
         body: initFailed == false
             ? buildBody(context)
             : Container(
-                height: double.infinity,
-                alignment: Alignment.center,
-                child: initFailed == null
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const <Widget>[
-                          CircularProgressIndicator(),
-                          Text('Connecting to the server...'),
-                        ],
-                      )
-                    : const Text('Connecting to the server failed!'),
-              ),
+          height: double.infinity,
+          alignment: Alignment.center,
+          child: initFailed == null
+              ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const <Widget>[
+              CircularProgressIndicator(),
+              Text('Connecting to the server...'),
+            ],
+          )
+              : const Text('Connecting to the server failed!'),
+        ),
       ),
     );
   }
@@ -73,7 +73,7 @@ class _MyAppState extends State<MyApp> {
 
   Widget buildBody(BuildContext context) {
     final GlobalKey<_ObjectFormState> objectFormKey =
-        GlobalKey<_ObjectFormState>();
+    GlobalKey<_ObjectFormState>();
     return Column(
       children: <Widget>[
         Expanded(
@@ -89,19 +89,19 @@ class _MyAppState extends State<MyApp> {
                     title: Row(
                       children: <Widget>[
                         Flexible(
-                          flex: 1,
                           child: Text(snapshot.loadedData!
                               .get<int>('order')
                               .toString()),
+                          flex: 1,
                         ),
                         Flexible(
-                          flex: 10,
                           child: Container(
                             alignment: Alignment.center,
                             child: Text(
                               snapshot.loadedData!.get<String>('text')!,
                             ),
                           ),
+                          flex: 10,
                         ),
                       ],
                     ),
@@ -132,7 +132,7 @@ class ObjectForm extends StatefulWidget {
   const ObjectForm({Key? key}) : super(key: key);
 
   @override
-  State<ObjectForm> createState() => _ObjectFormState();
+  _ObjectFormState createState() => _ObjectFormState();
 }
 
 class _ObjectFormState extends State<ObjectForm> {
@@ -150,48 +150,48 @@ class _ObjectFormState extends State<ObjectForm> {
     return _currentObject == null
         ? Container()
         : Form(
-            key: _formKey,
-            child: ListTile(
-              key: UniqueKey(),
-              title: Row(
-                children: <Widget>[
-                  Flexible(
-                    flex: 1,
-                    child: TextFormField(
-                      initialValue:
-                          _currentObject!.get<int>('order').toString(),
-                      keyboardType: TextInputType.number,
-                      onSaved: (String? value) {
-                        _currentObject!.set('order', int.parse(value!));
-                      },
-                    ),
-                  ),
-                  Flexible(
-                    flex: 10,
-                    child: TextFormField(
-                      initialValue: _currentObject!.get<String>('text'),
-                      onSaved: (String? value) {
-                        _currentObject!.set('text', value);
-                      },
-                    ),
-                  )
-                ],
+      key: _formKey,
+      child: ListTile(
+        key: UniqueKey(),
+        title: Row(
+          children: <Widget>[
+            Flexible(
+              flex: 1,
+              child: TextFormField(
+                initialValue:
+                _currentObject!.get<int>('order').toString(),
+                keyboardType: TextInputType.number,
+                onSaved: (String? value) {
+                  _currentObject!.set('order', int.parse(value!));
+                },
               ),
-              trailing: IconButton(
-                  icon: const Icon(Icons.save),
-                  onPressed: () {
-                    setState(() {
-                      _formKey.currentState!.save();
-                      final ParseObject? object = _currentObject;
-                      //Delay to highlight the animation.
-                      Future<void>.delayed(const Duration(seconds: 1))
-                          .then((_) {
-                        object!.save();
-                      });
-                      _currentObject = null;
-                    });
-                  }),
             ),
-          );
+            Flexible(
+              flex: 10,
+              child: TextFormField(
+                initialValue: _currentObject!.get<String>('text'),
+                onSaved: (String? value) {
+                  _currentObject!.set('text', value);
+                },
+              ),
+            )
+          ],
+        ),
+        trailing: IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () {
+              setState(() {
+                _formKey.currentState!.save();
+                final ParseObject? object = _currentObject;
+                //Delay to highlight the animation.
+                Future<void>.delayed(const Duration(seconds: 1))
+                    .then((_) {
+                  object!.save();
+                });
+                _currentObject = null;
+              });
+            }),
+      ),
+    );
   }
 }

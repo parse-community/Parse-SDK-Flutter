@@ -51,7 +51,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final List<String>? preloadedColumns;
 
   @override
-  State<ParseLiveListWidget<T>> createState() => _ParseLiveListWidgetState<T>();
+  _ParseLiveListWidgetState<T> createState() => _ParseLiveListWidgetState<T>();
 
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
       BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot) {
@@ -102,7 +102,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
             } else if (event is sdk.ParseLiveListDeleteEvent) {
               animatedListState.removeItem(
                   event.index,
-                  (BuildContext context, Animation<double> animation) =>
+                      (BuildContext context, Animation<double> animation) =>
                       ParseLiveListElementWidget<T>(
                         key: ValueKey<String>(
                             event.object.get<String>(sdk.keyVarObjectId) ??
@@ -129,7 +129,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
 
   sdk.ParseLiveList<T>? _liveList;
   final GlobalKey<AnimatedListState> _animatedListKey =
-      GlobalKey<AnimatedListState>();
+  GlobalKey<AnimatedListState>();
   bool _noData = true;
 
   @override
@@ -180,7 +180,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
             sizeFactor: animation,
             duration: widget.duration,
             childBuilder:
-                widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
+            widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
           );
         });
   }
@@ -197,12 +197,12 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
     extends StatefulWidget {
   const ParseLiveListElementWidget(
       {Key? key,
-      this.stream,
-      this.loadedData,
-      this.preLoadedData,
-      required this.sizeFactor,
-      required this.duration,
-      required this.childBuilder})
+        this.stream,
+        this.loadedData,
+        this.preLoadedData,
+        required this.sizeFactor,
+        required this.duration,
+        required this.childBuilder})
       : super(key: key);
 
   final StreamGetter<T>? stream;
@@ -213,7 +213,7 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
   final ChildBuilder<T> childBuilder;
 
   @override
-  State<ParseLiveListElementWidget<T>> createState() {
+  _ParseLiveListElementWidgetState<T> createState() {
     return _ParseLiveListElementWidgetState<T>();
   }
 }
@@ -229,10 +229,10 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
     _snapshot = sdk.ParseLiveListElementSnapshot<T>(
         loadedData: widget.loadedData != null ? widget.loadedData!() : null,
         preLoadedData:
-            widget.preLoadedData != null ? widget.preLoadedData!() : null);
+        widget.preLoadedData != null ? widget.preLoadedData!() : null);
     if (widget.stream != null) {
       _streamSubscription = widget.stream!().listen(
-        (T data) {
+            (T data) {
           setState(() {
             _snapshot = sdk.ParseLiveListElementSnapshot<T>(
                 loadedData: data, preLoadedData: data);
@@ -272,9 +272,9 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
       sizeFactor: widget.sizeFactor,
       child: AnimatedSize(
         duration: widget.duration,
+        child: widget.childBuilder(context, _snapshot),
         // ignore: deprecated_member_use
         vsync: this,
-        child: widget.childBuilder(context, _snapshot),
       ),
     );
     return result;
