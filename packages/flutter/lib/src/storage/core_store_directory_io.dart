@@ -15,12 +15,9 @@ class CoreStoreDirectory {
     return (await path_provider.getApplicationDocumentsDirectory()).path;
   }
 
-  /// Why do we need this migration on iOS? see:
+  /// Migrate SDK internal database file on iOS, see:
   /// https://github.com/parse-community/Parse-SDK-Flutter/issues/791
-  ///
-  /// TODO: remove this migration algorithm after at least two major releases
-  ///
-  /// the release when this migration added is `3.1.4`
+  /// TODO: Remove this migration algorithm in the future. 
   Future<void> _migrateDBFileToLibraryDirectory() async {
     final dbFile = await _getDBFileIfExistsInAppDocDir();
 
