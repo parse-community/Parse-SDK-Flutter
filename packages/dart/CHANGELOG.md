@@ -8,6 +8,12 @@
 
 * Upgrade various dependencies and fix warnings ([#824](https://github.com/parse-community/Parse-SDK-Flutter/pull/824))
 
+## [3.1.15](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.14...dart-3.1.15) (2023-02-28)
+
+### Bug Fixes
+
+* Updating and deleting a ParseObject sends requests even if object ID is null ([#829](https://github.com/parse-community/Parse-SDK-Flutter/pull/829))
+
 ## [3.1.14](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.13...dart-3.1.14) (2023-02-26)
 
 ### Bug Fixes

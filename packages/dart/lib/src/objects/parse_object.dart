@@ -86,6 +86,11 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   Future<ParseResponse> update() async {
+    assert(
+      objectId != null && (objectId?.isNotEmpty ?? false),
+      "Can't update a parse object while the objectId property is null or empty",
+    );
+
     try {
       final Uri url = getSanitisedUri(_client, '$_path/$objectId');
       final String body = json.encode(toJson(forApiRQ: true));
@@ -443,8 +448,25 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Deletes the current object locally and online
-  Future<ParseResponse> delete<T extends ParseObject>(
-      {String? id, String? path}) async {
+  Future<ParseResponse> delete<T extends ParseObject>({
+    String? id,
+    String? path,
+  }) async {
+    assert(() {
+      final objId = objectId;
+      final isNotValidObjectId = objId == null || objId.isEmpty;
+      final isNotValidIdArg = id == null || id.isEmpty;
+
+      if (isNotValidObjectId && isNotValidIdArg) {
+        throw Exception(
+          "Can't delete a parse object while the objectId property "
+          "and id argument is null or empty",
+        );
+      }
+
+      return true;
+    }());
+
     try {
       path ??= _path;
       id ??= objectId;
