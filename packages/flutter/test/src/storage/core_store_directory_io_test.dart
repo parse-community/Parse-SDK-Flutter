@@ -34,6 +34,7 @@ void main() {
       final result = await path_provider.getApplicationDocumentsDirectory();
       expect(result.path, applicationDocumentsPath);
     });
+    
     test('defaultTargetPlatform should equals iOS', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
