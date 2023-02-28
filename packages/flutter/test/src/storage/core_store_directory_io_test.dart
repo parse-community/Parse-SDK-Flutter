@@ -127,6 +127,7 @@ void main() {
               'dbDirectory should be the new db dir path for iOS (LibraryDir)',
         );
       });
+      
       test(
           'on any platform other than iOS, the copy migration algorithm should '
           'not run and the db file should and will remain in '
