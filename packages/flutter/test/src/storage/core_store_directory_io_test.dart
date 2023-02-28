@@ -87,7 +87,6 @@ void main() {
         final newDBFile = File(newDBFilePath);
 
         expect(newDBFile.existsSync(), isTrue);
-
         expect(
           newDBFile.lengthSync(),
           equals(oldDBFileSize),
