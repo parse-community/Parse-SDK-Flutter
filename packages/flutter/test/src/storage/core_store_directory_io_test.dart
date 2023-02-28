@@ -85,7 +85,6 @@ void main() {
           'parse.db',
         );
         final newDBFile = File(newDBFilePath);
-
         expect(newDBFile.existsSync(), isTrue);
         expect(
           newDBFile.lengthSync(),
