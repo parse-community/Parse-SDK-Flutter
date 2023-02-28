@@ -25,7 +25,7 @@ void main() {
       final result = await path_provider.getTemporaryDirectory();
       expect(result.path, kTemporaryPath);
     });
-    
+
     test('getLibraryDirectory', () async {
       final result = await path_provider.getLibraryDirectory();
       expect(result.path, libraryPath);
@@ -35,14 +35,14 @@ void main() {
       final result = await path_provider.getApplicationDocumentsDirectory();
       expect(result.path, applicationDocumentsPath);
     });
-    
+
     test('defaultTargetPlatform should equals iOS', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
       final platform = defaultTargetPlatform;
       expect(platform, equals(TargetPlatform.iOS));
     });
-    
+
     test('getTempDirectory() should return kTemporaryPath', () async {
       final path = await coreStoreDirectory.getTempDirectory();
       expect(path, kTemporaryPath);
@@ -127,7 +127,7 @@ void main() {
               'dbDirectory should be the new db dir path for iOS (LibraryDir)',
         );
       });
-      
+
       test(
           'on any platform other than iOS, the copy migration algorithm should '
           'not run and the db file should and will remain in '
