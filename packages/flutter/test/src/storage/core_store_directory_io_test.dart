@@ -142,10 +142,7 @@ void main() {
         for (final platform in targetPlatforms) {
           debugDefaultTargetPlatformOverride = platform;
 
-          // act
           final dbDirectory = await coreStoreDirectory.getDatabaseDirectory();
-
-          // assert
           expect(dbFile.existsSync(), isTrue);
 
           final dbFileSizeAfter = dbFile.lengthSync();
