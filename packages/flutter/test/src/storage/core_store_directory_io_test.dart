@@ -35,13 +35,9 @@ void main() {
       expect(result.path, applicationDocumentsPath);
     });
     test('defaultTargetPlatform should equals iOS', () async {
-      // arrange
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-      // act
       final platform = defaultTargetPlatform;
-
-      // assert
       expect(platform, equals(TargetPlatform.iOS));
     });
     test('getTempDirectory() should return kTemporaryPath', () async {
