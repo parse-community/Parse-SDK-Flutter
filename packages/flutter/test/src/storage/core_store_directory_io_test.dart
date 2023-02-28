@@ -65,20 +65,11 @@ void main() {
           '(applicationDocumentDirectory) to the new dir path (LibraryDirectory)'
           ' and the old db file should be deleted from the old dir path '
           'then return the new dir path (LibraryDirectory)', () async {
-        // arrange
-
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-        // database in the old path
         final oldDBFile = create1MBParseDBFileInAppDocDir();
         final oldDBFileSize = oldDBFile.lengthSync();
-
-        // act
-
         final dbDirectory = await coreStoreDirectory.getDatabaseDirectory();
-
-        // assert
-
         expect(
           oldDBFile.existsSync(),
           isFalse,
