@@ -4,6 +4,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
+import 'package:collection/collection.dart';
 
 import '../../parse_query_test.mocks.dart';
 
@@ -280,6 +281,7 @@ void main() {
 
         verifyNoMoreInteractions(client);
       });
+
       test('getAll() should return error', () async {
         // arrange
 
@@ -368,6 +370,7 @@ void main() {
           dietPlansObject.createdAt!.toIso8601String(),
           equals(resultFromServer[keyVarCreatedAt]),
         );
+
         expect(
           parseObject.objectId,
           equals(resultFromServer[keyVarObjectId]),
@@ -392,6 +395,7 @@ void main() {
 
         verifyNoMoreInteractions(client);
       });
+
       test('create() should return error', () async {
         // arrange
 
@@ -441,6 +445,7 @@ void main() {
           ..set(keyName, newNameValue)
           ..set(keyFat, newFatValue);
       });
+
       test(
           'update() should update an object on the server, return the updated '
           'object in ParseResponse results and update the calling object '
@@ -510,6 +515,7 @@ void main() {
 
         verifyNoMoreInteractions(client);
       });
+
       test(
           'update() should return error and the updated values should remain the same',
           () async {
@@ -545,6 +551,7 @@ void main() {
 
         verifyNoMoreInteractions(client);
       });
+
       test('should throw AssertionError if objectId is null', () {
         dietPlansObject.objectId = null;
 
@@ -553,6 +560,7 @@ void main() {
           throwsA(isA<AssertionError>()),
         );
       });
+
       test('should throw AssertionError if objectId is empty', () {
         dietPlansObject.objectId = '';
 
@@ -562,5 +570,120 @@ void main() {
         );
       });
     });
+
+    //TODO: add tesets for the save() function
+    // group('save()', () {});
+
+    group(
+      'Relation',
+      () {
+        late ParseObject dietPlansObject;
+
+        late ParseUser user1;
+        late ParseUser user2;
+
+        setUp(() {
+          user1 = ParseUser.forQuery()..objectId = 'user1';
+          user2 = ParseUser.forQuery()..objectId = 'user2';
+          final resultFromServer = {
+            "objectId": "O6BHlwV48Z",
+            "Name": "new name",
+            "Description": "Low fat diet.",
+            "Fat": 65,
+            "createdAt": "2023-02-26T13:23:03.073Z",
+            "updatedAt": "2023-03-01T03:38:16.390Z",
+            "usersRelation": {"__type": "Relation", "className": "_User"}
+          };
+
+          dietPlansObject = ParseObject('Diet_Plans')
+            ..fromJson(resultFromServer);
+        });
+
+        test(
+          'getRelation(): the targetClass should be _User',
+          () {
+            // act
+            final usersRelation = dietPlansObject.getRelation('usersRelation');
+
+            // assert
+            expect(
+              usersRelation.getTargetClass,
+              equals(keyClassUser),
+              reason: 'the target class should be _User',
+            );
+          },
+        );
+
+        test('addRelation(): the relation should hold two objects ', () {
+          // arrange
+
+          // act
+          dietPlansObject.addRelation('usersRelation', [user1, user2]);
+
+          // assert
+          final toJsonAfterAddRelation = dietPlansObject.toJson(forApiRQ: true);
+
+          final expectedToJson = {
+            "usersRelation": {
+              "__op": "AddRelation",
+              "objects": [
+                {
+                  "__type": "Pointer",
+                  "className": "_User",
+                  "objectId": "user1"
+                },
+                {
+                  "__type": "Pointer",
+                  "className": "_User",
+                  "objectId": "user2",
+                }
+              ]
+            }
+          };
+
+          expect(
+            DeepCollectionEquality().equals(
+              expectedToJson,
+              toJsonAfterAddRelation,
+            ),
+            isTrue,
+          );
+        });
+
+        test(
+          'calling getRelation after adding Relation should return ParseRelation',
+          () {
+            // arrange
+            dietPlansObject.addRelation('usersRelation', [user1, user2]);
+
+            // assert
+            expect(
+              () => dietPlansObject.getRelation('usersRelation'),
+              returnsNormally,
+            );
+          },
+          skip: 'getRelation() will throw Unhandled exception:'
+              'type _Map<String, dynamic> is not a subtype '
+              'of type ParseRelation<ParseObject>? in type cast. see the issue #696',
+        );
+
+        test(
+          'calling getRelation after removing Relation should return ParseRelation',
+          () {
+            // arrange
+            dietPlansObject.removeRelation('usersRelation', [user1, user2]);
+
+            // assert
+            expect(
+              () => dietPlansObject.getRelation('usersRelation'),
+              returnsNormally,
+            );
+          },
+          skip: 'getRelation() will throw Unhandled exception:'
+              'type _Map<String, dynamic> is not a subtype '
+              'of type ParseRelation<ParseObject>? in type cast. see the issue #696',
+        );
+      },
+    );
   });
 }
