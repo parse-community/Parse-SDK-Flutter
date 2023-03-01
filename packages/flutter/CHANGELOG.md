@@ -1,4 +1,4 @@
-## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-3.1.4) (2023-02-28)
+## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-3.1.4) (2023-03-01)
 
 ### Bug Fixes
 
