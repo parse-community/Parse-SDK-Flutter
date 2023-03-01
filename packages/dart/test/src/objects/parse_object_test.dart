@@ -585,6 +585,7 @@ void main() {
         setUp(() {
           user1 = ParseUser.forQuery()..objectId = 'user1';
           user2 = ParseUser.forQuery()..objectId = 'user2';
+
           final resultFromServer = {
             "objectId": "O6BHlwV48Z",
             "Name": "new name",
@@ -684,6 +685,313 @@ void main() {
               'of type ParseRelation<ParseObject>? in type cast. see the issue #696',
         );
       },
+    );
+
+    group(
+      'Array',
+      () {
+        const keyArray = 'array';
+
+        late ParseObject dietPlansObject;
+
+        setUp(() {
+          dietPlansObject = ParseObject("Diet_Plans", client: client);
+        });
+
+        test(
+            'adding values using setAdd() and then calling get(keyArray) '
+            'should return Instance of Iterable that contains all the added values ',
+            () {
+          // act
+          dietPlansObject.setAdd(keyArray, 1);
+          dietPlansObject.setAdd(keyArray, 2);
+          dietPlansObject.setAdd(keyArray, 1);
+
+          // assert
+          final array = dietPlansObject.get(keyArray);
+
+          expect(array, isA<Iterable>());
+
+          expect(
+            DeepCollectionEquality.unordered().equals(
+              array,
+              [1, 2, 1],
+            ),
+            isTrue,
+          );
+        });
+
+        test(
+            'adding values using setAddAll() and then calling get(keyArray) '
+            'should return Instance of Iterable that contains all the added values',
+            () {
+          // act
+          dietPlansObject.setAddAll(keyArray, [1, 2, 1]);
+
+          // assert
+          final array = dietPlansObject.get(keyArray);
+
+          expect(array, isA<Iterable>());
+
+          expect(
+            DeepCollectionEquality.unordered().equals(
+              array,
+              [1, 2, 1],
+            ),
+            isTrue,
+          );
+        });
+
+        test(
+            'adding values using setAddUnique() and then calling get(keyArray) '
+            'should return Instance of Iterable that contains all the added values'
+            ' with out any duplication in the values', () {
+          // act
+          dietPlansObject.setAddUnique(keyArray, 1);
+          dietPlansObject.setAddUnique(keyArray, 2);
+          dietPlansObject.setAddUnique(keyArray, 1);
+          dietPlansObject.setAddUnique(keyArray, 3);
+          dietPlansObject.setAddUnique(keyArray, 1);
+          dietPlansObject.setAddUnique(keyArray, 4);
+
+          // assert
+          final array = dietPlansObject.get(keyArray);
+
+          expect(array, isA<Iterable>());
+
+          expect(
+            DeepCollectionEquality.unordered().equals(
+              array,
+              [1, 2, 3, 4],
+            ),
+            isTrue,
+          );
+        });
+
+        test(
+            'adding values using setAddAllUnique() and then calling get(keyArray) '
+            'should return Instance of Iterable that contains all the added values'
+            ' with out any duplication in the values', () {
+          // act
+          dietPlansObject.setAddAllUnique(keyArray, [1, 2, 1, 3, 1, 4, 1]);
+
+          // assert
+          final array = dietPlansObject.get(keyArray);
+
+          expect(array, isA<Iterable>());
+
+          expect(
+            DeepCollectionEquality.unordered().equals(
+              array,
+              [1, 2, 3, 4],
+            ),
+            isTrue,
+          );
+        });
+
+        test(
+            'removing values using setRemove() and then calling get(keyArray) '
+            'should return Instance of Iterable that NOT contains the removed values',
+            () {
+          // arrange
+          final resultFromServer = {
+            "objectId": "O6BHlwV48Z",
+            "createdAt": "2023-02-26T13:23:03.073Z",
+            "updatedAt": "2023-03-01T03:38:16.390Z",
+            keyArray: [1, 2, 3, 4],
+          };
+
+          dietPlansObject = ParseObject('Diet_Plans')
+            ..fromJson(
+              resultFromServer,
+            );
+
+          // act
+          dietPlansObject.setRemove(keyArray, 4);
+
+          // assert
+          final array = dietPlansObject.get(keyArray);
+
+          expect(array, isA<Iterable>());
+
+          expect(
+            DeepCollectionEquality.unordered().equals(
+              array,
+              [1, 2, 3],
+            ),
+            isTrue,
+          );
+        });
+
+        test(
+            'removing values using setRemoveAll() and then calling get(keyArray) '
+            'should return Instance of Iterable that NOT contains the removed values',
+            () {
+          // arrange
+          final resultFromServer = {
+            "objectId": "O6BHlwV48Z",
+            "createdAt": "2023-02-26T13:23:03.073Z",
+            "updatedAt": "2023-03-01T03:38:16.390Z",
+            keyArray: [1, 2, 3, 4],
+          };
+
+          dietPlansObject = ParseObject('Diet_Plans')
+            ..fromJson(
+              resultFromServer,
+            );
+
+          // act
+          dietPlansObject.setRemoveAll(keyArray, [3, 4]);
+
+          // assert
+          final array = dietPlansObject.get(keyArray);
+
+          expect(array, isA<Iterable>());
+
+          expect(
+            DeepCollectionEquality.unordered().equals(
+              array,
+              [1, 2],
+            ),
+            isTrue,
+          );
+        });
+
+        test(
+            'the array should not been affected by removing non existent '
+            'values using setRemove()', () {
+          // arrange
+          final resultFromServer = {
+            "objectId": "O6BHlwV48Z",
+            "createdAt": "2023-02-26T13:23:03.073Z",
+            "updatedAt": "2023-03-01T03:38:16.390Z",
+            keyArray: [1, 2, 3, 4],
+          };
+
+          dietPlansObject = ParseObject('Diet_Plans')
+            ..fromJson(
+              resultFromServer,
+            );
+
+          // act
+          dietPlansObject.setRemove(keyArray, 15);
+          dietPlansObject.setRemove(keyArray, 16);
+
+          // assert
+          final array = dietPlansObject.get(keyArray);
+
+          expect(array, isA<Iterable>());
+
+          expect(
+            DeepCollectionEquality.unordered().equals(
+              array,
+              [1, 2, 3, 4],
+            ),
+            isTrue,
+          );
+        });
+
+        test(
+            'the array should not been affected by removing non existent '
+            'values using setRemoveAll()', () {
+          // arrange
+          final resultFromServer = {
+            "objectId": "O6BHlwV48Z",
+            "createdAt": "2023-02-26T13:23:03.073Z",
+            "updatedAt": "2023-03-01T03:38:16.390Z",
+            keyArray: [1, 2, 3, 4],
+          };
+
+          dietPlansObject = ParseObject('Diet_Plans')
+            ..fromJson(
+              resultFromServer,
+            );
+
+          // act
+          dietPlansObject.setRemoveAll(keyArray, [15, 16]);
+
+          // assert
+          final array = dietPlansObject.get(keyArray);
+
+          expect(array, isA<Iterable>());
+
+          expect(
+            DeepCollectionEquality.unordered().equals(
+              array,
+              [1, 2, 3, 4],
+            ),
+            isTrue,
+          );
+        });
+
+        test(
+            'adding to an array and then removing from it should result in error '
+            'the user can not add and remove in the same time', () {
+          // act
+          dietPlansObject.setAdd(keyArray, 1);
+          dietPlansObject.setAdd(keyArray, 2);
+
+          // assert
+          expect(
+            () => dietPlansObject.setRemove(keyArray, 2),
+            throwsA(isA<String>()),
+          );
+
+          final array = dietPlansObject.get(keyArray);
+
+          expect(array, isA<Iterable>());
+
+          expect(
+            DeepCollectionEquality.unordered().equals(
+              array,
+              [1, 2],
+            ),
+            isTrue,
+          );
+        });
+
+        test(
+            'removing from an array and then adding to it should result in error '
+            'the user can not remove and add in the same time', () {
+          // arrange
+          final resultFromServer = {
+            "objectId": "O6BHlwV48Z",
+            "createdAt": "2023-02-26T13:23:03.073Z",
+            "updatedAt": "2023-03-01T03:38:16.390Z",
+            keyArray: [1, 2, 3, 4],
+          };
+
+          dietPlansObject = ParseObject('Diet_Plans')
+            ..fromJson(
+              resultFromServer,
+            );
+
+          // act
+          dietPlansObject.setRemove(keyArray, 4);
+          dietPlansObject.setRemove(keyArray, 3);
+
+          // assert
+          expect(
+            () => dietPlansObject.setAdd(keyArray, 5),
+            throwsA(isA<String>()),
+          );
+
+          final array = dietPlansObject.get(keyArray);
+
+          expect(array, isA<Iterable>());
+
+          expect(
+            DeepCollectionEquality.unordered().equals(
+              array,
+              [1, 2],
+            ),
+            isTrue,
+          );
+        });
+      },
+      skip: 'get(keyArray) will return _Map<String, dynamic>'
+          'which is the wrong type. it should be any subtype of Iterable'
+          'see the issue #834',
     );
   });
 }
