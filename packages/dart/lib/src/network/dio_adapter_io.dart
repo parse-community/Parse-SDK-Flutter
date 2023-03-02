@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 import 'package:dio/io.dart';
 import 'package:dio/dio.dart';
