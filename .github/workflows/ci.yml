@@ -87,7 +87,7 @@ jobs:
         uses: dart-lang/setup-dart@v1
       - name: publish dry run
         run: |
-          (cd packages/flutter && dart pub publish --dry-run 1> flutter_dry_run_stdout 2> flutter_dry_run_stderr)
+          (cd packages/flutter && dart pub publish --dry-run 1> flutter_dry_run_stdout 2> flutter_dry_run_stderr) 
   check-flutter:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -160,3 +160,6 @@ jobs:
         with:
           files: packages/dart/coverage/lcov.info
           fail_ci_if_error: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
