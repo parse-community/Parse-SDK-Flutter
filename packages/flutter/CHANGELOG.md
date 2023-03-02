@@ -1,7 +1,7 @@
-## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-3.1.4) (2023-03-02)
+## [3.1.5](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.4...flutter-3.1.5) (2023-03-02)
 
 ### Bug Fixes
-* Implementation of Scroll Direction and other parameters/attributes (reverse, padding, physics,controller,scrollDirection,shrinkWrap)
+* Attributes `reverse`, `padding`, `physics`, `controller`, `scrollDirection`, `shrinkWrap` not implemented in `ParseLiveGridWidget` ([#761](https://github.com/parse-community/Parse-SDK-Flutter/pull/761))
 
 ## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-3.1.4) (2023-03-01)
 
