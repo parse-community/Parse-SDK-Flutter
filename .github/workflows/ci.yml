@@ -65,6 +65,33 @@ jobs:
         run: dart pub get --directory packages/dart
       - name: Analyze code
         run: dart analyze packages/dart
+  check-publish-dry-run-dart:
+    name: publish dry-run (dart)
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: publish dry run
+        run: cd packages/dart && dart pub publish --dry-run
+  check-publish-dry-run-flutter:
+    name: publish dry-run (flutter)
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: publish dry run
+        run: |
+          CURR_ERR='Packagevalidationfoundthefollowingpotentialissue:*Thenameof"lib/parse_server_sdk.dart","parse_server_sdk",shouldmatchthenameofthepackage,"parse_server_sdk_flutter".Thishelpsusersknowwhatlibrarytoimport.Packagehas1warning.'
+          cd packages/flutter && dart pub publish --dry-run 1> flutter_dry_run_stdout 2> flutter_dry_run_stderr
+          DRY_RUN_STD_ERR_NO_SPACES=$(tr -d "[:space:]" < flutter_dry_run_stderr)
+          cat flutter_dry_run_stdout flutter_dry_run_stderr
+          [[ $DRY_RUN_STD_ERR_NO_SPACES == $CURR_ERR ]] && echo "no errors" || exit 1
   check-flutter:
     runs-on: ${{ matrix.os }}
     strategy:
