@@ -1,3 +1,57 @@
+## [3.1.15](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.14...dart-3.1.15) (2023-02-28)
+
+### Bug Fixes
+
+* Updating and deleting a ParseObject sends requests even if object ID is null ([#829](https://github.com/parse-community/Parse-SDK-Flutter/pull/829))
+
+## [3.1.14](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.13...dart-3.1.14) (2023-02-26)
+
+### Bug Fixes
+
+* Dio error object holds a reference to null values ([#774](https://github.com/parse-community/Parse-SDK-Flutter/issues/774))
+
+## [3.1.13](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.12...dart-3.1.13) (2023-02-15)
+
+### Bug Fixes
+
+* `ParseUser.save` fails when user is logged in ([#819](https://github.com/parse-community/Parse-SDK-Flutter/issues/819))
+
+## [3.1.12](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.11...dart-3.1.12) (2023-02-01)
+
+### Bug Fixes
+
+* `ParseObject.fromJson` does not send proper payload to server ([#688](https://github.com/parse-community/Parse-SDK-Flutter/issues/688))
+
+## [3.1.11](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.10...dart-3.1.11) (2023-01-21)
+
+### Features
+
+* Add query constraint `wherePolygonContains` to determine whether a point in within a polygon ([#777](https://github.com/parse-community/Parse-SDK-Flutter/issues/777))
+
+## [3.1.10](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.9...dart-3.1.10) (2023-01-16)
+
+### Bug Fixes
+
+* Time zone data not set in `ParseInstallation` ([#96](https://github.com/parse-community/Parse-SDK-Flutter/issues/96))
+
+## [3.1.9](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.8...dart-3.1.9) (2022-12-25)
+
+### Bug Fixes
+
+* Include option in `getObject` feature is not working ([#813](https://github.com/parse-community/Parse-SDK-Flutter/issues/813))
+
+## [3.1.8](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.7...dart-3.1.8) (2022-12-23)
+
+### Features
+
+* Add `ParseObject.toJson()` to create a JSON representation ([#616](https://github.com/parse-community/Parse-SDK-Flutter/issues/616))
+
+## [3.1.7](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.6...dart-3.1.7) (2022-12-22)
+
+### Features
+
+* Add `include` option to `getObject` and `fetch` ([#798](https://github.com/parse-community/Parse-SDK-Flutter/issues/798))
+
 ## [3.1.6](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.5...dart-3.1.6) (2022-12-21)
 
 ### Bug Fixes
@@ -119,7 +173,7 @@ Bug fixes
 ## 1.0.22
 
 Added dirty children
-Added option of sembast or share_preferences 
+Added option of sembast or share_preferences
 
 ## 1.0.21
 
@@ -141,7 +195,7 @@ Bug fix
 
 ## 1.0.17
 
-LiveQuery fix 
+LiveQuery fix
 Bug fixes
 
 ## 1.0.16

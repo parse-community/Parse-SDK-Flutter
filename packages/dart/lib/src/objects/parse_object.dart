@@ -33,10 +33,18 @@ class ParseObject extends ParseBase implements ParseCloneable {
   late ParseClient _client;
 
   /// Gets an object from the server using it's [String] objectId
-  Future<ParseResponse> getObject(String objectId) async {
+  ///
+  /// `List<String>` include refers to other ParseObjects stored as a Pointer
+  Future<ParseResponse> getObject(String objectId,
+      {List<String>? include}) async {
     try {
-      final String uri = '$_path/$objectId';
-      final Uri url = getSanitisedUri(_client, uri);
+      String? query;
+      if (include != null) {
+        query = 'include=${concatenateArray(include)}';
+      }
+
+      final Uri url =
+          getSanitisedUri(_client, '$_path/$objectId', query: query);
 
       final ParseNetworkResponse result = await _client.get(url.toString());
       return handleResponse<ParseObject>(
@@ -78,6 +86,11 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   Future<ParseResponse> update() async {
+    assert(
+      objectId != null && (objectId?.isNotEmpty ?? false),
+      "Can't update a parse object while the objectId property is null or empty",
+    );
+
     try {
       final Uri url = getSanitisedUri(_client, '$_path/$objectId');
       final String body = json.encode(toJson(forApiRQ: true));
@@ -435,8 +448,25 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Deletes the current object locally and online
-  Future<ParseResponse> delete<T extends ParseObject>(
-      {String? id, String? path}) async {
+  Future<ParseResponse> delete<T extends ParseObject>({
+    String? id,
+    String? path,
+  }) async {
+    assert(() {
+      final objId = objectId;
+      final isNotValidObjectId = objId == null || objId.isEmpty;
+      final isNotValidIdArg = id == null || id.isEmpty;
+
+      if (isNotValidObjectId && isNotValidIdArg) {
+        throw Exception(
+          "Can't delete a parse object while the objectId property "
+          "and id argument is null or empty",
+        );
+      }
+
+      return true;
+    }());
+
     try {
       path ??= _path;
       id ??= objectId;
@@ -451,12 +481,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
   ///Fetches this object with the data from the server. Call this whenever you want the state of the
   ///object to reflect exactly what is on the server.
-  Future<ParseObject> fetch() async {
+  ///
+  /// `List<String>` include refers to other ParseObjects stored as a Pointer
+  Future<ParseObject> fetch({List<String>? include}) async {
     if (objectId == null || objectId!.isEmpty) {
       throw 'can not fetch without a objectId';
     }
 
-    final ParseResponse response = await getObject(objectId!);
+    final ParseResponse response = await getObject(objectId!, include: include);
 
     if (response.success && response.results != null) {
       return response.results!.first;

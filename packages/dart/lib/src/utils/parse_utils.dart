@@ -8,6 +8,21 @@ bool isDebugEnabled({bool? objectLevelDebug}) {
   return objectLevelDebug ?? ParseCoreData().debug;
 }
 
+/// Convert list of strings to a string with commas
+String concatenateArray(List<String> list) {
+  String output = '';
+
+  for (final String item in list) {
+    if (item == list.first) {
+      output += item;
+    } else {
+      output += ',$item';
+    }
+  }
+
+  return output;
+}
+
 /// Converts the object to the correct value for JSON,
 ///
 /// Strings are wrapped with "" but integers and others are not

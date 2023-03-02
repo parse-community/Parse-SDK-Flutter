@@ -1,8 +1,8 @@
-## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-3.1.4) (2022-10-06)
+## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-3.1.4) (2023-03-01)
 
 ### Bug Fixes
 
-* some parameters of `ParseLiveGridWidget` are not used ([#761](https://github.com/parse-community/Parse-SDK-Flutter/pull/761))
+* Parse SDK internal database file `parse.db` is accessible for app user on iOS and may be accidentally deleted ([#826](https://github.com/parse-community/Parse-SDK-Flutter/pull/826))
 
 ## [3.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.2...flutter-3.1.3) (2022-07-09)
 
