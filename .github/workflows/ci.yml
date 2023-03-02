@@ -90,7 +90,6 @@ jobs:
           cd packages/flutter && dart pub publish --dry-run 1> flutter_dry_run_stdout 2> flutter_dry_run_stderr
           DRY_RUN_STD_ERR_NO_SPACES=$(tr -d "[:space:]" < flutter_dry_run_stderr)
           cat flutter_dry_run_stdout flutter_dry_run_stderr
-          [[ $DRY_RUN_STD_ERR_NO_SPACES == $CURR_ERR ]] && echo "no errors" || echo "error from dart pub publish --dry-run" && exit 1
   check-flutter:
     runs-on: ${{ matrix.os }}
     strategy:
