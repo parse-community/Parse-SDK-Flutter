@@ -76,18 +76,6 @@ jobs:
         uses: dart-lang/setup-dart@v1
       - name: publish dry run
         run: cd packages/dart && dart pub publish --dry-run
-  check-publish-dry-run-flutter:
-    name: publish dry-run (flutter)
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup dart
-        uses: dart-lang/setup-dart@v1
-      - name: publish dry run
-        run: |
-          (cd packages/flutter && dart pub publish --dry-run 1> flutter_dry_run_stdout 2> flutter_dry_run_stderr) 
   check-flutter:
     runs-on: ${{ matrix.os }}
     strategy:
