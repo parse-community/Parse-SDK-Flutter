@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
-import 'package:collection/collection.dart';
 
 import '../../parse_query_test.mocks.dart';
 
@@ -993,5 +993,315 @@ void main() {
           'which is the wrong type. it should be any subtype of Iterable'
           'see the issue #834',
     );
+
+    group(
+      'Increment/Decrement',
+      () {
+        const keyFat = 'fat';
+
+        late ParseObject dietPlansObject;
+
+        setUp(() {
+          dietPlansObject = ParseObject("Diet_Plans", client: client);
+        });
+
+        test(
+            'Incrementing values using setIncrement() and then calling get(key) '
+            'should return Instance of num that hold the result of incrementing '
+            'the value by the amount parameter', () {
+          // arrange
+          dietPlansObject.set(keyFat, 0);
+
+          // act
+          dietPlansObject.setIncrement(keyFat, 1);
+          dietPlansObject.setIncrement(keyFat, 2.5);
+
+          // assert
+          final fatValue = dietPlansObject.get(keyFat);
+
+          expect(fatValue, isA<num>());
+
+          expect(fatValue, equals(3.5));
+        });
+
+        test(
+            'Incrementing not existing values should be handled by assuming'
+            'that the default value is 0 and operate on it', () {
+          // act
+          dietPlansObject.setIncrement(keyFat, 1);
+          dietPlansObject.setIncrement(keyFat, 2.5);
+
+          // assert
+          final fatValue = dietPlansObject.get(keyFat);
+
+          expect(fatValue, isA<num>());
+
+          expect(fatValue, equals(3.5));
+        });
+
+        test(
+            'Incrementing should work with already present values decoded from API',
+            () {
+          // arrange
+          final resultFromServer = {
+            "objectId": "O6BHlwV48Z",
+            "createdAt": "2023-02-26T13:23:03.073Z",
+            "updatedAt": "2023-03-01T03:38:16.390Z",
+            keyFat: 2.5,
+          };
+
+          dietPlansObject = ParseObject('Diet_Plans')
+            ..fromJson(resultFromServer);
+
+          // act
+          dietPlansObject.setIncrement(keyFat, 2.5);
+
+          // assert
+          final fatValue = dietPlansObject.get(keyFat);
+
+          expect(fatValue, isA<num>());
+
+          expect(fatValue, equals(5));
+        });
+        test(
+          'setIncrement() should account for pervasively set value',
+          () {
+            // arrange
+            dietPlansObject.set(keyFat, 5);
+
+            // act
+            dietPlansObject.setIncrement(keyFat, 2.5);
+
+            // assert
+            final fatValue = dietPlansObject.get(keyFat);
+
+            expect(fatValue, isA<num>());
+
+            expect(fatValue, equals(7.5));
+          },
+          skip: 'see #843',
+        );
+
+        test(
+            'setIncrement() operation should not be mergeable with any other'
+            'operation other than setDecrement()', () {
+          testUnmergeableOperationShouldThrow(
+            parseObject: dietPlansObject,
+            testingOn: dietPlansObject.setIncrement,
+            excludeMergeableOperations: [dietPlansObject.setDecrement],
+          );
+        });
+
+        test(
+            'Decrementing values using setDecrement() and then calling get(key) '
+            'should return Instance of num that hold the result of decrementing '
+            'the value by the amount parameter', () {
+          // arrange
+          dietPlansObject.set(keyFat, 0);
+
+          // act
+          dietPlansObject.setDecrement(keyFat, 1);
+          dietPlansObject.setDecrement(keyFat, 2.5);
+
+          // assert
+          final fatValue = dietPlansObject.get(keyFat);
+
+          expect(fatValue, isA<num>());
+
+          expect(fatValue, equals(-3.5));
+        });
+
+        test(
+            'Decrementing not existing values should be handled by assuming'
+            'that the default value is 0 and operate on it', () {
+          // act
+          dietPlansObject.setDecrement(keyFat, 1);
+          dietPlansObject.setDecrement(keyFat, 2.5);
+
+          // assert
+          final fatValue = dietPlansObject.get(keyFat);
+
+          expect(fatValue, isA<num>());
+
+          expect(fatValue, equals(-3.5));
+        });
+
+        test(
+            'Decrementing should work with already present values decoded from API',
+            () {
+          // arrange
+          final resultFromServer = {
+            "objectId": "O6BHlwV48Z",
+            "createdAt": "2023-02-26T13:23:03.073Z",
+            "updatedAt": "2023-03-01T03:38:16.390Z",
+            keyFat: 3.5,
+          };
+
+          dietPlansObject = ParseObject('Diet_Plans')
+            ..fromJson(resultFromServer);
+
+          // act
+          dietPlansObject.setDecrement(keyFat, 2.5);
+
+          // assert
+          final fatValue = dietPlansObject.get(keyFat);
+
+          expect(fatValue, isA<num>());
+
+          expect(fatValue, equals(1));
+        });
+
+        test(
+          'setDecrement() should account for pervasively set value',
+          () {
+            // arrange
+            dietPlansObject.set(keyFat, 5);
+
+            // act
+            dietPlansObject.setDecrement(keyFat, 3);
+
+            // assert
+            final fatValue = dietPlansObject.get(keyFat);
+
+            expect(fatValue, isA<num>());
+
+            expect(fatValue, equals(2));
+          },
+          skip: 'see #843',
+        );
+
+        test(
+            'mixing and matching Decrements and Increments should not cause '
+            'any issue', () {
+          // act
+          dietPlansObject.setDecrement(keyFat, 2.5);
+
+          dietPlansObject.setIncrement(keyFat, 5);
+
+          dietPlansObject.setDecrement(keyFat, 3);
+
+          dietPlansObject.setIncrement(keyFat, 1.5);
+
+          // assert
+          final fatValue = dietPlansObject.get(keyFat);
+
+          expect(fatValue, isA<num>());
+
+          expect(fatValue, equals(1));
+        });
+
+        test(
+            'setDecrement() operation should not be mergeable with any other'
+            'operation other than setIncrement()', () {
+          testUnmergeableOperationShouldThrow(
+            parseObject: dietPlansObject,
+            testingOn: dietPlansObject.setDecrement,
+            excludeMergeableOperations: [dietPlansObject.setIncrement],
+          );
+        });
+      },
+      skip: 'get(key) will return _Map<String, dynamic>'
+          'which is the wrong type. it should be any subtype of num'
+          'see the issue #842',
+    );
   });
+}
+
+/// If an unmergeable operation [testingOn] is attempted after an operation,
+/// it should result in an exception being thrown.
+///
+/// if a certain operation cannot be merged or combined with other operations
+/// in a particular context, then an exception should be thrown to alert
+/// the developer that the operation cannot be performed.
+///
+/// List of available operations:
+/// * setAdd
+/// * setAddUnique
+/// * setAddAll
+/// * setAddAllUnique
+/// * setRemove
+/// * setRemoveAll
+/// * setIncrement
+/// * setDecrement
+/// * addRelation
+/// * removeRelation
+///
+/// e.g.
+/// ```dart
+///    testUnmergeableOperationShouldThrow(
+///      parseObject: dietPlansObject,
+///      testingOn: dietPlansObject.setDecrement,
+///      excludeMergeableOperations: [dietPlansObject.setIncrement],
+///   );
+/// ```
+void testUnmergeableOperationShouldThrow({
+  required ParseObject parseObject,
+  required Function testingOn,
+  List<Function> excludeMergeableOperations = const [],
+}) {
+  String testingOnKey = 'key';
+
+  final Map<Function, List> operationsFuncRefWithArgs = {
+    parseObject.setAdd: [
+      testingOnKey,
+      1,
+    ],
+    parseObject.setAddUnique: [
+      testingOnKey,
+      1,
+    ],
+    parseObject.setAddAll: [
+      testingOnKey,
+      [1, 2],
+    ],
+    parseObject.setAddAllUnique: [
+      testingOnKey,
+      [1, 2],
+    ],
+    parseObject.setRemove: [
+      testingOnKey,
+      1,
+    ],
+    parseObject.setRemoveAll: [
+      testingOnKey,
+      [1, 2]
+    ],
+    parseObject.setIncrement: [
+      testingOnKey,
+      1,
+    ],
+    parseObject.setDecrement: [
+      testingOnKey,
+      1,
+    ],
+    parseObject.addRelation: [
+      testingOnKey,
+      [ParseObject('class')]
+    ],
+    parseObject.removeRelation: [
+      testingOnKey,
+      [ParseObject('class')]
+    ],
+  };
+
+  final testingOnValue = operationsFuncRefWithArgs.remove(testingOn);
+
+  for (final functionExclude in excludeMergeableOperations) {
+    operationsFuncRefWithArgs.remove(functionExclude);
+  }
+
+  for (final operation in operationsFuncRefWithArgs.entries) {
+    parseObject.unset(testingOnKey, offlineOnly: true);
+
+    final functionRef = operation.key;
+    final positionalArguments = operation.value;
+
+    Function.apply(functionRef, positionalArguments);
+
+    expect(
+      () => Function.apply(testingOn, testingOnValue),
+      throwsA(isA<String>()),
+      reason: 'Can not call $testingOn after $functionRef',
+    );
+  }
 }
