@@ -684,6 +684,23 @@ void main() {
               'type _Map<String, dynamic> is not a subtype '
               'of type ParseRelation<ParseObject>? in type cast. see the issue #696',
         );
+
+        test('addRelation() operation should not be mergeable with any other',
+            () {
+          testUnmergeableOperationShouldThrow(
+            parseObject: dietPlansObject,
+            testingOn: dietPlansObject.addRelation,
+          );
+        });
+
+        test(
+            'removeRelation() operation should not be mergeable with any other',
+            () {
+          testUnmergeableOperationShouldThrow(
+            parseObject: dietPlansObject,
+            testingOn: dietPlansObject.removeRelation,
+          );
+        });
       },
     );
 
@@ -722,6 +739,16 @@ void main() {
         });
 
         test(
+            'setAdd() operation should not be mergeable with any other'
+            'operation other than setAddAll()', () {
+          testUnmergeableOperationShouldThrow(
+            parseObject: dietPlansObject,
+            testingOn: dietPlansObject.setAdd,
+            excludeMergeableOperations: [dietPlansObject.setAddAll],
+          );
+        });
+
+        test(
             'adding values using setAddAll() and then calling get(keyArray) '
             'should return Instance of Iterable that contains all the added values',
             () {
@@ -739,6 +766,16 @@ void main() {
               [1, 2, 1],
             ),
             isTrue,
+          );
+        });
+
+        test(
+            'setAddAll() operation should not be mergeable with any other'
+            'operation other than setAdd()', () {
+          testUnmergeableOperationShouldThrow(
+            parseObject: dietPlansObject,
+            testingOn: dietPlansObject.setAddAll,
+            excludeMergeableOperations: [dietPlansObject.setAdd],
           );
         });
 
@@ -769,6 +806,16 @@ void main() {
         });
 
         test(
+            'setAddUnique() operation should not be mergeable with any other'
+            'operation other than setAddAllUnique()', () {
+          testUnmergeableOperationShouldThrow(
+            parseObject: dietPlansObject,
+            testingOn: dietPlansObject.setAddUnique,
+            excludeMergeableOperations: [dietPlansObject.setAddAllUnique],
+          );
+        });
+
+        test(
             'adding values using setAddAllUnique() and then calling get(keyArray) '
             'should return Instance of Iterable that contains all the added values'
             ' with out any duplication in the values', () {
@@ -786,6 +833,16 @@ void main() {
               [1, 2, 3, 4],
             ),
             isTrue,
+          );
+        });
+
+        test(
+            'setAddAllUnique() operation should not be mergeable with any other'
+            'operation other than setAddUnique()', () {
+          testUnmergeableOperationShouldThrow(
+            parseObject: dietPlansObject,
+            testingOn: dietPlansObject.setAddAllUnique,
+            excludeMergeableOperations: [dietPlansObject.setAddUnique],
           );
         });
 
@@ -986,6 +1043,26 @@ void main() {
               [1, 2],
             ),
             isTrue,
+          );
+        });
+
+        test(
+            'setRemove() operation should not be mergeable with any other'
+            'operation other than setRemoveAll()', () {
+          testUnmergeableOperationShouldThrow(
+            parseObject: dietPlansObject,
+            testingOn: dietPlansObject.setRemove,
+            excludeMergeableOperations: [dietPlansObject.setRemoveAll],
+          );
+        });
+
+        test(
+            'setRemoveAll() operation should not be mergeable with any other'
+            'operation other than setRemove()', () {
+          testUnmergeableOperationShouldThrow(
+            parseObject: dietPlansObject,
+            testingOn: dietPlansObject.setRemoveAll,
+            excludeMergeableOperations: [dietPlansObject.setRemove],
           );
         });
       },
@@ -1208,7 +1285,14 @@ void main() {
 }
 
 /// If an unmergeable operation [testingOn] is attempted after an operation,
-/// it should result in an exception being thrown.
+/// it should result in an exception being thrown. in context of the same key.
+///
+/// So for example you can call setAdd after setAddAll on the same key, because
+/// the values can be merged together. but calling setAdd after setIncrement
+/// will throw an error because you can not increment a value and then add a
+/// value to it like a list, it is not a list in the first place to be able
+/// to add to it.
+///
 ///
 /// if a certain operation cannot be merged or combined with other operations
 /// in a particular context, then an exception should be thrown to alert
