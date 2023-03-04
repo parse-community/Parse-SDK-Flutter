@@ -1335,7 +1335,8 @@ void main() {
         );
 
         // act
-        final ParseResponse parseResponse = await dietPlansObject.unset(keyFat);
+        final ParseResponse parseResponse =
+            await dietPlansObject.unset(keyFat, offlineOnly: false);
 
         // assert
         expect(parseResponse.success, isTrue);
@@ -1353,24 +1354,19 @@ void main() {
 
       test(
           'If objectId is null, unset() should unset a value from ParseObject '
-          'locally and not make any call to the server and return success Response',
+          'locally and not make any call to the server and return unsuccessful Response',
           () async {
         // arrange
         dietPlansObject.set(keyFat, 2);
 
         // act
-        final ParseResponse parseResponse = await dietPlansObject.unset(keyFat);
+        final ParseResponse parseResponse =
+            await dietPlansObject.unset(keyFat, offlineOnly: false);
 
         // assert
         expect(parseResponse.success, isFalse);
 
         expect(dietPlansObject.get(keyFat), isNull);
-
-        verifyNever(client.put(
-          captureAny,
-          options: anyNamed("options"),
-          data: anyNamed('data'),
-        ));
 
         verifyZeroInteractions(client);
       });
