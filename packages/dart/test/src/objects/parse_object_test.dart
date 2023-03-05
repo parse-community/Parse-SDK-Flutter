@@ -35,7 +35,7 @@ void main() {
       ParseObject myUserObject = ParseObject("MyUser", client: client);
       myUserObject.objectId = "Mn1iJTkWTE";
 
-      var desiredOutput = {
+      const desiredOutput = {
         "results": [
           {
             "objectId": "Mn1iJTkWTE",
@@ -71,7 +71,7 @@ void main() {
       // act
       ParseObject parseObject = await myUserObject.fetch(include: ["img"]);
 
-      var objectDesiredOutput = {
+      const objectDesiredOutput = {
         "className": "MyFile",
         "objectId": "8nGrLj3Mvk",
         "createdAt": "2022-11-14T10:55:56.025Z",
@@ -109,7 +109,7 @@ void main() {
       ParseObject myUserObject = ParseObject("MyUser", client: client);
       myUserObject.objectId = "Mn1iJTkWTE";
 
-      var desiredOutput = {
+      const desiredOutput = {
         "results": [
           {
             "objectId": "Mn1iJTkWTE",
@@ -148,7 +148,7 @@ void main() {
 
       ParseObject parseObject = response.results?.first;
 
-      var objectDesiredOutput = {
+      const objectDesiredOutput = {
         "className": "MyFile",
         "objectId": "8nGrLj3Mvk",
         "createdAt": "2022-11-14T10:55:56.025Z",
@@ -192,7 +192,7 @@ void main() {
       test('getAll() should return all objects', () async {
         // arrange
 
-        var desiredOutput = {
+        const desiredOutput = {
           "results": [
             {
               "objectId": "lHJEkg7kxm",
@@ -297,10 +297,18 @@ void main() {
         ParseResponse response = await dietPlansObject.getAll();
 
         // assert
+        expect(response.success, isFalse);
+
+        expect(response.result, isNull);
+
+        expect(response.count, isZero);
 
         expect(response.results, isNull);
+
         expect(response.error, isNotNull);
+
         expect(response.error!.exception, equals(error));
+
         expect(response.error!.code, equals(-1));
 
         verify(client.get(
@@ -333,7 +341,7 @@ void main() {
           () async {
         // arrange
 
-        final resultFromServer = {
+        const resultFromServer = {
           keyVarObjectId: "DLde4rYA8C",
           keyVarCreatedAt: "2023-02-26T00:20:37.187Z"
         };
@@ -411,12 +419,22 @@ void main() {
         ParseResponse response = await dietPlansObject.create();
 
         // assert
+        expect(response.success, isFalse);
+
+        expect(response.result, isNull);
+
+        expect(response.count, isZero);
 
         expect(response.results, isNull);
+
         expect(response.error, isNotNull);
+
         expect(response.error!.exception, equals(error));
+
         expect(response.error!.code, equals(-1));
+
         expect(dietPlansObject.objectId, isNull);
+
         expect(dietPlansObject.createdAt, isNull);
 
         verify(client.post(
@@ -453,7 +471,7 @@ void main() {
           'i.e: mutate the object state to reflect the new update', () async {
         // arrange
 
-        final resultFromServer = {
+        const resultFromServer = {
           keyVarUpdatedAt: "2023-02-26T13:25:27.865Z",
         };
 
@@ -533,10 +551,18 @@ void main() {
         ParseResponse response = await dietPlansObject.update();
 
         // assert
+        expect(response.success, isFalse);
+
+        expect(response.result, isNull);
+
+        expect(response.count, isZero);
 
         expect(response.results, isNull);
+
         expect(response.error, isNotNull);
+
         expect(response.error!.exception, equals(error));
+
         expect(response.error!.code, equals(ParseError.otherCause));
 
         // even if the update failed, the updated values should remain the same
@@ -586,7 +612,7 @@ void main() {
           user1 = ParseUser.forQuery()..objectId = 'user1';
           user2 = ParseUser.forQuery()..objectId = 'user2';
 
-          final resultFromServer = {
+          const resultFromServer = {
             "objectId": "O6BHlwV48Z",
             "Name": "new name",
             "Description": "Low fat diet.",
@@ -616,15 +642,13 @@ void main() {
         );
 
         test('addRelation(): the relation should hold two objects ', () {
-          // arrange
-
           // act
           dietPlansObject.addRelation('usersRelation', [user1, user2]);
 
           // assert
           final toJsonAfterAddRelation = dietPlansObject.toJson(forApiRQ: true);
 
-          final expectedToJson = {
+          const expectedToJson = {
             "usersRelation": {
               "__op": "AddRelation",
               "objects": [
@@ -851,7 +875,7 @@ void main() {
             'should return Instance of Iterable that NOT contains the removed values',
             () {
           // arrange
-          final resultFromServer = {
+          const resultFromServer = {
             "objectId": "O6BHlwV48Z",
             "createdAt": "2023-02-26T13:23:03.073Z",
             "updatedAt": "2023-03-01T03:38:16.390Z",
@@ -885,7 +909,7 @@ void main() {
             'should return Instance of Iterable that NOT contains the removed values',
             () {
           // arrange
-          final resultFromServer = {
+          const resultFromServer = {
             "objectId": "O6BHlwV48Z",
             "createdAt": "2023-02-26T13:23:03.073Z",
             "updatedAt": "2023-03-01T03:38:16.390Z",
@@ -918,7 +942,7 @@ void main() {
             'the array should not been affected by removing non existent '
             'values using setRemove()', () {
           // arrange
-          final resultFromServer = {
+          const resultFromServer = {
             "objectId": "O6BHlwV48Z",
             "createdAt": "2023-02-26T13:23:03.073Z",
             "updatedAt": "2023-03-01T03:38:16.390Z",
@@ -952,7 +976,7 @@ void main() {
             'the array should not been affected by removing non existent '
             'values using setRemoveAll()', () {
           // arrange
-          final resultFromServer = {
+          const resultFromServer = {
             "objectId": "O6BHlwV48Z",
             "createdAt": "2023-02-26T13:23:03.073Z",
             "updatedAt": "2023-03-01T03:38:16.390Z",
@@ -1011,7 +1035,7 @@ void main() {
             'removing from an array and then adding to it should result in error '
             'the user can not remove and add in the same time', () {
           // arrange
-          final resultFromServer = {
+          const resultFromServer = {
             "objectId": "O6BHlwV48Z",
             "createdAt": "2023-02-26T13:23:03.073Z",
             "updatedAt": "2023-03-01T03:38:16.390Z",
@@ -1120,7 +1144,7 @@ void main() {
             'Incrementing should work with already present values decoded from API',
             () {
           // arrange
-          final resultFromServer = {
+          const resultFromServer = {
             "objectId": "O6BHlwV48Z",
             "createdAt": "2023-02-26T13:23:03.073Z",
             "updatedAt": "2023-03-01T03:38:16.390Z",
@@ -1207,7 +1231,7 @@ void main() {
             'Decrementing should work with already present values decoded from API',
             () {
           // arrange
-          final resultFromServer = {
+          const resultFromServer = {
             "objectId": "O6BHlwV48Z",
             "createdAt": "2023-02-26T13:23:03.073Z",
             "updatedAt": "2023-03-01T03:38:16.390Z",
@@ -1319,8 +1343,8 @@ void main() {
         dietPlansObject.set(keyFat, 2);
         dietPlansObject.objectId = "O6BHlwV48Z";
 
-        final String putData = '{"$keyFat":{"__op":"Delete"}}';
-        final resultFromServer = {
+        const String putData = '{"$keyFat":{"__op":"Delete"}}';
+        const resultFromServer = {
           keyVarUpdatedAt: "2023-03-04T03:34:35.076Z",
         };
         when(client.put(
@@ -1360,15 +1384,179 @@ void main() {
         dietPlansObject.set(keyFat, 2);
 
         // act
-        final ParseResponse parseResponse =
+        final parseResponse =
             await dietPlansObject.unset(keyFat, offlineOnly: false);
 
         // assert
         expect(parseResponse.success, isFalse);
 
+        expect(parseResponse.result, isNull);
+
+        expect(parseResponse.count, isZero);
+
+        expect(parseResponse.statusCode, ParseError.otherCause);
+
         expect(dietPlansObject.get(keyFat), isNull);
 
         verifyZeroInteractions(client);
+      });
+    });
+
+    group("query()", () {
+      const keyFat = 'fat';
+
+      late ParseObject dietPlansObject;
+
+      late String stringQuery; //where={"fat": 15}
+
+      const getURL = 'https://example.com/classes/Diet_Plans?where={"fat": 15}';
+
+      //https://example.com/classes/Diet_Plans?where=%7B%22fat%22:%2015%7D
+      final normalizedGetURLRepresentation = Uri.parse(getURL).toString();
+
+      setUp(() {
+        dietPlansObject = ParseObject("Diet_Plans", client: client);
+
+        final query = QueryBuilder(dietPlansObject)..whereEqualTo(keyFat, 15);
+        stringQuery = query.buildQuery();
+      });
+
+      test('query() should return the expected result from server', () async {
+        // arrange
+        const resultFromServer = {
+          "results": [
+            {
+              "objectId": "lHJEkg7kxm",
+              "Name": "Textbook",
+              "Description":
+                  "For an active lifestyle and a straight forward macro plan, we suggest this plan.",
+              "Fat": 25,
+              "Carbs": 50,
+              "Protein": 25,
+              "Status": false,
+              "user": {
+                "__type": "Pointer",
+                "className": "_User",
+                "objectId": "cmWCmCAyQQ"
+              },
+              "createdAt": "2023-02-24T15:39:44.800Z",
+              "updatedAt": "2023-02-24T22:28:17.867Z",
+              "location": {
+                "__type": "GeoPoint",
+                "latitude": 50,
+                "longitude": 0
+              },
+              "anArray": ["3", "4"]
+            },
+            {
+              "objectId": "15NCdmBFBw",
+              "Name": "Zone Diet",
+              "Description":
+                  "Popular with CrossFit users. Zone Diet targets similar macros.",
+              "Fat": 30,
+              "Carbs": 40,
+              "Protein": 30,
+              "Status": true,
+              "user": {
+                "__type": "Pointer",
+                "className": "_User",
+                "objectId": "cmWCmCAyQQ"
+              },
+              "createdAt": "2023-02-24T15:44:17.781Z",
+              "updatedAt": "2023-02-24T22:28:45.446Z",
+              "location": {
+                "__type": "GeoPoint",
+                "latitude": 10,
+                "longitude": 20
+              },
+              "anArray": ["1", "2"],
+              "afile": {
+                "__type": "File",
+                "name": "33b6acb416c0mmer-wallpapers.png",
+                "url":
+                    "https://parsefiles.back4app.com/gyBkQBRSapgwfxB/cers.png"
+              }
+            }
+          ]
+        };
+
+        final resultList = resultFromServer["results"]!;
+        final firstObject = ParseObject('Diet_Plans').fromJson(resultList[0]);
+        final secondObject = ParseObject('Diet_Plans').fromJson(resultList[1]);
+
+        when(client.get(
+          normalizedGetURLRepresentation,
+        )).thenAnswer(
+          (realInvocation) async => ParseNetworkResponse(
+            statusCode: 200,
+            data: jsonEncode(resultFromServer),
+          ),
+        );
+
+        // act
+        final response = await dietPlansObject.query(stringQuery);
+
+        // assert
+        expect(response, isA<ParseResponse>());
+
+        expect(response.count, equals(2));
+
+        expect(response.success, isTrue);
+
+        expect(response.results, isNotNull);
+
+        expect(response.results, isA<List<ParseObject>>());
+
+        final responseResults = List<ParseObject>.from(response.results!);
+
+        expect(
+          jsonEncode(responseResults[0].toJson()),
+          equals(jsonEncode(firstObject.toJson())),
+        );
+
+        expect(
+          jsonEncode(responseResults[1].toJson()),
+          equals(jsonEncode(secondObject.toJson())),
+        );
+
+        verify(client.get(
+          normalizedGetURLRepresentation,
+        )).called(1);
+
+        verifyNoMoreInteractions(client);
+      });
+
+      test('query() should return error', () async {
+        // arrange
+        final error = Exception('error');
+
+        when(client.get(
+          normalizedGetURLRepresentation,
+        )).thenThrow(error);
+
+        // act
+        final response = await dietPlansObject.query(stringQuery);
+
+        // assert
+        expect(response.success, isFalse);
+
+        expect(response.result, isNull);
+
+        expect(response.count, isZero);
+
+        expect(response.results, isNull);
+
+        expect(response.error, isNotNull);
+
+        expect(response.error!.exception, equals(error));
+
+        expect(response.error!.code, equals(ParseError.otherCause));
+
+        verify(client.get(
+          normalizedGetURLRepresentation,
+        )).called(1);
+
+        verifyNoMoreInteractions(client);
       });
     });
   });
@@ -1475,7 +1663,6 @@ void testUnmergeableOperationShouldThrow({
     expect(
       () => Function.apply(testingOn, testingOnValue),
       throwsA(isA<String>()),
-      reason: 'Can not call $testingOn after $functionRef',
     );
   }
 }
