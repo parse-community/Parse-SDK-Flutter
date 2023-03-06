@@ -1334,19 +1334,17 @@ void main() {
 
       late ParseObject dietPlansObject;
 
-      late String putPath;
-
       setUp(() {
         dietPlansObject = ParseObject("Diet_Plans", client: client);
-
-        putPath = Uri.parse(
-          '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
-        ).toString();
       });
 
       test('unset() should unset a value from ParseObject locally', () async {
         // arrange
         dietPlansObject.set(keyFat, 2);
+
+        final putPath = Uri.parse(
+          '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
+        ).toString();
 
         // act
         final ParseResponse parseResponse =
@@ -1369,8 +1367,13 @@ void main() {
       test('unset() should unset a value from ParseObject locally on online',
           () async {
         // arrange
+
         dietPlansObject.set(keyFat, 2);
         dietPlansObject.objectId = "O6BHlwV48Z";
+
+        final putPath = Uri.parse(
+          '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
+        ).toString();
 
         const String putData = '{"$keyFat":{"__op":"Delete"}}';
         const resultFromServer = {
