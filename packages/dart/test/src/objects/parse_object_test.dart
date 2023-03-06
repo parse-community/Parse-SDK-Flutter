@@ -10,6 +10,8 @@ import '../../parse_query_test.mocks.dart';
 
 @GenerateMocks([ParseClient])
 void main() {
+  const serverUrl = 'https://example.com';
+
   group('parseObject', () {
     late MockParseClient client;
     setUp(() async {
@@ -17,7 +19,7 @@ void main() {
 
       await Parse().initialize(
         'appId',
-        'https://example.com',
+        serverUrl,
         debug: true,
         // to prevent automatic detection
         fileDirectory: 'someDirectory',
@@ -185,8 +187,14 @@ void main() {
     group('getAll()', () {
       late ParseObject dietPlansObject;
 
+      late String getPath;
+
       setUp(() {
         dietPlansObject = ParseObject("Diet_Plans", client: client);
+
+        getPath = Uri.parse(
+          '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}',
+        ).toString();
       });
 
       test('getAll() should return all objects', () async {
@@ -250,7 +258,7 @@ void main() {
         };
 
         when(client.get(
-          any,
+          getPath,
           options: anyNamed("options"),
           onReceiveProgress: anyNamed("onReceiveProgress"),
         )).thenAnswer((_) async => ParseNetworkResponse(
@@ -268,13 +276,15 @@ void main() {
 
         expect(response.results?.first, isA<ParseObject>());
 
+        expect(response.count, equals(2));
+
         expect(
           listParseObject.length,
           equals(desiredOutput["results"]!.length),
         );
 
         verify(client.get(
-          captureAny,
+          getPath,
           options: anyNamed("options"),
           onReceiveProgress: anyNamed("onReceiveProgress"),
         )).called(1);
@@ -288,7 +298,7 @@ void main() {
         final error = Exception('error');
 
         when(client.get(
-          any,
+          getPath,
           options: anyNamed("options"),
           onReceiveProgress: anyNamed("onReceiveProgress"),
         )).thenThrow(error);
@@ -312,7 +322,7 @@ void main() {
         expect(response.error!.code, equals(-1));
 
         verify(client.get(
-          captureAny,
+          getPath,
           options: anyNamed("options"),
           onReceiveProgress: anyNamed("onReceiveProgress"),
         )).called(1);
@@ -324,6 +334,8 @@ void main() {
     group('create()', () {
       late ParseObject dietPlansObject;
 
+      late String postPath;
+
       setUp(() {
         final user = ParseObject(keyClassUser)..objectId = "ELR124r8C";
         dietPlansObject = ParseObject("Diet_Plans", client: client);
@@ -332,6 +344,10 @@ void main() {
           ..set('Fat', 15)
           ..set('user', user)
           ..set("location", ParseGeoPoint(latitude: 10, longitude: 10));
+
+        postPath = Uri.parse(
+          '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}',
+        ).toString();
       });
 
       test(
@@ -348,7 +364,7 @@ void main() {
         final postData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
 
         when(client.post(
-          any,
+          postPath,
           options: anyNamed("options"),
           data: postData,
         )).thenAnswer(
@@ -396,7 +412,7 @@ void main() {
         );
 
         verify(client.post(
-          captureAny,
+          postPath,
           options: anyNamed("options"),
           data: postData,
         )).called(1);
@@ -410,7 +426,7 @@ void main() {
         final postData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
         final error = Exception('error');
         when(client.post(
-          any,
+          postPath,
           options: anyNamed("options"),
           data: postData,
         )).thenThrow(error);
@@ -438,7 +454,7 @@ void main() {
         expect(dietPlansObject.createdAt, isNull);
 
         verify(client.post(
-          captureAny,
+          postPath,
           options: anyNamed("options"),
           data: postData,
         )).called(1);
@@ -456,12 +472,18 @@ void main() {
 
       late ParseObject dietPlansObject;
 
+      late String putPath;
+
       setUp(() {
         dietPlansObject = ParseObject("Diet_Plans", client: client);
         dietPlansObject
           ..objectId = "DLde4rYA8C"
           ..set(keyName, newNameValue)
           ..set(keyFat, newFatValue);
+
+        putPath = Uri.parse(
+          '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
+        ).toString();
       });
 
       test(
@@ -478,7 +500,7 @@ void main() {
         final putData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
 
         when(client.put(
-          any,
+          putPath,
           options: anyNamed("options"),
           data: putData,
         )).thenAnswer(
@@ -526,7 +548,7 @@ void main() {
         );
 
         verify(client.put(
-          captureAny,
+          putPath,
           options: anyNamed("options"),
           data: putData,
         )).called(1);
@@ -541,8 +563,9 @@ void main() {
 
         final putData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
         final error = Exception('error');
+
         when(client.put(
-          any,
+          putPath,
           options: anyNamed("options"),
           data: putData,
         )).thenThrow(error);
@@ -570,7 +593,7 @@ void main() {
         expect(dietPlansObject.get(keyFat), equals(newFatValue));
 
         verify(client.put(
-          captureAny,
+          putPath,
           options: anyNamed("options"),
           data: putData,
         )).called(1);
@@ -1311,8 +1334,14 @@ void main() {
 
       late ParseObject dietPlansObject;
 
+      late String putPath;
+
       setUp(() {
         dietPlansObject = ParseObject("Diet_Plans", client: client);
+
+        putPath = Uri.parse(
+          '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
+        ).toString();
       });
 
       test('unset() should unset a value from ParseObject locally', () async {
@@ -1329,7 +1358,7 @@ void main() {
         expect(dietPlansObject.get(keyFat), isNull);
 
         verifyNever(client.put(
-          captureAny,
+          putPath,
           options: anyNamed("options"),
           data: anyNamed('data'),
         ));
@@ -1347,8 +1376,9 @@ void main() {
         const resultFromServer = {
           keyVarUpdatedAt: "2023-03-04T03:34:35.076Z",
         };
+
         when(client.put(
-          any,
+          putPath,
           options: anyNamed("options"),
           data: putData,
         )).thenAnswer(
@@ -1368,7 +1398,7 @@ void main() {
         expect(dietPlansObject.get(keyFat), isNull);
 
         verify(client.put(
-          captureAny,
+          putPath,
           options: anyNamed("options"),
           data: putData,
         )).called(1);
@@ -1407,18 +1437,22 @@ void main() {
 
       late ParseObject dietPlansObject;
 
-      late String stringQuery; //where={"fat": 15}
-
-      const getURL = 'https://example.com/classes/Diet_Plans?where={"fat": 15}';
+      //where={"fat": 15}
+      late String stringQuery;
 
       //https://example.com/classes/Diet_Plans?where=%7B%22fat%22:%2015%7D
-      final normalizedGetURLRepresentation = Uri.parse(getURL).toString();
+      late String getPath;
 
       setUp(() {
         dietPlansObject = ParseObject("Diet_Plans", client: client);
 
         final query = QueryBuilder(dietPlansObject)..whereEqualTo(keyFat, 15);
         stringQuery = query.buildQuery();
+
+        final getURI = Uri.parse(
+          '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}',
+        );
+        getPath = getURI.replace(query: 'where={"fat": 15}').toString();
       });
 
       test('query() should return the expected result from server', () async {
@@ -1485,7 +1519,7 @@ void main() {
         final secondObject = ParseObject('Diet_Plans').fromJson(resultList[1]);
 
         when(client.get(
-          normalizedGetURLRepresentation,
+          getPath,
         )).thenAnswer(
           (realInvocation) async => ParseNetworkResponse(
             statusCode: 200,
@@ -1520,7 +1554,7 @@ void main() {
         );
 
         verify(client.get(
-          normalizedGetURLRepresentation,
+          getPath,
         )).called(1);
 
         verifyNoMoreInteractions(client);
@@ -1531,7 +1565,7 @@ void main() {
         final error = Exception('error');
 
         when(client.get(
-          normalizedGetURLRepresentation,
+          getPath,
         )).thenThrow(error);
 
         // act
@@ -1553,7 +1587,7 @@ void main() {
         expect(response.error!.code, equals(ParseError.otherCause));
 
         verify(client.get(
-          normalizedGetURLRepresentation,
+          getPath,
         )).called(1);
 
         verifyNoMoreInteractions(client);
@@ -1567,14 +1601,16 @@ void main() {
 
       late String stringDistinctQuery = 'distinct=$keyName';
 
-      final getURL =
-          'https://example.com/aggregate/Diet_Plans?$stringDistinctQuery';
-
       // https://example.com/aggregate/Diet_Plans?distinct=Name
-      final normalizedGetURLRepresentation = Uri.parse(getURL).toString();
+      late String getPath;
 
       setUp(() {
         dietPlansObject = ParseObject("Diet_Plans", client: client);
+
+        final getURI = Uri.parse(
+          '$serverUrl$keyEndPointAggregate${dietPlansObject.parseClassName}',
+        );
+        getPath = getURI.replace(query: stringDistinctQuery).toString();
       });
 
       test(
@@ -1643,7 +1679,7 @@ void main() {
         final secondObject = ParseObject('Diet_Plans').fromJson(resultList[1]);
 
         when(client.get(
-          normalizedGetURLRepresentation,
+          getPath,
         )).thenAnswer(
           (realInvocation) async => ParseNetworkResponse(
             statusCode: 200,
@@ -1678,7 +1714,7 @@ void main() {
         );
 
         verify(client.get(
-          normalizedGetURLRepresentation,
+          getPath,
         )).called(1);
 
         verifyNoMoreInteractions(client);
@@ -1689,7 +1725,7 @@ void main() {
         final error = Exception('error');
 
         when(client.get(
-          normalizedGetURLRepresentation,
+          getPath,
         )).thenThrow(error);
 
         // act
@@ -1711,7 +1747,7 @@ void main() {
         expect(response.error!.code, equals(ParseError.otherCause));
 
         verify(client.get(
-          normalizedGetURLRepresentation,
+          getPath,
         )).called(1);
 
         verifyNoMoreInteractions(client);
