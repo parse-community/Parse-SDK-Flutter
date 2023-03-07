@@ -51,7 +51,7 @@ void main() {
         options: anyNamed("options"),
         data: postData,
       )).thenAnswer(
-        (realInvocation) async => ParseNetworkResponse(
+        (_) async => ParseNetworkResponse(
           statusCode: 200,
           data: jsonEncode(resultFromServer),
         ),
@@ -64,7 +64,11 @@ void main() {
       final resultList = response.results;
 
       expect(resultList, isNotNull);
+
+      expect(resultList, isA<List<ParseObject?>>());
+
       expect(resultList!.first, isNotNull);
+
       expect(resultList.first, isA<ParseObject>());
 
       final parseObject = (resultList.first as ParseObject);
@@ -73,6 +77,7 @@ void main() {
         parseObject.createdAt!.toIso8601String(),
         equals(resultFromServer[keyVarCreatedAt]),
       );
+
       expect(
         dietPlansObject.createdAt!.toIso8601String(),
         equals(resultFromServer[keyVarCreatedAt]),
@@ -82,6 +87,7 @@ void main() {
         parseObject.objectId,
         equals(resultFromServer[keyVarObjectId]),
       );
+
       expect(
         dietPlansObject.objectId,
         equals(resultFromServer[keyVarObjectId]),
@@ -130,7 +136,7 @@ void main() {
 
       expect(response.error!.exception, equals(error));
 
-      expect(response.error!.code, equals(-1));
+      expect(response.error!.code, equals(ParseError.otherCause));
 
       expect(dietPlansObject.objectId, isNull);
 
