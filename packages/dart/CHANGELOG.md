@@ -1,3 +1,13 @@
+## [4.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.14...dart-4.0.0) (2023-03-07)
+
+### BREAKING CHANGES
+
+* Upgrades to dio 5.x ([#824](https://github.com/parse-community/Parse-SDK-Flutter/pull/824))
+
+### Feature
+
+* Upgrade various dependencies and fix warnings ([#824](https://github.com/parse-community/Parse-SDK-Flutter/pull/824))
+
 ## [3.1.15](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.14...dart-3.1.15) (2023-02-28)
 
 ### Bug Fixes
@@ -173,7 +183,7 @@ Bug fixes
 ## 1.0.22
 
 Added dirty children
-Added option of sembast or share_preferences
+Added option of sembast or share_preferences 
 
 ## 1.0.21
 
@@ -195,7 +205,7 @@ Bug fix
 
 ## 1.0.17
 
-LiveQuery fix
+LiveQuery fix 
 Bug fixes
 
 ## 1.0.16

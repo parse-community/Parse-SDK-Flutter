@@ -112,8 +112,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// if using custom ParseUser object
   Future<ParseResponse> getUpdatedUser(
       {bool? debug, ParseClient? client}) async {
-    final bool _debug = isDebugEnabled(objectLevelDebug: debug);
-    final ParseClient _client = client ??
+    final bool debugLocal = isDebugEnabled(objectLevelDebug: debug);
+    final ParseClient clientLocal = client ??
         ParseCoreData().clientCreator(
             sendSessionId: true,
             securityContext: ParseCoreData().securityContext);
@@ -130,15 +130,16 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
 
     try {
-      final Uri url = getSanitisedUri(_client, keyEndPointUserName);
-      final ParseNetworkResponse response = await _client.get(
+      final Uri url = getSanitisedUri(clientLocal, keyEndPointUserName);
+      final ParseNetworkResponse response = await clientLocal.get(
         url.toString(),
         options: ParseNetworkOptions(headers: headers),
       );
       return await _handleResponse(
-          this, response, ParseApiRQ.currentUser, _debug, parseClassName);
+          this, response, ParseApiRQ.currentUser, debugLocal, parseClassName);
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.currentUser, _debug, parseClassName);
+      return handleException(
+          e, ParseApiRQ.currentUser, debugLocal, parseClassName);
     }
   }
 
@@ -442,20 +443,21 @@ class ParseUser extends ParseObject implements ParseCloneable {
   static Future<ParseResponse> all({bool? debug, ParseClient? client}) async {
     final ParseUser emptyUser = _getEmptyUser();
 
-    final bool _debug = isDebugEnabled(objectLevelDebug: debug);
-    final ParseClient _client = client ??
+    final bool debugLocal = isDebugEnabled(objectLevelDebug: debug);
+    final ParseClient clientLocal = client ??
         ParseCoreData().clientCreator(
             sendSessionId: true,
             securityContext: ParseCoreData().securityContext);
 
     try {
-      final Uri url = getSanitisedUri(_client, path);
-      final ParseNetworkResponse response = await _client.get(url.toString());
+      final Uri url = getSanitisedUri(clientLocal, path);
+      final ParseNetworkResponse response =
+          await clientLocal.get(url.toString());
       final ParseResponse parseResponse = handleResponse<ParseUser>(
-          emptyUser, response, ParseApiRQ.getAll, _debug, keyClassUser);
+          emptyUser, response, ParseApiRQ.getAll, debugLocal, keyClassUser);
       return parseResponse;
     } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.getAll, _debug, keyClassUser);
+      return handleException(e, ParseApiRQ.getAll, debugLocal, keyClassUser);
     }
   }
 

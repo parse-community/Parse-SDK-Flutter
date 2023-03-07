@@ -1,13 +1,11 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart' as dio;
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 import 'dio_adapter_io.dart' if (dart.library.js) 'dio_adapter_js.dart';
 
 class ParseDioClient extends ParseClient {
-  ParseDioClient(
-      {bool sendSessionId = false, SecurityContext? securityContext}) {
+  // securityContext is SecurityContext
+  ParseDioClient({bool sendSessionId = false, dynamic securityContext}) {
     _client = _ParseDioClient(
       sendSessionId: sendSessionId,
       securityContext: securityContext,
@@ -66,7 +64,8 @@ class ParseDioClient extends ParseClient {
           statusCode: error.response?.statusCode ?? ParseError.otherCause,
         );
       } else {
-        return _getOtherCaseErrorForParseNetworkResponse(error.error);
+        return _getOtherCaseErrorForParseNetworkResponse(
+            error.error.toString());
       }
     }
   }
@@ -141,7 +140,8 @@ class ParseDioClient extends ParseClient {
           statusCode: error.response?.statusCode ?? ParseError.otherCause,
         );
       } else {
-        return _getOtherCaseErrorForParseNetworkResponse(error.error);
+        return _getOtherCaseErrorForParseNetworkResponse(
+            error.error.toString());
       }
     }
   }
@@ -178,8 +178,7 @@ class ParseDioClient extends ParseClient {
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset
 class _ParseDioClient with dio.DioMixin implements dio.Dio {
-  _ParseDioClient(
-      {bool sendSessionId = false, SecurityContext? securityContext})
+  _ParseDioClient({bool sendSessionId = false, dynamic securityContext})
       : _sendSessionId = sendSessionId {
     options = dio.BaseOptions();
     httpClientAdapter = createHttpClientAdapter(securityContext);
@@ -243,7 +242,7 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
 
   void _logCUrl(dio.Options options, dynamic data, String url) {
     String curlCmd = 'curl';
-    curlCmd += ' -X ' + options.method!;
+    curlCmd += ' -X ${options.method!}';
     bool compressed = false;
     options.headers!.forEach((String name, dynamic value) {
       if (name.toLowerCase() == 'accept-encoding' &&
@@ -272,8 +271,8 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
 class _Options extends dio.Options {
   _Options({
     String? method,
-    int? sendTimeout,
-    int? receiveTimeout,
+    Duration? sendTimeout,
+    Duration? receiveTimeout,
     Map<String, dynamic>? extra,
     Map<String, dynamic>? headers,
     dio.ResponseType? responseType,
