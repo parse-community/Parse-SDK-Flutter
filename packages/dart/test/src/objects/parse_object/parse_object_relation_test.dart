@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 
 import '../../../parse_query_test.mocks.dart';
 import 'parse_object_test.dart';
-import 'test_utils.dart';
+import '../../../test_utils.dart';
 
 void main() {
   group('Relation add/edit/remove', () {
