@@ -41,7 +41,7 @@ void main() {
       when(client.delete(
         deletePath,
       )).thenAnswer(
-        (realInvocation) async => ParseNetworkResponse(
+        (_) async => ParseNetworkResponse(
           statusCode: 200,
           data: jsonEncode(resultFromServer),
         ),
@@ -158,7 +158,7 @@ void main() {
       when(client.delete(
         deletePath,
       )).thenAnswer(
-        (realInvocation) async => ParseNetworkResponse(
+        (_) async => ParseNetworkResponse(
           statusCode: 200,
           data: jsonEncode(resultFromServer),
         ),

@@ -91,7 +91,7 @@ void main() {
       when(client.get(
         getPath,
       )).thenAnswer(
-        (realInvocation) async => ParseNetworkResponse(
+        (_) async => ParseNetworkResponse(
           statusCode: 200,
           data: jsonEncode(resultFromServer),
         ),
