@@ -2,7 +2,7 @@ library flutter_parse_sdk;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'package:universal_io/io.dart';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
@@ -142,9 +142,9 @@ class Parse {
 
   Future<ParseResponse> healthCheck(
       {bool? debug, ParseClient? client, bool? sendSessionIdByDefault}) async {
-    final bool _debug = isDebugEnabled(objectLevelDebug: debug);
+    final bool debugLocal = isDebugEnabled(objectLevelDebug: debug);
 
-    final ParseClient _client = client ??
+    final ParseClient clientLocal = client ??
         ParseCoreData().clientCreator(
             sendSessionId:
                 sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
@@ -154,11 +154,11 @@ class Parse {
     const ParseApiRQ type = ParseApiRQ.healthCheck;
 
     try {
-      final ParseNetworkResponse response =
-          await _client.get('${ParseCoreData().serverUrl}$keyEndPointHealth');
-      return handleResponse<Parse>(null, response, type, _debug, className);
+      final ParseNetworkResponse response = await clientLocal
+          .get('${ParseCoreData().serverUrl}$keyEndPointHealth');
+      return handleResponse<Parse>(null, response, type, debugLocal, className);
     } on Exception catch (e) {
-      return handleException(e, type, _debug, className);
+      return handleException(e, type, debugLocal, className);
     }
   }
 }

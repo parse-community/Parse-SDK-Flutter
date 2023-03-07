@@ -9,17 +9,17 @@ class ParseLiveList<T extends ParseObject> {
   }
 
   static Future<ParseLiveList<T>> create<T extends ParseObject>(
-    QueryBuilder<T> _query, {
+    QueryBuilder<T> query, {
     bool? listenOnAllSubItems,
     List<String>? listeningIncludes,
     bool lazyLoading = true,
     List<String>? preloadedColumns,
   }) {
     final ParseLiveList<T> parseLiveList = ParseLiveList<T>._(
-      _query,
+      query,
       listenOnAllSubItems == true
           ? _toIncludeMap(
-              _query.limiters['include']?.toString().split(',') ?? <String>[])
+              query.limiters['include']?.toString().split(',') ?? <String>[])
           : _toIncludeMap(listeningIncludes ?? <String>[]),
       lazyLoading,
       preloadedColumns: preloadedColumns ?? const <String>[],
