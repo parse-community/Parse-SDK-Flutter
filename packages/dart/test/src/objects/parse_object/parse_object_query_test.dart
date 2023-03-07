@@ -111,6 +111,8 @@ void main() {
 
       expect(response.results, isNotNull);
 
+      expect(response.error, isNull);
+
       expect(response.results, isA<List<ParseObject>>());
 
       final responseResults = List<ParseObject>.from(response.results!);
