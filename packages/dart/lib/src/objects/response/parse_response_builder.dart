@@ -115,7 +115,7 @@ class _ParseResponseBuilder {
   List<T> _handleMultipleResults<T>(T object, List<dynamic> data) {
     final List<T> resultsList = <T>[];
     for (dynamic value in data) {
-      resultsList.add(_handleSingleResult<T>(object, value, true)!);
+      resultsList.add(_handleSingleResult<T>(object, value, true) as T);
     }
     return resultsList;
   }

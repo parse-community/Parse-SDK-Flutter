@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
@@ -161,7 +161,7 @@ class _ParseHTTPClient extends http.BaseClient {
 
   void _logCUrl(http.BaseRequest request) {
     String curlCmd = 'curl';
-    curlCmd += ' -X ' + request.method;
+    curlCmd += ' -X ${request.method}';
     bool compressed = false;
     request.headers.forEach((String name, String value) {
       if (name.toLowerCase() == 'accept-encoding' &&

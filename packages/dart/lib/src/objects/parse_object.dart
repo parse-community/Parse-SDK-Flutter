@@ -226,7 +226,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     final String parsePath = tempUri.path;
     final dynamic request = <String, dynamic>{
       'method': method,
-      'path': '$parsePath$_path' + (objectId != null ? '/$objectId' : ''),
+      'path': '$parsePath$_path${objectId != null ? '/$objectId' : ''}',
       'body': toJson(forApiRQ: true)
     };
     return request;
