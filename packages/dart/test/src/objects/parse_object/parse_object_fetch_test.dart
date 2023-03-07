@@ -161,7 +161,7 @@ void main() {
       );
 
       dietPlansObject.objectId = '';
-      
+
       expect(
         () async => await dietPlansObject.fetch(),
         throwsA(isA<String>()),
