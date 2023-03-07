@@ -65,6 +65,17 @@ jobs:
         run: dart pub get --directory packages/dart
       - name: Analyze code
         run: dart analyze packages/dart
+  check-publish-dry-run-dart:
+    name: publish dry-run (dart)
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: publish dry run
+        run: cd packages/dart && dart pub publish --dry-run
   check-flutter:
     runs-on: ${{ matrix.os }}
     strategy:
