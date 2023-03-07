@@ -76,6 +76,9 @@ void main() {
         ]
       };
 
+      final expectedParseObject = ParseObject('Diet_Plans')
+        ..fromJson(resultsFromServer['results']!.first);
+
       when(client.get(
         getPath,
         options: anyNamed("options"),
@@ -89,10 +92,81 @@ void main() {
 
       // act
       ParseObject parseObject = await dietPlansObject.fetch(
-        include: ['img', 'owner'],
+        include: ['afile', 'owner'],
       );
 
       // assert
+
+      expect(
+        jsonEncode(parseObject.toJson(full: true)),
+        equals(jsonEncode(expectedParseObject.toJson(full: true))),
+      );
+
+      verify(client.get(
+        getPath,
+      )).called(1);
+
+      verifyNoMoreInteractions(client);
+    });
+
+    test(
+        'fetch() should return the same calling object in case of an error and '
+        'the object data should remain the same', () async {
+      // arrange
+      dietPlansObject.objectId = "Mn1iJTkWTE";
+
+      const keyFat = 'keyFat';
+      const keyFatValue = 15;
+
+      dietPlansObject.set(keyFat, keyFatValue);
+
+      final getPath = Uri.parse(
+        '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
+      ).toString();
+
+      final error = Exception('error');
+
+      when(client.get(
+        getPath,
+        options: anyNamed("options"),
+        onReceiveProgress: anyNamed("onReceiveProgress"),
+      )).thenThrow(error);
+
+      // act
+      ParseObject parseObject = await dietPlansObject.fetch();
+
+      // assert
+      expect(identical(parseObject, dietPlansObject), isTrue);
+
+      expect(dietPlansObject.get<int>(keyFat), equals(keyFatValue));
+
+      verify(client.get(
+        getPath,
+        options: anyNamed("options"),
+        onReceiveProgress: anyNamed("onReceiveProgress"),
+      )).called(1);
+
+      verifyNoMoreInteractions(client);
+    });
+
+    test('fetch() should throw exception if the objectId is null or empty ',
+        () async {
+      // arrange
+      dietPlansObject.objectId = null;
+
+      expect(
+        () async => await dietPlansObject.fetch(),
+        throwsA(isA<String>()),
+        reason: 'the objectId is null',
+      );
+
+      dietPlansObject.objectId = '';
+      
+      expect(
+        () async => await dietPlansObject.fetch(),
+        throwsA(isA<String>()),
+        reason: 'the objectId is empty',
+      );
     });
   });
 }
