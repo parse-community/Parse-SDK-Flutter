@@ -17,6 +17,7 @@ void main() {
       await initializeParse();
 
       dietPlansObject = ParseObject("Diet_Plans", client: client);
+      dietPlansObject.objectId = '';
     });
   });
 }
