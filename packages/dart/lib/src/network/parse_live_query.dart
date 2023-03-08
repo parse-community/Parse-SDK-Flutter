@@ -352,12 +352,12 @@ class LiveQueryClient {
     final QueryBuilder query = subscription.query;
     final List<String>? keysToReturn = query.limiters['keys']?.split(',');
     query.limiters.clear(); //Remove limits in LiveQuery
-    final String _where = query.buildQuery().replaceAll('where=', '');
+    final String where = query.buildQuery().replaceAll('where=', '');
 
     //Convert where condition to Map
-    Map<String, dynamic> _whereMap = <String, dynamic>{};
-    if (_where != '') {
-      _whereMap = json.decode(_where);
+    Map<String, dynamic> whereMap = <String, dynamic>{};
+    if (where != '') {
+      whereMap = json.decode(where);
     }
 
     final Map<String, dynamic> subscribeMessage = <String, dynamic>{
@@ -365,7 +365,7 @@ class LiveQueryClient {
       'requestId': subscription.requestId,
       'query': <String, dynamic>{
         'className': query.object.parseClassName,
-        'where': _whereMap,
+        'where': whereMap,
         if (keysToReturn != null && keysToReturn.isNotEmpty)
           'fields': keysToReturn
       }

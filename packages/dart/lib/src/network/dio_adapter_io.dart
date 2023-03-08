@@ -1,11 +1,10 @@
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
-import 'package:dio/adapter.dart';
+import 'package:dio/io.dart';
 import 'package:dio/dio.dart';
 
 HttpClientAdapter createHttpClientAdapter(SecurityContext? securityContext) {
-  final DefaultHttpClientAdapter defaultHttpClientAdapter =
-      DefaultHttpClientAdapter();
+  final IOHttpClientAdapter defaultHttpClientAdapter = IOHttpClientAdapter();
 
   if (securityContext != null) {
     defaultHttpClientAdapter.onHttpClientCreate =

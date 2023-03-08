@@ -1,9 +1,7 @@
-import 'dart:io';
-
-import 'package:dio/adapter_browser.dart';
+import 'package:dio/browser.dart';
 import 'package:dio/dio.dart';
 
-HttpClientAdapter createHttpClientAdapter(SecurityContext? securityContext) {
+HttpClientAdapter createHttpClientAdapter(dynamic securityContext) {
   final BrowserHttpClientAdapter browserHttpClientAdapter =
       BrowserHttpClientAdapter();
   return browserHttpClientAdapter;
