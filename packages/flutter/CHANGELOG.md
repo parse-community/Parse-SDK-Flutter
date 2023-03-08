@@ -1,11 +1,8 @@
-## [4.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-4.0.0) (2023-03-07)
+## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-3.1.4) (2023-03-01)
 
-### Breaking change
+### Bug Fixes
 
-* Change the source file name ([#845](https://github.com/parse-community/Parse-SDK-Flutter/issues/845))
-  rather than importing `parse_server_sdk.dart` now you to import `parse_server_sdk_flutter.dart`
-
-
+* Parse SDK internal database file `parse.db` is accessible for app user on iOS and may be accidentally deleted ([#826](https://github.com/parse-community/Parse-SDK-Flutter/pull/826))
 
 ## [3.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.2...flutter-3.1.3) (2022-07-09)
 
