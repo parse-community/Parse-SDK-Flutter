@@ -1,3 +1,10 @@
+## [4.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-4.0.0) (2023-03-09)
+
+### Breaking change
+
+* Change the source file name ([#845](https://github.com/parse-community/Parse-SDK-Flutter/issues/845))
+  Rather than importing `parse_server_sdk.dart` now you need to import `parse_server_sdk_flutter.dart`
+
 ## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-3.1.4) (2023-03-01)
 
 ### Bug Fixes
