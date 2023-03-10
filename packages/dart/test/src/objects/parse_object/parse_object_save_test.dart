@@ -153,5 +153,25 @@ void main() {
 
       verifyNoMoreInteractions(client);
     });
+
+    test(
+        'should return unsuccessful response if there is a unbreakable '
+        'cycle between two or more unsaved objects', () async {
+      // arrange
+      final planObject = ParseObject('Plans');
+
+      // create a cycle of unsaved objects depends on each other
+      planObject.set('dietPlan', dietPlansObject);
+      dietPlansObject.set('Plan', planObject);
+
+      // act
+      // TODO: should this throw an error about an unbreakable cycle between two or more unsaved objects?
+      final response = await dietPlansObject.save();
+
+      // assert
+      expect(response.success, isFalse);
+
+      verifyZeroInteractions(client);
+    });
   });
 }
