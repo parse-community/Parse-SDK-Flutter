@@ -1,13 +1,46 @@
-name: example
-description: A Example project for Parse-SDK.
-publish_to: 'none'
-
-version: 1.0.0
+name: flutter_plugin_example
+description: Demonstrates how to use the flutter_plugin plugin.
+publish_to: none
 
 environment:
   sdk: '>=2.19.2 <3.0.0'
 
 dependencies:
+  flutter:
+    sdk: flutter
+
+  parse_server_sdk:
+    path: ../
+
+  cupertino_icons: ^1.0.5
+  path_provider: ^2.0.13
+  sembast: ^3.4.1
+  path: ^1.8.2
+  shared_preferences: ^2.0.18
 
 dev_dependencies:
-  lints: ^2.0.1
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.1
+  mockito: ^5.3.2
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/parse.png
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto/Roboto-Thin.ttf
+          weight: 100
+        - asset: fonts/Roboto/Roboto-Light.ttf
+          weight: 300
+        - asset: fonts/Roboto/Roboto-Regular.ttf
+          weight: 400
+        - asset: fonts/Roboto/Roboto-Medium.ttf
+          weight: 500
+        - asset: fonts/Roboto/Roboto-Bold.ttf
+          weight: 700
+        - asset: fonts/Roboto/Roboto-Black.ttf
+          weight: 900
