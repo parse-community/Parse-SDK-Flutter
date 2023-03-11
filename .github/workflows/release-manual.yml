@@ -32,16 +32,6 @@ jobs:
         with:
           accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
           refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
-          relativePath: packages/dart
-          format: true
-          dryRunOnly: false
-      - name: Publish flutter package
-        if: github.event.inputs.package == 'flutter'
-        uses: k-paxian/dart-package-publisher@v1.4
-        with:
-          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
-          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
-          relativePath: packages/flutter
-          flutter: true
+          relativePath: /
           format: true
           dryRunOnly: false
