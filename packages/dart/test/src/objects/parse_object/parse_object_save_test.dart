@@ -328,5 +328,160 @@ void main() {
 
       verifyNoMoreInteractions(client);
     });
+
+    test(
+      'should not save the calling object in case of any subObject(included) '
+      'fail while trying to saving it, and the save() should return the response '
+      'from the saving object batch',
+      () async {
+        // arrange
+        final planObject1 = ParseObject('Plans')..set('PlanName', 'plan 1');
+        final planObject2 = ParseObject('Plans')..set('PlanName', 'plan 2');
+
+        dietPlansObject.set('Plan1', planObject1);
+        dietPlansObject.set('Plan2', planObject2);
+
+        dietPlansObject.set('Fat', 15);
+
+        // batch arrange
+
+        const resultFromServerForBatch = [
+          {
+            "success": {
+              keyVarObjectId: "YAfSAWwXbL",
+              keyVarCreatedAt: "2023-03-10T12:23:45.678Z",
+            }
+          },
+          {
+            "error": {
+              "code": ParseError.internalServerError,
+              "error": "internal server error",
+            }
+          }
+        ];
+
+        final batchData = jsonEncode(
+          {
+            "requests": [
+              {
+                'method': 'POST',
+                'path': '$keyEndPointClasses${planObject1.parseClassName}',
+                'body': planObject1.toJson(forApiRQ: true),
+              },
+              {
+                'method': 'POST',
+                'path': '$keyEndPointClasses${planObject2.parseClassName}',
+                'body': planObject2.toJson(forApiRQ: true),
+              }
+            ]
+          },
+        );
+
+        final batchPath = Uri.parse('$serverUrl/batch').toString();
+
+        when(client.post(
+          batchPath,
+          options: anyNamed("options"),
+          data: batchData,
+        )).thenAnswer(
+          (_) async => ParseNetworkResponse(
+            statusCode: 200,
+            data: jsonEncode(resultFromServerForBatch),
+          ),
+        );
+
+        // post arrange
+
+        final postPath = Uri.parse(
+          '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}',
+        ).toString();
+
+        // act
+
+        // this response is from saving the children and not from saving the
+        // actual object (dietPlansObject) duo to error while saving one of
+        // the children, so the response form the batch function will be returned
+        final response = await dietPlansObject.save();
+
+        // assert
+        expect(response.success, isFalse);
+
+        // the error will be the results list
+        expect(response.error, isNull);
+
+        expect(response.count, equals(2));
+
+        final resultList = response.results;
+
+        expect(resultList, isNotNull);
+
+        expect(
+          resultList!.length,
+          equals(2),
+          reason:
+              'should be the same number of children sent suing batch request',
+        );
+
+        expect(resultList, isA<List<Object?>>());
+
+        final firstResponse = resultList[0];
+
+        expect(firstResponse, isA<ParseObject>());
+
+        expect(identical(firstResponse, planObject1), isTrue);
+
+        var objectCreatedResponseFromServer =
+            resultFromServerForBatch[0]['success']!;
+
+        expect(
+          planObject1.objectId,
+          equals(objectCreatedResponseFromServer[keyVarObjectId]),
+        );
+
+        expect(
+          planObject1.createdAt!.toIso8601String(),
+          equals(objectCreatedResponseFromServer[keyVarCreatedAt]),
+        );
+
+        final secondResponse = resultList[1];
+        var errorResponseFromServer = resultFromServerForBatch[1]['error']!;
+
+        expect(secondResponse, isA<ParseError>());
+
+        // to promote the secondResponse var to ParseError
+        (secondResponse as ParseError);
+
+        expect(
+          secondResponse.code,
+          equals(errorResponseFromServer['code']),
+        );
+
+        expect(
+          secondResponse.message,
+          equals(errorResponseFromServer['error']),
+        );
+
+        expect(
+          dietPlansObject.objectId,
+          isNull,
+          reason: 'dietPlansObject should not be saved',
+        );
+
+        verify(client.post(
+          batchPath,
+          options: anyNamed("options"),
+          data: batchData,
+        )).called(1);
+
+        verifyNever(client.post(
+          postPath,
+          options: anyNamed("options"),
+          data: anyNamed('data'),
+        ));
+
+        verifyNoMoreInteractions(client);
+      },
+      skip: 'see # and #',
+    );
   });
 }
