@@ -57,6 +57,7 @@ part 'src/objects/response/parse_response_utils.dart';
 part 'src/objects/response/parse_success_no_results.dart';
 part 'src/storage/core_store.dart';
 part 'src/storage/core_store_memory.dart';
+part 'src/storage/core_store_sp_impl.dart';
 part 'src/storage/core_store_sem_impl.dart';
 part 'src/storage/xxtea_codec.dart';
 part 'src/utils/parse_date_format.dart';
