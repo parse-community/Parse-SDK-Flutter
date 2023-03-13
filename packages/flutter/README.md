@@ -6,7 +6,6 @@ Because of the conflicts between the two libraries and the confusion of the user
 [parse_server_sdk](https://pub.dev/packages/parse_server_sdk)
 
 ---
----
 
 This library gives you access to the powerful Parse Server backend from your Flutter app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org).
 
