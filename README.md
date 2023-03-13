@@ -14,7 +14,7 @@
 
 ---
 
-This library gives you access to the powerful Parse Server backend from your Dart app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org). The Flutter package was moved [here](https://pub.dev/packages/parse_server_sdk_flutter). If you are using Flutter see [this guide](https://github.com/parse-community/Parse-SDK-Flutter/blob/release/2.0.0/docs/migrate-2-0-0.md) for how to migrate.
+This library gives you access to the powerful Parse Server backend from your Dart app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org).
 
 ---
 
@@ -28,14 +28,14 @@ This library gives you access to the powerful Parse Server backend from your Dar
 - [Increment Counter Values](#increment-counter-values)
 - [Array Operator in Objects](#array-operator-in-objects)
 - [Queries](#queries)
-  - [Alternative Query Methods](#alternative-query-methods)
+    - [Alternative Query Methods](#alternative-query-methods)
 - [Complex Queries](#complex-queries)
 - [Relational queries](#relational-queries)
 - [Counting objects](#counting-objects)
 - [LiveQuery](#livequery)
 - [ParseLiveList](#parselivelist)
-  - [General Use](#general-use)
-  - [Included Sub-Objects](#included-sub-objects)
+    - [General Use](#general-use)
+    - [Included Sub-Objects](#included-sub-objects)
 - [Users](#users)
 - [Facebook, OAuth and 3rd Party Login/User](#facebook-oauth-and-3rd-party-loginuser)
 - [Security for Objects - ParseACL](#security-for-objects---parseacl)
@@ -60,7 +60,7 @@ await Parse().initialize(
         );
 ```
 
-If you want to use secure storage or use the Flutter web/desktop SDK, please change to the below instance of CoreStorage as it has no dependencies on Flutter.
+If you want to use secure storage, please change to the below instance of CoreStorage as it has no dependencies on Flutter.
 
 **The `CoreStoreSembastImp` does not encrypt the data on web!** (Web is not safe anyway. Encrypt fields manually as needed.)
 ```dart
@@ -115,30 +115,30 @@ if (response.success) {
 }
 ```
 Types supported:
- * String
- * Double
- * Int
- * Boolean
- * DateTime
- * File
- * Geopoint
- * ParseObject/ParseUser (Pointer)
- * Map
- * List (all types supported)
+* String
+* Double
+* Int
+* Boolean
+* DateTime
+* File
+* Geopoint
+* ParseObject/ParseUser (Pointer)
+* Map
+* List (all types supported)
 
 You then have the ability to do the following with that object:
 The features available are:-
- * Get
- * GetAll
- * Create
- * Save
- * Query - By object Id
- * Delete
- * Complex queries as shown above
- * Pin
- * Plenty more
- * Counters
- * Array Operators
+* Get
+* GetAll
+* Create
+* Save
+* Query - By object Id
+* Delete
+* Complex queries as shown above
+* Pin
+* Plenty more
+* Counters
+* Array Operators
 
 ## Custom Objects
 You can create your own `ParseObjects` or convert your existing objects into Parse Objects by doing the following:
@@ -209,12 +209,22 @@ var dietPlan = DietPlan().fromPin('OBJECT ID OF OBJECT');
 We now have 2 types of storage, secure and unsecure. We currently rely on 2 third party options:
 
 - SharedPreferences
+```dart
+coreStore: await CoreStoreSharedPrefsImp.getInstance(
+          sharedPreferences: (await SharedPreferences.getInstance())),
+
+```
+
 - Sembast
-Sembast offers secured storage, whilst SharePreferences wraps NSUserDefaults (on iOS) and SharedPreferences (on Android).
+  Sembast offers secured storage, whilst SharePreferences wraps NSUserDefaults (on iOS) and SharedPreferences (on Android).
+```dart
+coreStore: await CoreStoreSembastImp.getInstance(
+          "${(await path.getTemporaryDirectory()).path}/parse.db",
+          password: passwordDatabaseParse),
+```
 
 The storage method is defined in the parameter __coreStore__ in  Parse().initialize
 
-Check sample code for options
 
 ## Increment Counter Values
 
@@ -260,9 +270,9 @@ Once you have setup the project and initialised the instance, you can then retre
 var apiResponse = await ParseObject('ParseTableName').getAll();
 
 if (apiResponse.success){
-  for (var testObject in apiResponse.result) {
-    print(ApplicationConstants.APP_NAME + ": " + testObject.toString());
-  }
+for (var testObject in apiResponse.result) {
+print(ApplicationConstants.APP_NAME + ": " + testObject.toString());
+}
 }
 ```
 Or you can get an object by its objectId:
@@ -271,9 +281,9 @@ Or you can get an object by its objectId:
 var dietPlan = await DietPlan().getObject('R5EonpUDWy');
 
 if (dietPlan.success) {
-  print(ApplicationConstants.keyAppName + ": " + (dietPlan.result as DietPlan).toString());
+print(ApplicationConstants.keyAppName + ": " + (dietPlan.result as DietPlan).toString());
 } else {
-  print(ApplicationConstants.keyAppName + ": " + dietPlan.exception.message);
+print(ApplicationConstants.keyAppName + ": " + dietPlan.exception.message);
 }
 ```
 
@@ -299,9 +309,9 @@ var queryBuilder = QueryBuilder<DietPlan>(DietPlan())
 var response = await queryBuilder.query();
 
 if (response.success) {
-  print(ApplicationConstants.keyAppName + ": " + ((response.results as List<dynamic>).first as DietPlan).toString());
+print(ApplicationConstants.keyAppName + ": " + ((response.results as List<dynamic>).first as DietPlan).toString());
 } else {
-  print(ApplicationConstants.keyAppName + ": " + response.exception.message);
+print(ApplicationConstants.keyAppName + ": " + response.exception.message);
 }
 ```
 
@@ -310,17 +320,17 @@ if you want to find objects that match one of several queries, you can use __Que
 ParseObject playerObject = ParseObject("Player");
 
 QueryBuilder<ParseObject> lotsOfWins =
-    QueryBuilder<ParseObject>(playerObject))
-      ..whereGreaterThan('wins', 50);
+QueryBuilder<ParseObject>(playerObject))
+..whereGreaterThan('wins', 50);
 
 QueryBuilder<ParseObject> fewWins =
-    QueryBuilder<ParseObject>(playerObject)
-      ..whereLessThan('wins', 5);
+QueryBuilder<ParseObject>(playerObject)
+..whereLessThan('wins', 5);
 
 QueryBuilder<ParseObject> mainQuery = QueryBuilder.or(
-      playerObject,
-      [lotsOfWins, fewWins],
-    );
+playerObject,
+[lotsOfWins, fewWins],
+);
 
 var apiResponse = await mainQuery.query();
 ```
@@ -328,33 +338,33 @@ var apiResponse = await mainQuery.query();
 To find objects that match several queries use __QueryBuilder.and__. To find objects that do not match any given query use __QueryBuilder.nor__.
 
 The features available are:-
- * Equals
- * Contains
- * LessThan
- * LessThanOrEqualTo
- * GreaterThan
- * GreaterThanOrEqualTo
- * NotEqualTo
- * StartsWith
- * EndsWith
- * Exists
- * Near
- * WithinMiles
- * WithinKilometers
- * WithinRadians
- * WithinGeoBox
- * WithinPolygon
- * MatchesQuery
- * DoesNotMatchQuery
- * MatchesKeyInQuery
- * DoesNotMatchKeyInQuery
- * Regex
- * Order
- * Limit
- * Skip
- * Ascending
- * Descending
- * Plenty more!
+* Equals
+* Contains
+* LessThan
+* LessThanOrEqualTo
+* GreaterThan
+* GreaterThanOrEqualTo
+* NotEqualTo
+* StartsWith
+* EndsWith
+* Exists
+* Near
+* WithinMiles
+* WithinKilometers
+* WithinRadians
+* WithinGeoBox
+* WithinPolygon
+* MatchesQuery
+* DoesNotMatchQuery
+* MatchesKeyInQuery
+* DoesNotMatchKeyInQuery
+* Regex
+* Order
+* Limit
+* Skip
+* Ascending
+* Descending
+* Plenty more!
 
 ## Relational queries
 If you want to retrieve objects where a field contains an object that matches another query, you can use the
@@ -364,12 +374,12 @@ You can find comments on posts with images by doing:
 
 ```dart
 QueryBuilder<ParseObject> queryPost =
-    QueryBuilder<ParseObject>(ParseObject('Post'))
-      ..whereValueExists('image', true);
+QueryBuilder<ParseObject>(ParseObject('Post'))
+  ..whereValueExists('image', true);
 
 QueryBuilder<ParseObject> queryComment =
-    QueryBuilder<ParseObject>(ParseObject('Comment'))
-      ..whereMatchesQuery('post', queryPost);
+QueryBuilder<ParseObject>(ParseObject('Comment'))
+  ..whereMatchesQuery('post', queryPost);
 
 var apiResponse = await queryComment.query();
 ```
@@ -381,12 +391,12 @@ You can find comments on posts without images by doing:
 
 ```dart
 QueryBuilder<ParseObject> queryPost =
-    QueryBuilder<ParseObject>(ParseObject('Post'))
-      ..whereValueExists('image', true);
+QueryBuilder<ParseObject>(ParseObject('Post'))
+  ..whereValueExists('image', true);
 
 QueryBuilder<ParseObject> queryComment =
-    QueryBuilder<ParseObject>(ParseObject('Comment'))
-      ..whereDoesNotMatchQuery('post', queryPost);
+QueryBuilder<ParseObject>(ParseObject('Comment'))
+  ..whereDoesNotMatchQuery('post', queryPost);
 
 var apiResponse = await queryComment.query();
 ```
@@ -395,12 +405,12 @@ You can use the __whereMatchesKeyInQuery__ method to get objects where a key mat
 
 ```dart
 QueryBuilder<ParseObject> teamQuery =
-    QueryBuilder<ParseObject>(ParseObject('Team'))
-      ..whereGreaterThan('winPct', 0.5);
+QueryBuilder<ParseObject>(ParseObject('Team'))
+  ..whereGreaterThan('winPct', 0.5);
 
 QueryBuilder<ParseUser> userQuery =
-    QueryBuilder<ParseUser>ParseUser.forQuery())
-      ..whereMatchesKeyInQuery('hometown', 'city', teamQuery);
+QueryBuilder<ParseUser>ParseUser.forQuery())
+..whereMatchesKeyInQuery('hometown', 'city', teamQuery);
 
 var apiResponse = await userQuery.query();
 ```
@@ -409,12 +419,12 @@ Conversely, to get objects where a key does not match the value of a key in a se
 
 ```dart
 QueryBuilder<ParseObject> teamQuery =
-    QueryBuilder<ParseObject>(ParseObject('Team'))
-      ..whereGreaterThan('winPct', 0.5);
+QueryBuilder<ParseObject>(ParseObject('Team'))
+  ..whereGreaterThan('winPct', 0.5);
 
 QueryBuilder<ParseUser> losingUserQuery =
-    QueryBuilder<ParseUser>ParseUser.forQuery())
-      ..whereDoesNotMatchKeyInQuery('hometown', 'city', teamQuery);
+QueryBuilder<ParseUser>ParseUser.forQuery())
+..whereDoesNotMatchKeyInQuery('hometown', 'city', teamQuery);
 
 var apiResponse = await losingUserQuery.query();
 ```
@@ -422,12 +432,12 @@ var apiResponse = await losingUserQuery.query();
 To filter rows based on objectId’s from pointers in a second table, you can use dot notation:
 ```dart
 QueryBuilder<ParseObject> rolesOfTypeX =
-    QueryBuilder<ParseObject>(ParseObject('Role'))
-      ..whereEqualTo('type', 'x');
+QueryBuilder<ParseObject>(ParseObject('Role'))
+  ..whereEqualTo('type', 'x');
 
 QueryBuilder<ParseObject> groupsWithRoleX =
-    QueryBuilder<ParseObject>(ParseObject('Group')))
-      ..whereMatchesKeyInQuery('objectId', 'belongsTo.objectId', rolesOfTypeX);
+QueryBuilder<ParseObject>(ParseObject('Group')))
+..whereMatchesKeyInQuery('objectId', 'belongsTo.objectId', rolesOfTypeX);
 
 var apiResponse = await groupsWithRoleX.query();
 ```
@@ -437,11 +447,11 @@ If you only care about the number of games played by a particular player:
 
 ```dart
 QueryBuilder<ParseObject> queryPlayers =
-    QueryBuilder<ParseObject>(ParseObject('GameScore'))
-      ..whereEqualTo('playerName', 'Jonathan Walsh');
+QueryBuilder<ParseObject>(ParseObject('GameScore'))
+  ..whereEqualTo('playerName', 'Jonathan Walsh');
 var apiResponse = await queryPlayers.count();
 if (apiResponse.success && apiResponse.result != null) {
-  int countGames = apiResponse.count;
+int countGames = apiResponse.count;
 }
 ```
 
@@ -458,12 +468,12 @@ The Parse Server configuration guide on the server is found here https://docs.pa
 Initialize the Parse Live Query by entering the parameter liveQueryUrl in Parse().initialize:
 ```dart
 Parse().initialize(
-      keyApplicationId,
-      keyParseServerUrl,
-      clientKey: keyParseClientKey,
-      debug: true,
-      liveQueryUrl: keyLiveQueryUrl,
-      autoSendSessionId: true);
+keyApplicationId,
+keyParseServerUrl,
+clientKey: keyParseClientKey,
+debug: true,
+liveQueryUrl: keyLiveQueryUrl,
+autoSendSessionId: true);
 ```
 
 Declare LiveQuery:
@@ -474,7 +484,7 @@ final LiveQuery liveQuery = LiveQuery();
 Set the QueryBuilder that will be monitored by LiveQuery:
 ```dart
 QueryBuilder<ParseObject> query =
-  QueryBuilder<ParseObject>(ParseObject('TestAPI'))
+QueryBuilder<ParseObject>(ParseObject('TestAPI'))
   ..whereEqualTo('intNumber', 1);
 ```
 __Create a subscription__
@@ -493,13 +503,13 @@ When a new ParseObject is created and it fulfills the QueryBuilder you subscribe
 The object is the ParseObject which was created.
 ```dart
 subscription.on(LiveQueryEvent.create, (value) {
-    print('*** CREATE ***: ${DateTime.now().toString()}\n $value ');
-    print((value as ParseObject).objectId);
-    print((value as ParseObject).updatedAt);
-    print((value as ParseObject).createdAt);
-    print((value as ParseObject).get('objectId'));
-    print((value as ParseObject).get('updatedAt'));
-    print((value as ParseObject).get('createdAt'));
+print('*** CREATE ***: ${DateTime.now().toString()}\n $value ');
+print((value as ParseObject).objectId);
+print((value as ParseObject).updatedAt);
+print((value as ParseObject).createdAt);
+print((value as ParseObject).get('objectId'));
+print((value as ParseObject).get('updatedAt'));
+print((value as ParseObject).get('createdAt'));
 });
 ```
 
@@ -509,13 +519,13 @@ QueryBuilder before and after changes), you’ll get this event.
 The object is the ParseObject which was updated. Its content is the latest value of the ParseObject.
 ```dart
 subscription.on(LiveQueryEvent.update, (value) {
-    print('*** UPDATE ***: ${DateTime.now().toString()}\n $value ');
-    print((value as ParseObject).objectId);
-    print((value as ParseObject).updatedAt);
-    print((value as ParseObject).createdAt);
-    print((value as ParseObject).get('objectId'));
-    print((value as ParseObject).get('updatedAt'));
-    print((value as ParseObject).get('createdAt'));
+print('*** UPDATE ***: ${DateTime.now().toString()}\n $value ');
+print((value as ParseObject).objectId);
+print((value as ParseObject).updatedAt);
+print((value as ParseObject).createdAt);
+print((value as ParseObject).get('objectId'));
+print((value as ParseObject).get('updatedAt'));
+print((value as ParseObject).get('createdAt'));
 });
 ```
 
@@ -525,13 +535,13 @@ you’ll get this event. The object is the ParseObject which enters the QueryBui
 Its content is the latest value of the ParseObject.
 ```dart
 subscription.on(LiveQueryEvent.enter, (value) {
-    print('*** ENTER ***: ${DateTime.now().toString()}\n $value ');
-    print((value as ParseObject).objectId);
-    print((value as ParseObject).updatedAt);
-    print((value as ParseObject).createdAt);
-    print((value as ParseObject).get('objectId'));
-    print((value as ParseObject).get('updatedAt'));
-    print((value as ParseObject).get('createdAt'));
+print('*** ENTER ***: ${DateTime.now().toString()}\n $value ');
+print((value as ParseObject).objectId);
+print((value as ParseObject).updatedAt);
+print((value as ParseObject).createdAt);
+print((value as ParseObject).get('objectId'));
+print((value as ParseObject).get('updatedAt'));
+print((value as ParseObject).get('createdAt'));
 });
 ```
 
@@ -541,13 +551,13 @@ you’ll get this event. The object is the ParseObject which leaves the QueryBui
 Its content is the latest value of the ParseObject.
 ```dart
 subscription.on(LiveQueryEvent.leave, (value) {
-    print('*** LEAVE ***: ${DateTime.now().toString()}\n $value ');
-    print((value as ParseObject).objectId);
-    print((value as ParseObject).updatedAt);
-    print((value as ParseObject).createdAt);
-    print((value as ParseObject).get('objectId'));
-    print((value as ParseObject).get('updatedAt'));
-    print((value as ParseObject).get('createdAt'));
+print('*** LEAVE ***: ${DateTime.now().toString()}\n $value ');
+print((value as ParseObject).objectId);
+print((value as ParseObject).updatedAt);
+print((value as ParseObject).createdAt);
+print((value as ParseObject).get('objectId'));
+print((value as ParseObject).get('updatedAt'));
+print((value as ParseObject).get('createdAt'));
 });
 ```
 
@@ -556,13 +566,13 @@ When an existing ParseObject which fulfills the QueryBuilder is deleted, you’l
 The object is the ParseObject which is deleted
 ```dart
 subscription.on(LiveQueryEvent.delete, (value) {
-    print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
-    print((value as ParseObject).objectId);
-    print((value as ParseObject).updatedAt);
-    print((value as ParseObject).createdAt);
-    print((value as ParseObject).get('objectId'));
-    print((value as ParseObject).get('updatedAt'));
-    print((value as ParseObject).get('createdAt'));
+print('*** DELETE ***: ${DateTime.now().toString()}\n $value ');
+print((value as ParseObject).objectId);
+print((value as ParseObject).updatedAt);
+print((value as ParseObject).createdAt);
+print((value as ParseObject).get('objectId'));
+print((value as ParseObject).get('updatedAt'));
+print((value as ParseObject).get('createdAt'));
 });
 ```
 
@@ -625,7 +635,7 @@ You can also logout with the user:
 ```dart
 var response = await user.logout();
 if (response.success) {
-    print('User logout');
+print('User logout');
 }
 ```
 Also, once logged in you can manage sessions tokens. This feature can be called after Parse().init() on startup to check for a logged in user.
@@ -636,21 +646,21 @@ user = ParseUser.currentUser();
 To add additional columns to the user:
 ```dart
 var user = ParseUser("TestFlutter", "TestPassword123", "TestFlutterSDK@gmail.com")
-            ..set("userLocation", "FlutterLand");
+  ..set("userLocation", "FlutterLand");
 ```
 
 Other user features are:-
- * Request Password Reset
- * Verification Email Request
- * Get all users
- * Save
- * Destroy user
- * Queries
+* Request Password Reset
+* Verification Email Request
+* Get all users
+* Save
+* Destroy user
+* Queries
 
- ## Facebook, OAuth and 3rd Party Login/User
+## Facebook, OAuth and 3rd Party Login/User
 
- Usually, each provider will provide their own library for logins, but the loginWith method on ParseUser accepts a name of provider, then a Map<String, dynamic> with the authentication details required.
- For Facebook and the example below, we used the library provided at https://pub.dev/packages/flutter_facebook_login
+Usually, each provider will provide their own library for logins, but the loginWith method on ParseUser accepts a name of provider, then a Map<String, dynamic> with the authentication details required.
+For Facebook and the example below, we used the library provided at https://pub.dev/packages/flutter_facebook_login
 
  ```
  Future<void> goToFacebookLogin() async {
@@ -709,7 +719,7 @@ limits access to that user. An object’s ACL is updated when the object is save
 ```dart
 ParseUser user = await ParseUser.currentUser() as ParseUser;
 ParseACL parseACL = ParseACL(owner: user);
-  
+
 ParseObject parseObject = ParseObject("TestAPI");
 ...
 parseObject.setACL(parseACL);
@@ -739,7 +749,7 @@ parseACL.setPublicReadAccess(allowed: true);
 parseACL.setPublicWriteAccess(allowed: true);
 
 ParseObject parseObject = ParseObject("TestAPI");
-...  
+...
 parseObject.setACL(parseACL);
 var apiResponse = await parseObject.save();
 ```
@@ -780,10 +790,10 @@ final ParseCloudFunction function = ParseCloudFunction('hello');
 final ParseResponse result =
     await function.executeObjectFunction<ParseObject>();
 if (result.success) {
-  if (result.result is ParseObject) {
-    final ParseObject parseObject = result.result;
-    print(parseObject.className);
-  }
+if (result.result is ParseObject) {
+final ParseObject parseObject = result.result;
+print(parseObject.className);
+}
 }
 ```
 
@@ -824,17 +834,17 @@ final result = await user.save();
 To retrieve objects that are members of Relation field of a parent object:
 ```dart
 QueryBuilder<ParseObject> query =
-    QueryBuilder<ParseObject>(ParseObject('Fruits'))
-      ..whereRelatedTo('fruits', 'DietPlan', DietPlan.objectId);
+QueryBuilder<ParseObject>(ParseObject('Fruits'))
+  ..whereRelatedTo('fruits', 'DietPlan', DietPlan.objectId);
 ```
 
 ## File
 There are three different file classes in this SDK:
 - `ParseFileBase` is and abstract class and is the foundation of every file class that can be handled by this SDK.
 - `ParseFile` (former the only file class in the SDK) extends ParseFileBase and is by default used as the file class on every platform but web.
-This class uses a `File` from `dart:io` for storing the raw file.
+  This class uses a `File` from `dart:io` for storing the raw file.
 - `ParseWebFile` is the equivalent to ParseFile used at Flutter Web.
-This class uses an `Uint8List` for storing the raw file.
+  This class uses an `Uint8List` for storing the raw file.
 
 These classes are used by default to represent files, but you can also build your own class extending ParseFileBase and provide a custom `ParseFileConstructor` similar to the `SubClasses`.
 
@@ -847,7 +857,7 @@ Widget buildImage(ParseFileBase image){
   return FutureBuilder<ParseFileBase>(
     future: image.download(),
     builder: (BuildContext context,
-    AsyncSnapshot<ParseFileBase> snapshot) {
+        AsyncSnapshot<ParseFileBase> snapshot) {
       if (snapshot.hasData) {
         if (kIsWeb) {
           return Image.memory((snapshot.data as ParseWebFile).file);
@@ -867,12 +877,12 @@ Widget buildImage(ParseFileBase image){
 PickedFile pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
 ParseFileBase parseFile;
 if (kIsWeb) {
-  //Seems weird, but this lets you get the data from the selected file as an Uint8List very easily. 
-  ParseWebFile file = ParseWebFile(null, name: null, url: pickedFile.path);
-  await file.download();
-  parseFile = ParseWebFile(file.file, name: file.name);
+//Seems weird, but this lets you get the data from the selected file as an Uint8List very easily. 
+ParseWebFile file = ParseWebFile(null, name: null, url: pickedFile.path);
+await file.download();
+parseFile = ParseWebFile(file.file, name: file.name);
 } else {
-  parseFile = ParseFile(File(pickedFile.path));
+parseFile = ParseFile(File(pickedFile.path));
 }
 someParseObject.set("image", parseFile);
 //This saves the ParseObject as well as all of its children, and the ParseFileBase is such a child. 
