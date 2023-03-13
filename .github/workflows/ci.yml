@@ -66,7 +66,6 @@ jobs:
       - name: Convert code coverage
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
-        working-directory: /
         run: |
           dart pub global activate coverage
           dart pub global run coverage:format_coverage --packages=.dart_tool/package_config.json --report-on=lib --lcov -o ./coverage/lcov.info -i ./coverage
