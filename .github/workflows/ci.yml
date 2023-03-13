@@ -10,19 +10,6 @@ on:
     branches:
       - "**"
 jobs:
-  check-lint-flutter:
-    name: Lint (flutter)
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup flutter
-        uses: subosito/flutter-action@v2
-        with:
-          cache: true
-      - name: Lint
-        run: flutter format --output=none --set-exit-if-changed /
   check-lint-dart:
     name: Lint (dart)
     timeout-minutes: 5
@@ -31,24 +18,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup dart
-        uses: dart-lang/setup-dart@v1
+        uses: dart-lang/setup-dart@v1.4
       - name: Lint
-        run: dart format --output=none --set-exit-if-changed /
-  check-code-analysis-flutter:
-    name: Code analysis (flutter)
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup flutter
-        uses: subosito/flutter-action@v2
-        with:
-          cache: true
-      - name: Install dependencies
-        run: flutter pub get
-      - name: Analyze code
-        run: flutter analyze / --no-fatal-infos
+        run: dart format --output=none --set-exit-if-changed ./
   check-code-analysis-dart:
     name: Code analysis (dart)
     timeout-minutes: 5
@@ -57,7 +29,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup dart
-        uses: dart-lang/setup-dart@v1
+        uses: dart-lang/setup-dart@v1.4
       - name: Install dependencies
         run: dart pub get
       - name: Analyze code
@@ -70,45 +42,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup dart
-        uses: dart-lang/setup-dart@v1
+        uses: dart-lang/setup-dart@v1.4
       - name: publish dry run
         run: dart pub publish --dry-run
-  check-flutter:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-      fail-fast: false
-    name: Test flutter (${{ matrix.os }})
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup flutter
-        uses: subosito/flutter-action@v2
-        with:
-          cache: true
-      - name: Install dependencies on Ubuntu and MacOS
-        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
-        run: flutter pub get
-      - name: Install dependencies on Windows
-        if: matrix.os == 'windows-latest'
-        run: cmd /c "flutter pub get"
-      - name: Run tests
-        run: flutter test --coverage
-      - name: Convert code coverage
-        # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
-        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
-        working-directory: /
-        run: |
-          escapedPath="$(echo `pwd` | sed 's/\//\\\//g')"
-          sed "s/^SF:lib/SF:$escapedPath\/lib/g" coverage/lcov.info > coverage/lcov-full.info
-      - name: Upload code coverage
-        uses: codecov/codecov-action@v2
-        # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
-        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
-        with:
-          files: coverage/lcov-full.info
-          fail_ci_if_error: true
   check-dart:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -120,26 +56,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup dart
-        uses: dart-lang/setup-dart@v1
+        uses: dart-lang/setup-dart@v1.4
       - name: Install dependencies
         run: dart pub get
       - name: Run build_runner
         run: dart run build_runner build --delete-conflicting-outputs
       - name: Run tests
-        run: dart test --coverage=coverage
+        run: dart test --coverage=./coverage --concurrency=4 --test-randomize-ordering-seed random
       - name: Convert code coverage
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         working-directory: /
         run: |
           dart pub global activate coverage
-          dart pub global run coverage:format_coverage -i coverage/test -o coverage/lcov.info --lcov --packages=.dart_tool/package_config.json --report-on=lib
+          dart pub global run coverage:format_coverage --packages=.dart_tool/package_config.json --report-on=lib --lcov -o ./coverage/lcov.info -i ./coverage
       - name: Upload code coverage
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3.1.1
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
-          files: coverage/lcov.info
+          files: ./coverage/lcov.info
           fail_ci_if_error: true
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

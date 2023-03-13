@@ -14,6 +14,6 @@ jobs:
         with:
           accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
           refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
-          relativePath: /
+          relativePath: ./
           format: true
           dryRunOnly: false
