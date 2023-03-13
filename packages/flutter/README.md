@@ -2,8 +2,11 @@
 
 ---
 
-Because of the conflicts between the two libraries and the confusion of the user. We have decided to deprecate this package. Please migrate to Dart version.
-[parse_server_sdk](https://pub.dev/packages/parse_server_sdk)
+# Deprecated in favor of [parse_server_sdk](https://pub.dev/packages/parse_server_sdk)
+Because of the conflicts between the two libraries (this and [parse_server_sdk](https://pub.dev/packages/parse_server_sdk))
+We have decided to deprecate this package. Please migrate to Dart version.
+[parse_server_sdk](https://pub.dev/packages/parse_server_sdk).
+#### _This package will no longer receive any updates._
 
 ---
 
