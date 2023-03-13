@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: dart pub get
       - name: Analyze code
-        run: dart analyze
+        run: dart analyze --fatal-infos
   check-publish-dry-run-dart:
     name: publish dry-run (dart)
     timeout-minutes: 5
