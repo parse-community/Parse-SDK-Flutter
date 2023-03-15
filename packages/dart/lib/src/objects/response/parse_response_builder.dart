@@ -54,8 +54,12 @@ class _ParseResponseBuilder {
   }
 
   /// Handles successful response with results
-  ParseResponse _handleSuccess<T>(ParseResponse response, dynamic object,
-      String responseBody, ParseApiRQ type) {
+  ParseResponse _handleSuccess<T>(
+    ParseResponse response,
+    dynamic object,
+    String responseBody,
+    ParseApiRQ type,
+  ) {
     response.success = true;
 
     final dynamic result = json.decode(responseBody);
