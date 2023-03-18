@@ -1,3 +1,13 @@
+## 4.0.0 (unreleased)
+
+### BREAKING CHANGES
+
+* The source file name of the Flutter package has changed; to import the Flutter package use `parse_server_sdk_flutter.dart` instead of `parse_server_sdk.dart` ([#846](https://github.com/parse-community/Parse-SDK-Flutter/pull/846))
+
+### Features
+
+* Rename Flutter package source file to `parse_server_sdk_flutter.dart` ([#846](https://github.com/parse-community/Parse-SDK-Flutter/pull/846))
+
 ## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-3.1.4) (2023-03-01)
 
 ### Bug Fixes
