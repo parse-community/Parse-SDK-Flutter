@@ -83,8 +83,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Setup dart
-        uses: dart-lang/setup-dart@v1
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          cache: true
       - name: publish dry run
         run: cd packages/flutter && dart pub publish --dry-run
   check-flutter:
