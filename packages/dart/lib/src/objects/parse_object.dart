@@ -182,7 +182,11 @@ class ParseObject extends ParseBase implements ParseCloneable {
         for (ParseObject obj in chunk) {
           obj._saveChanges();
         }
-        final ParseResponse response = await batchRequest(requests, chunk);
+        final ParseResponse response = await batchRequest(
+          requests,
+          chunk,
+          client: _client,
+        );
         totalResponse.success &= response.success;
         if (response.success) {
           totalResponse.results!.addAll(response.results!);
