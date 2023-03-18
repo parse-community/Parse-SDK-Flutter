@@ -1,4 +1,4 @@
-## Unreleased (master branch)
+## 4.0.0 (unreleased)
 
 ### BREAKING CHANGES
 
