@@ -50,6 +50,7 @@ part 'src/objects/parse_relation.dart';
 part 'src/objects/parse_response.dart';
 part 'src/objects/parse_session.dart';
 part 'src/objects/parse_user.dart';
+part 'src/objects/parse_operation.dart';
 part 'src/objects/response/parse_error_response.dart';
 part 'src/objects/response/parse_exception_response.dart';
 part 'src/objects/response/parse_response_builder.dart';
