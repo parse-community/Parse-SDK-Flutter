@@ -2,9 +2,9 @@ library flutter_parse_sdk;
 
 import 'dart:async';
 import 'dart:convert';
-import 'package:universal_io/io.dart';
 import 'dart:math';
 import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'package:mime_type/mime_type.dart';
@@ -14,6 +14,7 @@ import 'package:sembast/sembast_io.dart';
 import 'package:sembast_web/sembast_web.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:universal_io/io.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:xxtea/xxtea.dart';
@@ -57,8 +58,8 @@ part 'src/objects/response/parse_response_utils.dart';
 part 'src/objects/response/parse_success_no_results.dart';
 part 'src/storage/core_store.dart';
 part 'src/storage/core_store_memory.dart';
-part 'src/storage/core_store_sp_impl.dart';
 part 'src/storage/core_store_sem_impl.dart';
+part 'src/storage/core_store_sp_impl.dart';
 part 'src/storage/xxtea_codec.dart';
 part 'src/utils/parse_date_format.dart';
 part 'src/utils/parse_decoder.dart';
@@ -107,6 +108,18 @@ class Parse {
     Stream<void>? appResumedStream,
     ParseClientCreator? clientCreator,
   }) async {
+    assert(() {
+      if (liveQueryUrl != null && connectivityProvider == null) {
+        throw Exception(
+          'Invalid argument (connectivityProvider): Must not be null\n'
+          'Live Query can not operate without connectivity provider.\n'
+          'You need to provide a connectivityProvider to the SDK',
+        );
+      }
+
+      return true;
+    }());
+
     final String url = removeTrailingSlash(serverUrl);
 
     await ParseCoreData.init(
@@ -141,8 +154,11 @@ class Parse {
 
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
-  Future<ParseResponse> healthCheck(
-      {bool? debug, ParseClient? client, bool? sendSessionIdByDefault}) async {
+  Future<ParseResponse> healthCheck({
+    bool? debug,
+    ParseClient? client,
+    bool? sendSessionIdByDefault,
+  }) async {
     final bool debugLocal = isDebugEnabled(objectLevelDebug: debug);
 
     final ParseClient clientLocal = client ??
