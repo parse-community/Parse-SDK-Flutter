@@ -84,8 +84,8 @@ class _ParseResponseBuilder {
             response.results!.add(item);
           } else {
             final ParseError error = ParseError(
-              code: objectResult['error'][keyCode],
-              message: objectResult['error'][keyError].toString(),
+              code: objectResult[keyError][keyCode],
+              message: objectResult[keyError][keyError].toString(),
             );
 
             response.results!.add(error);
