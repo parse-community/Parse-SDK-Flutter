@@ -1,3 +1,9 @@
+## [4.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-4.0.0) (2023-03-19)
+
+### BREAKING CHANGES
+
+* Upgrades to dio 5.x ([#821](https://github.com/parse-community/Parse-SDK-Flutter/pull/821))
+
 ## [3.1.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.3...flutter-3.1.4) (2023-03-01)
 
 ### Bug Fixes
