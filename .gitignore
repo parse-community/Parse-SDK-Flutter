@@ -102,7 +102,7 @@ unlinked_spec.ds
 
 # macOS
 **/macos/Flutter/GeneratedPluginRegistrant.swift
-**/macos/flutter/ephemeral/
+**/macos/Flutter/ephemeral/
 
 # Linux
 **/linux/flutter/ephemeral
