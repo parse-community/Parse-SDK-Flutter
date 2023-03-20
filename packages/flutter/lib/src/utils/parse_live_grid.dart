@@ -156,7 +156,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         physics: widget.scrollPhysics,
         controller: widget.scrollController,
         scrollDirection: widget.scrollDirection,
-        shrinkWrap: widget.shrinkWrap,
+        // shrinkWrap: widget.shrinkWrap,
         itemCount: liveGrid.size,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: widget.crossAxisCount,
