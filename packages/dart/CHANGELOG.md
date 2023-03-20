@@ -1,8 +1,8 @@
-## [4.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-4.0.0...dart-4.0.1) (2023-03-19)
+## [4.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-4.0.0...dart-4.0.1) (2023-03-20)
 
 ### Bug Fixes
 
-* Saving Parse object will crash the SDK if error occurred when saving the object children ([#858](https://github.com/parse-community/Parse-SDK-Flutter/pull/858))
+* Unhandled exception when saving a `ParseObject` but its nested object fails to save ([#858](https://github.com/parse-community/Parse-SDK-Flutter/pull/858))
 
 ## [4.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-3.1.14...dart-4.0.0) (2023-03-07)
 
