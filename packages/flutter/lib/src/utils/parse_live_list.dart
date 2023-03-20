@@ -51,7 +51,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final List<String>? preloadedColumns;
 
   @override
-  _ParseLiveListWidgetState<T> createState() => _ParseLiveListWidgetState<T>();
+  State<ParseLiveListWidget<T>> createState() => _ParseLiveListWidgetState<T>();
 
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
       BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot) {
@@ -213,7 +213,7 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
   final ChildBuilder<T> childBuilder;
 
   @override
-  _ParseLiveListElementWidgetState<T> createState() {
+  State<ParseLiveListElementWidget<T>> createState() {
     return _ParseLiveListElementWidgetState<T>();
   }
 }
@@ -272,9 +272,9 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
       sizeFactor: widget.sizeFactor,
       child: AnimatedSize(
         duration: widget.duration,
-        child: widget.childBuilder(context, _snapshot),
         // ignore: deprecated_member_use
         vsync: this,
+        child: widget.childBuilder(context, _snapshot),
       ),
     );
     return result;
