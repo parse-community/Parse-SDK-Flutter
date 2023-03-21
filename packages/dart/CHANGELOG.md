@@ -1,3 +1,9 @@
+## [4.0.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-4.0.0...dart-4.0.1) (2023-03-21)
+
+### Bug Fixes
+
+* The SDK will try to save a ParseObject even if its child ParseObject not saved ([#859](https://github.com/parse-community/Parse-SDK-Flutter/pull/859))
+
 ## [4.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-4.0.0...dart-4.0.1) (2023-03-20)
 
 ### Bug Fixes
