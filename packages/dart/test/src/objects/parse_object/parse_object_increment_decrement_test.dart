@@ -1,13 +1,9 @@
-@Skip('get(key) will return _Map<String, dynamic>'
-    'which is the wrong type. it should be any subtype of num'
-    'see the issue #842')
-// TODO: remove the skip when the issue fixed
-
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
 
 import '../../../parse_query_test.mocks.dart';
 import '../../../test_utils.dart';
+import 'parse_object_test.dart';
 
 void main() {
   group('Increment/Decrement', () {
@@ -98,7 +94,6 @@ void main() {
 
         expect(fatValue, equals(7.5));
       },
-      skip: 'see #843',
     );
 
     test(
@@ -185,7 +180,6 @@ void main() {
 
         expect(fatValue, equals(2));
       },
-      skip: 'see #843',
     );
 
     test(
