@@ -22,8 +22,7 @@ class _ParseAddRelationOperation extends _ParseRelationOperation {
     if (previous is List<ParseObject>) {
       previousValue = previous;
     } else {
-      previousValue =
-          (previous as _ParseAddOperation).value as List<ParseObject>;
+      previousValue = (previous as _ParseAddRelationOperation).value;
     }
 
     previousValue.addAll(value);
