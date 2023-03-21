@@ -2,23 +2,7 @@ import 'package:mockito/annotations.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
 
-const serverUrl = 'https://example.com';
-
-Future<void> initializeParse() async {
-  await Parse().initialize(
-    'appId',
-    serverUrl,
-    debug: true,
-    // to prevent automatic detection
-    fileDirectory: 'someDirectory',
-    // to prevent automatic detection
-    appName: 'appName',
-    // to prevent automatic detection
-    appPackageName: 'somePackageName',
-    // to prevent automatic detection
-    appVersion: 'someAppVersion',
-  );
-}
+import '../../../test_utils.dart';
 
 @GenerateMocks([ParseClient])
 void main() {
