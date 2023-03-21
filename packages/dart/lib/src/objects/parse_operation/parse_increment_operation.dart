@@ -1,6 +1,8 @@
 part of flutter_parse_sdk;
 
 class _ParseIncrementOperation extends _ParseOperation<num> {
+  num incrementAmountForApiRequest = 0;
+
   _ParseIncrementOperation(num value) : super(value);
 
   @override
@@ -17,12 +19,18 @@ class _ParseIncrementOperation extends _ParseOperation<num> {
       throw _UnmergeableOperationException(this, previous);
     }
 
+    incrementAmountForApiRequest += value;
+
     final num previousValue;
 
     if (previous is num) {
       previousValue = previous;
     } else {
-      previousValue = (previous as _ParseIncrementOperation).value;
+      final previousIncrement = (previous as _ParseIncrementOperation);
+      previousValue = previousIncrement.value;
+
+      incrementAmountForApiRequest +=
+          previousIncrement.incrementAmountForApiRequest;
     }
 
     value = value + previousValue;
@@ -32,6 +40,20 @@ class _ParseIncrementOperation extends _ParseOperation<num> {
 
   @override
   Map<String, dynamic> toJson({bool full = false}) {
-    return {'__op': operationName, 'amount': value};
+    if (full) {
+      return {
+        'className': 'ParseIncrementOperation',
+        '__op': operationName,
+        'amount': incrementAmountForApiRequest,
+        'estimatedValue': value
+      };
+    }
+
+    return {'__op': operationName, 'amount': incrementAmountForApiRequest};
+  }
+
+  factory _ParseIncrementOperation.fromFullJson(Map<String, dynamic> json) {
+    return _ParseIncrementOperation(json['estimatedValue'] as num)
+      ..incrementAmountForApiRequest = json['amount'] as num;
   }
 }

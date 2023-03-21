@@ -3,7 +3,6 @@ import 'package:test/test.dart';
 
 import '../../../parse_query_test.mocks.dart';
 import '../../../test_utils.dart';
-import 'parse_object_test.dart';
 
 void main() {
   group('Increment/Decrement', () {
@@ -107,6 +106,25 @@ void main() {
     });
 
     test(
+      'the amount that should be added to a value for the API should be incremental'
+      ' and independent from the estimated value (the increment operation result)',
+      () {
+        // arrange
+        dietPlansObject.set(keyFat, 10);
+
+        // act
+        dietPlansObject.setIncrement(keyFat, 2.5);
+        dietPlansObject.setIncrement(keyFat, 2.5);
+
+        // assert
+        expect(
+          dietPlansObject.toJson(forApiRQ: true)[keyFat]['amount'],
+          equals(5.0),
+        );
+      },
+    );
+
+    test(
         'Decrementing values using setDecrement() and then calling get(key) '
         'should return Instance of num that hold the result of decrementing '
         'the value by the amount parameter', () {
@@ -179,6 +197,25 @@ void main() {
         expect(fatValue, isA<num>());
 
         expect(fatValue, equals(2));
+      },
+    );
+
+    test(
+      'the amount that should be subtracted from a value for the API should be incremental'
+      ' and independent from the estimated value (the decrement operation result)',
+      () {
+        // arrange
+        dietPlansObject.set(keyFat, 10);
+
+        // act
+        dietPlansObject.setDecrement(keyFat, 2.5);
+        dietPlansObject.setDecrement(keyFat, 2.5);
+
+        // assert
+        expect(
+          dietPlansObject.toJson(forApiRQ: true)[keyFat]['amount'],
+          equals(-5.0),
+        );
       },
     );
 
