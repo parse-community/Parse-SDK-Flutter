@@ -1,4 +1,10 @@
-## [4.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.4...flutter-4.0.0) (2023-03-19)
+## [4.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.4...flutter-4.0.1) (2023-03-21)
+
+### Bug Fixes
+
+* some Attributes of `ParseLiveGridWidget` are not used ([#761](https://github.com/parse-community/Parse-SDK-Flutter/pull/761))
+
+i.e reverse, padding, physics, controller, scrollDirection, shrinkWrap
 
 ### BREAKING CHANGES
 
