@@ -44,7 +44,7 @@ class _ParseArray implements _Valuable {
       ..savedArray = parseDecode(json['savedArray'])
       ..estimatedArray = parseDecode(json['estimatedArray'])
       ..lastPreformedOperation =
-          _ParseArrayOperation.fromJson(json['lastPreformedOperation']);
+          _ParseArrayOperation.fromFullJson(json['lastPreformedOperation']);
   }
 
   @override

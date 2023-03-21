@@ -63,12 +63,13 @@ abstract class _ParseArrayOperation extends _ParseOperation<List> {
     return {'__op': operationName, 'objects': parseEncode(valueForAPIRequest)};
   }
 
-  static _ParseArrayOperation? fromJson(Map<String, dynamic>? json) {
+  static _ParseArrayOperation? fromFullJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
 
     final List objects = parseDecode(json['objects'] as List);
+
     final List? objectsForAPIRequest =
         parseDecode(json['valueForAPIRequest'] as List?);
 
