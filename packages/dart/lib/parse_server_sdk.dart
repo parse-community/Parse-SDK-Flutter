@@ -2,9 +2,9 @@ library flutter_parse_sdk;
 
 import 'dart:async';
 import 'dart:convert';
-import 'package:universal_io/io.dart';
 import 'dart:math';
 import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'package:mime_type/mime_type.dart';
@@ -14,6 +14,7 @@ import 'package:sembast/sembast_io.dart';
 import 'package:sembast_web/sembast_web.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:universal_io/io.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:xxtea/xxtea.dart';
@@ -46,11 +47,19 @@ part 'src/objects/parse_geo_point.dart';
 part 'src/objects/parse_installation.dart';
 part 'src/objects/parse_merge.dart';
 part 'src/objects/parse_object.dart';
+part 'src/objects/parse_array.dart';
+part 'src/objects/parse_operation/operation_exception.dart';
+part 'src/objects/parse_operation/parse_add_operation.dart';
+part 'src/objects/parse_operation/parse_add_relation_operation.dart';
+part 'src/objects/parse_operation/parse_add_unique_operation.dart';
+part 'src/objects/parse_operation/parse_increment_operation.dart';
+part 'src/objects/parse_operation/parse_operation.dart';
+part 'src/objects/parse_operation/parse_remove_operation.dart';
+part 'src/objects/parse_operation/parse_remove_relation_operation.dart';
 part 'src/objects/parse_relation.dart';
 part 'src/objects/parse_response.dart';
 part 'src/objects/parse_session.dart';
 part 'src/objects/parse_user.dart';
-part 'src/objects/parse_operation.dart';
 part 'src/objects/response/parse_error_response.dart';
 part 'src/objects/response/parse_exception_response.dart';
 part 'src/objects/response/parse_response_builder.dart';
@@ -67,6 +76,7 @@ part 'src/utils/parse_live_list.dart';
 part 'src/utils/parse_logger.dart';
 part 'src/utils/parse_login_helpers.dart';
 part 'src/utils/parse_utils.dart';
+part 'src/utils/valuable.dart';
 
 class Parse {
   bool _hasBeenInitialized = false;
