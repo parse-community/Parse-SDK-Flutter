@@ -1,8 +1,3 @@
-@Skip('get(keyArray) will return _Map<String, dynamic>'
-    'which is the wrong type. it should be any subtype of Iterable'
-    'see the issue #834')
-// TODO: remove the skip when the issue fixed
-
 import 'package:collection/collection.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
@@ -304,7 +299,7 @@ void main() {
         // assert
         expect(
           () => dietPlansObject.setRemove(keyArray, 2),
-          throwsA(isA<String>()),
+          throwsA(isA<ParseOperationException>()),
         );
 
         final array = dietPlansObject.get(keyArray);
@@ -343,7 +338,7 @@ void main() {
         // assert
         expect(
           () => dietPlansObject.setAdd(keyArray, 5),
-          throwsA(isA<String>()),
+          throwsA(isA<ParseOperationException>()),
         );
 
         final array = dietPlansObject.get(keyArray);

@@ -22,6 +22,10 @@ class _ParseAddUniqueOperation extends _ParseArrayOperation {
     if (previous is _ParseArray) {
       previousValue = previous.estimatedArray;
 
+      // if the previous is _ParseArray then its the first unique add operation on this list
+      // we should make all the values unique before using them
+      value = value.toSet().toList();
+
       if (previous.savedArray.isEmpty) {
         valueForAPIRequest.addAll({...previous.estimatedArray, ...value});
       } else {

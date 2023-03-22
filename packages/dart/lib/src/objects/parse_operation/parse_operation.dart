@@ -25,7 +25,10 @@ abstract class _ParseOperation<T> implements _Valuable {
       if (previousValue is _ParseArray) {
         return previousValue.preformArrayOperation(newValue);
       }
-      return _ParseArray().preformArrayOperation(newValue);
+
+      if (previousValue == null || previousValue is! _ParseOperation) {
+        return _ParseArray().preformArrayOperation(newValue);
+      }
     }
 
     if (newValue is! _ParseOperation || previousValue == null) {
