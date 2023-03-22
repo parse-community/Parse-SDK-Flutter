@@ -32,7 +32,7 @@ class _ParseArray implements _Valuable {
         'className': 'ParseArray',
         'estimatedArray': parseEncode(estimatedArray, full: full),
         'savedArray': parseEncode(savedArray, full: full),
-        'lastPreformedOperation': lastPreformedOperation?.toJson()
+        'lastPreformedOperation': lastPreformedOperation?.toJson(full: full)
       };
     }
 
@@ -41,8 +41,10 @@ class _ParseArray implements _Valuable {
 
   factory _ParseArray.fromFullJson(Map<String, dynamic> json) {
     return _ParseArray()
-      ..savedArray = parseDecode(json['savedArray'])
-      ..estimatedArray = parseDecode(json['estimatedArray'])
+      ..savedArray =
+          (json['savedArray'] as List).map((e) => parseDecode(e)).toList()
+      ..estimatedArray =
+          (json['estimatedArray'] as List).map((e) => parseDecode(e)).toList()
       ..lastPreformedOperation =
           _ParseArrayOperation.fromFullJson(json['lastPreformedOperation']);
   }

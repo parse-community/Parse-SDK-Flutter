@@ -71,10 +71,12 @@ abstract class _ParseArrayOperation extends _ParseOperation<List> {
       return null;
     }
 
-    final List objects = parseDecode(json['objects'] as List);
+    final List objects =
+        (json['objects'] as List).map((e) => parseDecode(e)).toList();
 
-    final List? objectsForAPIRequest =
-        parseDecode(json['valueForAPIRequest'] as List?);
+    final List? objectsForAPIRequest = (json['valueForAPIRequest'] as List?)
+        ?.map((e) => parseDecode(e))
+        .toList();
 
     final _ParseArrayOperation arrayOperation;
     switch (json['__op']) {
