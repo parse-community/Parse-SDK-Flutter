@@ -1,7 +1,17 @@
 part of flutter_parse_sdk;
 
-class _ParseArray implements _Valuable {
+class _ParseArray with ParseSaveStateAwareChild implements _Valuable {
   _ParseArray();
+
+  @override
+  void onSave() {
+    super.onSave();
+
+    _savedArray.clear();
+    _savedArray.addAll(estimatedArray);
+
+    lastPreformedOperation = null;
+  }
 
   List _savedArray = [];
   List estimatedArray = [];

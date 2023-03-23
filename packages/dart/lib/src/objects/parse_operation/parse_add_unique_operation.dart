@@ -27,22 +27,22 @@ class _ParseAddUniqueOperation extends _ParseArrayOperation {
       value = value.toSet().toList();
 
       if (previous.savedArray.isEmpty) {
-        valueForAPIRequest.addAll({...previous.estimatedArray, ...value});
+        valueForApiRequest.addAll({...previous.estimatedArray, ...value});
       } else {
         final estimatedSet = previous.estimatedArray.toSet();
         final savedSet = previous.savedArray.toSet();
 
         final valuesToBeAddedUniquely = estimatedSet.difference(savedSet);
 
-        valueForAPIRequest.addAll({...valuesToBeAddedUniquely, ...value});
+        valueForApiRequest.addAll({...valuesToBeAddedUniquely, ...value});
       }
     } else {
       final previousAddUnique = (previous as _ParseAddUniqueOperation);
 
       previousValue = previousAddUnique.value;
 
-      valueForAPIRequest.addAll({
-        ...previousAddUnique.valueForAPIRequest,
+      valueForApiRequest.addAll({
+        ...previousAddUnique.valueForApiRequest,
         ...value,
       });
     }

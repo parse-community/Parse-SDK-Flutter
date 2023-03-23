@@ -1,12 +1,19 @@
 part of flutter_parse_sdk;
 
 class _ParseIncrementOperation extends _ParseOperation<num> {
-  num incrementAmountForApiRequest = 0;
-
-  _ParseIncrementOperation(num value) : super(value);
+  _ParseIncrementOperation(num value) : super(value) {
+    super.valueForApiRequest = 0.0;
+  }
 
   @override
   String get operationName => 'Increment';
+
+  @override
+  void onSave() {
+    super.onSave();
+
+    valueForApiRequest = 0.0;
+  }
 
   @override
   bool canMergeWith(Object other) {
@@ -19,7 +26,7 @@ class _ParseIncrementOperation extends _ParseOperation<num> {
       throw _UnmergeableOperationException(this, previous);
     }
 
-    incrementAmountForApiRequest += value;
+    valueForApiRequest += value;
 
     final num previousValue;
 
@@ -29,8 +36,7 @@ class _ParseIncrementOperation extends _ParseOperation<num> {
       final previousIncrement = (previous as _ParseIncrementOperation);
       previousValue = previousIncrement.value;
 
-      incrementAmountForApiRequest +=
-          previousIncrement.incrementAmountForApiRequest;
+      valueForApiRequest += previousIncrement.valueForApiRequest;
     }
 
     value = value + previousValue;
@@ -44,16 +50,16 @@ class _ParseIncrementOperation extends _ParseOperation<num> {
       return {
         'className': 'ParseIncrementOperation',
         '__op': operationName,
-        'amount': incrementAmountForApiRequest,
+        'amount': valueForApiRequest,
         'estimatedValue': value
       };
     }
 
-    return {'__op': operationName, 'amount': incrementAmountForApiRequest};
+    return {'__op': operationName, 'amount': valueForApiRequest};
   }
 
   factory _ParseIncrementOperation.fromFullJson(Map<String, dynamic> json) {
     return _ParseIncrementOperation(json['estimatedValue'] as num)
-      ..incrementAmountForApiRequest = json['amount'] as num;
+      ..valueForApiRequest = json['amount'] as num;
   }
 }

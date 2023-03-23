@@ -1,7 +1,11 @@
 part of flutter_parse_sdk;
 
-abstract class _ParseOperation<T> implements _Valuable {
+abstract class _ParseOperation<T>
+    with ParseSaveStateAwareChild
+    implements _Valuable {
   T value;
+
+  late T valueForApiRequest;
 
   _ParseOperation(this.value);
 
@@ -49,9 +53,16 @@ abstract class _ParseOperation<T> implements _Valuable {
 }
 
 abstract class _ParseArrayOperation extends _ParseOperation<List> {
-  List valueForAPIRequest = [];
+  _ParseArrayOperation(List value) : super(value) {
+    super.valueForApiRequest = [];
+  }
 
-  _ParseArrayOperation(List value) : super(value);
+  @override
+  void onSave() {
+    super.onSave();
+
+    valueForApiRequest.clear();
+  }
 
   @override
   Map<String, dynamic> toJson({bool full = false}) {
@@ -59,11 +70,11 @@ abstract class _ParseArrayOperation extends _ParseOperation<List> {
       return {
         '__op': operationName,
         'objects': parseEncode(value, full: full),
-        'valueForAPIRequest': parseEncode(valueForAPIRequest, full: full),
+        'valueForAPIRequest': parseEncode(valueForApiRequest, full: full),
       };
     }
 
-    return {'__op': operationName, 'objects': parseEncode(valueForAPIRequest)};
+    return {'__op': operationName, 'objects': parseEncode(valueForApiRequest)};
   }
 
   static _ParseArrayOperation? fromFullJson(Map<String, dynamic>? json) {
@@ -93,7 +104,7 @@ abstract class _ParseArrayOperation extends _ParseOperation<List> {
         return null;
     }
 
-    arrayOperation.valueForAPIRequest = objectsForAPIRequest ?? [];
+    arrayOperation.valueForApiRequest = objectsForAPIRequest ?? [];
 
     return arrayOperation;
   }
@@ -101,7 +112,17 @@ abstract class _ParseArrayOperation extends _ParseOperation<List> {
 
 abstract class _ParseRelationOperation
     extends _ParseOperation<List<ParseObject>> {
-  _ParseRelationOperation(List<ParseObject> value) : super(value);
+  _ParseRelationOperation(List<ParseObject> value) : super(value) {
+    super.valueForApiRequest = [];
+  }
+
+  @override
+  void onSave() {
+    super.onSave();
+
+    valueForApiRequest.clear();
+    value.clear();
+  }
 
   @override
   Map<String, dynamic> toJson({bool full = false}) {

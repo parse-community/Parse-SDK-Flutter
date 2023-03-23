@@ -23,15 +23,15 @@ class _ParseAddOperation extends _ParseArrayOperation {
       previousValue = previous.estimatedArray;
 
       if (previous.savedArray.isEmpty) {
-        valueForAPIRequest.addAll([...previous.estimatedArray, ...value]);
+        valueForApiRequest.addAll([...previous.estimatedArray, ...value]);
       } else {
-        valueForAPIRequest.addAll(value);
+        valueForApiRequest.addAll(value);
       }
     } else {
       final previousAdd = (previous as _ParseAddOperation);
 
       previousValue = previousAdd.value;
-      valueForAPIRequest.addAll([...previousAdd.valueForAPIRequest, ...value]);
+      valueForApiRequest.addAll([...previousAdd.valueForApiRequest, ...value]);
     }
 
     value = [...previousValue, ...value];

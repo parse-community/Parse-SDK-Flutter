@@ -26,7 +26,7 @@ class _ParseRemoveOperation extends _ParseArrayOperation {
         throw ParseOperationException('Can not remove from unsaved array');
       }
 
-      valueForAPIRequest.addAll(value.where(
+      valueForApiRequest.addAll(value.where(
         (e) => previous.savedArray.contains(e),
       ));
     } else {
@@ -34,8 +34,8 @@ class _ParseRemoveOperation extends _ParseArrayOperation {
 
       previousValue = previousRemove.value;
 
-      valueForAPIRequest.addAll([
-        ...previousRemove.valueForAPIRequest,
+      valueForApiRequest.addAll([
+        ...previousRemove.valueForApiRequest,
         ...value,
       ]);
     }
