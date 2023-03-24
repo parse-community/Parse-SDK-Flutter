@@ -12,10 +12,7 @@ class _ParseAddUniqueOperation extends _ParseArrayOperation {
   }
 
   @override
-  _ParseOperation<List> mergeWithPrevious(Object previous) {
-    if (!canMergeWith(previous)) {
-      throw _UnmergeableOperationException(this, previous);
-    }
+  _ParseOperation<List> merge(Object previous) {
 
     final List previousValue;
 

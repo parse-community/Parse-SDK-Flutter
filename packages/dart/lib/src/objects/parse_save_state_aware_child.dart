@@ -1,9 +1,9 @@
 part of flutter_parse_sdk;
 
 mixin ParseSaveStateAwareChild {
-  void onSave() {}
+  void onSaved() {}
 
   void onSaving() {}
 
-  void onRevertSave() {}
+  void onRevertSaving() {}
 }

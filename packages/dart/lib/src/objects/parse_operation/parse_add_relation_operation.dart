@@ -12,11 +12,7 @@ class _ParseAddRelationOperation extends _ParseRelationOperation {
   }
 
   @override
-  _ParseOperation<List<ParseObject>> mergeWithPrevious(Object previous) {
-    if (!canMergeWith(previous)) {
-      throw _UnmergeableOperationException(this, previous);
-    }
-
+  _ParseOperation<List<ParseObject>> merge(Object previous) {
     final List<ParseObject> previousValue;
 
     if (previous is List<ParseObject>) {

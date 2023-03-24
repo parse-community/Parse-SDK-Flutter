@@ -1,6 +1,7 @@
 part of flutter_parse_sdk;
 
-class _ParseIncrementOperation extends _ParseOperation<num> {
+class _ParseIncrementOperation extends _ParseOperation<num>
+    implements ParseSaveStateAwareChild {
   _ParseIncrementOperation(num value) : super(value) {
     super.valueForApiRequest = 0.0;
   }
@@ -9,23 +10,12 @@ class _ParseIncrementOperation extends _ParseOperation<num> {
   String get operationName => 'Increment';
 
   @override
-  void onSave() {
-    super.onSave();
-
-    valueForApiRequest = 0.0;
-  }
-
-  @override
   bool canMergeWith(Object other) {
     return other is _ParseIncrementOperation || other is num;
   }
 
   @override
-  _ParseOperation<num> mergeWithPrevious(Object previous) {
-    if (!canMergeWith(previous)) {
-      throw _UnmergeableOperationException(this, previous);
-    }
-
+  _ParseOperation<num> merge(Object previous) {
     valueForApiRequest += value;
 
     final num previousValue;
@@ -37,6 +27,12 @@ class _ParseIncrementOperation extends _ParseOperation<num> {
       previousValue = previousIncrement.value;
 
       valueForApiRequest += previousIncrement.valueForApiRequest;
+
+      if (previousIncrement.valueForApiRequestBeforeSaving != null) {
+        valueForApiRequestBeforeSaving =
+            (valueForApiRequestBeforeSaving ?? 0.0) +
+                previousIncrement.valueForApiRequestBeforeSaving!;
+      }
     }
 
     value = value + previousValue;
@@ -61,5 +57,34 @@ class _ParseIncrementOperation extends _ParseOperation<num> {
   factory _ParseIncrementOperation.fromFullJson(Map<String, dynamic> json) {
     return _ParseIncrementOperation(json['estimatedValue'] as num)
       ..valueForApiRequest = json['amount'] as num;
+  }
+
+  num? valueForApiRequestBeforeSaving;
+
+  @override
+  @mustCallSuper
+  void onSaved() {
+    if (valueForApiRequestBeforeSaving == valueForApiRequest) {
+      // No operations were performed during the save process
+      valueForApiRequest = 0.0;
+    } else {
+      // some operation performed during the save process subtract the saved value
+      valueForApiRequest =
+          valueForApiRequest - (valueForApiRequestBeforeSaving ?? 0.0);
+    }
+
+    valueForApiRequestBeforeSaving = null;
+  }
+
+  @override
+  @mustCallSuper
+  void onSaving() {
+    valueForApiRequestBeforeSaving = valueForApiRequest;
+  }
+
+  @override
+  @mustCallSuper
+  void onRevertSaving() {
+    valueForApiRequestBeforeSaving = null;
   }
 }

@@ -1,23 +1,14 @@
 part of flutter_parse_sdk;
 
-class _ParseArray with ParseSaveStateAwareChild implements _Valuable {
+class _ParseArray implements _Valuable, ParseSaveStateAwareChild {
   _ParseArray();
-
-  @override
-  void onSave() {
-    super.onSave();
-
-    _savedArray.clear();
-    _savedArray.addAll(estimatedArray);
-
-    lastPreformedOperation = null;
-  }
 
   List _savedArray = [];
   List estimatedArray = [];
 
   set savedArray(List array) {
-    estimatedArray = _savedArray = array.toList();
+    _savedArray = array.toList();
+    estimatedArray = array.toList();
   }
 
   List get savedArray => _savedArray;
@@ -62,5 +53,36 @@ class _ParseArray with ParseSaveStateAwareChild implements _Valuable {
   @override
   Object? getValue() {
     return estimatedArray.toList();
+  }
+
+  _ParseArrayOperation? _lastPreformedOperationBeforeSaving;
+  List? _estimatedArrayBeforeSaving = [];
+
+  @override
+  @mustCallSuper
+  void onSaved() {
+    _savedArray.clear();
+    _savedArray.addAll(_estimatedArrayBeforeSaving ?? []);
+    _estimatedArrayBeforeSaving = null;
+
+    // No operations were performed during the save process
+    if (_lastPreformedOperationBeforeSaving == lastPreformedOperation) {
+      lastPreformedOperation = null;
+    }
+    _lastPreformedOperationBeforeSaving = null;
+  }
+
+  @override
+  @mustCallSuper
+  void onSaving() {
+    _lastPreformedOperationBeforeSaving = lastPreformedOperation;
+    _estimatedArrayBeforeSaving = estimatedArray.toList();
+  }
+
+  @override
+  @mustCallSuper
+  void onRevertSaving() {
+    _lastPreformedOperationBeforeSaving = null;
+    _estimatedArrayBeforeSaving = null;
   }
 }

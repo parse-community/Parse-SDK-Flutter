@@ -12,32 +12,22 @@ class _ParseRemoveOperation extends _ParseArrayOperation {
   }
 
   @override
-  _ParseOperation<List> mergeWithPrevious(Object previous) {
-    if (!canMergeWith(previous)) {
-      throw _UnmergeableOperationException(this, previous);
-    }
-
+  _ParseOperation<List> merge(Object previous) {
     final List previousValue;
+
+    valueForApiRequest.addAll(value.toSet());
 
     if (previous is _ParseArray) {
       previousValue = previous.estimatedArray;
-
-      if (previous.savedArray.isEmpty) {
-        throw ParseOperationException('Can not remove from unsaved array');
-      }
-
-      valueForApiRequest.addAll(value.where(
-        (e) => previous.savedArray.contains(e),
-      ));
     } else {
       final previousRemove = (previous as _ParseRemoveOperation);
 
       previousValue = previousRemove.value;
 
-      valueForApiRequest.addAll([
+      valueForApiRequest = {
+        ...valueForApiRequest,
         ...previousRemove.valueForApiRequest,
-        ...value,
-      ]);
+      }.toList();
     }
 
     value = [...previousValue]..removeWhere((e) => value.contains(e));

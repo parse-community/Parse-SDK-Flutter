@@ -1,8 +1,6 @@
 part of flutter_parse_sdk;
 
-abstract class _ParseOperation<T>
-    with ParseSaveStateAwareChild
-    implements _Valuable {
+abstract class _ParseOperation<T> implements _Valuable {
   T value;
 
   late T valueForApiRequest;
@@ -13,7 +11,15 @@ abstract class _ParseOperation<T>
 
   bool canMergeWith(Object other);
 
-  _ParseOperation<T> mergeWithPrevious(Object previous);
+  _ParseOperation<T> mergeWithPrevious(Object previous) {
+    if (!canMergeWith(previous)) {
+      throw _UnmergeableOperationException(this, previous);
+    }
+
+    return merge(previous);
+  }
+
+  _ParseOperation<T> merge(Object previous);
 
   Map<String, dynamic> toJson({bool full = false});
 
@@ -55,13 +61,6 @@ abstract class _ParseOperation<T>
 abstract class _ParseArrayOperation extends _ParseOperation<List> {
   _ParseArrayOperation(List value) : super(value) {
     super.valueForApiRequest = [];
-  }
-
-  @override
-  void onSave() {
-    super.onSave();
-
-    valueForApiRequest.clear();
   }
 
   @override
@@ -116,13 +115,13 @@ abstract class _ParseRelationOperation
     super.valueForApiRequest = [];
   }
 
-  @override
-  void onSave() {
-    super.onSave();
-
-    valueForApiRequest.clear();
-    value.clear();
-  }
+  // @override
+  // void onSaved() {
+  //   super.onSaved();
+  //
+  //   valueForApiRequest.clear();
+  //   value.clear();
+  // }
 
   @override
   Map<String, dynamic> toJson({bool full = false}) {
