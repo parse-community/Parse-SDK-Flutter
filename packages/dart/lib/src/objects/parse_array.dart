@@ -42,12 +42,11 @@ class _ParseArray implements _Valuable, ParseSaveStateAwareChild {
 
   factory _ParseArray.fromFullJson(Map<String, dynamic> json) {
     return _ParseArray()
-      ..savedArray =
-          (json['savedArray'] as List).map((e) => parseDecode(e)).toList()
-      ..estimatedArray =
-          (json['estimatedArray'] as List).map((e) => parseDecode(e)).toList()
-      ..lastPreformedOperation =
-          _ParseArrayOperation.fromFullJson(json['lastPreformedOperation']);
+      ..savedArray = parseDecode(json['savedArray'])
+      ..estimatedArray = parseDecode(json['estimatedArray'])
+      ..lastPreformedOperation = json['lastPreformedOperation'] == null
+          ? null
+          : _ParseArrayOperation.fromFullJson(json['lastPreformedOperation']);
   }
 
   @override
@@ -64,6 +63,14 @@ class _ParseArray implements _Valuable, ParseSaveStateAwareChild {
     _savedArray.clear();
     _savedArray.addAll(_estimatedArrayBeforeSaving ?? []);
     _estimatedArrayBeforeSaving = null;
+
+    if (lastPreformedOperation is _ParseRemoveOperation) {
+      lastPreformedOperation?.valueForApiRequest
+          .retainWhere((e) => _savedArray.contains(e));
+    } else {
+      lastPreformedOperation?.valueForApiRequest
+          .removeWhere((e) => _savedArray.contains(e));
+    }
 
     // No operations were performed during the save process
     if (_lastPreformedOperationBeforeSaving == lastPreformedOperation) {
