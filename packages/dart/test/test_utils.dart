@@ -115,14 +115,6 @@ void testUnmergeableOperationShouldThrow({
     final functionRef = operation.key;
     final positionalArguments = operation.value;
 
-    if (functionRef == parseObject.setRemove ||
-        functionRef == parseObject.setRemoveAll) {
-      // to avoid the exception when trying to remove from unsaved array
-      parseObject.fromJson({
-        testingOnKey: [1, 2]
-      });
-    }
-
     Function.apply(functionRef, positionalArguments);
 
     expect(
