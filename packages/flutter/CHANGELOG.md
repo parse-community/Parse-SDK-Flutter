@@ -1,3 +1,9 @@
+## Unreleased (master branch)
+
+### Bug Fixes
+
+* Since Flutter 3.8, the `vsync` property was removed from `AnimatedSize` causing compilation failure. ([#861](https://github.com/parse-community/Parse-SDK-Flutter/issues/861))
+
 ## [4.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.4...flutter-4.0.0) (2023-03-19)
 
 ### BREAKING CHANGES
