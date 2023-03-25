@@ -27,7 +27,7 @@ class QueryBuilder<T extends ParseObject> {
       if (i > 0) {
         query += ',';
       }
-      query += '{' + list[i].buildQueries(list[i].queries) + '}';
+      query += '{${list[i].buildQueries(list[i].queries)}}';
     }
     query += ']';
     queries.add(MapEntry<String, dynamic>(_noOperatorNeeded, query));
@@ -523,7 +523,7 @@ class QueryBuilder<T extends ParseObject> {
   String getLimiters(Map<String, dynamic> map) {
     String result = '';
     map.forEach((String key, dynamic value) {
-      result = result + '&$key=$value';
+      result = '$result&$key=$value';
     });
     return result;
   }
@@ -533,7 +533,7 @@ class QueryBuilder<T extends ParseObject> {
     String result = '';
     map.forEach((String key, dynamic value) {
       if (result.isNotEmpty) {
-        result = result + ',"$key":$value';
+        result = '$result,"$key":$value';
       } else {
         result = '"$key":$value';
       }

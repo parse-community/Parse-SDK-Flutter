@@ -86,6 +86,11 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   Future<ParseResponse> update() async {
+    assert(
+      objectId != null && (objectId?.isNotEmpty ?? false),
+      "Can't update a parse object while the objectId property is null or empty",
+    );
+
     try {
       final Uri url = getSanitisedUri(_client, '$_path/$objectId');
       final String body = json.encode(toJson(forApiRQ: true));
@@ -133,26 +138,32 @@ class ParseObject extends ParseBase implements ParseCloneable {
       final ParseResponse response = ParseResponse();
       return response;
     }
+
     if (object is ParseObject) {
       uniqueObjects.remove(object);
     }
+
     for (ParseFileBase file in uniqueFiles) {
       final ParseResponse response = await file.save();
       if (!response.success) {
         return response;
       }
     }
+
     List<ParseObject> remaining = uniqueObjects.toList();
     final List<ParseObject> finished = <ParseObject>[];
+
     final ParseResponse totalResponse = ParseResponse()
       ..success = true
       ..results = <dynamic>[]
       ..statusCode = 200;
+
     while (remaining.isNotEmpty) {
       /* Partition the objects into two sets: those that can be save immediately,
       and those that rely on other objects to be created first. */
       final List<ParseObject> current = <ParseObject>[];
       final List<ParseObject> nextBatch = <ParseObject>[];
+
       for (ParseObject object in remaining) {
         if (object._canbeSerialized(finished)) {
           current.add(object);
@@ -160,7 +171,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
           nextBatch.add(object);
         }
       }
+
       remaining = nextBatch;
+
       // TODO(yulingtianxia): lazy User
       /* Batch requests have currently a limit of 50 packaged requests per single request
       This splitting will split the overall array into segments of upto 50 requests
@@ -174,18 +187,29 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final List<dynamic> requests = chunk.map<dynamic>((ParseObject obj) {
           return obj._getRequestJson(obj.objectId == null ? 'POST' : 'PUT');
         }).toList();
+
         for (ParseObject obj in chunk) {
           obj._saveChanges();
         }
-        final ParseResponse response = await batchRequest(requests, chunk);
+        final ParseResponse response = await batchRequest(
+          requests,
+          chunk,
+          client: _client,
+        );
         totalResponse.success &= response.success;
+
         if (response.success) {
           totalResponse.results!.addAll(response.results!);
           totalResponse.count += response.count;
+
           for (int i = 0; i < response.count; i++) {
             if (response.results![i] is ParseError) {
               // Batch request succeed, but part of batch failed.
               chunk[i]._revertSavingChanges();
+
+              // if any request in a batch requests group fails,
+              // then the overall response will be considered unsuccessful.
+              totalResponse.success = false;
             } else {
               chunk[i]._savingChanges.clear();
             }
@@ -195,12 +219,15 @@ class ParseObject extends ParseBase implements ParseCloneable {
           for (ParseObject obj in chunk) {
             obj._revertSavingChanges();
           }
+
           totalResponse.statusCode = response.statusCode;
           totalResponse.error = response.error;
         }
       }
+
       finished.addAll(current);
     }
+
     return totalResponse;
   }
 
@@ -221,7 +248,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     final String parsePath = tempUri.path;
     final dynamic request = <String, dynamic>{
       'method': method,
-      'path': '$parsePath$_path' + (objectId != null ? '/$objectId' : ''),
+      'path': '$parsePath$_path${objectId != null ? '/$objectId' : ''}',
       'body': toJson(forApiRQ: true)
     };
     return request;
@@ -450,8 +477,25 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Deletes the current object locally and online
-  Future<ParseResponse> delete<T extends ParseObject>(
-      {String? id, String? path}) async {
+  Future<ParseResponse> delete<T extends ParseObject>({
+    String? id,
+    String? path,
+  }) async {
+    assert(() {
+      final objId = objectId;
+      final isNotValidObjectId = objId == null || objId.isEmpty;
+      final isNotValidIdArg = id == null || id.isEmpty;
+
+      if (isNotValidObjectId && isNotValidIdArg) {
+        throw Exception(
+          "Can't delete a parse object while the objectId property "
+          "and id argument is null or empty",
+        );
+      }
+
+      return true;
+    }());
+
     try {
       path ??= _path;
       id ??= objectId;

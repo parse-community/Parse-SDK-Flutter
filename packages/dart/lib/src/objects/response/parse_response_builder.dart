@@ -54,27 +54,40 @@ class _ParseResponseBuilder {
   }
 
   /// Handles successful response with results
-  ParseResponse _handleSuccess<T>(ParseResponse response, dynamic object,
-      String responseBody, ParseApiRQ type) {
+  ParseResponse _handleSuccess<T>(
+    ParseResponse response,
+    dynamic object,
+    String responseBody,
+    ParseApiRQ type,
+  ) {
     response.success = true;
 
     final dynamic result = json.decode(responseBody);
 
     if (type == ParseApiRQ.batch) {
       final List<dynamic>? list = result;
+
       if (object is List && object.length == list!.length) {
         response.count = object.length;
         response.results = <dynamic>[];
+
         for (int i = 0; i < object.length; i++) {
           final Map<String, dynamic> objectResult = list[i];
+
           if (objectResult.containsKey('success')) {
             final T? item = _handleSingleResult<T>(
-                object[i], objectResult['success'], false);
+              object[i],
+              objectResult['success'],
+              false,
+            );
+
             response.results!.add(item);
           } else {
             final ParseError error = ParseError(
-                code: objectResult[keyCode],
-                message: objectResult[keyError].toString());
+              code: objectResult[keyError][keyCode],
+              message: objectResult[keyError][keyError].toString(),
+            );
+
             response.results!.add(error);
           }
         }
@@ -115,7 +128,7 @@ class _ParseResponseBuilder {
   List<T> _handleMultipleResults<T>(T object, List<dynamic> data) {
     final List<T> resultsList = <T>[];
     for (dynamic value in data) {
-      resultsList.add(_handleSingleResult<T>(object, value, true)!);
+      resultsList.add(_handleSingleResult<T>(object, value, true) as T);
     }
     return resultsList;
   }
