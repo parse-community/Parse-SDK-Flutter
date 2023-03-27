@@ -47,7 +47,6 @@ part 'src/objects/parse_file_web.dart';
 part 'src/objects/parse_function.dart';
 part 'src/objects/parse_geo_point.dart';
 part 'src/objects/parse_installation.dart';
-part 'src/objects/parse_merge.dart';
 part 'src/objects/parse_object.dart';
 part 'src/objects/parse_operation/operation_exception.dart';
 part 'src/objects/parse_operation/parse_add_operation.dart';
