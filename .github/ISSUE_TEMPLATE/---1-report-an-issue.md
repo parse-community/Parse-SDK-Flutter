@@ -36,6 +36,8 @@ assignees: ''
 
 Parse Flutter SDK
 - SDK version: `FILL_THIS_OUT`
+- Flutter version: `FILL_THIS_OUT`
+- Dart version: `FILL_THIS_OUT`
 - Operating system version: `FILL_THIS_OUT`
 
 Server
