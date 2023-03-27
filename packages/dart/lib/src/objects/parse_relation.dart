@@ -1,55 +1,190 @@
 part of flutter_parse_sdk;
 
-// ignore_for_file: always_specify_types
-class ParseRelation<T extends ParseObject> {
-  ParseRelation({required ParseObject parent, required String key}) {
-    if (!parent.containsKey(key)) {
-      throw 'Invalid Relation key name';
-    }
-    _targetClass = parent.get<ParseRelation>(key)!.getTargetClass;
-    _parent = parent;
-    _key = key;
-    _parentObjectId = parent.objectId!;
-  }
-
-  ParseRelation.fromJson(Map<String, dynamic> map) {
-    _knownObjects = parseDecode(map['objects']);
-    _targetClass = map['className'];
-  }
-
+abstract class ParseRelation<T extends ParseObject> {
   //The owning object of this ParseRelation
-  ParseObject? _parent;
-  // The object Id of the parent.
-  String _parentObjectId = '';
-  //The className of the target objects.
+  ParseObject getParent();
+
+  //The key of the relation in the parent object. i.e. the column name
+  String getKey();
+
+  factory ParseRelation({
+    required ParseObject parent,
+    required String key,
+  }) {
+    return _ParseRelation(parent: parent, key: key);
+  }
+
+  ///The className of the target objects.
+  @Deprecated('use the targetClass getter')
+  String get getTargetClass;
+
+  ///The className of the target objects.
+  String? get targetClass;
+
+  QueryBuilder getQuery();
+
+  void add(T parseObject);
+
+  void remove(T parseObject);
+
+  factory ParseRelation.fromJson(
+    Map<String, dynamic> map, {
+    ParseObject? parent,
+    String? key,
+  }) {
+    return _ParseRelation.fromJson(map, parent: parent, key: key);
+  }
+
+  Map<String, dynamic> toJson({bool full = false});
+}
+
+class _ParseRelation<T extends ParseObject>
+    implements ParseRelation<T>, _ParseSaveStateAwareChild {
   String? _targetClass;
-  //The key of the relation in the parent object.
-  String _key = '';
+
+  ParseObject? parent;
+
+  @override
+  ParseObject getParent() {
+    return parent!;
+  }
+
+  String? key;
+
+  @override
+  String getKey() {
+    return key!;
+  }
+
   //For offline caching, we keep track of every object we've known to be in the relation.
-  Set<T>? _knownObjects = <T>{};
+  Set<T> knownObjects = <T>{};
 
+  _ParseRelationOperation? lastPreformedOperation;
+
+  _ParseRelation({required this.parent, required this.key});
+
+  _ParseRelation<T> preformRelationOperation(
+    _ParseRelationOperation relationOperation,
+  ) {
+    resolveTargetClassFromRelationObjets(relationOperation.value);
+
+    relationOperation.mergeWithPrevious(lastPreformedOperation ?? this);
+
+    lastPreformedOperation = relationOperation;
+
+    knownObjects = lastPreformedOperation!.value.toSet() as Set<T>;
+
+    return this;
+  }
+
+  @override
   QueryBuilder getQuery() {
-    return QueryBuilder(ParseCoreData.instance.createObject(_targetClass!))
-      ..whereRelatedTo(_key, _parent!.parseClassName, _parentObjectId);
+    final parentClassName = parent!.parseClassName;
+    final parentObjectId = parent!.objectId;
+
+    if (parentObjectId == null) {
+      throw 'The parent objectId is null. Query based on a Relation require ObjectId';
+    }
+
+    final QueryBuilder queryBuilder;
+
+    if (_targetClass == null) {
+      queryBuilder = QueryBuilder(
+        ParseCoreData.instance.createObject(parentClassName),
+      )..setRedirectClassNameForKey(key!);
+    } else {
+      queryBuilder = QueryBuilder(
+        ParseCoreData.instance.createObject(_targetClass!),
+      );
+    }
+
+    return queryBuilder..whereRelatedTo(key!, parentClassName, parentObjectId);
   }
 
-  void add(T object) {
-    _targetClass = object.parseClassName;
-    _knownObjects!.add(object);
-    _parent!.addRelation(_key, _knownObjects!.toList());
+  @override
+  void add(T parseObject) {
+    preformRelationOperation(_ParseAddRelationOperation({parseObject}));
   }
 
-  void remove(T object) {
-    _targetClass = object.parseClassName;
-    _knownObjects!.remove(object);
-    _parent!.removeRelation(_key, _knownObjects!.toList());
+  @override
+  void remove(T parseObject) {
+    preformRelationOperation(_ParseRemoveRelationOperation({parseObject}));
   }
 
+  @override
   String get getTargetClass => _targetClass ?? '';
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        '__type': keyRelation,
-        'className': _targetClass,
-        'objects': parseEncode(_knownObjects?.toList())
+  @override
+  String? get targetClass => _targetClass;
+
+  _ParseRelation.fromJson(
+    Map<String, dynamic> json, {
+    ParseObject? parent,
+    String? key,
+  }) {
+    if (parent != null) {
+      this.parent = parent;
+    }
+    if (key != null) {
+      this.key = key;
+    }
+
+    knownObjects = Set.from(parseDecode(json['objects']) ?? {});
+    _targetClass = json['className'];
+  }
+
+  _ParseRelation.fromFullJson(Map<String, dynamic> json) {
+    knownObjects = parseDecode(json['objects']);
+    _targetClass = json['className'];
+    key = json['key'];
+    parent = parseDecode(json['parent']);
+    knownObjects = Set.from(parseDecode(json['objects']) ?? {});
+    lastPreformedOperation = json['lastPreformedOperation'] == null
+        ? null
+        : _ParseRelationOperation.fromFullJson(json['lastPreformedOperation']);
+  }
+
+  @override
+  Map<String, dynamic> toJson({bool full = false}) {
+    if (full) {
+      return {
+        'className': 'ParseRelation',
+        'targetClass': targetClass,
+        'key': key,
+        'parent': parseEncode(parent, full: true),
+        'objects': parseEncode(knownObjects, full: true),
+        'lastPreformedOperation': lastPreformedOperation?.toJson(full: true)
       };
+    }
+
+    return lastPreformedOperation?.toJson(full: false) ?? {};
+  }
+
+  bool shouldIncludeInRequest() {
+    return lastPreformedOperation?.valueForApiRequest.isNotEmpty ?? false;
+  }
+
+  @override
+  void onSaved() {}
+
+  @override
+  void onSaving() {}
+
+  @override
+  void onRevertSaving() {}
+
+  void resolveTargetClassFromRelationObjets(Set<ParseObject> relationObjects) {
+    var potentialTargetClass = _targetClass;
+
+    for (final parseObject in relationObjects) {
+      potentialTargetClass = parseObject.parseClassName;
+
+      if (_targetClass != null && potentialTargetClass != _targetClass) {
+        throw 'Can not add more then one class for a relation. the current target '
+            'class $targetClass and the passed class $potentialTargetClass';
+      }
+    }
+
+    _targetClass = potentialTargetClass;
+  }
 }

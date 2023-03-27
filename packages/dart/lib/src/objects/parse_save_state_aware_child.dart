@@ -1,6 +1,6 @@
 part of flutter_parse_sdk;
 
-mixin ParseSaveStateAwareChild {
+mixin _ParseSaveStateAwareChild {
   void onSaved() {}
 
   void onSaving() {}

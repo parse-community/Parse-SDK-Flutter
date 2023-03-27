@@ -1,7 +1,7 @@
 part of flutter_parse_sdk;
 
 class _ParseIncrementOperation extends _ParseOperation<num>
-    implements ParseSaveStateAwareChild {
+    implements _ParseSaveStateAwareChild {
   _ParseIncrementOperation(num value) : super(value) {
     super.valueForApiRequest = 0.0;
   }

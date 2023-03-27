@@ -26,6 +26,8 @@ abstract class _ParseOperation<T> implements _Valuable {
   static Object? maybeMergeWithPrevious<R>({
     required R newValue,
     required Object? previousValue,
+    required ParseObject parent,
+    required String key,
   }) {
     if (newValue is List) {
       return _ParseArray()..estimatedArray = newValue;
@@ -38,6 +40,17 @@ abstract class _ParseOperation<T> implements _Valuable {
 
       if (previousValue == null || previousValue is! _ParseOperation) {
         return _ParseArray().preformArrayOperation(newValue);
+      }
+    }
+
+    if (newValue is _ParseRelationOperation) {
+      if (previousValue is _ParseRelation) {
+        return previousValue.preformRelationOperation(newValue);
+      }
+
+      if (previousValue == null || previousValue is! _ParseOperation) {
+        return _ParseRelation(parent: parent, key: key)
+            .preformRelationOperation(newValue);
       }
     }
 
@@ -68,8 +81,8 @@ abstract class _ParseArrayOperation extends _ParseOperation<List> {
     if (full) {
       return {
         '__op': operationName,
-        'objects': parseEncode(value, full: full),
-        'valueForAPIRequest': parseEncode(valueForApiRequest, full: full),
+        'objects': parseEncode(value, full: true),
+        'valueForAPIRequest': parseEncode(valueForApiRequest, full: true),
       };
     }
 
@@ -102,21 +115,47 @@ abstract class _ParseArrayOperation extends _ParseOperation<List> {
 }
 
 abstract class _ParseRelationOperation
-    extends _ParseOperation<List<ParseObject>> {
-  _ParseRelationOperation(List<ParseObject> value) : super(value) {
-    super.valueForApiRequest = [];
+    extends _ParseOperation<Set<ParseObject>> {
+  _ParseRelationOperation(Set<ParseObject> value) : super(value) {
+    super.valueForApiRequest = {};
   }
 
-  // @override
-  // void onSaved() {
-  //   super.onSaved();
-  //
-  //   valueForApiRequest.clear();
-  //   value.clear();
-  // }
+  static _ParseRelationOperation? fromFullJson(Map<String, dynamic> json) {
+    final Set<ParseObject> objects =
+        Set.from(parseDecode(json['objects']) ?? {});
+
+    final Set<ParseObject>? objectsForAPIRequest =
+        json['valueForAPIRequest'] == null
+            ? null
+            : Set.from(parseDecode(json['valueForAPIRequest']));
+
+    final _ParseRelationOperation relationOperation;
+    switch (json['__op']) {
+      case 'AddRelation':
+        relationOperation = _ParseAddRelationOperation(objects);
+        break;
+      case 'RemoveRelation':
+        relationOperation = _ParseRemoveRelationOperation(objects);
+        break;
+
+      default:
+        return null;
+    }
+
+    relationOperation.valueForApiRequest = objectsForAPIRequest ?? {};
+
+    return relationOperation;
+  }
 
   @override
   Map<String, dynamic> toJson({bool full = false}) {
-    return {'__op': operationName, 'objects': parseEncode(value, full: full)};
+    if (full) {
+      return {
+        '__op': operationName,
+        'objects': parseEncode(value, full: true),
+        'valueForAPIRequest': parseEncode(valueForApiRequest, full: true),
+      };
+    }
+    return {'__op': operationName, 'objects': parseEncode(value, full: false)};
   }
 }

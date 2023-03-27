@@ -1,6 +1,6 @@
 part of flutter_parse_sdk;
 
-class _ParseArray implements _Valuable, ParseSaveStateAwareChild {
+class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
   _ParseArray();
 
   List _savedArray = [];
@@ -15,10 +15,10 @@ class _ParseArray implements _Valuable, ParseSaveStateAwareChild {
 
   _ParseArrayOperation? lastPreformedOperation;
 
-  _ParseArray preformArrayOperation(_ParseArrayOperation arrayOperation) {
-    arrayOperation.mergeWithPrevious(
-      lastPreformedOperation ?? this,
-    );
+  _ParseArray preformArrayOperation(
+    _ParseArrayOperation arrayOperation,
+  ) {
+    arrayOperation.mergeWithPrevious(lastPreformedOperation ?? this);
 
     lastPreformedOperation = arrayOperation;
 
@@ -31,13 +31,14 @@ class _ParseArray implements _Valuable, ParseSaveStateAwareChild {
     if (full) {
       return {
         'className': 'ParseArray',
-        'estimatedArray': parseEncode(estimatedArray, full: full),
-        'savedArray': parseEncode(savedArray, full: full),
-        'lastPreformedOperation': lastPreformedOperation?.toJson(full: full)
+        'estimatedArray': parseEncode(estimatedArray, full: true),
+        'savedArray': parseEncode(savedArray, full: true),
+        'lastPreformedOperation': lastPreformedOperation?.toJson(full: true)
       };
     }
 
-    return lastPreformedOperation?.toJson() ?? parseEncode(estimatedArray);
+    return lastPreformedOperation?.toJson(full: false) ??
+        parseEncode(estimatedArray);
   }
 
   factory _ParseArray.fromFullJson(Map<String, dynamic> json) {

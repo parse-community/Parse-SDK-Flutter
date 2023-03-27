@@ -48,28 +48,10 @@ class _ParseAddUniqueOperation extends _ParseArrayOperation {
       ...value.where((e) => previousValue.contains(e) == false),
     ];
 
-    _removeDuplicateParseObjectByObjectId(value);
-    _removeDuplicateParseObjectByObjectId(valueForApiRequest);
+    value = removeDuplicateParseObjectByObjectId(value);
+    valueForApiRequest =
+        removeDuplicateParseObjectByObjectId(valueForApiRequest);
 
     return this;
-  }
-
-  void _removeDuplicateParseObjectByObjectId(List list) {
-    var foldedGroupByObjectId = list
-        .whereType<ParseObject>()
-        .where((e) => e.objectId != null)
-        .groupFoldBy(
-          (e) => e.objectId!,
-          (previous, element) => element,
-        );
-
-    list.removeWhere(
-      (e) {
-        return e is ParseObject &&
-            foldedGroupByObjectId.keys.contains(e.objectId);
-      },
-    );
-
-    list.addAll(foldedGroupByObjectId.values);
   }
 }
