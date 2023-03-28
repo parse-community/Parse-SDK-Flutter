@@ -13,16 +13,31 @@ class _ParseRemoveRelationOperation extends _ParseRelationOperation {
 
   @override
   _ParseOperation<Set<ParseObject>> merge(Object previous) {
-    final Set<ParseObject> previousValue;
+    Set<ParseObject> previousValue = {};
 
-    // if (previous is List<ParseObject>) {
-    //   previousValue = previous;
-    // } else {
-    //   previousValue = (previous as _ParseRemoveRelationOperation).value;
-    // }
+    if (previous is _ParseRelation) {
+      previousValue = previous.knownObjects.toSet();
+    } else {
+      final previousRemove = (previous as _ParseRemoveRelationOperation);
 
-    // previousValue.addAll(value);
-    // value = previousValue.toSet().toList();
+      previousValue = previousRemove.value.toSet();
+
+      valueForApiRequest.addAll(previousRemove.valueForApiRequest);
+    }
+
+    valueForApiRequest.addAll(value);
+
+    final parseObjectToRemoveByIds =
+        value.where((e) => e.objectId != null).map((e) => e.objectId!);
+
+    value = previousValue
+      ..removeWhere((e) =>
+          value.contains(e) || parseObjectToRemoveByIds.contains(e.objectId));
+
+    value = Set.from(removeDuplicateParseObjectByObjectId(value));
+
+    valueForApiRequest =
+        Set.from(removeDuplicateParseObjectByObjectId(valueForApiRequest));
 
     return this;
   }

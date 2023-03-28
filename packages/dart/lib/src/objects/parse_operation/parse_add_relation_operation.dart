@@ -13,20 +13,24 @@ class _ParseAddRelationOperation extends _ParseRelationOperation {
 
   @override
   _ParseOperation<Set<ParseObject>> merge(Object previous) {
-    final Set<ParseObject> previousValue;
+    Set<ParseObject> previousValue = {};
 
     if (previous is _ParseRelation) {
-      previousValue = value.toSet();
+      previousValue = previous.knownObjects.toSet();
     } else {
-      previousValue = (previous as _ParseAddRelationOperation).value;
+      final previousAdd = (previous as _ParseAddRelationOperation);
+
+      previousValue = previousAdd.value.toSet();
+
+      valueForApiRequest.addAll(previousAdd.valueForApiRequest);
     }
 
-    value = {
-      ...previousValue,
-      ...value.where((e) => previousValue.contains(e) == false),
-    };
+    valueForApiRequest.addAll(value);
+
+    value = {...previousValue, ...value};
 
     value = Set.from(removeDuplicateParseObjectByObjectId(value));
+
     valueForApiRequest =
         Set.from(removeDuplicateParseObjectByObjectId(valueForApiRequest));
 
