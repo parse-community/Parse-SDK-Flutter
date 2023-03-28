@@ -1,6 +1,21 @@
 part of flutter_parse_sdk;
 
-class ParseOperationException implements Exception {
+abstract class ParseException implements Exception {}
+
+class ParseRelationException implements ParseException{
+  final String? message;
+
+  const ParseRelationException([this.message]);
+
+  @override
+  String toString() {
+    if (message == null) return "ParseRelationException";
+    return "ParseRelationException: $message";
+  }
+}
+
+
+class ParseOperationException implements ParseException {
   final String? message;
 
   const ParseOperationException([this.message]);

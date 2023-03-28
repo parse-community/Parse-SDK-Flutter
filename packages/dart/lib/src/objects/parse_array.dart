@@ -31,14 +31,14 @@ class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
     if (full) {
       return {
         'className': 'ParseArray',
-        'estimatedArray': parseEncode(estimatedArray, full: true),
-        'savedArray': parseEncode(savedArray, full: true),
-        'lastPreformedOperation': lastPreformedOperation?.toJson(full: true)
+        'estimatedArray': parseEncode(estimatedArray, full: full),
+        'savedArray': parseEncode(savedArray, full: full),
+        'lastPreformedOperation': lastPreformedOperation?.toJson(full: full)
       };
     }
 
-    return lastPreformedOperation?.toJson(full: false) ??
-        parseEncode(estimatedArray);
+    return lastPreformedOperation?.toJson(full: full) ??
+        parseEncode(estimatedArray, full: full);
   }
 
   factory _ParseArray.fromFullJson(Map<String, dynamic> json) {
@@ -56,7 +56,7 @@ class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
   }
 
   _ParseArrayOperation? _lastPreformedOperationBeforeSaving;
-  List? _estimatedArrayBeforeSaving = [];
+  List? _estimatedArrayBeforeSaving;
 
   @override
   @mustCallSuper
@@ -65,18 +65,20 @@ class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
     _savedArray.addAll(_estimatedArrayBeforeSaving ?? []);
     _estimatedArrayBeforeSaving = null;
 
-    if (lastPreformedOperation is _ParseRemoveOperation) {
-      lastPreformedOperation?.valueForApiRequest
-          .retainWhere((e) => _savedArray.contains(e));
+    if (_lastPreformedOperationBeforeSaving == lastPreformedOperation) {
+      // No operations were performed during the save process
+      lastPreformedOperation = null;
     } else {
-      lastPreformedOperation?.valueForApiRequest
-          .removeWhere((e) => _savedArray.contains(e));
+      // remove the saved objects and keep the new added objects while saving
+      if (lastPreformedOperation is _ParseRemoveOperation) {
+        lastPreformedOperation?.valueForApiRequest
+            .retainWhere((e) => _savedArray.contains(e));
+      } else {
+        lastPreformedOperation?.valueForApiRequest
+            .removeWhere((e) => _savedArray.contains(e));
+      }
     }
 
-    // No operations were performed during the save process
-    if (_lastPreformedOperationBeforeSaving == lastPreformedOperation) {
-      lastPreformedOperation = null;
-    }
     _lastPreformedOperationBeforeSaving = null;
   }
 
@@ -90,6 +92,15 @@ class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
   @override
   @mustCallSuper
   void onRevertSaving() {
+    _lastPreformedOperationBeforeSaving = null;
+    _estimatedArrayBeforeSaving = null;
+  }
+
+  @override
+  @mustCallSuper
+  void onClearUnsaved() {
+    estimatedArray = savedArray;
+    lastPreformedOperation = null;
     _lastPreformedOperationBeforeSaving = null;
     _estimatedArrayBeforeSaving = null;
   }

@@ -87,4 +87,12 @@ class _ParseIncrementOperation extends _ParseOperation<num>
   void onRevertSaving() {
     valueForApiRequestBeforeSaving = null;
   }
+
+  @override
+  @mustCallSuper
+  void onClearUnsaved() {
+    value = value - valueForApiRequest;
+    valueForApiRequest = 0.0;
+    valueForApiRequestBeforeSaving = null;
+  }
 }
