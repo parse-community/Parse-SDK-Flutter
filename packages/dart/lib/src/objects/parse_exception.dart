@@ -2,7 +2,7 @@ part of flutter_parse_sdk;
 
 abstract class ParseException implements Exception {}
 
-class ParseRelationException implements ParseException{
+class ParseRelationException implements ParseException {
   final String? message;
 
   const ParseRelationException([this.message]);
@@ -13,7 +13,6 @@ class ParseRelationException implements ParseException{
     return "ParseRelationException: $message";
   }
 }
-
 
 class ParseOperationException implements ParseException {
   final String? message;
