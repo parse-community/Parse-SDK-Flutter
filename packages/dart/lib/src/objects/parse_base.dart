@@ -91,11 +91,16 @@ abstract class ParseBase {
       map[keyVarUpdatedAt] = _parseDateFormat.format(updatedAt!);
     }
 
-    final Map<String, dynamic> target =
-        forApiRQ ? _unsavedChanges : _getObjectData();
+    final target = forApiRQ ? _unsavedChanges : _getObjectData();
     target.forEach((String key, dynamic value) {
       if (!map.containsKey(key)) {
         map[key] = parseEncode(value, full: full);
+      }
+
+      if (forApiRQ &&
+          value is _ParseRelation &&
+          !value.shouldIncludeInRequest()) {
+        map.remove(key);
       }
     });
 
@@ -115,7 +120,7 @@ abstract class ParseBase {
   }
 
   @override
-  String toString() => json.encode(toJson());
+  String toString() => json.encode(toJson(full: true));
 
   dynamic fromJsonForManualObject(Map<String, dynamic> objectData) {
     return _fromJson(objectData, true);
@@ -146,9 +151,19 @@ abstract class ParseBase {
       } else if (key == keyVarAcl) {
         _getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
       } else {
-        _getObjectData()[key] = parseDecode(value);
+        var decodedValue = parseDecode(value);
+        if (decodedValue is List) {
+          if (addInUnSave) {
+            decodedValue = _ParseArray()..estimatedArray = decodedValue;
+          } else {
+            decodedValue = _ParseArray()..savedArray = decodedValue;
+          }
+        }
+
+        _getObjectData()[key] = decodedValue;
+
         if (addInUnSave) {
-          _unsavedChanges[key] = _getObjectData()[key];
+          _unsavedChanges[key] = decodedValue;
         }
       }
     });
@@ -193,6 +208,15 @@ abstract class ParseBase {
 
   void clearUnsavedChanges() {
     _unsavedChanges.clear();
+    _notifyChildrenAboutClearUnsaved();
+  }
+
+  void _notifyChildrenAboutClearUnsaved() {
+    for (final child in _getObjectData().values) {
+      if (child is _ParseSaveStateAwareChild) {
+        child.onClearUnsaved();
+      }
+    }
   }
 
   /// Sets type [T] from objectData
@@ -201,15 +225,17 @@ abstract class ParseBase {
   /// [bool] forceUpdate is always true, if unsure as to whether an item is
   /// needed or not, set to false
   void set<T>(String key, T value, {bool forceUpdate = true}) {
-    if (_getObjectData().containsKey(key)) {
-      if (_getObjectData()[key] == value && !forceUpdate) {
-        return;
-      }
-      _getObjectData()[key] =
-          ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
-    } else {
-      _getObjectData()[key] = value;
+    if (_getObjectData()[key] == value && !forceUpdate) {
+      return;
     }
+
+    _getObjectData()[key] = _ParseOperation.maybeMergeWithPrevious<T>(
+      newValue: value,
+      previousValue: _getObjectData()[key],
+      parent: this as ParseObject,
+      key: key,
+    );
+
     _unsavedChanges[key] = _getObjectData()[key];
   }
 
@@ -220,7 +246,19 @@ abstract class ParseBase {
   /// provided
   T? get<T>(String key, {T? defaultValue}) {
     if (_getObjectData().containsKey(key)) {
-      return _getObjectData()[key] as T?;
+      final result = _getObjectData()[key];
+
+      if (result is _Valuable) {
+        return result.getValue() as T?;
+      }
+
+      if (result is _ParseRelation) {
+        return (result
+          ..parent = (this as ParseObject)
+          ..key = key) as T?;
+      }
+
+      return result as T?;
     } else {
       return defaultValue;
     }
@@ -256,7 +294,7 @@ abstract class ParseBase {
   /// Saves item to simple key pair value storage
   ///
   /// Replicates Android SDK pin process and saves object to storage
-  dynamic fromPin(String objectId) async {
+  Future<dynamic> fromPin(String objectId) async {
     final CoreStore coreStore = ParseCoreData().getStore();
     final String? itemFromStore = await coreStore.getString(objectId);
 

@@ -235,12 +235,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
     _savingChanges.clear();
     _savingChanges.addAll(_unsavedChanges);
     _unsavedChanges.clear();
+    _notifyChildrenAboutSaving();
   }
 
   void _revertSavingChanges() {
     _savingChanges.addAll(_unsavedChanges);
     _unsavedChanges.addAll(_savingChanges);
     _savingChanges.clear();
+    _notifyChildrenAboutRevertSaving();
   }
 
   dynamic _getRequestJson(String method) {
@@ -270,7 +272,15 @@ class ParseObject extends ParseBase implements ParseCloneable {
             return false;
           }
         }
-      } else if (value is List) {
+      } else if (value is _Valuable) {
+        if (!_canbeSerialized(aftersaving, value: value.getValue())) {
+          return false;
+        }
+      } else if (value is _ParseRelation) {
+        if (!_canbeSerialized(aftersaving, value: value.valueForApiRequest())) {
+          return false;
+        }
+      } else if (value is Iterable) {
         for (dynamic child in value) {
           if (!_canbeSerialized(aftersaving, value: child)) {
             return false;
@@ -290,7 +300,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       Set<ParseFileBase> uniqueFiles,
       Set<ParseObject> seen,
       Set<ParseObject> seenNew) {
-    if (object is List) {
+    if (object is Iterable) {
       for (dynamic child in object) {
         if (!_collectionDirtyChildren(
             child, uniqueObjects, uniqueFiles, seen, seenNew)) {
@@ -303,6 +313,16 @@ class ParseObject extends ParseBase implements ParseCloneable {
             child, uniqueObjects, uniqueFiles, seen, seenNew)) {
           return false;
         }
+      }
+    } else if (object is _Valuable) {
+      if (!_collectionDirtyChildren(
+          object.getValue(), uniqueObjects, uniqueFiles, seen, seenNew)) {
+        return false;
+      }
+    } else if (object is _ParseRelation) {
+      if (!_collectionDirtyChildren(object.valueForApiRequest(), uniqueObjects,
+          uniqueFiles, seen, seenNew)) {
+        return false;
       }
     } else if (object is ParseACL) {
       // TODO(yulingtianxia): handle ACL
@@ -343,65 +363,94 @@ class ParseObject extends ParseBase implements ParseCloneable {
     return true;
   }
 
+  void _notifyChildrenAboutSave() {
+    for (final child in _getObjectData().values) {
+      if (child is _ParseSaveStateAwareChild) {
+        child.onSaved();
+      }
+    }
+  }
+
+  void _notifyChildrenAboutSaving() {
+    for (final child in _getObjectData().values) {
+      if (child is _ParseSaveStateAwareChild) {
+        child.onSaving();
+      }
+    }
+  }
+
+  void _notifyChildrenAboutRevertSaving() {
+    for (final child in _getObjectData().values) {
+      if (child is _ParseSaveStateAwareChild) {
+        child.onRevertSaving();
+      }
+    }
+  }
+
   /// Get the instance of ParseRelation class associated with the given key.
   ParseRelation<T> getRelation<T extends ParseObject>(String key) {
-    return ParseRelation<T>(parent: this, key: key);
+    final potentialRelation = _getObjectData()[key];
+
+    if (potentialRelation == null) {
+      return ParseRelation<T>(parent: this, key: key);
+    }
+
+    if (potentialRelation is _ParseRelation<T>) {
+      return potentialRelation
+        ..parent = this
+        ..key = key;
+    }
+
+    throw ParseRelationException(
+        'The key $key is associated with a value ($potentialRelation) '
+        'can not be a relation');
   }
 
   /// Removes an element from an Array
   void setRemove(String key, dynamic value) {
-    _arrayOperation('Remove', key, <dynamic>[value]);
+    set(key, _ParseRemoveOperation([value]));
   }
 
   /// Remove multiple elements from an array of an object
   void setRemoveAll(String key, List<dynamic> values) {
-    _arrayOperation('Remove', key, values);
+    set(key, _ParseRemoveOperation(values));
   }
 
   /// Add a multiple elements to an array of an object
   void setAddAll(String key, List<dynamic> values) {
-    _arrayOperation('Add', key, values);
+    set(key, _ParseAddOperation(values));
   }
 
   void setAddUnique(String key, dynamic value) {
-    _arrayOperation('AddUnique', key, <dynamic>[value]);
+    set(key, _ParseAddUniqueOperation([value]));
   }
 
   /// Add a multiple elements to an array of an object
   void setAddAllUnique(String key, List<dynamic> values) {
-    _arrayOperation('AddUnique', key, values);
+    set(key, _ParseAddUniqueOperation(values));
   }
 
   /// Add a single element to an array of an object
-  void setAdd(String key, dynamic value) {
-    _arrayOperation('Add', key, <dynamic>[value]);
+  void setAdd<T>(String key, T value) {
+    set(key, _ParseAddOperation([value]));
   }
 
-  void addRelation(String key, List<dynamic> values) {
-    _arrayOperation('AddRelation', key, values);
+  void addRelation(String key, List<ParseObject> values) {
+    set(key, _ParseAddRelationOperation(values.toSet()));
   }
 
-  void removeRelation(String key, List<dynamic> values) {
-    _arrayOperation('RemoveRelation', key, values);
-  }
-
-  /// Used in array Operations in save() method
-  void _arrayOperation(String arrayAction, String key, List<dynamic> values) {
-    // TODO(yulingtianxia): Array operations should be incremental. Merge add and remove operation.
-    set<Map<String, dynamic>>(
-        key, <String, dynamic>{'__op': arrayAction, 'objects': values});
+  void removeRelation(String key, List<ParseObject> values) {
+    set(key, _ParseRemoveRelationOperation(values.toSet()));
   }
 
   /// Increases a num of an object by x amount
   void setIncrement(String key, num amount) {
-    set<Map<String, dynamic>>(
-        key, <String, dynamic>{'__op': 'Increment', 'amount': amount});
+    set(key, _ParseIncrementOperation(amount));
   }
 
   /// Decreases a num of an object by x amount
   void setDecrement(String key, num amount) {
-    set<Map<String, dynamic>>(
-        key, <String, dynamic>{'__op': 'Increment', 'amount': -amount});
+    set(key, _ParseIncrementOperation(-amount));
   }
 
   /// Can be used set an objects variable to undefined rather than null

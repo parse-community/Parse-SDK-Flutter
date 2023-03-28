@@ -18,10 +18,18 @@ dynamic parseEncode(dynamic value, {bool full = false}) {
     return _encodeDate(value);
   }
 
-  if (value is List) {
+  if (value is Iterable) {
     return value.map<dynamic>((dynamic value) {
       return parseEncode(value, full: full);
     }).toList();
+  }
+
+  if (value is _ParseArray) {
+    return value.toJson(full: full);
+  }
+
+  if (value is _ParseOperation) {
+    return value.toJson(full: full);
   }
 
   if (value is Map) {
@@ -39,10 +47,10 @@ dynamic parseEncode(dynamic value, {bool full = false}) {
   }
 
   if (value is ParseRelation) {
-    return value;
+    return value.toJson(full: full);
   }
 
-  if (value is ParseObject || value is ParseUser) {
+  if (value is ParseObject) {
     if (full) {
       return value.toJson(full: full);
     } else {
