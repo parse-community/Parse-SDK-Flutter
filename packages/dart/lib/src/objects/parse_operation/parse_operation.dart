@@ -38,7 +38,9 @@ abstract class _ParseOperation<T> implements _Valuable {
         return previousValue.preformArrayOperation(newValue);
       }
 
-      if (previousValue == null || previousValue is! _ParseOperation) {
+      if (previousValue == null ||
+          (previousValue is! _ParseOperation &&
+              previousValue is! _ParseRelation)) {
         return _ParseArray().preformArrayOperation(newValue);
       }
     }
@@ -48,7 +50,9 @@ abstract class _ParseOperation<T> implements _Valuable {
         return previousValue.preformRelationOperation(newValue);
       }
 
-      if (previousValue == null || previousValue is! _ParseOperation) {
+      if (previousValue == null ||
+          (previousValue is! _ParseOperation &&
+              previousValue is! _ParseArray)) {
         return _ParseRelation(parent: parent, key: key)
             .preformRelationOperation(newValue);
       }
@@ -81,12 +85,15 @@ abstract class _ParseArrayOperation extends _ParseOperation<List> {
     if (full) {
       return {
         '__op': operationName,
-        'objects': parseEncode(value, full: true),
-        'valueForAPIRequest': parseEncode(valueForApiRequest, full: true),
+        'objects': parseEncode(value, full: full),
+        'valueForAPIRequest': parseEncode(valueForApiRequest, full: full),
       };
     }
 
-    return {'__op': operationName, 'objects': parseEncode(valueForApiRequest)};
+    return {
+      '__op': operationName,
+      'objects': parseEncode(valueForApiRequest, full: full),
+    };
   }
 
   static _ParseArrayOperation? fromFullJson(Map<String, dynamic> json) {
@@ -152,10 +159,10 @@ abstract class _ParseRelationOperation
     if (full) {
       return {
         '__op': operationName,
-        'objects': parseEncode(value, full: true),
-        'valueForAPIRequest': parseEncode(valueForApiRequest, full: true),
+        'objects': parseEncode(value, full: full),
+        'valueForAPIRequest': parseEncode(valueForApiRequest, full: full),
       };
     }
-    return {'__op': operationName, 'objects': parseEncode(value, full: false)};
+    return {'__op': operationName, 'objects': parseEncode(value, full: full)};
   }
 }
