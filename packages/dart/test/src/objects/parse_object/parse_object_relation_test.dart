@@ -38,7 +38,7 @@ void main() {
 
         // assert
         expect(
-          usersRelation.getTargetClass,
+          usersRelation.targetClass,
           equals(keyClassUser),
           reason: 'the target class should be _User',
         );
@@ -87,9 +87,6 @@ void main() {
           returnsNormally,
         );
       },
-      skip: 'getRelation() will throw Unhandled exception:'
-          'type _Map<String, dynamic> is not a subtype '
-          'of type ParseRelation<ParseObject>? in type cast. see the issue #696',
     );
 
     test(
@@ -104,9 +101,6 @@ void main() {
           returnsNormally,
         );
       },
-      skip: 'getRelation() will throw Unhandled exception:'
-          'type _Map<String, dynamic> is not a subtype '
-          'of type ParseRelation<ParseObject>? in type cast. see the issue #696',
     );
 
     test('addRelation() operation should not be mergeable with any other', () {

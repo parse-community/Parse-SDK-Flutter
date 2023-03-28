@@ -176,7 +176,7 @@ void main() {
 
     test(
         'save should updated an object online and store and updated any object '
-        'added via relation ', () async {
+        'added via relation', () async {
       // arrange
       dietPlansObject.objectId = "NNAfSGGHHbL";
 

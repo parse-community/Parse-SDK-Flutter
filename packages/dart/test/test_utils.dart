@@ -120,7 +120,8 @@ void testUnmergeableOperationShouldThrow({
     expect(
       () => Function.apply(testingOn, testingOnValue),
       throwsA(isA<ParseOperationException>()),
-      reason: '${functionRef.toString()} then ${testingOn.toString()}',
+      reason: 'Calling {{${functionRef.toString()}}} '
+          'then {{${testingOn.toString()}}} should throw ParseOperationException',
     );
   }
 }
