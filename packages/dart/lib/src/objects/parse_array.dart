@@ -38,7 +38,7 @@ class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
       return {
         'className': 'ParseArray',
         'estimatedArray': parseEncode(estimatedArray, full: full),
-        'savedArray': parseEncode(savedArray, full: full),
+        'savedArray': parseEncode(_savedArray, full: full),
         'lastPreformedOperation': lastPreformedOperation?.toJson(full: full)
       };
     }
@@ -49,7 +49,7 @@ class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
 
   factory _ParseArray.fromFullJson(Map<String, dynamic> json) {
     return _ParseArray()
-      ..savedArray = parseDecode(json['savedArray'])
+      .._savedArray = parseDecode(json['savedArray'])
       ..estimatedArray = parseDecode(json['estimatedArray'])
       ..lastPreformedOperation = json['lastPreformedOperation'] == null
           ? null

@@ -42,6 +42,7 @@ part 'src/objects/parse_cloneable.dart';
 part 'src/objects/parse_config.dart';
 part 'src/objects/parse_error.dart';
 part 'src/objects/parse_file.dart';
+part 'src/objects/parse_number.dart';
 part 'src/objects/parse_file_base.dart';
 part 'src/objects/parse_file_web.dart';
 part 'src/objects/parse_function.dart';

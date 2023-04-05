@@ -28,6 +28,10 @@ dynamic parseEncode(dynamic value, {bool full = false}) {
     return value.toJson(full: full);
   }
 
+  if (value is _ParseNumber) {
+    return value.toJson(full: full);
+  }
+
   if (value is _ParseOperation) {
     return value.toJson(full: full);
   }

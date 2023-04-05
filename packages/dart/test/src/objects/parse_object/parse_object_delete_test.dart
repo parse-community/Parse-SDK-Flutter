@@ -29,8 +29,7 @@ void main() {
 
       dietPlansObject.set('Fat', 15);
 
-      final dietPlansObjectDataBeforeDeletion =
-          dietPlansObject.toJson(full: true);
+      final dietPlansObjectDataBeforeDeletion = dietPlansObject.toJson();
 
       final deletePath = Uri.parse(
         '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
@@ -71,7 +70,7 @@ void main() {
       expect(identical(objectFromResponse, dietPlansObject), isTrue);
 
       final dietPlansObjectDataAfterDeletion =
-          (objectFromResponse as ParseObject).toJson(full: true);
+          (objectFromResponse as ParseObject).toJson();
 
       expect(
         jsonEncode(dietPlansObjectDataAfterDeletion),
@@ -146,8 +145,7 @@ void main() {
 
       dietPlansObject.set('Fat', 15);
 
-      final dietPlansObjectDataBeforeDeletion =
-          dietPlansObject.toJson(full: true);
+      final dietPlansObjectDataBeforeDeletion = dietPlansObject.toJson();
 
       final deletePath = Uri.parse(
         '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/$id',
@@ -188,7 +186,7 @@ void main() {
       expect(identical(objectFromResponse, dietPlansObject), isTrue);
 
       final dietPlansObjectDataAfterDeletion =
-          (objectFromResponse as ParseObject).toJson(full: true);
+          (objectFromResponse as ParseObject).toJson();
 
       expect(
         jsonEncode(dietPlansObjectDataAfterDeletion),

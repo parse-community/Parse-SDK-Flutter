@@ -32,6 +32,20 @@ abstract class _ParseOperation<T> implements _Valuable {
     if (newValue is List) {
       return _ParseArray(setMode: true)..estimatedArray = newValue;
     }
+    if (newValue is num) {
+      return _ParseNumber(newValue, setMode: true);
+    }
+
+    if (newValue is _ParseNumberOperation) {
+      if (previousValue is _ParseNumber) {
+        return previousValue.preformNumberOperation(newValue);
+      }
+
+      if (previousValue == null ||
+          (previousValue is! _ParseArray && previousValue is! _ParseRelation)) {
+        return _ParseNumber(0).preformNumberOperation(newValue);
+      }
+    }
 
     if (newValue is _ParseArrayOperation) {
       if (previousValue is _ParseArray) {
@@ -39,7 +53,7 @@ abstract class _ParseOperation<T> implements _Valuable {
       }
 
       if (previousValue == null ||
-          (previousValue is! _ParseOperation &&
+          (previousValue is! _ParseNumber &&
               previousValue is! _ParseRelation)) {
         return _ParseArray().preformArrayOperation(newValue);
       }
@@ -51,8 +65,7 @@ abstract class _ParseOperation<T> implements _Valuable {
       }
 
       if (previousValue == null ||
-          (previousValue is! _ParseOperation &&
-              previousValue is! _ParseArray)) {
+          (previousValue is! _ParseNumber && previousValue is! _ParseArray)) {
         return _ParseRelation(parent: parent, key: key)
             .preformRelationOperation(newValue);
       }
@@ -164,5 +177,42 @@ abstract class _ParseRelationOperation
       };
     }
     return {'__op': operationName, 'objects': parseEncode(value, full: full)};
+  }
+}
+
+abstract class _ParseNumberOperation extends _ParseOperation<num> {
+  _ParseNumberOperation(num value) : super(value) {
+    super.valueForApiRequest = value;
+  }
+
+  @override
+  Map<String, dynamic> toJson({bool full = false}) {
+    if (full) {
+      return {
+        '__op': operationName,
+        'amount': valueForApiRequest,
+        'estimatedValue': value
+      };
+    }
+
+    return {'__op': operationName, 'amount': valueForApiRequest};
+  }
+
+  static _ParseNumberOperation? fromFullJson(Map<String, dynamic> json) {
+    final num estimatedValueFromJson = json['estimatedValue'] as num;
+    final num valueForApiRequestFromJson = json['amount'] as num;
+
+    final _ParseNumberOperation parseNumberOperation;
+    switch (json['__op']) {
+      case 'Increment':
+        parseNumberOperation = _ParseIncrementOperation(estimatedValueFromJson);
+        break;
+      default:
+        return null;
+    }
+
+    parseNumberOperation.valueForApiRequest = valueForApiRequestFromJson;
+
+    return parseNumberOperation;
   }
 }

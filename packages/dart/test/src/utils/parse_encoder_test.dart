@@ -40,17 +40,27 @@ void main() {
         "className": "Diet_Plans",
         "pointer_val": {"className": "plan", "somePlanKey": "some value"},
         "int_val": {
-          "className": "ParseIncrementOperation",
-          "__op": "Increment",
-          "amount": 2.0,
-          "estimatedValue": 4
+          "className": "ParseNumber",
+          "estimateNumber": 4,
+          "savedNumber": 0.0,
+          "setMode": true,
+          "lastPreformedOperation": {
+            "__op": "Increment",
+            "amount": 4.0,
+            "estimatedValue": 4
+          }
         },
         "string_val": "some String",
         "double_val": {
-          "className": "ParseIncrementOperation",
-          "__op": "Increment",
-          "amount": -2.0,
-          "estimatedValue": 0.5
+          "className": "ParseNumber",
+          "estimateNumber": 0.5,
+          "savedNumber": 0.0,
+          "setMode": true,
+          "lastPreformedOperation": {
+            "__op": "Increment",
+            "amount": 0.5,
+            "estimatedValue": 0.5
+          }
         },
         "array_1_val": {
           "className": "ParseArray",

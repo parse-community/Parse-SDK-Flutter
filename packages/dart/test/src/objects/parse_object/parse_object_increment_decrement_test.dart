@@ -110,7 +110,7 @@ void main() {
       ' and independent from the estimated value (the increment operation result)',
       () {
         // arrange
-        dietPlansObject.set(keyFat, 10);
+        dietPlansObject.fromJson({keyFat: 10});
 
         // act
         dietPlansObject.setIncrement(keyFat, 2.5);
@@ -120,6 +120,11 @@ void main() {
         expect(
           dietPlansObject.toJson(forApiRQ: true)[keyFat]['amount'],
           equals(5.0),
+        );
+
+        expect(
+          dietPlansObject.get(keyFat),
+          equals(15.0),
         );
       },
     );
@@ -205,7 +210,7 @@ void main() {
       ' and independent from the estimated value (the decrement operation result)',
       () {
         // arrange
-        dietPlansObject.set(keyFat, 10);
+        dietPlansObject.fromJson({keyFat: 10});
 
         // act
         dietPlansObject.setDecrement(keyFat, 2.5);
@@ -215,6 +220,11 @@ void main() {
         expect(
           dietPlansObject.toJson(forApiRQ: true)[keyFat]['amount'],
           equals(-5.0),
+        );
+
+        expect(
+          dietPlansObject.get(keyFat),
+          equals(5.0),
         );
       },
     );

@@ -85,8 +85,8 @@ dynamic parseDecode(dynamic value) {
       case 'ParseArray':
         return _ParseArray.fromFullJson(map);
 
-      case 'ParseIncrementOperation':
-        return _ParseIncrementOperation.fromFullJson(map);
+      case 'ParseNumber':
+        return _ParseNumber.fromFullJson(map);
 
       case 'ParseRelation':
         return _ParseRelation.fromFullJson(map);

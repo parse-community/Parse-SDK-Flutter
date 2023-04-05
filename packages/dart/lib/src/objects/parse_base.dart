@@ -152,11 +152,21 @@ abstract class ParseBase {
         _getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
       } else {
         var decodedValue = parseDecode(value);
+
         if (decodedValue is List) {
           if (addInUnSave) {
             decodedValue = _ParseArray()..estimatedArray = decodedValue;
           } else {
             decodedValue = _ParseArray()..savedArray = decodedValue;
+          }
+        }
+
+        if (decodedValue is num) {
+          if (addInUnSave) {
+            decodedValue = _ParseNumber(decodedValue);
+          } else {
+            decodedValue = _ParseNumber(decodedValue)
+              ..savedNumber = decodedValue;
           }
         }
 
