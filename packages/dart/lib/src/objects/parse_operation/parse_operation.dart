@@ -30,7 +30,7 @@ abstract class _ParseOperation<T> implements _Valuable {
     required String key,
   }) {
     if (newValue is List) {
-      return _ParseArray(forSet: true)..estimatedArray = newValue;
+      return _ParseArray(setMode: true)..estimatedArray = newValue;
     }
 
     if (newValue is _ParseArrayOperation) {
