@@ -1,7 +1,9 @@
 part of flutter_parse_sdk;
 
 class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
-  _ParseArray();
+  _ParseArray({this.forSet = false});
+
+  bool forSet;
 
   List _savedArray = [];
   List estimatedArray = [];
@@ -23,6 +25,10 @@ class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
     lastPreformedOperation = arrayOperation;
 
     estimatedArray = lastPreformedOperation!.value.toList();
+
+    if (forSet) {
+      lastPreformedOperation = null;
+    }
 
     return this;
   }
@@ -61,6 +67,7 @@ class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
   @override
   @mustCallSuper
   void onSaved() {
+    forSet = false;
     _savedArray.clear();
     _savedArray.addAll(_estimatedArrayBeforeSaving ?? []);
     _estimatedArrayBeforeSaving = null;

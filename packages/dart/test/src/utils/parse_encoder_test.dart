@@ -11,7 +11,7 @@ void main() {
   });
 
   group('full encode', () {
-    test('should ', () async {
+    test('should return the expected json encode ', () async {
       // arrange
       final dietPlansObject = ParseObject("Diet_Plans");
       final plan = ParseObject("plan")..set('somePlanKey', 'some value');
@@ -56,31 +56,19 @@ void main() {
           "className": "ParseArray",
           "estimatedArray": [1, 2, 3, 3],
           "savedArray": [],
-          "lastPreformedOperation": {
-            "__op": "Add",
-            "objects": [1, 2, 3, 3],
-            "valueForAPIRequest": [1, 2, 3, 3]
-          }
+          "lastPreformedOperation": null
         },
         "array_2_val": {
           "className": "ParseArray",
           "estimatedArray": [1, 2, 3, 4],
           "savedArray": [],
-          "lastPreformedOperation": {
-            "__op": "AddUnique",
-            "objects": [1, 2, 3, 4],
-            "valueForAPIRequest": [1, 2, 3, 4]
-          }
+          "lastPreformedOperation": null
         },
         "array_3_val": {
           "className": "ParseArray",
           "estimatedArray": [1, 2],
           "savedArray": [],
-          "lastPreformedOperation": {
-            "__op": "Remove",
-            "objects": [1, 2],
-            "valueForAPIRequest": [3]
-          }
+          "lastPreformedOperation": null
         },
         "relation_val": {
           "className": "ParseRelation",
