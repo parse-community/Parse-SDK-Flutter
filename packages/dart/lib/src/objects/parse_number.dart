@@ -109,6 +109,14 @@ class _ParseNumber implements _Valuable, _ParseSaveStateAwareChild {
 
   @override
   @mustCallSuper
+  void onErrorSaving() {
+    _lastPreformedOperationBeforeSaving = null;
+    _numberForApiRequestBeforeSaving = null;
+    _estimateNumberBeforeSaving = null;
+  }
+
+  @override
+  @mustCallSuper
   void onClearUnsaved() {
     estimateNumber = _savedNumber;
 

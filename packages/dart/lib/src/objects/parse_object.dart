@@ -74,13 +74,22 @@ class ParseObject extends ParseBase implements ParseCloneable {
         forApiRQ: true,
         allowCustomObjectId: allowCustomObjectId,
       ));
+
       _saveChanges();
+
       final ParseNetworkResponse result =
           await _client.post(url.toString(), data: body);
 
-      return handleResponse<ParseObject>(
+      final response = handleResponse<ParseObject>(
           this, result, ParseApiRQ.create, _debug, parseClassName);
+
+      if (!response.success) {
+        _notifyChildrenAboutErrorSaving();
+      }
+
+      return response;
     } on Exception catch (e) {
+      _notifyChildrenAboutErrorSaving();
       return handleException(e, ParseApiRQ.create, _debug, parseClassName);
     }
   }
@@ -94,15 +103,26 @@ class ParseObject extends ParseBase implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$_path/$objectId');
       final String body = json.encode(toJson(forApiRQ: true));
+
       _saveChanges();
+
       final Map<String, String> headers = {
         keyHeaderContentType: keyHeaderContentTypeJson
       };
+
       final ParseNetworkResponse result = await _client.put(url.toString(),
           data: body, options: ParseNetworkOptions(headers: headers));
-      return handleResponse<ParseObject>(
+
+      final response = handleResponse<ParseObject>(
           this, result, ParseApiRQ.save, _debug, parseClassName);
+
+      if (!response.success) {
+        _notifyChildrenAboutErrorSaving();
+      }
+
+      return response;
     } on Exception catch (e) {
+      _notifyChildrenAboutErrorSaving();
       return handleException(e, ParseApiRQ.save, _debug, parseClassName);
     }
   }
@@ -375,6 +395,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
     for (final child in _getObjectData().values) {
       if (child is _ParseSaveStateAwareChild) {
         child.onSaving();
+      }
+    }
+  }
+
+  void _notifyChildrenAboutErrorSaving() {
+    for (final child in _getObjectData().values) {
+      if (child is _ParseSaveStateAwareChild) {
+        child.onErrorSaving();
       }
     }
   }

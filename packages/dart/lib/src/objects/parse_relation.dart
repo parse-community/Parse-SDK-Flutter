@@ -215,6 +215,12 @@ class _ParseRelation<T extends ParseObject>
   }
 
   @override
+  void onErrorSaving() {
+    _lastPreformedOperationBeforeSaving = null;
+    _valueForApiRequestBeforeSaving = null;
+  }
+
+  @override
   void onClearUnsaved() {
     if (lastPreformedOperation != null) {
       knownObjects.removeWhere(

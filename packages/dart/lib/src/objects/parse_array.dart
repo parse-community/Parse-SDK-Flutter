@@ -105,6 +105,13 @@ class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
 
   @override
   @mustCallSuper
+  void onErrorSaving() {
+    _lastPreformedOperationBeforeSaving = null;
+    _estimatedArrayBeforeSaving = null;
+  }
+
+  @override
+  @mustCallSuper
   void onClearUnsaved() {
     estimatedArray = savedArray;
     lastPreformedOperation = null;

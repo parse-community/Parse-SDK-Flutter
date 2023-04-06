@@ -5,6 +5,8 @@ abstract class _ParseSaveStateAwareChild {
 
   void onSaving();
 
+  void onErrorSaving();
+
   void onRevertSaving();
 
   void onClearUnsaved();
