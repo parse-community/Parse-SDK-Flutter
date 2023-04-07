@@ -1,30 +1,22 @@
+import 'dart:convert';
+
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
-import 'dart:convert';
-import 'parse_query_test.mocks.dart';
+
+import '../../parse_query_test.mocks.dart';
+import '../../test_utils.dart';
 
 @GenerateMocks([ParseClient])
 void main() {
   group('queryBuilder', () {
     late MockParseClient client;
+
     setUp(() async {
       client = MockParseClient();
 
-      await Parse().initialize(
-        'appId',
-        'https://example.com',
-        debug: true,
-        // to prevent automatic detection
-        fileDirectory: 'someDirectory',
-        // to prevent automatic detection
-        appName: 'appName',
-        // to prevent automatic detection
-        appPackageName: 'somePackageName',
-        // to prevent automatic detection
-        appVersion: 'someAppVersion',
-      );
+      await initializeParse();
     });
 
     test('whereRelatedTo', () async {
@@ -397,6 +389,21 @@ void main() {
       expect(parseObject.containsKey("geometry"), true);
       expect(result.path, '/classes/TEST_SCHEMA');
       expect(result.query, expectedQuery.query);
+    });
+
+    test(
+        'The resulting query should include "redirectClassNameForKey" as a query parameter',
+        () {
+      // arrange
+      final queryBuilder = QueryBuilder.name('Diet_Plans');
+
+      // act
+      queryBuilder.setRedirectClassNameForKey('Plan');
+
+      // assert
+      final query = queryBuilder.buildQuery();
+
+      expect(query, equals('where={}&redirectClassNameForKey=Plan'));
     });
   });
 }
