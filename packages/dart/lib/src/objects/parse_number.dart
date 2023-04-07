@@ -1,6 +1,6 @@
 part of flutter_parse_sdk;
 
-class _ParseNumber implements _Valuable, _ParseSaveStateAwareChild {
+class _ParseNumber implements _Valuable<num>, _ParseSaveStateAwareChild {
   num estimateNumber;
 
   num _savedNumber = 0.0;
@@ -55,7 +55,7 @@ class _ParseNumber implements _Valuable, _ParseSaveStateAwareChild {
   }
 
   @override
-  Object? getValue() {
+  num getValue() {
     return estimateNumber;
   }
 

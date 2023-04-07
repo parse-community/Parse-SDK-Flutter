@@ -1,6 +1,6 @@
 part of flutter_parse_sdk;
 
-abstract class _ParseOperation<T> implements _Valuable {
+abstract class _ParseOperation<T> implements _Valuable<T> {
   T value;
 
   late T valueForApiRequest;
@@ -79,11 +79,12 @@ abstract class _ParseOperation<T> implements _Valuable {
   }
 
   @override
-  Object? getValue() {
+  T getValue() {
     if (value is Iterable) {
-      // return as new list to prevent the user from mutating the internal list state
-      return (value as Iterable).toList();
+      // return as new Iterable to prevent the user from mutating the internal list state
+      return (value as Iterable).cast() as T;
     }
+
     return value;
   }
 }

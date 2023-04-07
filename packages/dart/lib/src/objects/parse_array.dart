@@ -1,6 +1,6 @@
 part of flutter_parse_sdk;
 
-class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
+class _ParseArray implements _Valuable<List>, _ParseSaveStateAwareChild {
   _ParseArray({this.setMode = false});
 
   bool setMode;
@@ -57,7 +57,7 @@ class _ParseArray implements _Valuable, _ParseSaveStateAwareChild {
   }
 
   @override
-  Object? getValue() {
+  List getValue() {
     return estimatedArray.toList();
   }
 
