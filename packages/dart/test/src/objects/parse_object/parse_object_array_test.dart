@@ -431,7 +431,7 @@ void main() {
       });
 
       test(
-          'The saved modified array internal state should be identical '
+          'The array internal state should be identical '
           'before and after storing it in data store', () async {
         // arrange
         dietPlansObject.fromJson({
