@@ -11,6 +11,10 @@ abstract class _ParseOperation<T> implements _Valuable<T> {
 
   bool canMergeWith(Object other);
 
+  _ParseOperation<T> merge(Object previous);
+
+  Map<String, dynamic> toJson({bool full = false});
+
   _ParseOperation<T> mergeWithPrevious(Object previous) {
     if (!canMergeWith(previous)) {
       throw _UnmergeableOperationException(this, previous);
@@ -18,10 +22,6 @@ abstract class _ParseOperation<T> implements _Valuable<T> {
 
     return merge(previous);
   }
-
-  _ParseOperation<T> merge(Object previous);
-
-  Map<String, dynamic> toJson({bool full = false});
 
   static Object? maybeMergeWithPrevious<R>({
     required R newValue,
@@ -37,6 +37,19 @@ abstract class _ParseOperation<T> implements _Valuable<T> {
       return _ParseNumber(newValue, setMode: true);
     }
 
+    if (newValue is _ParseOperation) {
+      return _handelOperation<R>(newValue, previousValue, parent, key);
+    }
+
+    return newValue;
+  }
+
+  static Object _handelOperation<R>(
+    R newValue,
+    Object? previousValue,
+    ParseObject parent,
+    String key,
+  ) {
     if (newValue is _ParseNumberOperation) {
       return _handelNumOperation(newValue, previousValue);
     }
@@ -49,7 +62,8 @@ abstract class _ParseOperation<T> implements _Valuable<T> {
       return _handelRelationOperation(newValue, previousValue, parent, key);
     }
 
-    return newValue;
+    throw ParseOperationException(
+        'operation ${newValue.runtimeType} not implemented');
   }
 
   static _ParseNumber _handelNumOperation(
