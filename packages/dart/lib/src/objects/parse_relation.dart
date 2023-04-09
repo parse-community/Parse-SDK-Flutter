@@ -21,6 +21,8 @@ abstract class ParseRelation<T extends ParseObject> {
   /// The className of the target objects.
   String? get targetClass;
 
+  set setTargetClass(String targetClass);
+
   QueryBuilder getQuery();
 
   void add(T parseObject);
@@ -94,9 +96,8 @@ class _ParseRelation<T extends ParseObject>
     final QueryBuilder queryBuilder;
 
     if (_targetClass == null) {
-      queryBuilder = QueryBuilder(
-        ParseCoreData.instance.createObject(parentClassName),
-      )..setRedirectClassNameForKey(key!);
+      queryBuilder = QueryBuilder(ParseObject(parentClassName))
+        ..setRedirectClassNameForKey(key!);
     } else {
       queryBuilder = QueryBuilder(
         ParseCoreData.instance.createObject(_targetClass!),
@@ -121,6 +122,18 @@ class _ParseRelation<T extends ParseObject>
 
   @override
   String? get targetClass => _targetClass;
+
+  @override
+  set setTargetClass(String targetClass) {
+    assert(targetClass.isNotEmpty);
+
+    _targetClass ??= targetClass;
+
+    if (_targetClass != targetClass) {
+      throw ParseRelationException(
+          'The target class can not be modified if it is already set');
+    }
+  }
 
   _ParseRelation.fromJson(
     Map<String, dynamic> json, {
