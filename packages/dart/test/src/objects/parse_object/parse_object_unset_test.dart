@@ -8,16 +8,18 @@ import '../../../parse_query_test.mocks.dart';
 import '../../../test_utils.dart';
 
 void main() {
+  setUpAll(() async {
+    await initializeParse();
+  });
+
   group('unset()', () {
     late MockParseClient client;
 
     late ParseObject dietPlansObject;
     const keyFat = 'fat';
 
-    setUp(() async {
+    setUp(() {
       client = MockParseClient();
-
-      await initializeParse();
 
       dietPlansObject = ParseObject("Diet_Plans", client: client);
     });

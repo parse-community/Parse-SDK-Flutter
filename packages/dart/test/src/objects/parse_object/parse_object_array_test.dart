@@ -9,6 +9,10 @@ import '../../../parse_query_test.mocks.dart';
 import '../../../test_utils.dart';
 
 void main() {
+  setUpAll(() async {
+    await initializeParse();
+  });
+
   group(
     'Array',
     () {
@@ -18,10 +22,8 @@ void main() {
 
       const keyArray = 'array';
 
-      setUp(() async {
+      setUp(() {
         client = MockParseClient();
-
-        await initializeParse();
 
         dietPlansObject = ParseObject("Diet_Plans", client: client);
       });

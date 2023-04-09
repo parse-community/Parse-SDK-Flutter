@@ -8,6 +8,10 @@ import '../../../parse_query_test.mocks.dart';
 import '../../../test_utils.dart';
 
 void main() {
+  setUpAll(() async {
+    await initializeParse();
+  });
+
   group('update()', () {
     late MockParseClient client;
 
@@ -21,10 +25,8 @@ void main() {
 
     late String putPath;
 
-    setUp(() async {
+    setUp(() {
       client = MockParseClient();
-
-      await initializeParse();
 
       dietPlansObject = ParseObject("Diet_Plans", client: client);
       dietPlansObject

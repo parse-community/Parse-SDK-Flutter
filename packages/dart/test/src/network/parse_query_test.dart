@@ -10,13 +10,15 @@ import '../../test_utils.dart';
 
 @GenerateMocks([ParseClient])
 void main() {
+  setUpAll(() async {
+    await initializeParse();
+  });
+
   group('queryBuilder', () {
     late MockParseClient client;
 
-    setUp(() async {
+    setUp(() {
       client = MockParseClient();
-
-      await initializeParse();
     });
 
     test('whereRelatedTo', () async {

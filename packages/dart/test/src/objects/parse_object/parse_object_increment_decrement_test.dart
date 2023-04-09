@@ -9,6 +9,10 @@ import '../../../parse_query_test.mocks.dart';
 import '../../../test_utils.dart';
 
 void main() {
+  setUpAll(() async {
+    await initializeParse();
+  });
+
   group('Increment/Decrement', () {
     late MockParseClient client;
 
@@ -18,8 +22,6 @@ void main() {
 
     setUp(() async {
       client = MockParseClient();
-
-      await initializeParse();
 
       dietPlansObject = ParseObject("Diet_Plans", client: client);
     });
