@@ -420,7 +420,11 @@ class ParseObject extends ParseBase implements ParseCloneable {
     final potentialRelation = _getObjectData()[key];
 
     if (potentialRelation == null) {
-      return ParseRelation<T>(parent: this, key: key);
+      final relation = ParseRelation<T>(parent: this, key: key);
+
+      set(key, relation);
+
+      return relation;
     }
 
     if (potentialRelation is _ParseRelation<T>) {
