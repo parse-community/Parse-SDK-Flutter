@@ -32,50 +32,78 @@ abstract class _ParseOperation<T> implements _Valuable<T> {
     if (newValue is List) {
       return _ParseArray(setMode: true)..estimatedArray = newValue;
     }
+
     if (newValue is num) {
       return _ParseNumber(newValue, setMode: true);
     }
 
     if (newValue is _ParseNumberOperation) {
-      if (previousValue is _ParseNumber) {
-        return previousValue.preformNumberOperation(newValue);
-      }
-
-      if (previousValue == null ||
-          (previousValue is! _ParseArray && previousValue is! _ParseRelation)) {
-        return _ParseNumber(0).preformNumberOperation(newValue);
-      }
+      return _handelNumOperation(newValue, previousValue);
     }
 
     if (newValue is _ParseArrayOperation) {
-      if (previousValue is _ParseArray) {
-        return previousValue.preformArrayOperation(newValue);
-      }
-
-      if (previousValue == null ||
-          (previousValue is! _ParseNumber &&
-              previousValue is! _ParseRelation)) {
-        return _ParseArray().preformArrayOperation(newValue);
-      }
+      return _handelArrayOperation(newValue, previousValue);
     }
 
     if (newValue is _ParseRelationOperation) {
-      if (previousValue is _ParseRelation) {
-        return previousValue.preformRelationOperation(newValue);
-      }
-
-      if (previousValue == null ||
-          (previousValue is! _ParseNumber && previousValue is! _ParseArray)) {
-        return _ParseRelation(parent: parent, key: key)
-            .preformRelationOperation(newValue);
-      }
+      return _handelRelationOperation(newValue, previousValue, parent, key);
     }
 
-    if (newValue is! _ParseOperation || previousValue == null) {
-      return newValue;
+    return newValue;
+  }
+
+  static _ParseNumber _handelNumOperation(
+    _ParseNumberOperation numberOperation,
+    Object? previousValue,
+  ) {
+    if (previousValue is _ParseNumber) {
+      return previousValue.preformNumberOperation(numberOperation);
     }
 
-    return newValue.mergeWithPrevious(previousValue);
+    if (previousValue == null) {
+      return _ParseNumber(0).preformNumberOperation(numberOperation);
+    } else {
+      throw ParseOperationException(
+          'wrong key, unable to preform numeric operation on'
+          ' the previous value: ${previousValue.runtimeType}');
+    }
+  }
+
+  static _ParseArray _handelArrayOperation(
+    _ParseArrayOperation arrayOperation,
+    Object? previousValue,
+  ) {
+    if (previousValue is _ParseArray) {
+      return previousValue.preformArrayOperation(arrayOperation);
+    }
+
+    if (previousValue == null) {
+      return _ParseArray().preformArrayOperation(arrayOperation);
+    } else {
+      throw ParseOperationException(
+          'wrong key, unable to preform Array operation on'
+          ' the previous value: ${previousValue.runtimeType}');
+    }
+  }
+
+  static _ParseRelation _handelRelationOperation(
+    _ParseRelationOperation relationOperation,
+    Object? previousValue,
+    ParseObject parent,
+    String key,
+  ) {
+    if (previousValue is _ParseRelation) {
+      return previousValue.preformRelationOperation(relationOperation);
+    }
+
+    if (previousValue == null) {
+      return _ParseRelation(parent: parent, key: key)
+          .preformRelationOperation(relationOperation);
+    } else {
+      throw ParseOperationException(
+          'wrong key, unable to preform Relation operation on'
+          ' the previous value: ${previousValue.runtimeType}');
+    }
   }
 
   @override
