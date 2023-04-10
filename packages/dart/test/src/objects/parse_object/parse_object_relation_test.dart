@@ -602,5 +602,23 @@ void main() {
         throwsA(isA<ParseRelationException>()),
       );
     });
+
+    test(
+        'If the value for API request is empty in ParseRelation then the'
+        ' ParseRelation should not be part of the end map for'
+        ' API request of an object', () {
+      // arrange
+
+      // this will create and store an empty relation if no relation associated
+      // with this key
+      dietPlansObject.getRelation('someRelationKey');
+
+      // act
+
+      final valueFroApiRequest = dietPlansObject.toJson(forApiRQ: true);
+
+      // assert
+      expect(valueFroApiRequest.isEmpty, isTrue);
+    });
   });
 }
