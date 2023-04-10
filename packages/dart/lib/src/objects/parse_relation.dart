@@ -153,7 +153,7 @@ class _ParseRelation<T extends ParseObject>
 
   _ParseRelation.fromFullJson(Map<String, dynamic> json) {
     knownObjects = Set.from(parseDecode(json['objects']));
-    _targetClass = json['className'];
+    _targetClass = json['targetClass'];
     key = json['key'];
     knownObjects = Set.from(parseDecode(json['objects']) ?? {});
     lastPreformedOperation = json['lastPreformedOperation'] == null
@@ -187,7 +187,7 @@ class _ParseRelation<T extends ParseObject>
       potentialTargetClass = parseObject.parseClassName;
 
       if (_targetClass != null && potentialTargetClass != _targetClass) {
-        ParseRelationException(
+        throw ParseRelationException(
             'Can not add more then one class for a relation. the current target '
             'class $targetClass and the passed class $potentialTargetClass');
       }
