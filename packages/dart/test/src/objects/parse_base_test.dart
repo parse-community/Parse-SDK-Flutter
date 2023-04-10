@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
 
@@ -127,6 +128,43 @@ main() {
 
       // assert
       expect(dietPlansObject.getACL(), equals(acl));
+    });
+
+    test('fromJsonForManualObject() should put all the values in unsaved state',
+        () {
+      // arrange
+      final createdAt = DateTime.now();
+      final updatedAt = DateTime.now();
+      final manualJsonObject = <String, dynamic>{
+        keyVarCreatedAt: createdAt,
+        keyVarUpdatedAt: updatedAt,
+        "array": [1, 2, 3],
+        'number': 2,
+      };
+
+      // act
+      dietPlansObject.fromJsonForManualObject(manualJsonObject);
+
+      // assert
+      expect(dietPlansObject.isDirty(key: 'array'), isTrue);
+      expect(dietPlansObject.isDirty(key: 'number'), isTrue);
+
+      expect(dietPlansObject.createdAt, equals(createdAt));
+      expect(dietPlansObject.updatedAt, equals(updatedAt));
+
+      final valueForAPiRequest = dietPlansObject.toJson(forApiRQ: true);
+      final expectedValueForAPiRequest = {
+        "array": [1, 2, 3],
+        "number": 2
+      };
+
+      expect(
+        DeepCollectionEquality().equals(
+          valueForAPiRequest,
+          expectedValueForAPiRequest,
+        ),
+        isTrue,
+      );
     });
   });
 }
