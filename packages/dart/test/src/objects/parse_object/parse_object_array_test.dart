@@ -433,7 +433,7 @@ void main() {
       });
 
       test(
-          'The array internal state should be identical '
+          'The saved modified array internal state should be identical '
           'before and after storing it in data store', () async {
         // arrange
         dietPlansObject.fromJson({
@@ -737,7 +737,7 @@ void main() {
 
       test(
           'The list value and the value for api request should be identical '
-          'before and after the save() failed to save the object', () {
+          'before and after the save() failed to save the object', () async {
         // arrange
 
         when(client.post(
@@ -752,7 +752,7 @@ void main() {
             dietPlansObject.toJson(forApiRQ: true);
 
         // act
-        dietPlansObject.save();
+        await dietPlansObject.save();
 
         // assert
         final listValue = dietPlansObject.get('arr');
