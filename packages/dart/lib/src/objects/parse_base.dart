@@ -195,7 +195,13 @@ abstract class ParseBase {
   Map<String, dynamic> _getObjectData() => _objectData;
 
   bool containsValue(Object value) {
-    return _getObjectData().containsValue(value);
+    for (final val in _getObjectData().values) {
+      if (val == value || (val is _Valuable && val.getValue() == value)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   bool containsKey(String key) {
