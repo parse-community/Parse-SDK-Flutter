@@ -566,7 +566,7 @@ void main() {
 
       final ParseRelation relation =
           dietPlansObject.getRelation('someRelationKey');
-      relation.add(ParseObject('someClassName'));
+      relation.remove(ParseObject('someClassName'));
 
       final toJsonBeforePin = relation.toJson(full: true);
 
@@ -592,12 +592,13 @@ void main() {
       final ParseRelation relation =
           dietPlansObject.getRelation('someRelationKey');
 
-      relation.add(ParseObject('someClassName'));
+      relation.remove(ParseObject('someClassName')..objectId = "123");
+      relation.remove(ParseObject('someClassName')..objectId = '456');
 
       // act
       // assert
       expect(
-        () => relation.add(ParseObject('otherClassName')),
+        () => relation.remove(ParseObject('otherClassName')),
         throwsA(isA<ParseRelationException>()),
       );
     });

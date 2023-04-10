@@ -386,11 +386,11 @@ void main() {
         // arrange
         void operations() {
           // act
-          dietPlansObject.set('arr', [1, 2]);
-          dietPlansObject.setAdd('arr', 3);
-          dietPlansObject.setAddUnique('arr', 3);
-          dietPlansObject.setAddUnique('arr', 4);
-          dietPlansObject.setRemove('arr', 1);
+          dietPlansObject.set(keyArray, [1, 2]);
+          dietPlansObject.setAdd(keyArray, 3);
+          dietPlansObject.setAddUnique(keyArray, 3);
+          dietPlansObject.setAddUnique(keyArray, 4);
+          dietPlansObject.setRemove(keyArray, 1);
         }
 
         // assert
@@ -403,13 +403,13 @@ void main() {
         // arrange
         dietPlansObject.objectId = "someId";
 
-        dietPlansObject.set('arr', [1, 2]);
-        dietPlansObject.setAdd('arr', 3);
-        dietPlansObject.setAddUnique('arr', 3);
-        dietPlansObject.setAddUnique('arr', 4);
-        dietPlansObject.setRemove('arr', 1);
+        dietPlansObject.set(keyArray, [1, 2]);
+        dietPlansObject.setAdd(keyArray, 3);
+        dietPlansObject.setAddUnique(keyArray, 3);
+        dietPlansObject.setAddUnique(keyArray, 4);
+        dietPlansObject.setRemove(keyArray, 1);
 
-        final listBeforePin = dietPlansObject.get<List>('arr');
+        final listBeforePin = dietPlansObject.get<List>(keyArray);
         final toJsonBeforePin = dietPlansObject.toJson(forApiRQ: true);
 
         // act
@@ -418,7 +418,7 @@ void main() {
         final objectFromPin = await dietPlansObject.fromPin('someId');
 
         // assert
-        final listAfterPin = objectFromPin.get<List>('arr');
+        final listAfterPin = objectFromPin.get<List>(keyArray);
         final toJsonAfterPin = objectFromPin.toJson(forApiRQ: true);
 
         expect(
@@ -437,13 +437,13 @@ void main() {
           'before and after storing it in data store', () async {
         // arrange
         dietPlansObject.fromJson({
-          'arr': [1, 2],
+          keyArray: [1, 2],
           "objectId": "someId"
         }); // assume this coming from the server
 
-        dietPlansObject.setAdd('arr', 3);
+        dietPlansObject.setAddUnique(keyArray, 3);
 
-        final listBeforePin = dietPlansObject.get<List>('arr');
+        final listBeforePin = dietPlansObject.get<List>(keyArray);
         final toJsonBeforePin = dietPlansObject.toJson(forApiRQ: true);
 
         // act
@@ -452,7 +452,7 @@ void main() {
         final objectFromPin = await dietPlansObject.fromPin('someId');
 
         // assert
-        final listAfterPin = objectFromPin.get<List>('arr');
+        final listAfterPin = objectFromPin.get<List>(keyArray);
         final toJsonAfterPin = objectFromPin.toJson(forApiRQ: true);
 
         expect(
@@ -471,15 +471,15 @@ void main() {
           ' should not be allowed and throw an exception', () {
         // arrange
         dietPlansObject.fromJson({
-          'arr': [1, 2],
+          keyArray: [1, 2],
           "objectId": "someId"
         }); // assume this coming from the server
 
         // act
-        dietPlansObject.setAdd('arr', 3);
+        dietPlansObject.setAdd(keyArray, 3);
 
         // assert
-        op() => dietPlansObject.setRemove('arr', 3);
+        op() => dietPlansObject.setRemove(keyArray, 3);
 
         expect(() => op(), throwsA(isA<ParseOperationException>()));
       });
@@ -508,21 +508,21 @@ void main() {
           },
         );
 
-        dietPlansObject.setAddAll('arr', [1, 2, 3]);
+        dietPlansObject.setAddAll(keyArray, [1, 2, 3]);
 
         final valueForApiReqBeforeSave = dietPlansObject.toJson(forApiRQ: true);
 
-        final listValueBeforeSave = dietPlansObject.get('arr');
+        final listValueBeforeSave = dietPlansObject.get(keyArray);
 
         // act
         await dietPlansObject.save();
 
         // assert
         final valueForApiReqAfterSave = dietPlansObject.toJson(forApiRQ: true);
-        final listValueAfterSave = dietPlansObject.get('arr');
+        final listValueAfterSave = dietPlansObject.get(keyArray);
 
         final expectedValueForApiReqBeforeSave = {
-          "arr": {
+          keyArray: {
             "__op": "Add",
             "objects": [1, 2, 3]
           }
@@ -573,10 +573,10 @@ void main() {
             },
           );
 
-          dietPlansObject.setAdd('arr', 1);
-          dietPlansObject.setAdd('arr', 2);
+          dietPlansObject.setAdd(keyArray, 1);
+          dietPlansObject.setAdd(keyArray, 2);
 
-          final listBeforeSave = dietPlansObject.get('arr');
+          final listBeforeSave = dietPlansObject.get(keyArray);
           final valueForApiReqBeforeSave =
               dietPlansObject.toJson(forApiRQ: true);
 
@@ -587,8 +587,8 @@ void main() {
           await Future.delayed(Duration.zero);
 
           // Then suddenly the user added a value to the list
-          dietPlansObject.setAdd('arr', 3);
-          dietPlansObject.setAdd('arr', 4);
+          dietPlansObject.setAdd(keyArray, 3);
+          dietPlansObject.setAdd(keyArray, 4);
 
           // Await the save function to be done
           await Future.delayed(Duration(milliseconds: 150));
@@ -599,14 +599,14 @@ void main() {
             isTrue,
           );
 
-          final listAfterSave = dietPlansObject.get('arr');
+          final listAfterSave = dietPlansObject.get(keyArray);
           expect(
             DeepCollectionEquality().equals(listAfterSave, [1, 2, 3, 4]),
             isTrue,
           );
 
           const expectedValueForApiReqBeforeSave = {
-            "arr": {
+            keyArray: {
               "__op": "Add",
               "objects": [1, 2]
             }
@@ -622,7 +622,7 @@ void main() {
           final valueForApiReqAfterSave =
               dietPlansObject.toJson(forApiRQ: true);
           const expectedValueForApiReqAfterSave = {
-            "arr": {
+            keyArray: {
               "__op": "Add",
               "objects": [3, 4]
             }
@@ -664,10 +664,10 @@ void main() {
           );
 
           dietPlansObject.fromJson({
-            'arr': [1, 2, 3, 4]
+            keyArray: [1, 2, 3, 4]
           });
 
-          final listBeforeSave = dietPlansObject.get('arr');
+          final listBeforeSave = dietPlansObject.get(keyArray);
           final valueForApiReqBeforeSave =
               dietPlansObject.toJson(forApiRQ: true);
 
@@ -678,7 +678,7 @@ void main() {
           await Future.delayed(Duration.zero);
 
           // Then suddenly the user remove a value from the list
-          dietPlansObject.setRemoveAll('arr', [3, 4]);
+          dietPlansObject.setRemoveAll(keyArray, [3, 4]);
 
           // Await the save function to be done
           await Future.delayed(Duration(milliseconds: 150));
@@ -686,7 +686,7 @@ void main() {
           // assert
           expect(listBeforeSave, orderedEquals([1, 2, 3, 4]));
 
-          final listAfterSave = dietPlansObject.get('arr');
+          final listAfterSave = dietPlansObject.get(keyArray);
           expect(
             listAfterSave,
             orderedEquals([1, 2]),
@@ -700,7 +700,7 @@ void main() {
           final valueForApiReqAfterSave =
               dietPlansObject.toJson(forApiRQ: true);
           const expectedValueForApiReqAfterSave = {
-            "arr": {
+            keyArray: {
               "__op": "Remove",
               "objects": [3, 4]
             }
@@ -720,17 +720,17 @@ void main() {
           ' to its original state before any modifications were made', () {
         // arrange
         dietPlansObject.fromJson({
-          'arr': [1, 2],
+          keyArray: [1, 2],
           "objectId": "someId"
         }); // assume this coming from the server
 
-        dietPlansObject.setAdd('arr', 3);
+        dietPlansObject.setAdd(keyArray, 3);
 
         // act
         dietPlansObject.clearUnsavedChanges();
 
         // assert
-        final listValue = dietPlansObject.get('arr');
+        final listValue = dietPlansObject.get(keyArray);
 
         expect(listValue, orderedEquals([1, 2]));
       });
@@ -746,7 +746,7 @@ void main() {
           data: anyNamed("data"),
         )).thenThrow(Exception('error'));
 
-        dietPlansObject.setAddAll('arr', [1, 2]);
+        dietPlansObject.setAddAll(keyArray, [1, 2]);
 
         final valueForApiReqBeforeErrorSave =
             dietPlansObject.toJson(forApiRQ: true);
@@ -755,7 +755,7 @@ void main() {
         await dietPlansObject.save();
 
         // assert
-        final listValue = dietPlansObject.get('arr');
+        final listValue = dietPlansObject.get(keyArray);
 
         expect(listValue, orderedEquals([1, 2]));
 
