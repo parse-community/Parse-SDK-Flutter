@@ -219,7 +219,10 @@ abstract class _ParseRelationOperation
         'valueForAPIRequest': parseEncode(valueForApiRequest, full: full),
       };
     }
-    return {'__op': operationName, 'objects': parseEncode(value, full: full)};
+    return {
+      '__op': operationName,
+      'objects': parseEncode(valueForApiRequest, full: full)
+    };
   }
 }
 
