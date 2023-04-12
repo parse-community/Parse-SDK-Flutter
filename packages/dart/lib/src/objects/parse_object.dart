@@ -498,29 +498,37 @@ class ParseObject extends ParseBase implements ParseCloneable {
       return ParseResponse()..success = true;
     }
 
+    if (objectId == null) {
+      return ParseResponse()..success = false;
+    }
+
     try {
-      if (objectId != null) {
-        final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-        final String body = '{"$key":{"__op":"Delete"}}';
-        final ParseNetworkResponse result =
-            await _client.put(url.toString(), data: body);
-        final ParseResponse response = handleResponse<ParseObject>(
-            this, result, ParseApiRQ.unset, _debug, parseClassName);
-        if (!response.success) {
-          _objectData[key] = object;
-          _unsavedChanges[key] = object;
-          _savingChanges[key] = object;
-        } else {
-          return ParseResponse()..success = true;
-        }
+      final Uri url = getSanitisedUri(_client, '$_path/$objectId');
+
+      final String body = '{"$key":{"__op":"Delete"}}';
+
+      final ParseNetworkResponse result =
+          await _client.put(url.toString(), data: body);
+
+      final ParseResponse response = handleResponse<ParseObject>(
+          this, result, ParseApiRQ.unset, _debug, parseClassName);
+
+      if (response.success) {
+        return ParseResponse()..success = true;
+      } else {
+        _objectData[key] = object;
+        _unsavedChanges[key] = object;
+        _savingChanges[key] = object;
+
+        return response;
       }
-    } on Exception {
+    } on Exception catch (e) {
       _objectData[key] = object;
       _unsavedChanges[key] = object;
       _savingChanges[key] = object;
-    }
 
-    return ParseResponse()..success = false;
+      return handleException(e, ParseApiRQ.unset, _debug, parseClassName);
+    }
   }
 
   /// Can be used to create custom queries

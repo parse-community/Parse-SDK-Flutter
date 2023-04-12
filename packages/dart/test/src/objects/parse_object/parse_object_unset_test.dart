@@ -28,10 +28,6 @@ void main() {
       // arrange
       dietPlansObject.set(keyFat, 2);
 
-      final putPath = Uri.parse(
-        '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
-      ).toString();
-
       // act
       final ParseResponse parseResponse =
           await dietPlansObject.unset(keyFat, offlineOnly: true);
@@ -40,12 +36,6 @@ void main() {
       expect(parseResponse.success, isTrue);
 
       expect(dietPlansObject.get(keyFat), isNull);
-
-      verifyNever(client.put(
-        putPath,
-        options: anyNamed("options"),
-        data: anyNamed('data'),
-      ));
 
       verifyZeroInteractions(client);
     });
@@ -118,6 +108,91 @@ void main() {
       expect(dietPlansObject.get(keyFat), isNull);
 
       verifyZeroInteractions(client);
+    });
+
+    test(
+        'unset() should keep the the key and its value if the request was unsuccessful',
+        () async {
+      // arrange
+
+      dietPlansObject.objectId = "O6BHlwV48Z";
+      dietPlansObject.set(keyFat, 2);
+
+      final errorData = jsonEncode({keyCode: -1, keyError: "someError"});
+
+      when(client.put(
+        any,
+        options: anyNamed("options"),
+        data: anyNamed("data"),
+      )).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: -1,
+          data: errorData,
+        ),
+      );
+
+      // act
+      final parseResponse =
+          await dietPlansObject.unset(keyFat, offlineOnly: false);
+
+      // assert
+      expect(parseResponse.success, isFalse);
+
+      expect(parseResponse.error, isNotNull);
+
+      expect(parseResponse.error!.message, equals('someError'));
+
+      expect(parseResponse.error!.code, equals(-1));
+
+      expect(dietPlansObject.get(keyFat), equals(2));
+
+      verify(client.put(
+        any,
+        options: anyNamed("options"),
+        data: anyNamed("data"),
+      )).called(1);
+
+      verifyNoMoreInteractions(client);
+    });
+
+    test(
+        'unset() should keep the the key and its value if the request throws an exception',
+        () async {
+      // arrange
+
+      dietPlansObject.objectId = "O6BHlwV48Z";
+      dietPlansObject.set(keyFat, 2);
+
+      final error = Exception('error');
+
+      when(client.put(
+        any,
+        options: anyNamed("options"),
+        data: anyNamed("data"),
+      )).thenThrow(error);
+
+      // act
+      final parseResponse =
+          await dietPlansObject.unset(keyFat, offlineOnly: false);
+
+      // assert
+      expect(parseResponse.success, isFalse);
+
+      expect(parseResponse.error, isNotNull);
+
+      expect(parseResponse.error!.exception, equals(error));
+
+      expect(parseResponse.error!.code, equals(-1));
+
+      expect(dietPlansObject.get(keyFat), equals(2));
+
+      verify(client.put(
+        any,
+        options: anyNamed("options"),
+        data: anyNamed("data"),
+      )).called(1);
+
+      verifyNoMoreInteractions(client);
     });
   });
 }
