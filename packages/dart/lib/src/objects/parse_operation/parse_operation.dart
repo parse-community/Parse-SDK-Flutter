@@ -3,7 +3,7 @@ part of flutter_parse_sdk;
 /// Represents an operation performed on Parse data. It defines the core
 /// functionality of any operation performed on Parse data.
 abstract class _ParseOperation<T> implements _Valuable<T> {
-  /// Used to store the estimated value after an operation.
+  /// Used to store the estimated value for operation.
   ///
   /// This is what the user will see as the result of any operation on the data.
   /// For example, if the operation is an array addition and the user wants
