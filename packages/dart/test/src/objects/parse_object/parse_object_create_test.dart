@@ -115,12 +115,15 @@ void main() {
       // arrange
 
       final postData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
-      final error = Exception('error');
+      final errorData = jsonEncode({keyCode: -1, keyError: "someError"});
+
       when(client.post(
         postPath,
         options: anyNamed("options"),
         data: postData,
-      )).thenThrow(error);
+      )).thenAnswer(
+        (_) async => ParseNetworkResponse(data: errorData, statusCode: -1),
+      );
 
       // act
       ParseResponse response = await dietPlansObject.create();
@@ -136,7 +139,7 @@ void main() {
 
       expect(response.error, isNotNull);
 
-      expect(response.error!.exception, equals(error));
+      expect(response.error!.message, equals('someError'));
 
       expect(response.error!.code, equals(ParseError.otherCause));
 
