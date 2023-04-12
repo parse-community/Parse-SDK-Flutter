@@ -620,5 +620,18 @@ void main() {
       // assert
       expect(valueFroApiRequest.isEmpty, isTrue);
     });
+
+    test(
+        'Should throw exception when getRelation() called on key'
+        ' holds value other than Relation or null', () {
+      // arrange
+      dietPlansObject.set('someRelationKey', 'some String');
+
+      // act
+      getRelation() => dietPlansObject.getRelation('someRelationKey');
+
+      // assert
+      expect(() => getRelation(), throwsA(isA<ParseRelationException>()));
+    });
   });
 }
