@@ -21,13 +21,27 @@ abstract class ParseRelation<T extends ParseObject> {
   /// The className of the target objects.
   String? get targetClass;
 
+  /// Will work only if the current target class is null, otherwise will throw
+  /// [ParseRelationException] with the message:
+  /// The target class can not be modified if it is already set
   set setTargetClass(String targetClass);
 
+  /// Gets a query that can be used to query the objects in this relation.
+  ///
+  /// Return a [QueryBuilder] that restricts the results to objects in this relation
   QueryBuilder getQuery();
 
+  /// Add object to this relation
   void add(T parseObject);
 
+  /// Add objects to this relation.
+  void addAll(List<T> parseObjects);
+
+  /// Remove object from this relation
   void remove(T parseObject);
+
+  /// Remove objects from this relation
+  void removeAll(List<T> parseObjects);
 
   factory ParseRelation.fromJson(
     Map<String, dynamic> map, {
@@ -48,7 +62,8 @@ class _ParseRelation<T extends ParseObject>
 
   String? key;
 
-  //For offline caching, we keep track of every object we've known to be in the relation.
+  // For offline caching, we keep track of every object
+  // we've known to be in the relation.
   Set<T> knownObjects = <T>{};
 
   _ParseRelationOperation? lastPreformedOperation;
@@ -113,8 +128,18 @@ class _ParseRelation<T extends ParseObject>
   }
 
   @override
+  void addAll(List<T> parseObjects) {
+    parent!.addRelation(key!, parseObjects);
+  }
+
+  @override
   void remove(T parseObject) {
     parent!.removeRelation(key!, [parseObject]);
+  }
+
+  @override
+  void removeAll(List<T> parseObjects) {
+    parent!.removeRelation(key!, parseObjects);
   }
 
   @override
