@@ -1,5 +1,6 @@
 part of flutter_parse_sdk;
 
+/// An operation that increment a numeric value by a given amount
 class _ParseIncrementOperation extends _ParseNumberOperation {
   _ParseIncrementOperation(num value) : super(value);
 

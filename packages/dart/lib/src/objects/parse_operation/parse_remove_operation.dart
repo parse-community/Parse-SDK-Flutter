@@ -1,5 +1,6 @@
 part of flutter_parse_sdk;
 
+/// An operation that removes every instance of an element from an array
 class _ParseRemoveOperation extends _ParseArrayOperation {
   _ParseRemoveOperation(List value) : super(value);
 

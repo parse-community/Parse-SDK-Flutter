@@ -1,5 +1,7 @@
 part of flutter_parse_sdk;
 
+/// An operation that adds a new element to an array field,
+/// only if it wasn't already present
 class _ParseAddUniqueOperation extends _ParseArrayOperation {
   _ParseAddUniqueOperation(List value) : super(value);
 

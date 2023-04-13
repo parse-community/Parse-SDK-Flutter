@@ -1,5 +1,6 @@
 part of flutter_parse_sdk;
 
+/// An operation that adds a new element to an array
 class _ParseAddOperation extends _ParseArrayOperation {
   _ParseAddOperation(List value) : super(value);
 
