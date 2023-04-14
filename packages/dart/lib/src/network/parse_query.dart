@@ -431,17 +431,17 @@ class QueryBuilder<T extends ParseObject> {
 
   /// Runs through all queries and adds them to a query string
   String buildQueries(List<MapEntry<String, dynamic>> queries) {
-    String queryBuilder = '';
-
-    for (final MapEntry<String, dynamic> item in queries) {
-      if (item == queries.first) {
-        queryBuilder += item.value;
-      } else {
-        queryBuilder += ',${item.value}';
-      }
+    if (queries.isEmpty) {
+      return '';
     }
 
-    return queryBuilder;
+    var queryBuilder = queries.first.value;
+
+    for (final MapEntry<String, dynamic> item in queries.skip(1)) {
+      queryBuilder += ',${item.value}';
+    }
+
+    return Uri.encodeComponent(queryBuilder);
   }
 
   /// Creates a query param using the column, the value and the queryOperator
