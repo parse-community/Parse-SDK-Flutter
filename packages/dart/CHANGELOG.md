@@ -1,3 +1,21 @@
+## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.0.0...dart-4.0.2) (2023-04-21)
+
+### BREAKING CHANGES
+
+* The SDK now returns the estimated value for a key after performing an atomic update on that key, instead of a map of the operation ([#860](https://github.com/parse-community/Parse-SDK-Flutter/pull/860))
+    * Example:
+      ```
+         dietPlansObject.setIncrement('numKey', 3);
+         print(dietPlansObject.get('numKey')); 
+      ```
+      Previously this will print something like this `{__op: Increment, amount: 3}` rather than the result of the increment operation, which is `3`.
+      So now you will get the result of the operation (`3`) rather than a map of what will be sent to the server.
+
+
+### Bug Fixes
+
+* Calling `getRelation` on `ParseObject` after add/remove relation operation will throw: `type 'Map' is not a subtype of type 'ParseRelation<ParseObject>?' in type cast` ([#860](https://github.com/parse-community/Parse-SDK-Flutter/pull/860))
+
 ## [4.0.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-4.0.1...dart-4.0.2) (2023-03-23)
 
 ### Bug Fixes
