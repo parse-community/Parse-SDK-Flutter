@@ -11,6 +11,9 @@ dependencies:
     sdk: flutter
 
   parse_server_sdk: ^5.0.0
+  # Uncomment for local testing
+  #parse_server_sdk:
+  #   path: ../dart
 
   # Networking
   dio: ^5.0.1
@@ -26,13 +29,6 @@ dependencies:
   sembast_web: ^2.1.0+4
   path: ^1.8.2 # required for transitive use only
 
-dependency_overrides:
-  # Override to local mono-repo path so devs can test this repo
-  # against changes that they're making to other mono-repo packages.
-  parse_server_sdk:
-    path: ../dart
-
-
 dev_dependencies:
   flutter_lints: ^2.0.1
   # Testing
@@ -41,6 +37,3 @@ dev_dependencies:
   mockito: ^5.3.2
   path_provider_platform_interface: ^2.0.6
   plugin_platform_interface: ^2.1.4
-
-
-
