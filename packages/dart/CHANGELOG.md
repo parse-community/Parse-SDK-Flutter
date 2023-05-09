@@ -1,4 +1,4 @@
-## Unreleased
+## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.0.0...dart-4.0.2) (UNRELEASED)
 
 ### BREAKING CHANGES
 
