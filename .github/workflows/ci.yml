@@ -113,9 +113,6 @@ jobs:
           - name: Flutter 3.3
             os: ubuntu-latest
             sdk: 3.3.x
-          - name: Flutter 3.0
-            os: ubuntu-latest
-            sdk: 3.0.x
       fail-fast: false
     name: Test ${{ matrix.name }}
     steps:
