@@ -142,7 +142,7 @@ jobs:
       - name: Setup dart
         uses: dart-lang/setup-dart@v1.5.0
         with:
-          sdk: 2.19.0
+          sdk: ^2.19.0
       - name: Install dependencies
         run: dart pub get --directory packages/dart
       - name: Run build_runner
