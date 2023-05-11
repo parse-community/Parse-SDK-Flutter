@@ -117,7 +117,7 @@ jobs:
             os: ubuntu-latest
             sdk: 3.0.x
       fail-fast: false
-    name: Test flutter (${{ matrix.os }})
+    name: Test ${{ matrix.name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
