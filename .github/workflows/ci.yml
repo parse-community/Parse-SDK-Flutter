@@ -134,6 +134,8 @@ jobs:
     strategy:
       matrix:
         include:
+          # Dart SDK may contain breaking changes in minor version releases, i.e. it doesn't
+          # follow semver, see 
           - name: Dart 3.0, Ubuntu
             os: ubuntu-latest
             sdk: 3.0.0
@@ -143,6 +145,8 @@ jobs:
           - name: Dart 3.0, Windows
             os: windows-latest
             sdk: 3.0.0
+          # Only the latest Dart SDK version (above) is tested with all architectures. Previous
+          # Dart SDK versions (below) are only tested with Ubuntu to reduce CI resource usage.
           - name: Dart 2.19
             os: ubuntu-latest
             sdk: 2.19.6
@@ -168,7 +172,7 @@ jobs:
             os: ubuntu-latest
             sdk: 2.12.4
       fail-fast: false
-    name: ${{ matrix.name }}
+    name: Test ${{ matrix.name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
