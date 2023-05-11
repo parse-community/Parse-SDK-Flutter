@@ -66,7 +66,7 @@ jobs:
       - name: Analyze code
         run: dart analyze packages/dart
   check-publish-dry-run-dart:
-    name: publish dry-run (dart)
+    name: Publish dry-run (dart)
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
@@ -77,7 +77,7 @@ jobs:
       - name: publish dry run
         run: cd packages/dart && dart pub publish --dry-run
   check-publish-dry-run-flutter:
-    name: publish dry-run (flutter)
+    name: Publish dry-run (flutter)
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
@@ -134,18 +134,18 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: Dart Ubuntu
-            os: ubuntu-latest
-            sdk: 2.19.6
-          - name: Dart macOS
-            os: macos-latest
-            sdk: 2.19.6
-          - name: Dart Windows
-            os: windows-latest
-            sdk: 2.19.6
-          - name: Dart 3.0
+          - name: Dart 3.0, Ubuntu
             os: ubuntu-latest
             sdk: 3.0.0
+          - name: Dart 3.0, macOS
+            os: macos-latest
+            sdk: 3.0.0
+          - name: Dart 3.0, Windows
+            os: windows-latest
+            sdk: 3.0.0
+          - name: Dart 2.19
+            os: ubuntu-latest
+            sdk: 2.19.6
           - name: Dart 2.18
             os: ubuntu-latest
             sdk: 2.18.7
