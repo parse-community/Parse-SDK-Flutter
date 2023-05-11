@@ -93,7 +93,29 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          # Dart SDK may contain breaking changes in minor version releases, i.e. it doesn't
+          # follow semver, see 
+          - name: Flutter 3.10, Ubuntu
+            os: ubuntu-latest
+            sdk: 3.10.x
+          - name: Flutter 3.10, macOS
+            os: macos-latest
+            sdk: 3.10.x
+          - name: Flutter 3.10, Windows
+            os: windows-latest
+            sdk: 3.10.x
+          # Only the latest Flutter SDK version (above) is tested with all architectures. Previous
+          # Flutter SDK versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          - name: Flutter 3.7
+            os: ubuntu-latest
+            sdk: 3.7.x
+          - name: Flutter 3.3
+            os: ubuntu-latest
+            sdk: 3.3.x
+          - name: Flutter 3.0
+            os: ubuntu-latest
+            sdk: 3.0.x
       fail-fast: false
     name: Test flutter (${{ matrix.os }})
     steps:
@@ -102,6 +124,7 @@ jobs:
       - name: Setup flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: ${{ matrix.sdk }}
           cache: true
       - name: Install dependencies on Ubuntu and MacOS
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
