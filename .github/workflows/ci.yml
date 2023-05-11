@@ -136,7 +136,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         sdk: [2.18.0, 2.19.0]
       fail-fast: false
-    name: Test dart (${{ matrix.os }})
+    name: Test dart (${{ matrix.os }}, Dart ${{ matrix.sdk }})
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
