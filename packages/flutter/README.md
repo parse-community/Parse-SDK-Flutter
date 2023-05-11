@@ -41,7 +41,7 @@ This library gives you access to the powerful Parse Server backend from your Flu
 
 ## Compatibility
 
-The Parse Flutter SDK is continuously tested with the most recent release of the Flutter framework to ensure compatibility. To give developers time to upgrade their app to the newest Flutter framework, previous Flutter framework releases are supported for at least 1 year after their [release date](https://docs.flutter.dev/release/archive?tab=linux).
+The Parse Flutter SDK is continuously tested with the most recent release of the Flutter framework to ensure compatibility. To give developers time to upgrade their app to the newest Flutter framework, previous Flutter framework releases are supported for at least 1 year after their [release date](https://docs.flutter.dev/release/archive?tab=linux). The Parse Flutter SDK depends on the Parse Dart SDK which may require a higher Dart framework version than the Flutter framework version, in which case the Flutter framework version cannot be supported even though its release date may have been less than a year ago.
 
 | Version      | End of Support | Compatible                                   |
 |--------------|----------------|----------------------------------------------|
