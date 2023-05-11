@@ -140,7 +140,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Setup dart
-        uses: dart-lang/setup-dart@v1
+        uses: dart-lang/setup-dart@v1.5.0
+        with:
+          sdk: 2.19.0
       - name: Install dependencies
         run: dart pub get --directory packages/dart
       - name: Run build_runner
