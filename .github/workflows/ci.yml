@@ -16,8 +16,7 @@ jobs:
     strategy:
       matrix:
         include:
-          # Dart SDK may contain breaking changes in minor version releases, i.e. it doesn't
-          # follow semver, see 
+          # Dart framework may contain breaking changes in minor version releases, not following semver.
           - name: Dart 3.0, Ubuntu
             os: ubuntu-latest
             sdk: 3.0.0
@@ -27,8 +26,8 @@ jobs:
           - name: Dart 3.0, Windows
             os: windows-latest
             sdk: 3.0.0
-          # Only the latest Dart SDK version (above) is tested with all architectures. Previous
-          # Dart SDK versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          # Only the latest Dart framework version (above) is tested with all architectures. Previous
+          # Dart framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
           - name: Dart 2.19
             os: ubuntu-latest
             sdk: 2.19.6
@@ -75,8 +74,7 @@ jobs:
     strategy:
       matrix:
         include:
-          # Dart SDK may contain breaking changes in minor version releases, i.e. it doesn't
-          # follow semver, see 
+          # Flutter framework may contain breaking changes in minor version releases, not following semver.
           - name: Flutter 3.10, Ubuntu
             os: ubuntu-latest
             sdk: 3.10.x
@@ -86,8 +84,8 @@ jobs:
           - name: Flutter 3.10, Windows
             os: windows-latest
             sdk: 3.10.x
-          # Only the latest Flutter SDK version (above) is tested with all architectures. Previous
-          # Flutter SDK versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          # Only the latest Flutter framework version (above) is tested with all architectures. Previous
+          # Flutter framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
           - name: Flutter 3.7
             os: ubuntu-latest
             sdk: 3.7.x
