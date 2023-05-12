@@ -45,9 +45,9 @@ The Parse Flutter SDK is continuously tested with the most recent release of the
 
 | Version      | End of Support | Compatible                                   |
 |--------------|----------------|----------------------------------------------|
-| Flutter 3.10 | May 2024       | ✅ Yes                                        |
+| Flutter 3.10 | May 2024       | ❌ No                                         |
 | Flutter 3.7  | Apr 2024       | ✅ Yes                                        |
-| Flutter 3.3  | Jan 2024       | ✅ Yes                                        |
+| Flutter 3.3  | Jan 2024       | ❌ No                                         |
 | Flutter 3.0  | Jul 2023       | ❌ No (Parse Dart SDK requires Dart >=2.18.0) |
 
 ## Getting Started
