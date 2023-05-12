@@ -7,6 +7,7 @@ This library gives you access to the powerful Parse Server backend from your Flu
 ---
 
 - [Compatibility](#compatibility)
+- [Example Apps](#example-apps)
 - [Getting Started](#getting-started)
     - [Web support](#web-support)
     - [Desktop Support (macOS)](#desktop-support-macos)
@@ -47,8 +48,12 @@ The Parse Flutter SDK is continuously tested with the most recent release of the
 |--------------|----------------|----------------------------------------------|
 | Flutter 3.10 | May 2024       | ❌ No                                         |
 | Flutter 3.7  | Apr 2024       | ✅ Yes                                        |
-| Flutter 3.3  | Jan 2024       | ❌ No                                         |
+| Flutter 3.3  | Jan 2024       | ✅ Yes                                         |
 | Flutter 3.0  | Jul 2023       | ❌ No (Parse Dart SDK requires Dart >=2.18.0) |
+
+## Example Apps
+
+Example Flutter apps can be found in the GitHub repository's [example](https://github.com/parse-community/Parse-SDK-Flutter/tree/master/examples) directory.
 
 ## Getting Started
 
