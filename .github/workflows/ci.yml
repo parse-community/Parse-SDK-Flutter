@@ -116,6 +116,8 @@ jobs:
         run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
       - name: Analyze code
         run: dart analyze packages/dart
+      - name: Publish dry run
+        run: cd packages/dart && dart pub publish --dry-run
       - name: Run tests
         run: (cd packages/dart && dart test --coverage=coverage)
       - name: Convert code coverage
@@ -178,6 +180,8 @@ jobs:
           cmd /c "cd packages\flutter && flutter pub get"
       - name: Analyze code
         run: flutter analyze packages/flutter --no-fatal-infos
+      - name: Publish dry run
+        run: cd packages/flutter && dart pub publish --dry-run
       - name: Run tests
         run: (cd packages/flutter && flutter test --coverage)
       - name: Convert code coverage
