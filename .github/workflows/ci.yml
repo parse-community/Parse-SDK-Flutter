@@ -11,8 +11,19 @@ on:
     branches:
       - "**"
 jobs:
+  check-lint-dart:
+    name: Lint (Dart)
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed packages/dart
   check-lint-flutter:
-    name: Lint (flutter)
+    name: Lint (Flutter)
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
@@ -24,8 +35,8 @@ jobs:
           cache: true
       - name: Lint
         run: dart format --output=none --set-exit-if-changed packages/flutter
-  check-lint-dart:
-    name: Lint (dart)
+  check-code-analysis-dart:
+    name: Code analysis (Dart)
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
@@ -33,10 +44,12 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup dart
         uses: dart-lang/setup-dart@v1
-      - name: Lint
-        run: dart format --output=none --set-exit-if-changed packages/dart
+      - name: Install dependencies
+        run: dart pub get --directory packages/dart
+      - name: Analyze code
+        run: dart analyze packages/dart
   check-code-analysis-flutter:
-    name: Code analysis (flutter)
+    name: Code analysis (Flutter)
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
@@ -52,21 +65,8 @@ jobs:
           (cd packages/flutter && flutter pub get)
       - name: Analyze code
         run: flutter analyze packages/flutter --no-fatal-infos
-  check-code-analysis-dart:
-    name: Code analysis (dart)
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup dart
-        uses: dart-lang/setup-dart@v1
-      - name: Install dependencies
-        run: dart pub get --directory packages/dart
-      - name: Analyze code
-        run: dart analyze packages/dart
   check-publish-dry-run-dart:
-    name: Publish dry-run (dart)
+    name: Publish dry-run (Dart)
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
@@ -77,7 +77,7 @@ jobs:
       - name: publish dry run
         run: cd packages/dart && dart pub publish --dry-run
   check-publish-dry-run-flutter:
-    name: Publish dry-run (flutter)
+    name: Publish dry-run (Flutter)
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
