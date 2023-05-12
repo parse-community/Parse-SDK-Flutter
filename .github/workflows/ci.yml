@@ -11,54 +11,6 @@ on:
     branches:
       - "**"
 jobs:
-  check-lint-dart:
-    name: Lint (Dart)
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup dart
-        uses: dart-lang/setup-dart@v1
-      - name: Lint
-        run: dart format --output=none --set-exit-if-changed packages/dart
-  check-lint-flutter:
-    name: Lint (Flutter)
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup flutter
-        uses: subosito/flutter-action@v2
-        with:
-          cache: true
-      - name: Lint
-        run: dart format --output=none --set-exit-if-changed packages/flutter
-  check-publish-dry-run-dart:
-    name: Publish dry-run (Dart)
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup dart
-        uses: dart-lang/setup-dart@v1
-      - name: publish dry run
-        run: cd packages/dart && dart pub publish --dry-run
-  check-publish-dry-run-flutter:
-    name: Publish dry-run (Flutter)
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Setup flutter
-        uses: subosito/flutter-action@v2
-        with:
-          cache: true
-      - name: publish dry run
-        run: cd packages/flutter && dart pub publish --dry-run
   check-dart:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -116,6 +68,8 @@ jobs:
         run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
       - name: Analyze code
         run: dart analyze packages/dart
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed packages/dart
       - name: Publish dry run
         run: cd packages/dart && dart pub publish --dry-run
       - name: Run tests
@@ -180,6 +134,8 @@ jobs:
           cmd /c "cd packages\flutter && flutter pub get"
       - name: Analyze code
         run: flutter analyze packages/flutter --no-fatal-infos
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed packages/flutter
       - name: Publish dry run
         run: cd packages/flutter && dart pub publish --dry-run
       - name: Run tests
