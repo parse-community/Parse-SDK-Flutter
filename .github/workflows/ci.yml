@@ -23,7 +23,7 @@ jobs:
         with:
           cache: true
       - name: Lint
-        run: flutter format --output=none --set-exit-if-changed packages/flutter
+        run: dart format --output=none --set-exit-if-changed packages/flutter
   check-lint-dart:
     name: Lint (dart)
     timeout-minutes: 5
