@@ -35,24 +35,6 @@ jobs:
           - name: Dart 2.18
             os: ubuntu-latest
             sdk: 2.18.7
-          - name: Dart 2.17
-            os: ubuntu-latest
-            sdk: 2.17.7
-          - name: Dart 2.16
-            os: ubuntu-latest
-            sdk: 2.16.2
-          - name: Dart 2.15
-            os: ubuntu-latest
-            sdk: 2.15.1
-          - name: Dart 2.14
-            os: ubuntu-latest
-            sdk: 2.14.4
-          - name: Dart 2.13
-            os: ubuntu-latest
-            sdk: 2.13.4
-          - name: Dart 2.12
-            os: ubuntu-latest
-            sdk: 2.12.4
       fail-fast: false
     name: Test ${{ matrix.name }}
     steps:
