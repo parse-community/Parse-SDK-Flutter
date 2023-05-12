@@ -5,7 +5,6 @@ homepage: https://github.com/parse-community/Parse-SDK-Flutter
 
 environment:
   sdk: ">=2.18.0 <3.1.0"
-  flutter: ">=3.3.0"
 
 dependencies:
   flutter:
