@@ -8,15 +8,17 @@ import '../../../parse_query_test.mocks.dart';
 import '../../../test_utils.dart';
 
 void main() {
+  setUpAll(() async {
+    await initializeParse();
+  });
+
   group('save()', () {
     late MockParseClient client;
 
     late ParseObject dietPlansObject;
 
-    setUp(() async {
+    setUp(() {
       client = MockParseClient();
-
-      await initializeParse();
 
       dietPlansObject = ParseObject("Diet_Plans", client: client);
     });
@@ -176,7 +178,7 @@ void main() {
 
     test(
         'save should updated an object online and store and updated any object '
-        'added via relation ', () async {
+        'added via relation', () async {
       // arrange
       dietPlansObject.objectId = "NNAfSGGHHbL";
 

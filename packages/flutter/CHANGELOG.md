@@ -1,11 +1,13 @@
-## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.0.0...flutter-4.0.0) (2023-04-22)
+## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-4.0.0...flutter-5.0.0) (UNRELEASED)
 
 ### BREAKING CHANGES
 
+* The minimum required Dart SDK version is 2.18.0 ([#867](https://github.com/parse-community/Parse-SDK-Flutter/pull/867))
 * Upgrade dependency `parse_server_sdk` to `5.x.x` ([#868](https://github.com/parse-community/Parse-SDK-Flutter/pull/868))
-* Bump the minimum required Dart SDK version to `2.17.0 ` ([#867](https://github.com/parse-community/Parse-SDK-Flutter/pull/867))
 
+### Bug Fixes
 
+* Incorrect Dart and Flutter SDKs compatibility range ([#867](https://github.com/parse-community/Parse-SDK-Flutter/pull/867))
 
 ## [4.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.4...flutter-4.0.0) (2023-03-19)
 

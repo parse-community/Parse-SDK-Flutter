@@ -6,8 +6,11 @@ This library gives you access to the powerful Parse Server backend from your Flu
 
 ---
 
+- [Compatibility](#compatibility)
+- [Example Apps](#example-apps)
 - [Getting Started](#getting-started)
     - [Web support](#web-support)
+    - [Desktop Support (macOS)](#desktop-support-macos)
     - [Network client](#network-client)
 - [Objects](#objects)
 - [Custom Objects](#custom-objects)
@@ -36,6 +39,21 @@ This library gives you access to the powerful Parse Server backend from your Flu
 - [Other Features](#other-features)
 
 ---
+
+## Compatibility
+
+The Parse Flutter SDK is continuously tested with the most recent release of the Flutter framework to ensure compatibility. To give developers time to upgrade their app to the newest Flutter framework, previous Flutter framework releases are supported for at least 1 year after their [release date](https://docs.flutter.dev/release/archive?tab=linux). The Parse Flutter SDK depends on the Parse Dart SDK which may require a higher Dart framework version than the Flutter framework version, in which case the Flutter framework version cannot be supported even though its release date may have been less than a year ago.
+
+| Version      | End of Support | Compatible                                   |
+|--------------|----------------|----------------------------------------------|
+| Flutter 3.10 | May 2024       | ❌ No                                         |
+| Flutter 3.7  | Apr 2024       | ✅ Yes                                        |
+| Flutter 3.3  | Jan 2024       | ✅ Yes                                         |
+| Flutter 3.0  | Jul 2023       | ❌ No (Parse Flutter SDK requires Flutter >=3.3.0) |
+
+## Example Apps
+
+Example Flutter apps can be found in the GitHub repository's [example](https://github.com/parse-community/Parse-SDK-Flutter/tree/master/examples) directory.
 
 ## Getting Started
 
