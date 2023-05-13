@@ -2,9 +2,9 @@ library flutter_parse_sdk_flutter;
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart' as sdk;
@@ -78,7 +78,9 @@ class Parse extends sdk.Parse
       appVersion: appVersion,
       appPackageName: appPackageName,
       locale: locale ??
-          (sdk.parseIsWeb ? ui.window.locale.toString() : Platform.localeName),
+          (sdk.parseIsWeb
+              ? PlatformDispatcher.instance.locale.toString()
+              : Platform.localeName),
       liveQueryUrl: liveQueryUrl,
       clientKey: clientKey,
       masterKey: masterKey,
