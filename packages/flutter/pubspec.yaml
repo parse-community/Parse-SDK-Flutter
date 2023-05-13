@@ -12,7 +12,6 @@ dependencies:
 
   parse_server_sdk: ^5.0.0
   # Uncomment for local testing
-  
   #parse_server_sdk:
   #   path: ../dart
 
