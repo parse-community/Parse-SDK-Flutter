@@ -1,4 +1,4 @@
-## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-4.0.2...dart-5.0.0) (UNRELEASED)
+## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-4.0.2...dart-5.0.0) (2023-05-14)
 
 ### BREAKING CHANGES
 
