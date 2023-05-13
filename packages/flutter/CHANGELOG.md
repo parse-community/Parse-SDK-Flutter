@@ -1,4 +1,4 @@
-## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-4.0.0...flutter-5.0.0) (UNRELEASED)
+## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-4.0.0...flutter-5.0.0)
 
 ### BREAKING CHANGES
 
