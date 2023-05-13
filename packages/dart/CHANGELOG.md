@@ -1,11 +1,13 @@
-## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.0.0...dart-4.0.2) (UNRELEASED)
+## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-4.0.2...dart-5.0.0) (UNRELEASED)
 
 ### BREAKING CHANGES
 
+* The minimum required Dart SDK version is 2.18.0. ([#867](https://github.com/parse-community/Parse-SDK-Flutter/pull/867))
 * Performing an atomic update on a key of a Parse Object now returns the prospective value, instead of a map of the operation that will be sent to the server; for example for a Parse Object `obj` with a key `count`, the atomic update `obj.setIncrement('count', 1);` previously returned the value `{__op: Increment, amount: 1}` but now returns the prospective result of the operation, which would be `1` if the key's previous value was `0`. ([#860](https://github.com/parse-community/Parse-SDK-Flutter/pull/860))
 
 ### Bug Fixes
 
+* Incorrect Dart and Flutter SDKs compatibility range ([#867](https://github.com/parse-community/Parse-SDK-Flutter/pull/867))
 * Setting atomic operation on Parse Object returns operation instead of prospective value ([#860](https://github.com/parse-community/Parse-SDK-Flutter/pull/860))
 
 ## [4.0.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-4.0.1...dart-4.0.2) (2023-03-23)
