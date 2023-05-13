@@ -219,7 +219,8 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
 }
 
 class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
-    extends State<ParseLiveListElementWidget<T>> {
+    extends State<ParseLiveListElementWidget<T>>
+    with SingleTickerProviderStateMixin {
   late sdk.ParseLiveListElementSnapshot<T> _snapshot;
   StreamSubscription<T>? _streamSubscription;
 
@@ -271,6 +272,8 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
       sizeFactor: widget.sizeFactor,
       child: AnimatedSize(
         duration: widget.duration,
+        // ignore: deprecated_member_use
+        vsync: this,
         child: widget.childBuilder(context, _snapshot),
       ),
     );
