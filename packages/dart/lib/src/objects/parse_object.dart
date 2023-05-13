@@ -1,14 +1,28 @@
 part of flutter_parse_sdk;
 
+/// [ParseObject] is a local representation of data that can be saved and
+/// retrieved from the Parse cloud.
+///
+/// The basic workflow for creating new data is to construct a new [ParseObject],
+/// use set(key, value) to fill it with data, and then use [save] to persist
+/// to the cloud.
+///
+/// The basic workflow for accessing existing data is to use a [QueryBuilder]
+/// to specify which existing data to retrieve.
 class ParseObject extends ParseBase implements ParseCloneable {
   /// Creates a new Parse Object
   ///
-  /// [String] className refers to the Table Name in your Parse Server,
-  /// [bool] debug will overwrite the current default debug settings and
-  /// [ParseHttpClient] can be overwritten to create your own HTTP Client
-  ParseObject(String className,
-      {bool? debug, ParseClient? client, bool? autoSendSessionId})
-      : super() {
+  /// [className], refers to the Table Name in your Parse Server
+  ///
+  /// [debug], will overwrite the current default debug settings
+  ///
+  /// [client], can be overwritten to create your own HTTP Client
+  ParseObject(
+    String className, {
+    bool? debug,
+    ParseClient? client,
+    bool? autoSendSessionId,
+  }) : super() {
     parseClassName = className;
     _path = '$keyEndPointClasses$className';
     _aggregatepath = '$keyEndPointAggregate$className';
@@ -32,11 +46,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
   late bool _debug;
   late ParseClient _client;
 
-  /// Gets an object from the server using it's [String] objectId
+  /// Gets an object from the server using it's [objectId]
   ///
-  /// `List<String>` include refers to other ParseObjects stored as a Pointer
-  Future<ParseResponse> getObject(String objectId,
-      {List<String>? include}) async {
+  /// [include], is a list of [ParseObject]s keys to be included directly and
+  /// not as a pointer.
+  Future<ParseResponse> getObject(
+    String objectId, {
+    List<String>? include,
+  }) async {
     try {
       String? query;
       if (include != null) {
@@ -67,6 +84,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Creates a new object and saves it online
+  ///
+  /// Prefer using [save] over [create]
   Future<ParseResponse> create({bool allowCustomObjectId = false}) async {
     try {
       final Uri url = getSanitisedUri(_client, _path);
@@ -74,17 +93,33 @@ class ParseObject extends ParseBase implements ParseCloneable {
         forApiRQ: true,
         allowCustomObjectId: allowCustomObjectId,
       ));
+
       _saveChanges();
+
       final ParseNetworkResponse result =
           await _client.post(url.toString(), data: body);
 
-      return handleResponse<ParseObject>(
+      final response = handleResponse<ParseObject>(
           this, result, ParseApiRQ.create, _debug, parseClassName);
+
+      if (!response.success) {
+        _notifyChildrenAboutErrorSaving();
+      }
+
+      return response;
     } on Exception catch (e) {
+      _notifyChildrenAboutErrorSaving();
       return handleException(e, ParseApiRQ.create, _debug, parseClassName);
     }
   }
 
+  /// Send the updated object to the server.
+  ///
+  /// Will only send the dirty (modified) data and not the entire object
+  ///
+  /// The object should hold an [objectId] in order to update it
+  ///
+  /// Prefer using [save] over [update]
   Future<ParseResponse> update() async {
     assert(
       objectId != null && (objectId?.isNotEmpty ?? false),
@@ -94,20 +129,62 @@ class ParseObject extends ParseBase implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, '$_path/$objectId');
       final String body = json.encode(toJson(forApiRQ: true));
+
       _saveChanges();
+
       final Map<String, String> headers = {
         keyHeaderContentType: keyHeaderContentTypeJson
       };
+
       final ParseNetworkResponse result = await _client.put(url.toString(),
           data: body, options: ParseNetworkOptions(headers: headers));
-      return handleResponse<ParseObject>(
+
+      final response = handleResponse<ParseObject>(
           this, result, ParseApiRQ.save, _debug, parseClassName);
+
+      if (!response.success) {
+        _notifyChildrenAboutErrorSaving();
+      }
+
+      return response;
     } on Exception catch (e) {
+      _notifyChildrenAboutErrorSaving();
       return handleException(e, ParseApiRQ.save, _debug, parseClassName);
     }
   }
 
-  /// Saves the current object online
+  /// Saves the current object online.
+  ///
+  /// If the object not saved yet, this will create it. Otherwise,
+  /// it will send the updated object to the server.
+  ///
+  /// This will save any nested(child) object in this object. So you do not need
+  /// to each one of them manually.
+  ///
+  /// Example of saving child and parent objects using save():
+  ///
+  /// ```dart
+  /// final dietPlan = ParseObject('Diet_Plans')..set('Fat', 15);
+  /// final plan = ParseObject('Plan')..set('planName', 'John.W');
+  /// dietPlan.set('plan', plan);
+  ///
+  /// // the save function will create the nested(child) object first and then
+  /// // attempts to save the parent object.
+  /// //
+  /// // using create in this situation will throw an error, because the child
+  /// // object is not saved/created yet and you need to create it manually
+  /// await dietPlan.save();
+  ///
+  /// print(plan.objectId); // DLde4rYA8C
+  /// print(dietPlan.objectId); // RGd4fdEUB
+  ///
+  /// ```
+  ///
+  /// The same principle works with [ParseRelation]
+  ///
+  /// Its safe to call this function aging if an error occurred while saving.
+  ///
+  /// Prefer using [save] over [update] and [create]
   Future<ParseResponse> save() async {
     final ParseResponse childrenResponse = await _saveChildren(this);
     if (childrenResponse.success) {
@@ -235,12 +312,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
     _savingChanges.clear();
     _savingChanges.addAll(_unsavedChanges);
     _unsavedChanges.clear();
+    _notifyChildrenAboutSaving();
   }
 
   void _revertSavingChanges() {
     _savingChanges.addAll(_unsavedChanges);
     _unsavedChanges.addAll(_savingChanges);
     _savingChanges.clear();
+    _notifyChildrenAboutRevertSaving();
   }
 
   dynamic _getRequestJson(String method) {
@@ -270,7 +349,15 @@ class ParseObject extends ParseBase implements ParseCloneable {
             return false;
           }
         }
-      } else if (value is List) {
+      } else if (value is _Valuable) {
+        if (!_canbeSerialized(aftersaving, value: value.getValue())) {
+          return false;
+        }
+      } else if (value is _ParseRelation) {
+        if (!_canbeSerialized(aftersaving, value: value.valueForApiRequest())) {
+          return false;
+        }
+      } else if (value is Iterable) {
         for (dynamic child in value) {
           if (!_canbeSerialized(aftersaving, value: child)) {
             return false;
@@ -290,7 +377,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       Set<ParseFileBase> uniqueFiles,
       Set<ParseObject> seen,
       Set<ParseObject> seenNew) {
-    if (object is List) {
+    if (object is Iterable) {
       for (dynamic child in object) {
         if (!_collectionDirtyChildren(
             child, uniqueObjects, uniqueFiles, seen, seenNew)) {
@@ -303,6 +390,16 @@ class ParseObject extends ParseBase implements ParseCloneable {
             child, uniqueObjects, uniqueFiles, seen, seenNew)) {
           return false;
         }
+      }
+    } else if (object is _Valuable) {
+      if (!_collectionDirtyChildren(
+          object.getValue(), uniqueObjects, uniqueFiles, seen, seenNew)) {
+        return false;
+      }
+    } else if (object is _ParseRelation) {
+      if (!_collectionDirtyChildren(object.valueForApiRequest(), uniqueObjects,
+          uniqueFiles, seen, seenNew)) {
+        return false;
       }
     } else if (object is ParseACL) {
       // TODO(yulingtianxia): handle ACL
@@ -343,65 +440,116 @@ class ParseObject extends ParseBase implements ParseCloneable {
     return true;
   }
 
-  /// Get the instance of ParseRelation class associated with the given key.
+  void _notifyChildrenAboutSave() {
+    for (final child in _getObjectData().values) {
+      if (child is _ParseSaveStateAwareChild) {
+        child.onSaved();
+      }
+    }
+  }
+
+  void _notifyChildrenAboutSaving() {
+    for (final child in _getObjectData().values) {
+      if (child is _ParseSaveStateAwareChild) {
+        child.onSaving();
+      }
+    }
+  }
+
+  void _notifyChildrenAboutErrorSaving() {
+    for (final child in _getObjectData().values) {
+      if (child is _ParseSaveStateAwareChild) {
+        child.onErrorSaving();
+      }
+    }
+  }
+
+  void _notifyChildrenAboutRevertSaving() {
+    for (final child in _getObjectData().values) {
+      if (child is _ParseSaveStateAwareChild) {
+        child.onRevertSaving();
+      }
+    }
+  }
+
+  /// Get the instance of [ParseRelation] class associated with the given [key]
   ParseRelation<T> getRelation<T extends ParseObject>(String key) {
-    return ParseRelation<T>(parent: this, key: key);
+    final potentialRelation = _getObjectData()[key];
+
+    if (potentialRelation == null) {
+      final relation = ParseRelation<T>(parent: this, key: key);
+
+      set(key, relation);
+
+      return relation;
+    }
+
+    if (potentialRelation is _ParseRelation<T>) {
+      return potentialRelation
+        ..parent = this
+        ..key = key;
+    }
+
+    throw ParseRelationException(
+        'The key $key is associated with a value ($potentialRelation) '
+        'can not be a relation');
   }
 
-  /// Removes an element from an Array
-  void setRemove(String key, dynamic value) {
-    _arrayOperation('Remove', key, <dynamic>[value]);
+  /// Remove every instance of an [element] from an array
+  /// associated with a given [key]
+  void setRemove(String key, dynamic element) {
+    set(key, _ParseRemoveOperation([element]));
   }
 
-  /// Remove multiple elements from an array of an object
-  void setRemoveAll(String key, List<dynamic> values) {
-    _arrayOperation('Remove', key, values);
+  /// Removes all instances of the [elements] contained in a [List] from the
+  /// array associated with a given [key]
+  void setRemoveAll(String key, List<dynamic> elements) {
+    set(key, _ParseRemoveOperation(elements));
   }
 
-  /// Add a multiple elements to an array of an object
-  void setAddAll(String key, List<dynamic> values) {
-    _arrayOperation('Add', key, values);
+  /// Add multiple [elements] to the end of the array
+  /// associated with a given [key]
+  void setAddAll(String key, List<dynamic> elements) {
+    set(key, _ParseAddOperation(elements));
   }
 
-  void setAddUnique(String key, dynamic value) {
-    _arrayOperation('AddUnique', key, <dynamic>[value]);
+  /// Add an [element] to the array associated with a given [key], only if
+  /// it is not already present in the array. The position of the insert is not
+  /// guaranteed
+  void setAddUnique(String key, dynamic element) {
+    set(key, _ParseAddUniqueOperation([element]));
   }
 
-  /// Add a multiple elements to an array of an object
-  void setAddAllUnique(String key, List<dynamic> values) {
-    _arrayOperation('AddUnique', key, values);
+  /// Add multiple [elements] to the array associated with a given [key], only
+  /// adding elements which are not already present in the array. The position
+  /// of the insert is not guaranteed
+  void setAddAllUnique(String key, List<dynamic> elements) {
+    set(key, _ParseAddUniqueOperation(elements));
   }
 
-  /// Add a single element to an array of an object
-  void setAdd(String key, dynamic value) {
-    _arrayOperation('Add', key, <dynamic>[value]);
+  /// Add an [element] to the end of the array associated with a given [key]
+  void setAdd<T>(String key, T element) {
+    set(key, _ParseAddOperation([element]));
   }
 
-  void addRelation(String key, List<dynamic> values) {
-    _arrayOperation('AddRelation', key, values);
+  /// Add multiple [objets] to a relation associated with a given [key]
+  void addRelation(String key, List<ParseObject> objets) {
+    set(key, _ParseAddRelationOperation(objets.toSet()));
   }
 
-  void removeRelation(String key, List<dynamic> values) {
-    _arrayOperation('RemoveRelation', key, values);
+  /// Remove multiple [objets] from a relation associated with a given [key]
+  void removeRelation(String key, List<ParseObject> objets) {
+    set(key, _ParseRemoveRelationOperation(objets.toSet()));
   }
 
-  /// Used in array Operations in save() method
-  void _arrayOperation(String arrayAction, String key, List<dynamic> values) {
-    // TODO(yulingtianxia): Array operations should be incremental. Merge add and remove operation.
-    set<Map<String, dynamic>>(
-        key, <String, dynamic>{'__op': arrayAction, 'objects': values});
-  }
-
-  /// Increases a num of an object by x amount
+  /// Increment a num value associated with a given [key] by the given [amount]
   void setIncrement(String key, num amount) {
-    set<Map<String, dynamic>>(
-        key, <String, dynamic>{'__op': 'Increment', 'amount': amount});
+    set(key, _ParseIncrementOperation(amount));
   }
 
-  /// Decreases a num of an object by x amount
+  /// Decrement a num value associated with a given [key] by the given [amount]
   void setDecrement(String key, num amount) {
-    set<Map<String, dynamic>>(
-        key, <String, dynamic>{'__op': 'Increment', 'amount': -amount});
+    set(key, _ParseIncrementOperation(-amount));
   }
 
   /// Can be used set an objects variable to undefined rather than null
@@ -417,29 +565,37 @@ class ParseObject extends ParseBase implements ParseCloneable {
       return ParseResponse()..success = true;
     }
 
+    if (objectId == null) {
+      return ParseResponse()..success = false;
+    }
+
     try {
-      if (objectId != null) {
-        final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-        final String body = '{"$key":{"__op":"Delete"}}';
-        final ParseNetworkResponse result =
-            await _client.put(url.toString(), data: body);
-        final ParseResponse response = handleResponse<ParseObject>(
-            this, result, ParseApiRQ.unset, _debug, parseClassName);
-        if (!response.success) {
-          _objectData[key] = object;
-          _unsavedChanges[key] = object;
-          _savingChanges[key] = object;
-        } else {
-          return ParseResponse()..success = true;
-        }
+      final Uri url = getSanitisedUri(_client, '$_path/$objectId');
+
+      final String body = '{"$key":{"__op":"Delete"}}';
+
+      final ParseNetworkResponse result =
+          await _client.put(url.toString(), data: body);
+
+      final ParseResponse response = handleResponse<ParseObject>(
+          this, result, ParseApiRQ.unset, _debug, parseClassName);
+
+      if (response.success) {
+        return ParseResponse()..success = true;
+      } else {
+        _objectData[key] = object;
+        _unsavedChanges[key] = object;
+        _savingChanges[key] = object;
+
+        return response;
       }
-    } on Exception {
+    } on Exception catch (e) {
       _objectData[key] = object;
       _unsavedChanges[key] = object;
       _savingChanges[key] = object;
-    }
 
-    return ParseResponse()..success = false;
+      return handleException(e, ParseApiRQ.unset, _debug, parseClassName);
+    }
   }
 
   /// Can be used to create custom queries
@@ -501,10 +657,13 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
-  ///Fetches this object with the data from the server. Call this whenever you want the state of the
-  ///object to reflect exactly what is on the server.
+  /// Fetches this object with the data from the server.
   ///
-  /// `List<String>` include refers to other ParseObjects stored as a Pointer
+  /// Call this whenever you want the state of the object to reflect exactly
+  /// what is on the server.
+  ///
+  /// [include], is a list of [ParseObject]s keys to be included directly and
+  /// not as a pointer.
   Future<ParseObject> fetch({List<String>? include}) async {
     if (objectId == null || objectId!.isEmpty) {
       throw 'can not fetch without a objectId';

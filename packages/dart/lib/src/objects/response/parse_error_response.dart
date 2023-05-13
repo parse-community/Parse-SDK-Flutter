@@ -4,9 +4,13 @@ part of flutter_parse_sdk;
 ParseResponse buildErrorResponse(
     ParseResponse response, ParseNetworkResponse apiResponse) {
   final Map<String, dynamic> responseData = json.decode(apiResponse.data);
+
   response.error = ParseError(
-      code: responseData[keyCode] ?? ParseError.otherCause,
-      message: responseData[keyError].toString());
+    code: responseData[keyCode] ?? ParseError.otherCause,
+    message: responseData[keyError].toString(),
+  );
+
   response.statusCode = responseData[keyCode] ?? ParseError.otherCause;
+
   return response;
 }

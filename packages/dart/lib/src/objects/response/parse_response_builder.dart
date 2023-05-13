@@ -151,7 +151,8 @@ class _ParseResponseBuilder {
       return object
         ..fromJson(map)
         .._unsavedChanges.clear()
-        .._unsavedChanges.addAll(unsaved);
+        .._unsavedChanges.addAll(unsaved)
+        .._notifyChildrenAboutSave();
     } else {
       return null;
     }

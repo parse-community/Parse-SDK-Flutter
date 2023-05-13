@@ -1,11 +1,7 @@
 part of flutter_parse_sdk;
 
-List<dynamic> _convertJSONArrayToList(List<dynamic> array) {
-  final List<dynamic> list = <dynamic>[];
-  for (final dynamic item in array) {
-    list.add(parseDecode(item));
-  }
-  return list;
+List _convertJSONArrayToList(List<dynamic> array) {
+  return array.map(parseDecode).toList();
 }
 
 Map<String, dynamic> _convertJSONObjectToMap(Map<String, dynamic> object) {
@@ -71,7 +67,6 @@ dynamic parseDecode(dynamic value) {
         return ParseGeoPoint(
             latitude: latitude.toDouble(), longitude: longitude.toDouble());
       case 'Relation':
-        // ignore: always_specify_types
         return ParseRelation.fromJson(map);
     }
   }
@@ -83,7 +78,19 @@ dynamic parseDecode(dynamic value) {
         final num latitude = map['latitude'] ?? 0.0;
         final num longitude = map['longitude'] ?? 0.0;
         return ParseGeoPoint(
-            latitude: latitude.toDouble(), longitude: longitude.toDouble());
+          latitude: latitude.toDouble(),
+          longitude: longitude.toDouble(),
+        );
+
+      case 'ParseArray':
+        return _ParseArray.fromFullJson(map);
+
+      case 'ParseNumber':
+        return _ParseNumber.fromFullJson(map);
+
+      case 'ParseRelation':
+        return _ParseRelation.fromFullJson(map);
+
       default:
         return ParseCoreData.instance
             .createObject(map['className'])
