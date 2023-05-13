@@ -24,7 +24,7 @@ dependencies:
   mime_type: ^1.0.0
   timezone: ^0.9.1
   universal_io: ^2.2.0
-  collection: ^1.16.0
+  collection: ^1.17.1
 
 dev_dependencies:
   lints: ^2.0.1
