@@ -8,15 +8,17 @@ import '../../../parse_query_test.mocks.dart';
 import '../../../test_utils.dart';
 
 void main() {
+  setUpAll(() async {
+    await initializeParse();
+  });
+
   group('delete()', () {
     late MockParseClient client;
 
     late ParseObject dietPlansObject;
 
-    setUp(() async {
+    setUp(() {
       client = MockParseClient();
-
-      await initializeParse();
 
       dietPlansObject = ParseObject("Diet_Plans", client: client);
     });
@@ -29,8 +31,7 @@ void main() {
 
       dietPlansObject.set('Fat', 15);
 
-      final dietPlansObjectDataBeforeDeletion =
-          dietPlansObject.toJson(full: true);
+      final dietPlansObjectDataBeforeDeletion = dietPlansObject.toJson();
 
       final deletePath = Uri.parse(
         '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
@@ -71,7 +72,7 @@ void main() {
       expect(identical(objectFromResponse, dietPlansObject), isTrue);
 
       final dietPlansObjectDataAfterDeletion =
-          (objectFromResponse as ParseObject).toJson(full: true);
+          (objectFromResponse as ParseObject).toJson();
 
       expect(
         jsonEncode(dietPlansObjectDataAfterDeletion),
@@ -146,8 +147,7 @@ void main() {
 
       dietPlansObject.set('Fat', 15);
 
-      final dietPlansObjectDataBeforeDeletion =
-          dietPlansObject.toJson(full: true);
+      final dietPlansObjectDataBeforeDeletion = dietPlansObject.toJson();
 
       final deletePath = Uri.parse(
         '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/$id',
@@ -188,7 +188,7 @@ void main() {
       expect(identical(objectFromResponse, dietPlansObject), isTrue);
 
       final dietPlansObjectDataAfterDeletion =
-          (objectFromResponse as ParseObject).toJson(full: true);
+          (objectFromResponse as ParseObject).toJson();
 
       expect(
         jsonEncode(dietPlansObjectDataAfterDeletion),
