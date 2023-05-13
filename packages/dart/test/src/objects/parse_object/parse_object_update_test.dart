@@ -8,6 +8,10 @@ import '../../../parse_query_test.mocks.dart';
 import '../../../test_utils.dart';
 
 void main() {
+  setUpAll(() async {
+    await initializeParse();
+  });
+
   group('update()', () {
     late MockParseClient client;
 
@@ -21,10 +25,8 @@ void main() {
 
     late String putPath;
 
-    setUp(() async {
+    setUp(() {
       client = MockParseClient();
-
-      await initializeParse();
 
       dietPlansObject = ParseObject("Diet_Plans", client: client);
       dietPlansObject
@@ -135,6 +137,53 @@ void main() {
       expect(response.error, isNotNull);
 
       expect(response.error!.exception, equals(error));
+
+      expect(response.error!.code, equals(ParseError.otherCause));
+
+      // even if the update failed, the updated values should remain the same
+      expect(dietPlansObject.get(keyName), equals(newNameValue));
+      expect(dietPlansObject.get(keyFat), equals(newFatValue));
+
+      verify(client.put(
+        putPath,
+        options: anyNamed("options"),
+        data: putData,
+      )).called(1);
+
+      verifyNoMoreInteractions(client);
+    });
+
+    test(
+        'update() should return error form the server and the'
+        ' updated values should remain the same', () async {
+      // arrange
+
+      final putData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
+      final errorData = jsonEncode({keyCode: -1, keyError: "someError"});
+
+      when(client.put(
+        putPath,
+        options: anyNamed("options"),
+        data: putData,
+      )).thenAnswer(
+        (_) async => ParseNetworkResponse(data: errorData, statusCode: -1),
+      );
+
+      // act
+      ParseResponse response = await dietPlansObject.update();
+
+      // assert
+      expect(response.success, isFalse);
+
+      expect(response.result, isNull);
+
+      expect(response.count, isZero);
+
+      expect(response.results, isNull);
+
+      expect(response.error, isNotNull);
+
+      expect(response.error!.message, equals('someError'));
 
       expect(response.error!.code, equals(ParseError.otherCause));
 
