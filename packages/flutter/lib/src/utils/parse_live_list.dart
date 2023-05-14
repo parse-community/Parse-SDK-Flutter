@@ -273,7 +273,7 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
       child: AnimatedSize(
         duration: widget.duration,
         // ignore: deprecated_member_use
-        vsync: this,
+        // vsync: this,
         child: widget.childBuilder(context, _snapshot),
       ),
     );
