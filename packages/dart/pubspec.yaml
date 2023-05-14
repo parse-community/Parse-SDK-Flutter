@@ -1,6 +1,6 @@
 name: parse_server_sdk
 description: The Dart SDK for Parse Platform (https://parseplatform.org)
-version: 5.0.0
+version: 5.0.1
 homepage: https://github.com/parse-community/Parse-SDK-Flutter
 
 environment:
