@@ -1,9 +1,14 @@
-## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-4.0.0...flutter-5.0.0) (UNRELEASED)
+## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-4.0.0...flutter-5.0.0) (2023-05-14)
 
 ### BREAKING CHANGES
 
-* The minimum required Dart SDK version is 2.18.0 ([#867](https://github.com/parse-community/Parse-SDK-Flutter/pull/867))
+* The minimum required Dart SDK version is 2.18.0. ([#867](https://github.com/parse-community/Parse-SDK-Flutter/pull/867))
+* Upgrades the dependency `parse_server_sdk` to `5.x.x`. ([#868](https://github.com/parse-community/Parse-SDK-Flutter/pull/868))
 * The deprecated parameter `vsync` from `AnimatedSize` is removed. ([#864](https://github.com/parse-community/Parse-SDK-Flutter/pull/864))
+
+### Features
+
+* Upgrade `parse_server_sdk` to `5.x.x` ([#868](https://github.com/parse-community/Parse-SDK-Flutter/pull/868))
 
 ### Bug Fixes
 

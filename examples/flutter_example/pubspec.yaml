@@ -16,6 +16,12 @@ dependencies:
   sembast: ^3.0.0+4
   shared_preferences: ^2.0.5
 
+dependency_overrides:
+  # Override to local mono-repo path so devs can test this repo
+  # against changes that they're making to other mono-repo packages.
+  parse_server_sdk:
+    path: ../../dart
+
 dev_dependencies:
   flutter_lints: ^1.0.4
   flutter_test:
