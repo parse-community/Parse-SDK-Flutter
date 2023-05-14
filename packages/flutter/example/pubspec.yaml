@@ -1,0 +1,50 @@
+name: flutter_plugin_example
+description: Demonstrates how to use the flutter_plugin plugin.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.18.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  parse_server_sdk_flutter:
+    path: ../
+
+  path: ^1.8.3
+  path_provider: ^2.0.15
+  sembast: ^3.4.4
+  shared_preferences: ^2.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+  mockito: ^5.4.0
+
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/parse.png
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: fonts/Roboto/Roboto-Thin.ttf
+          weight: 100
+        - asset: fonts/Roboto/Roboto-Light.ttf
+          weight: 300
+        - asset: fonts/Roboto/Roboto-Regular.ttf
+          weight: 400
+        - asset: fonts/Roboto/Roboto-Medium.ttf
+          weight: 500
+        - asset: fonts/Roboto/Roboto-Bold.ttf
+          weight: 700
+        - asset: fonts/Roboto/Roboto-Black.ttf
+          weight: 900
+
