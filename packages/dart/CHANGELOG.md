@@ -1,3 +1,9 @@
+## [5.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.0.0...dart-5.1.0) (2023-05-14)
+
+### Features
+
+* Downgrade collection dependency to ^1.16.0 for compatibility with Flutter >=3.3 ([#880](https://github.com/parse-community/Parse-SDK-Flutter/pull/880))
+  
 ## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-4.0.2...dart-5.0.0) (2023-05-14)
 
 ### BREAKING CHANGES
