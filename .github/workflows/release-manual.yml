@@ -23,7 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
      dir: ${{ github.event.inputs.package == 'flutter' and 'packages/flutter' or 'packages/dart' }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
