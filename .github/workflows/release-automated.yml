@@ -9,7 +9,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     env:
-     dir: ${{ startsWith(github.ref_name, 'flutter') and packages/flutter or packages/dart }}
+     dir: ${{ startsWith(github.ref_name, 'flutter') and 'packages/flutter' or 'packages/dart' }}
 
     steps:
       - name: Checkout code
