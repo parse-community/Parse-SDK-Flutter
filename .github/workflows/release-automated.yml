@@ -1,5 +1,4 @@
 name: release-automated
-
 on:
   push:
     tags:
