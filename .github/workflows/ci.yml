@@ -34,6 +34,9 @@ jobs:
           - name: Dart 2.18
             os: ubuntu-latest
             sdk: 2.18.7
+          - name: Dart beta
+            os: ubuntu-latest
+            sdk: beta
       fail-fast: false
     name: Test ${{ matrix.name }}
     steps:
@@ -92,12 +95,22 @@ jobs:
           - name: Flutter 3.3
             os: ubuntu-latest
             sdk: 3.3.x
+          - name: Flutter Beta
+            os: ubuntu-latest
+            sdk: beta
       fail-fast: false
     name: Test ${{ matrix.name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Setup Beta flutter
+        if: ${{  matrix.sdk == 'beta' }}
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "beta"
+          cache: true
       - name: Setup flutter
+        if: ${{  matrix.sdk != 'beta' }}
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ matrix.sdk }}
