@@ -8,20 +8,29 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+     dir: ${{ startsWith(github.ref_name, 'flutter') and packages/flutter or packages/dart }}
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v3
+        
       - name: Setup Dart SDK
-        uses: dart-lang/setup-dart@v1.5.0
-      - name: Publish Dart package
-        if: ${{ startsWith(github.ref_name, 'dart') }}
-        run: |
-          cd packages/dart
-          dart pub get
-          dart pub publish --force
-      - name: Publish Flutter package
-        if: ${{ startsWith(github.ref_name, 'flutter') }}
-        run: |
-          cd packages/flutter
-          dart pub get
-          dart pub publish --force
+        uses: dart-lang/setup-dart@v1
+
+      - name: Resolve packages
+        run: dart pub get --directory ${{ env.dir }}
+
+      - name: Analyze
+        run: dart analyze --fatal-infos ${{ env.dir }}
+
+      - name: Check lints
+        run: dart format --output=none --set-exit-if-changed ${{ env.dir }}
+
+      - name: Publish --dry-run
+        working-directory: ${{ env.dir }}
+        run: dart pub publish --dry-run
+
+      - name: Publish package
+        working-directory: ${{ env.dir }}
+        run: dart pub publish --force
