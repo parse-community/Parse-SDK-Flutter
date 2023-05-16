@@ -95,7 +95,7 @@ jobs:
           - name: Flutter 3.3
             os: ubuntu-latest
             sdk: 3.3.x
-          - name: Flutter Beta
+          - name: Flutter beta
             os: ubuntu-latest
             sdk: beta
       fail-fast: false
@@ -103,8 +103,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Setup Beta flutter
-        if: ${{  matrix.sdk == 'beta' }}
+      - name: Setup flutter (beta)
+        if: ${{ matrix.sdk == 'beta' }}
         uses: subosito/flutter-action@v2
         with:
           channel: "beta"
