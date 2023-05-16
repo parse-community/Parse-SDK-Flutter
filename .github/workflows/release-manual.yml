@@ -21,27 +21,24 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+     dir: ${{ github.event.inputs.package == 'flutter' && 'packages/flutter' || 'packages/dart' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.ref }}
-      - name: Publish dart package
-        if: github.event.inputs.package == 'dart'
-        uses: k-paxian/dart-package-publisher@v1.5.1
-        with:
-          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
-          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
-          relativePath: packages/dart
-          format: true
-          dryRunOnly: false
-      - name: Publish flutter package
-        if: github.event.inputs.package == 'flutter'
-        uses: k-paxian/dart-package-publisher@v1.5.1
-        with:
-          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
-          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
-          relativePath: packages/flutter
-          flutter: true
-          format: true
-          dryRunOnly: false
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+      - name: Resolve packages
+        run: dart pub get --directory ${{ env.dir }}
+      - name: Analyze
+        run: dart analyze --fatal-infos ${{ env.dir }}
+      - name: Check lint
+        run: dart format --output=none --set-exit-if-changed ${{ env.dir }}
+      - name: Publish package (dry-run)
+        working-directory: ${{ env.dir }}
+        run: dart pub publish --dry-run
+      - name: Publish package
+        working-directory: ${{ env.dir }}
+        run: dart pub publish --force
