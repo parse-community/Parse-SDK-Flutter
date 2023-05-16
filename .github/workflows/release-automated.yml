@@ -12,8 +12,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Setup Dart SDK
-        uses: dart-lang/setup-dart@v1
+      - name: Setup Flutter Framework
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
       - name: Resolve packages
         run: dart pub get --directory ${{ env.dir }}
       - name: Analyze
