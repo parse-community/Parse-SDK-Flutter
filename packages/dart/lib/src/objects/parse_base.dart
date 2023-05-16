@@ -1,6 +1,7 @@
 part of flutter_parse_sdk;
 
 abstract class ParseBase {
+  /// refers to the Table Name in your Parse Server
   String parseClassName = 'ParseBase';
   final bool _dirty = false; // reserved property
   final Map<String, dynamic> _unsavedChanges = <String, dynamic>{};
@@ -91,11 +92,16 @@ abstract class ParseBase {
       map[keyVarUpdatedAt] = _parseDateFormat.format(updatedAt!);
     }
 
-    final Map<String, dynamic> target =
-        forApiRQ ? _unsavedChanges : _getObjectData();
+    final target = forApiRQ ? _unsavedChanges : _getObjectData();
     target.forEach((String key, dynamic value) {
       if (!map.containsKey(key)) {
         map[key] = parseEncode(value, full: full);
+      }
+
+      if (forApiRQ &&
+          value is _ParseRelation &&
+          !value.shouldIncludeInRequest()) {
+        map.remove(key);
       }
     });
 
@@ -115,7 +121,7 @@ abstract class ParseBase {
   }
 
   @override
-  String toString() => json.encode(toJson());
+  String toString() => json.encode(toJson(full: true));
 
   dynamic fromJsonForManualObject(Map<String, dynamic> objectData) {
     return _fromJson(objectData, true);
@@ -146,9 +152,29 @@ abstract class ParseBase {
       } else if (key == keyVarAcl) {
         _getObjectData()[keyVarAcl] = ParseACL().fromJson(value);
       } else {
-        _getObjectData()[key] = parseDecode(value);
+        var decodedValue = parseDecode(value);
+
+        if (decodedValue is List) {
+          if (addInUnSave) {
+            decodedValue = _ParseArray()..estimatedArray = decodedValue;
+          } else {
+            decodedValue = _ParseArray()..savedArray = decodedValue;
+          }
+        }
+
+        if (decodedValue is num) {
+          if (addInUnSave) {
+            decodedValue = _ParseNumber(decodedValue);
+          } else {
+            decodedValue = _ParseNumber(decodedValue)
+              ..savedNumber = decodedValue;
+          }
+        }
+
+        _getObjectData()[key] = decodedValue;
+
         if (addInUnSave) {
-          _unsavedChanges[key] = _getObjectData()[key];
+          _unsavedChanges[key] = decodedValue;
         }
       }
     });
@@ -170,7 +196,13 @@ abstract class ParseBase {
   Map<String, dynamic> _getObjectData() => _objectData;
 
   bool containsValue(Object value) {
-    return _getObjectData().containsValue(value);
+    for (final val in _getObjectData().values) {
+      if (val == value || (val is _Valuable && val.getValue() == value)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   bool containsKey(String key) {
@@ -193,42 +225,62 @@ abstract class ParseBase {
 
   void clearUnsavedChanges() {
     _unsavedChanges.clear();
+    _notifyChildrenAboutClearUnsaved();
   }
 
-  /// Sets type [T] from objectData
+  void _notifyChildrenAboutClearUnsaved() {
+    for (final child in _getObjectData().values) {
+      if (child is _ParseSaveStateAwareChild) {
+        child.onClearUnsaved();
+      }
+    }
+  }
+
+  /// Add a key-value pair to this object.
   ///
-  /// To set an int, call setType<int> and an int will be saved
+  /// It is recommended to name keys in `camelCaseLikeThis`
+  ///
   /// [bool] forceUpdate is always true, if unsure as to whether an item is
   /// needed or not, set to false
   void set<T>(String key, T value, {bool forceUpdate = true}) {
-    if (_getObjectData().containsKey(key)) {
-      if (_getObjectData()[key] == value && !forceUpdate) {
-        return;
-      }
-      _getObjectData()[key] =
-          ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
-    } else {
-      _getObjectData()[key] = value;
+    if (_getObjectData()[key] == value && !forceUpdate) {
+      return;
     }
+
+    _getObjectData()[key] = _ParseOperation.maybeMergeWithPrevious<T>(
+      newValue: value,
+      previousValue: _getObjectData()[key],
+      parent: this as ParseObject,
+      key: key,
+    );
+
     _unsavedChanges[key] = _getObjectData()[key];
   }
 
-  /// Gets type [T] from objectData
+  /// Get a value of type [T] associated with a given [key]
   ///
-  /// Returns null or [defaultValue] if provided. To get an int, call
-  /// getType<int> and an int will be returned, null, or a defaultValue if
-  /// provided
+  /// Returns null or [defaultValue] if provided.
   T? get<T>(String key, {T? defaultValue}) {
     if (_getObjectData().containsKey(key)) {
-      return _getObjectData()[key] as T?;
+      final result = _getObjectData()[key];
+
+      if (result is _Valuable) {
+        return result.getValue() as T?;
+      }
+
+      if (result is _ParseRelation) {
+        return (result
+          ..parent = (this as ParseObject)
+          ..key = key) as T?;
+      }
+
+      return result as T?;
     } else {
       return defaultValue;
     }
   }
 
-  /// Saves item to simple key pair value storage
-  ///
-  /// Replicates Android SDK pin process and saves object to storage
+  /// Saves item to value storage
   Future<bool> pin() async {
     if (objectId != null) {
       await unpin();
@@ -241,9 +293,7 @@ abstract class ParseBase {
     }
   }
 
-  /// Saves item to simple key pair value storage
-  ///
-  /// Replicates Android SDK pin process and saves object to storage
+  /// Remove item from value storage
   Future<bool> unpin({String? key}) async {
     if (objectId != null || key != null) {
       await ParseCoreData().getStore().remove(key ?? objectId!);
@@ -253,10 +303,8 @@ abstract class ParseBase {
     return false;
   }
 
-  /// Saves item to simple key pair value storage
-  ///
-  /// Replicates Android SDK pin process and saves object to storage
-  dynamic fromPin(String objectId) async {
+  /// Get item from value storage
+  Future<dynamic> fromPin(String objectId) async {
     final CoreStore coreStore = ParseCoreData().getStore();
     final String? itemFromStore = await coreStore.getString(objectId);
 
@@ -268,12 +316,12 @@ abstract class ParseBase {
 
   Map<String, dynamic> toPointer() => encodeObject(parseClassName, objectId!);
 
-  ///Set the [ParseACL] governing this object.
+  /// Set the [ParseACL] governing this object.
   void setACL<ParseACL>(ParseACL acl) {
     set(keyVarAcl, acl);
   }
 
-  ///Access the [ParseACL] governing this object.
+  /// Access the [ParseACL] governing this object.
   ParseACL getACL() {
     if (_getObjectData().containsKey(keyVarAcl)) {
       return _getObjectData()[keyVarAcl];

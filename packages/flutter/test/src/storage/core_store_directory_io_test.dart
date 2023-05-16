@@ -192,7 +192,7 @@ File create1MBParseDBFileInLibraryPath() {
 
 File generate1MBFile(String path) {
   final dbFile = File(path);
-  dbFile.createSync(recursive: true, exclusive: false);
+  dbFile.createSync(recursive: true);
 
   const fileSize = 1024 * 1024; // 1 MB
   final random = Random();

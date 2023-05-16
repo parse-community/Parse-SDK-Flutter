@@ -104,3 +104,26 @@ Future<ParseResponse> batchRequest(
 Stream<T> _createStreamError<T>(Object error) async* {
   throw error;
 }
+
+List removeDuplicateParseObjectByObjectId(Iterable iterable) {
+  final list = iterable.toList();
+
+  final foldedGroupedByObjectId = list
+      .whereType<ParseObject>()
+      .where((e) => e.objectId != null)
+      .groupFoldBy(
+        (e) => e.objectId!,
+        (previous, element) => element,
+      );
+
+  list.removeWhere(
+    (e) {
+      return e is ParseObject &&
+          foldedGroupedByObjectId.keys.contains(e.objectId);
+    },
+  );
+
+  list.addAll(foldedGroupedByObjectId.values);
+
+  return list;
+}
