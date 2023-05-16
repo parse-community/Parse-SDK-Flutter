@@ -3,38 +3,37 @@
 # part of the automated release workflow.
 
 name: release-manual
-on:
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: 'Reference (tag / SHA):'
-        required: true
-        default: ''
-      package:
-        description: 'Package'
-        required: true
-        default: ''
-        type: choice
-        options:
-        - dart
-        - flutter
+on: workflow_dispatch
+env:
+  package: ${{ startsWith(github.event.ref, 'dart') && 'dart' || 'flutter' }}
 jobs:
   release:
     runs-on: ubuntu-latest
     env:
-     dir: ${{ github.event.inputs.package == 'flutter' && 'packages/flutter' || 'packages/dart' }}
+      dir: ${{ env.package == 'dart' && 'packages/dart' || 'packages/flutter' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.ref }}
-      - name: Setup Dart SDK
+          ref: ${{ github.event.ref }}
+      - name: Setup dart
+        if: env.package == 'dart'
         uses: dart-lang/setup-dart@v1
-      - name: Resolve packages
-        run: dart pub get --directory ${{ env.dir }}
-      - name: Analyze
+      - name: Setup flutter
+        if: env.package == 'flutter'
+        uses: subosito/flutter-action@v2
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Install dart dependencies
+        if: env.package == 'flutter'
+        run: dart pub get --directory 'packages/flutter'
+      - name: Analyze dart
+        if: env.package == 'dart'
         run: dart analyze --fatal-infos ${{ env.dir }}
-      - name: Check lint
+      - name: Analyze flutter
+        if: env.package == 'flutter'
+        run: flutter analyze --fatal-infos ${{ env.dir }}
+      - name: Lint
         run: dart format --output=none --set-exit-if-changed ${{ env.dir }}
       - name: Publish package (dry-run)
         working-directory: ${{ env.dir }}
