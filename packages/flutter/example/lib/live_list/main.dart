@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
                 height: double.infinity,
                 alignment: Alignment.center,
                 child: initFailed == null
-                    ? const Column(
+                    ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           CircularProgressIndicator(),
