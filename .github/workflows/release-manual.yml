@@ -3,7 +3,13 @@
 # part of the automated release workflow.
 
 name: release-manual
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Reference tag (dart-#.#.# or flutter-#.#.#):'
+        required: true
+        default: ''
 env:
   package: ${{ startsWith(github.event.ref, 'dart') && 'dart' || 'flutter' }}
 jobs:
