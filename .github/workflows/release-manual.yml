@@ -25,10 +25,13 @@ jobs:
       - name: Setup dart
         if: env.package == 'dart'
         uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.0.0'
       - name: Setup flutter
         if: env.package == 'flutter'
         uses: subosito/flutter-action@v2
         with:
+          channel: 'stable'
           cache: true
       - name: Install dart dependencies
         run: dart pub get --directory 'packages/dart'
