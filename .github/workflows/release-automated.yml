@@ -21,7 +21,7 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
       - name: Setup dart
-        if: env.package == 'dart'
+        # if: env.package == 'dart'
         uses: dart-lang/setup-dart@v1
       - name: Setup flutter
         if: env.package == 'flutter'
