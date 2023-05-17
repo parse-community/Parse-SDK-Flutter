@@ -22,6 +22,8 @@ jobs:
       - name: Setup flutter
         if: env.package == 'flutter'
         uses: subosito/flutter-action@v2
+        with:
+          cache: true
       - name: Install dart dependencies
         run: dart pub get --directory 'packages/dart'
       - name: Install dart dependencies
