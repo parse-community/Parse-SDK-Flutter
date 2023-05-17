@@ -15,6 +15,7 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       id-token: write # This is required for requesting the JWT
     steps:
@@ -23,7 +24,7 @@ jobs:
         with:
           ref: ${{ github.event.ref }}
       - name: Setup dart
-        if: env.package == 'dart'
+        # if: env.package == 'dart'
         uses: dart-lang/setup-dart@v1
         with:
           sdk: '3.0.0'
@@ -31,7 +32,7 @@ jobs:
         if: env.package == 'flutter'
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: 'beta'
           cache: true
       - name: Install dart dependencies
         run: dart pub get --directory 'packages/dart'
