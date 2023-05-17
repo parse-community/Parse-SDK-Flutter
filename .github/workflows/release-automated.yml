@@ -1,5 +1,8 @@
-# To properly authenticate on pub.dev to publish a release via GitHub Actions, a tag
+# To authenticate on pub.dev to publish a release via GitHub Actions, a tag
 # needs to be pushed, see: https://dart.dev/tools/pub/automated-publishing
+#
+# Publishing cannot currently be triggered manually via a "workflow_dispatch",
+# see: https://dart.dev/go/publishing-from-github
 
 name: release-automated
 on:
@@ -21,13 +24,14 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
       - name: Setup dart
-        # if: env.package == 'dart'
         uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.0.0' # Set to 3.0.0 due to Parse Dart SDK compatibility, can be removed later on
       - name: Setup flutter
         if: env.package == 'flutter'
         uses: subosito/flutter-action@v2
         with:
-          channel: 'beta'
+          channel: 'stable'
           cache: true
       - name: Install dart dependencies
         run: dart pub get --directory 'packages/dart'
