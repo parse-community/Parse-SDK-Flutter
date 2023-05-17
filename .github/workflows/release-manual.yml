@@ -30,7 +30,7 @@ jobs:
           cache: true
       - name: Install dart dependencies
         run: dart pub get --directory 'packages/dart'
-      - name: Install dart dependencies
+      - name: Install flutter dependencies
         if: env.package == 'flutter'
         run: dart pub get --directory 'packages/flutter'
       - name: Analyze dart
