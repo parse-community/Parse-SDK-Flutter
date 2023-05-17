@@ -1,16 +1,16 @@
 name: parse_server_sdk_flutter
-description: The Flutter SDK for Parse Platform (https://parseplatform.org)
+description: The Flutter SDK to connect to Parse Server. Build your apps faster with Parse Platform, the complete application stack.
 version: 5.0.0
 homepage: https://github.com/parse-community/Parse-SDK-Flutter
 
 environment:
-  sdk: ">=2.18.0 <3.1.0"
+  sdk: ">=2.18.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  parse_server_sdk: ^5.0.0
+  parse_server_sdk: ^5.1.0
   # Uncomment for local testing
   #parse_server_sdk:
   #   path: ../dart
@@ -37,3 +37,7 @@ dev_dependencies:
   mockito: ^5.3.2
   path_provider_platform_interface: ^2.0.6
   plugin_platform_interface: ^2.1.4
+
+screenshots:
+  - description: Parse Platform logo.
+    path: screenshots/logo.png
