@@ -420,7 +420,7 @@ class QueryBuilder<T extends ParseObject> {
   /// Builds the query relational for Parse
   String _buildQueryRelational(String className) {
     queries = _checkForMultipleColumnInstances(queries);
-    return '{"where":{${buildQueries(queries)}},"className":"$className"${getLimitersRelational(limiters)}}';
+    return '{"where":{${buildQueries(queries)}},"className":"$className",${getLimitersRelational(limiters)}}';
   }
 
   /// Builds the query relational with Key for Parse
