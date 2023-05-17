@@ -15,8 +15,6 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      dir: ${{ env.package == 'dart' && 'packages/dart' || 'packages/flutter' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -37,15 +35,15 @@ jobs:
         run: dart pub get --directory 'packages/flutter'
       - name: Analyze dart
         if: env.package == 'dart'
-        run: dart analyze --fatal-infos ${{ env.dir }}
+        run: dart analyze --fatal-infos 'packages/${{ env.package }}'
       - name: Analyze flutter
         if: env.package == 'flutter'
-        run: flutter analyze --fatal-infos ${{ env.dir }}
+        run: flutter analyze --fatal-infos 'packages/${{ env.package }}'
       - name: Lint
-        run: dart format --output=none --set-exit-if-changed ${{ env.dir }}
+        run: dart format --output=none --set-exit-if-changed 'packages/${{ env.package }}'
       - name: Publish package (dry-run)
-        working-directory: ${{ env.dir }}
+        working-directory: 'packages/${{ env.package }}'
         run: dart pub publish --dry-run
       - name: Publish package
-        working-directory: ${{ env.dir }}
+        working-directory: 'packages/${{ env.package }}'
         run: dart pub publish --force
