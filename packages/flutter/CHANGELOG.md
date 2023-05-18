@@ -1,5 +1,11 @@
 ## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-4.0.0...flutter-5.0.0) (2023-05-14)
 
+### Bug Fixes
+
+* some Attributes of `ParseLiveGridWidget` are not used ([#761](https://github.com/parse-community/Parse-SDK-Flutter/pull/761))
+
+i.e reverse, padding, physics, controller, scrollDirection, shrinkWrap
+
 ### BREAKING CHANGES
 
 * The minimum required Dart SDK version is 2.18.0. ([#867](https://github.com/parse-community/Parse-SDK-Flutter/pull/867))
