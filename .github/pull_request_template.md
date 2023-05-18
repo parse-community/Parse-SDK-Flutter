@@ -1,27 +1,20 @@
-### New Pull Request Checklist
-<!--
-    Please check the following boxes [x] before submitting your issue.
-    Click the "Preview" tab for better readability.
-    Thanks for contributing to Parse Server!
--->
 
-- [ ] I am not disclosing a [vulnerability](https://github.com/parse-community/Parse-SDK-Flutter/security/policy).
-- [ ] I am creating this PR in reference to an [issue](https://github.com/parse-community/Parse-SDK-Flutter/issues?q=is%3Aissue).
+## Pull Request
 
-### Issue Description
-<!-- Add a brief description of the issue this PR solves. -->
+- Report security issues [confidentially](https://github.com/parse-community/Parse-SDK-Flutter/security/policy).
+- Any contribution is under this [license](https://github.com/parse-community/Parse-SDK-Flutter/blob/master/LICENSE).
+- Link this pull request to an [issue](https://github.com/parse-community/Parse-SDK-Flutter/issues?q=is%3Aissue).
+
+## Issue
+<!-- Add the link to the issue that this PR closes. -->
 
 Closes: FILL_THIS_OUT
 
-### Approach
-<!-- Add a description of the approach in this PR. -->
+## Approach
+<!-- Describe the changes in this PR. -->
 
-### TODOs before merging
-<!--
-    Add TODOs that need to be completed before merging this PR.
-    Delete TODOs that do not apply to this PR.
--->
+## Tasks
+<!-- Delete tasks that don't apply. -->
 
 - [ ] Add tests
-- [ ] Add changes to documentation (guides, repository pages, in-code descriptions)
-- [ ] A changelog entry
+- [ ] Add changes to documentation (guides, repository pages, code comments)
