@@ -57,6 +57,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Column _buildLoading() {
+    // ignore: prefer_const_constructors
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: const [
