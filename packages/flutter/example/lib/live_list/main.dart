@@ -49,16 +49,20 @@ class _MyAppState extends State<MyApp> {
                 height: double.infinity,
                 alignment: Alignment.center,
                 child: initFailed == null
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          CircularProgressIndicator(),
-                          Text('Connecting to the server...'),
-                        ],
-                      )
+                    ? _buildLoading()
                     : const Text('Connecting to the server failed!'),
               ),
       ),
+    );
+  }
+
+  Column _buildLoading() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        CircularProgressIndicator(),
+        Text('Connecting to the server...'),
+      ],
     );
   }
 
