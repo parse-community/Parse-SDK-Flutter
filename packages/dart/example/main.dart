@@ -1,4 +1,4 @@
-import '../lib/parse_server_sdk.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 Future<void> main() async {
   // Parse initialize
