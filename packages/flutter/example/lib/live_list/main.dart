@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
                 child: initFailed == null
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
+                        children: const [
                           CircularProgressIndicator(),
                           Text('Connecting to the server...'),
                         ],
