@@ -58,6 +58,8 @@ const String keyParamSessionToken = 'sessionToken';
 // Storage
 const String keyParseStoreBase = 'flutter_parse_sdk_';
 const String keyParseStoreUser = '${keyParseStoreBase}user';
+const String keyParseStoreObjects = '${keyParseStoreBase}objects';
+const String keyParseStoreDeletes = '${keyParseStoreBase}deletes';
 const String keyParseStoreInstallation = '${keyParseStoreBase}installation';
 
 // Installation

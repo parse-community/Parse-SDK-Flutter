@@ -153,6 +153,25 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
+  Future<ParseResponse> saveEventually() async {
+    // save object
+    final ParseResponse response = await save();
+
+    if (response.success) {
+      // return success response
+      return response;
+    } else {
+      // if have network connection error
+      if ((response.error?.message ?? "") == "NetworkError") {
+        // save this object in CoreStore
+        await _addThisObjectToParseCoreDataList(keyParseStoreObjects);
+      } else {
+        return response;
+      }
+    }
+    return response;
+  }
+
   /// Saves the current object online.
   ///
   /// If the object not saved yet, this will create it. Otherwise,
@@ -186,7 +205,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   ///
   /// Prefer using [save] over [update] and [create]
   Future<ParseResponse> save() async {
-    final ParseResponse childrenResponse = await _saveChildren(this);
+    final ParseResponse childrenResponse = await _saveChildren(this, _client);
     if (childrenResponse.success) {
       ParseResponse? response;
       if (objectId == null) {
@@ -207,7 +226,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     return childrenResponse;
   }
 
-  Future<ParseResponse> _saveChildren(dynamic object) async {
+  static Future<ParseResponse> _saveChildren(dynamic object, client) async {
     final Set<ParseObject> uniqueObjects = <ParseObject>{};
     final Set<ParseFileBase> uniqueFiles = <ParseFileBase>{};
     if (!_collectionDirtyChildren(
@@ -271,7 +290,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final ParseResponse response = await batchRequest(
           requests,
           chunk,
-          client: _client,
+          client: client,
         );
         totalResponse.success &= response.success;
 
@@ -371,7 +390,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     return true;
   }
 
-  bool _collectionDirtyChildren(
+  static bool _collectionDirtyChildren(
       dynamic object,
       Set<ParseObject> uniqueObjects,
       Set<ParseFileBase> uniqueFiles,
@@ -625,6 +644,32 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
+  Future<ParseResponse> deleteEventually() async {
+    // save object
+    final ParseResponse response = await delete();
+
+    if (response.success) {
+      // return success response
+      return response;
+    } else {
+      // if have network connection error
+      if ((response.error?.message ?? "") == "NetworkError") {
+        // save this object in CoreStore
+        await _addThisObjectToParseCoreDataList(keyParseStoreDeletes);
+      } else {
+        return response;
+      }
+    }
+    return response;
+  }
+
+  Future<void> _addThisObjectToParseCoreDataList(String key) async {
+    final CoreStore coreStore = ParseCoreData().getStore();
+    List<String> list = await coreStore.getStringList(key) ?? [];
+    list.add(json.encode(toJson(full: true)));
+    await coreStore.setStringList(key, list);
+  }
+
   /// Deletes the current object locally and online
   Future<ParseResponse> delete<T extends ParseObject>({
     String? id,
@@ -676,5 +721,90 @@ class ParseObject extends ParseBase implements ParseCloneable {
     } else {
       return this;
     }
+  }
+
+  static Future<ParseResponse?> submitEventually(
+      {ParseClient? client, bool? autoSendSessionId}) async {
+    // get client
+    ParseClient localClient = client ??
+        ParseCoreData().clientCreator(
+            sendSessionId:
+                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+            securityContext: ParseCoreData().securityContext);
+
+    // preparation ParseCoreData
+    final CoreStore coreStore = ParseCoreData().getStore();
+
+    // ---> save
+    // get json parse saved objects
+    List<String>? listSaves =
+        await coreStore.getStringList(keyParseStoreObjects);
+
+    if (listSaves != null) {
+      List<ParseObject> parseObjectList = [];
+      for (var element in listSaves) {
+        // decode json
+        dynamic object = json.decode(element);
+        parseObjectList
+            .add(ParseObject(object[keyVarClassName]).fromJson(object));
+      }
+
+      // send parseObjects to server
+      ParseResponse response =
+          await ParseObject._saveChildren(parseObjectList, localClient);
+
+      // if success clear all objects
+      if (response.success) {
+        coreStore.setStringList(keyParseStoreObjects, []);
+      }
+
+      return response;
+    }
+
+    // ---> delete
+    // get json parse saved objects
+    List<String>? listDeletes =
+        await coreStore.getStringList(keyParseStoreDeletes);
+
+    if (listDeletes != null) {
+      int firstLength = listDeletes.length;
+      for (var element in listDeletes) {
+        // decode json
+        dynamic object = json.decode(element);
+
+        // crate parse object
+        ParseObject parseObject =
+            ParseObject(object[keyVarClassName]).fromJson(object);
+
+        // delete parse object
+        ParseResponse deleteResponse = await parseObject.delete();
+
+        if (deleteResponse.success) {
+          // remove from list Deletes
+          listDeletes.remove(element);
+        }
+      }
+
+      // set new list deletes in coreStore
+      coreStore.setStringList(keyParseStoreDeletes, listDeletes);
+
+      bool success = true;
+      int statusCode = 200;
+
+      if (listDeletes.length == firstLength) {
+        // Nothing has been deleted
+        success = false;
+        statusCode = -1;
+      }
+
+      final ParseResponse response = ParseResponse()
+        ..success = success
+        ..results = <dynamic>[]
+        ..statusCode = statusCode;
+
+      return response;
+    }
+
+    return null;
   }
 }
