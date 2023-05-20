@@ -1,3 +1,9 @@
+## [5.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.0.0...flutter-5.0.1) (2023-05-20)
+
+### Bug Fixes
+
+* Attributes `reverse`, `padding`, `physics`, `controller`, `scrollDirection`, `shrinkWrap` not implemented in `ParseLiveGridWidget` ([#761](https://github.com/parse-community/Parse-SDK-Flutter/pull/761))
+
 ## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-4.0.0...flutter-5.0.0) (2023-05-14)
 
 ### BREAKING CHANGES
