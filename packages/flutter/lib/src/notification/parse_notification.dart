@@ -9,7 +9,7 @@ class ParseNotification {
   }
 
   ParseNotification._internal() {
-    // initialize Awesome Notifications
+    // Initialize notifications helper package
     AwesomeNotifications().initialize(
       null,
       [

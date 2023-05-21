@@ -12,9 +12,9 @@ class ParsePush {
   ParsePush._internal();
 
   Future<void> initialize(firebaseMessaging) async {
-    // get GCM token
+    // Get Google Cloud Messaging (GCM) token
     firebaseMessaging.getToken().asStream().listen((event) async {
-      // set token in ParseInstallation
+      // Set token in installation
       sdk.ParseInstallation parseInstallation =
           await sdk.ParseInstallation.currentInstallation();
 
@@ -46,7 +46,7 @@ class ParsePush {
     }
 
     if (data != null) {
-      // show notification
+      // Show push notification
       ParseNotification.instance.showNotification(data["alert"]);
     }
   }
