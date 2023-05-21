@@ -1,56 +1,42 @@
 # Push Notifications
 
-Push notifications are a great way to keep your users engaged and informed about your app. You can reach your entire user base quickly and effectively. This guide will help you through the setup process and the general usage of Parse to send push notifications.
+Push notifications are a great way to keep your users engaged and informed about your app. You can reach your user base quickly and effectively. This guide will help you through the setup process and the general usage of Parse Platform to send push notifications.
 
-To activate and implement Push Notifications in Parse Server, check [this page](https://docs.parseplatform.org/parse-server/guide/#push-notifications)
+To configure push notifications in Parse Server, check out the [push notification guide](https://docs.parseplatform.org/parse-server/guide/#push-notifications).
 
 ## Installation
-1 : First need install [Firebase Core](https://firebase.flutter.dev/docs/overview) and [Cloud Messaging](https://firebase.flutter.dev/docs/messaging/overview)
 
-Tip : Recommend reviewing the [Firebase Core Manual](https://firebase.flutter.dev/docs/manual-installation/)
+1. Install [Firebase Core](https://firebase.flutter.dev/docs/overview) and [Cloud Messaging](https://firebase.flutter.dev/docs/messaging/overview). For more details review the [Firebase Core Manual](https://firebase.flutter.dev/docs/manual-installation/).
 
-2 : Set the following codes after ```Parse().initialize```
-```dart
-await Parse().initialize(...);
+2. Add the following code after `Parse().initialize(...);`:
 
-ParsePush.instance.initialize(FirebaseMessaging.instance);
-FirebaseMessaging.onMessage.listen((message) => ParsePush.instance.onMessage(message));
-```
+  ```dart
+  ParsePush.instance.initialize(FirebaseMessaging.instance);
+  FirebaseMessaging.onMessage.listen((message) => ParsePush.instance.onMessage(message));
 
-3 : To work with push notifications after closing the application, follow the steps below.
+## Implementation Example
 
-Put the following code after the above codes
-```dart
-FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
-```
-
-Put the following function in your codes
-```dart
-Future<void> onBackgroundMessage(RemoteMessage message) async => ParsePush.instance.onMessage(message);
-```
-
-## Implemented example
-Your code should look like the following code
+The following is a code example for a simple implementation of push notifications:
 
 ```dart
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // initialize Firebase Core
+  // Initialize Firebase Core
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // initialize Parse
+  // Initialize Parse
   await Parse().initialize("applicationId", "serverUrl",
       clientKey: "clientKey", debug: true);
 
-  // initialize Parse Push
+  // Initialize Parse push notifications
   ParsePush.instance.initialize(FirebaseMessaging.instance);
   FirebaseMessaging.onMessage
       .listen((message) => ParsePush.instance.onMessage(message));
   
-  // for run ParsePush in the background
+  // Process push notifications while app is in the background
   FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
 
   runApp(const MyApp());
