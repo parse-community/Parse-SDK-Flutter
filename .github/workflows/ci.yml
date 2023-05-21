@@ -34,6 +34,9 @@ jobs:
           - name: Dart 2.18
             os: ubuntu-latest
             sdk: 2.18.7
+          - name: Dart beta
+            os: ubuntu-latest
+            sdk: beta
       fail-fast: false
     name: Test ${{ matrix.name }}
     steps:
@@ -48,7 +51,7 @@ jobs:
       - name: Run build_runner
         run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
       - name: Analyze code
-        run: dart analyze packages/dart
+        run: dart analyze packages/dart --fatal-infos
       - name: Lint
         run: dart format --output=none --set-exit-if-changed packages/dart
       - name: Publish dry run
@@ -92,12 +95,22 @@ jobs:
           - name: Flutter 3.3
             os: ubuntu-latest
             sdk: 3.3.x
+          - name: Flutter beta
+            os: ubuntu-latest
+            sdk: beta
       fail-fast: false
     name: Test ${{ matrix.name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Setup flutter (beta)
+        if: ${{ matrix.sdk == 'beta' }}
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "beta"
+          cache: true
       - name: Setup flutter
+        if: ${{  matrix.sdk != 'beta' }}
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ matrix.sdk }}
@@ -113,7 +126,7 @@ jobs:
           cmd /c "cd packages\dart && flutter pub get"
           cmd /c "cd packages\flutter && flutter pub get"
       - name: Analyze code
-        run: flutter analyze packages/flutter --no-fatal-infos
+        run: flutter analyze packages/flutter --fatal-infos
       - name: Lint
         run: dart format --output=none --set-exit-if-changed packages/flutter
       - name: Publish dry run

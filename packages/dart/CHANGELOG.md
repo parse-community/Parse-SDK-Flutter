@@ -1,3 +1,9 @@
+## [5.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.1.0...dart-5.1.1) (2023-05-20)
+
+### Bug Fixes
+
+* Query conditions `inQuery` and `notInQuery` not working properly ([#869](https://github.com/parse-community/Parse-SDK-Flutter/pull/869))
+
 ## [5.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.0.0...dart-5.1.0) (2023-05-14)
 
 ### Features

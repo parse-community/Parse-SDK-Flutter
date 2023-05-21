@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
@@ -406,6 +405,65 @@ void main() {
       final query = queryBuilder.buildQuery();
 
       expect(query, equals('where={}&redirectClassNameForKey=Plan'));
+    });
+
+    test('whereMatchesQuery', () async {
+      // arrange
+      ParseObject object2 = ParseObject("object2");
+      final query2 = QueryBuilder<ParseObject>(object2)
+        ..includeObject(["avatar"])
+        ..whereEqualTo("firstName", "Oliver1");
+
+      ParseObject object1 = ParseObject("object1");
+      final query1 = QueryBuilder<ParseObject>(object1)
+        ..includeObject(["user"])
+        ..whereEqualTo("id", "1122")
+        ..whereMatchesQuery("object2", query2);
+
+      ParseObject objectMain = ParseObject("objectMain", client: client);
+      final mainQuery = QueryBuilder<ParseObject>(objectMain)
+        ..includeObject(["img"])
+        ..whereMatchesQuery("object1", query1);
+
+      var desiredOutput = {
+        "results": [
+          {
+            "className": "_User",
+            "objectId": "fqx5BECOME",
+            "createdAt": "2022-10-25T06:04:47.138Z",
+            "updatedAt": "2022-10-25T06:05:22.328Z",
+            "firstName": "Oliver1",
+            "lastName": "Smith1",
+          },
+          {
+            "className": "_User",
+            "objectId": "hAtRRYGrUO",
+            "createdAt": "2022-01-24T15:53:48.396Z",
+            "updatedAt": "2022-01-25T05:52:01.701Z",
+            "firstName": "Oliver2",
+            "lastName": "Smith2",
+          },
+        ]
+      };
+
+      when(client.get(
+        any,
+        options: anyNamed("options"),
+        onReceiveProgress: anyNamed("onReceiveProgress"),
+      )).thenAnswer((_) async => ParseNetworkResponse(
+          statusCode: 200, data: jsonEncode(desiredOutput)));
+
+      // act
+      await mainQuery.query();
+
+      final Uri result = Uri.parse(verify(client.get(
+        captureAny,
+        options: anyNamed("options"),
+        onReceiveProgress: anyNamed("onReceiveProgress"),
+      )).captured.single);
+
+      // assert
+      expect(result.query.contains("%22object2%22,%22include%22"), true);
     });
   });
 }
