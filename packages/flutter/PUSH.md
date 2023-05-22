@@ -10,16 +10,20 @@ To configure push notifications in Parse Server, check out the [push notificatio
 
 2. Add the following code after `Parse().initialize(...);`:
 
-```dart
-ParsePush.instance.initialize(FirebaseMessaging.instance);
-
-FirebaseMessaging.onMessage.listen((message) => ParsePush.instance.onMessage(message));
-```
+  ```dart
+  ParsePush.instance.initialize(FirebaseMessaging.instance);
+  FirebaseMessaging.onMessage.listen((message) => ParsePush.instance.onMessage(message));
+  ```
 
 3. For you app to process push notification while in the background, add the following code:
 
   ```dart
   FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
+  ```
+
+  ```dart
+  Future<void> onBackgroundMessage(RemoteMessage message) async => ParsePush.instance.onMessage(message);
+  ```
 
 ## Implementation Example
 
