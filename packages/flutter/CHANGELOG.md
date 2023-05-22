@@ -1,3 +1,9 @@
+## [5.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.0.1...flutter-5.1.0) (2023-05-22)
+
+### Features
+
+* Add `ParsePush` and `ParseNotification` ([#914](https://github.com/parse-community/Parse-SDK-Flutter/pull/914))
+
 ## [5.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.0.0...flutter-5.0.1) (2023-05-20)
 
 ### Bug Fixes
