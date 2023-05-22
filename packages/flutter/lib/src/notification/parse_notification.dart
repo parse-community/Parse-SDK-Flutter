@@ -21,6 +21,7 @@ class ParseNotification {
     );
   }
 
+  /// Show notification
   void showNotification(title) {
     AwesomeNotifications().createNotification(
         content: NotificationContent(

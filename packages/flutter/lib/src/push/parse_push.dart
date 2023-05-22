@@ -2,6 +2,7 @@ part of flutter_parse_sdk_flutter;
 
 class ParsePush {
   static final ParsePush instance = ParsePush._internal();
+
   static String keyType = "gcm";
   static String keyPushType = 'pushType';
 
@@ -11,9 +12,18 @@ class ParsePush {
 
   ParsePush._internal();
 
-  Future<void> initialize(firebaseMessaging) async {
+  /// initialize ParsePush
+  ///
+  /// On web, a [vapidKey] is required.
+  Future<void> initialize(
+    firebaseMessaging, {
+    String? vapidKey,
+  }) async {
     // Get Google Cloud Messaging (GCM) token
-    firebaseMessaging.getToken().asStream().listen((event) async {
+    firebaseMessaging
+        .getToken(vapidKey: vapidKey)
+        .asStream()
+        .listen((event) async {
       // Set token in installation
       sdk.ParseInstallation parseInstallation =
           await sdk.ParseInstallation.currentInstallation();
@@ -25,6 +35,7 @@ class ParsePush {
     });
   }
 
+  /// Handle push notification message
   void onMessage(message) {
     String pushId = message.data["push_id"] ?? "";
     String timestamp = message.data["time"] ?? "";
@@ -51,6 +62,7 @@ class ParsePush {
     }
   }
 
+  /// Subscribes the device to a channel of push notifications
   Future<void> subscribeToChannel(String value) async {
     sdk.ParseInstallation parseInstallation =
         await sdk.ParseInstallation.currentInstallation();
@@ -58,6 +70,7 @@ class ParsePush {
     await parseInstallation.subscribeToChannel(value);
   }
 
+  /// Unsubscribes the device to a channel of push notifications
   Future<void> unsubscribeFromChannel(String value) async {
     sdk.ParseInstallation parseInstallation =
         await sdk.ParseInstallation.currentInstallation();
@@ -65,6 +78,7 @@ class ParsePush {
     await parseInstallation.unsubscribeFromChannel(value);
   }
 
+  /// Returns an <List<String>> containing all the channel names this device is subscribed to
   Future<List<dynamic>> getSubscribedChannels() async {
     sdk.ParseInstallation parseInstallation =
         await sdk.ParseInstallation.currentInstallation();
