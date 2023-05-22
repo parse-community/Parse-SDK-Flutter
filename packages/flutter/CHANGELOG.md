@@ -2,7 +2,7 @@
 
 ### Features
 
-* Add `ParsePush` and `ParseNotification` ([#914](https://github.com/parse-community/Parse-SDK-Flutter/pull/914))
+* Add support for push notifications via `ParsePush`, `ParseNotification` ([#914](https://github.com/parse-community/Parse-SDK-Flutter/pull/914))
 
 ## [5.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.0.0...flutter-5.0.1) (2023-05-20)
 
