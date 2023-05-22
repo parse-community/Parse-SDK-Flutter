@@ -17,13 +17,9 @@ FirebaseMessaging.onMessage.listen((message) => ParsePush.instance.onMessage(mes
 ```
 
 3. For you app to process push notification while in the background, add the following code:
-```dart
-FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
-```
 
-```dart
-Future<void> onBackgroundMessage(RemoteMessage message) async => ParsePush.instance.onMessage(message);
-```
+  ```dart
+  FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
 
 ## Implementation Example
 
