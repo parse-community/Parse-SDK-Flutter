@@ -12,9 +12,7 @@ class ParsePush {
 
   ParsePush._internal();
 
-  /// initialize ParsePush
-  ///
-  /// On web, a [vapidKey] is required.
+  /// Initialize ParsePush; for web a [vapidKey] is required.
   Future<void> initialize(
     firebaseMessaging, {
     String? vapidKey,
