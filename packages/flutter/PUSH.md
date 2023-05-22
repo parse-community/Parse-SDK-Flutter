@@ -10,9 +10,11 @@ To configure push notifications in Parse Server, check out the [push notificatio
 
 2. Add the following code after `Parse().initialize(...);`:
 
-  ```dart
-  ParsePush.instance.initialize(FirebaseMessaging.instance);
-  FirebaseMessaging.onMessage.listen((message) => ParsePush.instance.onMessage(message));
+```dart
+ParsePush.instance.initialize(FirebaseMessaging.instance);
+
+FirebaseMessaging.onMessage.listen((message) => ParsePush.instance.onMessage(message));
+```
 
 ## Implementation Example
 
@@ -21,7 +23,7 @@ The following is a code example for a simple implementation of push notification
 ```dart
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Firebase Core
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -35,7 +37,7 @@ Future<void> main() async {
   ParsePush.instance.initialize(FirebaseMessaging.instance);
   FirebaseMessaging.onMessage
       .listen((message) => ParsePush.instance.onMessage(message));
-  
+
   // Process push notifications while app is in the background
   FirebaseMessaging.onBackgroundMessage(onBackgroundMessage);
 
