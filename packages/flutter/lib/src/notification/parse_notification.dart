@@ -1,5 +1,6 @@
 part of flutter_parse_sdk_flutter;
 
+/// A class that provides a mechanism for showing system notifications in the app.
 class ParseNotification {
   static final ParseNotification instance = ParseNotification._internal();
   static String keyNotificationChannelName = "parse";

@@ -1,11 +1,23 @@
 part of flutter_parse_sdk_flutter;
 
+/// The type of function that builds a child widget for a ParseLiveList element.
 typedef ChildBuilder<T extends sdk.ParseObject> = Widget Function(
     BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot);
 
+/// The type of function that returns the stream to listen for updates from.
 typedef StreamGetter<T extends sdk.ParseObject> = Stream<T> Function();
+
+/// The type of function that returns the loaded data for a ParseLiveList element.
 typedef DataGetter<T extends sdk.ParseObject> = T? Function();
 
+/// A widget that displays a live list of Parse objects.
+///
+/// The `ParseLiveListWidget` is initialized with a `query` that retrieves the
+/// objects to display in the list. The `childBuilder` function is used to
+/// specify how each object in the list should be displayed.
+///
+/// The `ParseLiveListWidget` also provides support for error handling and
+/// lazy loading of objects in the list.
 class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   const ParseLiveListWidget({
     Key? key,
@@ -53,6 +65,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   @override
   State<ParseLiveListWidget<T>> createState() => _ParseLiveListWidgetState<T>();
 
+  /// The default child builder function used to display a ParseLiveList element.
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
       BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot) {
     Widget child;
