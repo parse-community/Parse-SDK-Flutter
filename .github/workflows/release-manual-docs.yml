@@ -1,0 +1,34 @@
+name: release-manual-docs
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        default: ''
+        description: 'Version tag:' 
+env:
+  NODE_VERSION: 18
+  PHP_VERSION: 8.1
+jobs:
+  docs-publish:
+    if: github.event.inputs.tag != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.tag }}
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      # - name: Setup flutter
+      #   uses: subosito/flutter-action@v2
+      #   with:
+      #     channel: 'stable'
+      #     cache: true
+      - name: Generate Docs
+        run: |
+          dart doc ./packages/flutter/ -o ./.api_docs/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3.7.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./.api_docs/
