@@ -18,7 +18,12 @@ jobs:
           ref: ${{ github.event.inputs.tag }}
       - name: Setup dart
         uses: dart-lang/setup-dart@v1
-      - name: Generate Docs
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+       - name: Generate Docs
         run: |
           dart doc ./packages/${{ env.package }}/ -o ./.api_docs/${{ env.package }}/
       - name: Deploy
