@@ -58,6 +58,6 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Publish docs
-        uses: parse-community/Parse-SDK-Flutter/.github/workflows/release-manual-docs@main
+        uses: parse-community/Parse-SDK-Flutter/.github/workflows/release-manual-docs@master
         with:
           tag: ${{ github.ref_name }}
