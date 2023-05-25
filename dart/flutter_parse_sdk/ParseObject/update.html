@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the update method from the ParseObject class, for the Dart programming language.">
+  <title>update method - ParseObject class - flutter_parse_sdk library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">parse_server_sdk</a></li>
+    <li><a href="../../flutter_parse_sdk/flutter_parse_sdk-library.html">flutter_parse_sdk</a></li>
+    <li><a href="../../flutter_parse_sdk/ParseObject-class.html">ParseObject</a></li>
+    <li class="self-crumb">update method</li>
+  </ol>
+  <div class="self-name">update</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        brightness_4
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        brightness_5
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-method">update</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-async/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../flutter_parse_sdk/ParseResponse-class.html">ParseResponse</a></span>&gt;</span></span>
+<span class="name ">update</span>(<wbr>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Send the updated object to the server.</p>
+<p>Will only send the dirty (modified) data and not the entire object</p>
+<p>The object should hold an <a href="../../flutter_parse_sdk/ParseBase/objectId.html">objectId</a> in order to update it</p>
+<p>Prefer using <a href="../../flutter_parse_sdk/ParseObject/save.html">save</a> over <a href="../../flutter_parse_sdk/ParseObject/update.html">update</a></p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;ParseResponse&gt; update() async {
+  assert(
+    objectId != null &amp;&amp; (objectId?.isNotEmpty ?? false),
+    &quot;Can&#39;t update a parse object while the objectId property is null or empty&quot;,
+  );
+
+  try {
+    final Uri url = getSanitisedUri(_client, &#39;$_path&#47;$objectId&#39;);
+    final String body = json.encode(toJson(forApiRQ: true));
+
+    _saveChanges();
+
+    final Map&lt;String, String&gt; headers = {
+      keyHeaderContentType: keyHeaderContentTypeJson
+    };
+
+    final ParseNetworkResponse result = await _client.put(url.toString(),
+        data: body, options: ParseNetworkOptions(headers: headers));
+
+    final response = handleResponse&lt;ParseObject&gt;(
+        this, result, ParseApiRQ.save, _debug, parseClassName);
+
+    if (!response.success) {
+      _notifyChildrenAboutErrorSaving();
+    }
+
+    return response;
+  } on Exception catch (e) {
+    _notifyChildrenAboutErrorSaving();
+    return handleException(e, ParseApiRQ.save, _debug, parseClassName);
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../../index.html">parse_server_sdk</a></li>
+  <li><a href="../../flutter_parse_sdk/flutter_parse_sdk-library.html">flutter_parse_sdk</a></li>
+  <li><a href="../../flutter_parse_sdk/ParseObject-class.html">ParseObject</a></li>
+  <li class="self-crumb">update method</li>
+</ol>
+
+
+    <h5>ParseObject class</h5>
+    <ol>
+
+        <li class="section-title"><a href="../../flutter_parse_sdk/ParseObject-class.html#constructors">Constructors</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/ParseObject.html">ParseObject</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/ParseObject.clone.html">clone</a></li>
+
+
+        <li class="section-title inherited">
+          <a href="../../flutter_parse_sdk/ParseObject-class.html#instance-properties">Properties</a>
+        </li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/createdAt.html">createdAt</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/objectId.html">objectId</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/parseClassName.html">parseClassName</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/updatedAt.html">updatedAt</a></li>
+
+        <li class="section-title"><a href="../../flutter_parse_sdk/ParseObject-class.html#instance-methods">Methods</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/addRelation.html">addRelation</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/clearUnsavedChanges.html">clearUnsavedChanges</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/clone.html">clone</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/containsKey.html">containsKey</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/containsValue.html">containsValue</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/copy.html">copy</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/create.html">create</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/delete.html">delete</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/distinct.html">distinct</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/fetch.html">fetch</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/fromJson.html">fromJson</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/fromJsonForManualObject.html">fromJsonForManualObject</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/fromPin.html">fromPin</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/get.html">get</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/getACL.html">getACL</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/getAll.html">getAll</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/getObject.html">getObject</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/getRelation.html">getRelation</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/isDirty.html">isDirty</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/pin.html">pin</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/query.html">query</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/removeRelation.html">removeRelation</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/save.html">save</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/saveInStorage.html">saveInStorage</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/set.html">set</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/setACL.html">setACL</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/setAdd.html">setAdd</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/setAddAll.html">setAddAll</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/setAddAllUnique.html">setAddAllUnique</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/setAddUnique.html">setAddUnique</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/setDecrement.html">setDecrement</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/setIncrement.html">setIncrement</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/setRemove.html">setRemove</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/setRemoveAll.html">setRemoveAll</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/toJson.html">toJson</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/toPointer.html">toPointer</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/toString.html">toString</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/unpin.html">unpin</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/unset.html">unset</a></li>
+          <li><a href="../../flutter_parse_sdk/ParseObject/update.html">update</a></li>
+
+        <li class="section-title inherited"><a href="../../flutter_parse_sdk/ParseObject-class.html#operators">Operators</a></li>
+          <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/operator_get.html">operator []</a></li>
+          <li class="inherited"><a href="../../flutter_parse_sdk/ParseBase/operator_put.html">operator []=</a></li>
+
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    parse_server_sdk
+      5.1.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+
