@@ -4,7 +4,9 @@ on:
     inputs:
       tag:
         default: ''
-        description: 'Version tag:' 
+        description: 'Version tag (dart-#.#.# or flutter-#.#.#):'
+env:
+  package: ${{ startsWith(github.event.inputs.tag, 'dart') && 'dart' || 'flutter' }}
 jobs:
   docs-publish:
     if: github.event.inputs.tag != ''
@@ -18,10 +20,10 @@ jobs:
         uses: dart-lang/setup-dart@v1
       - name: Generate Docs
         run: |
-          dart doc ./packages/dart/ -o ./.api_docs/dart/
-          dart doc ./packages/flutter/ -o ./.api_docs/flutter/
+          dart doc ./packages/${{ env.package }}/ -o ./.api_docs/${{ env.package }}/
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./.api_docs/
+          destination_dir: ${{ env.package }}
