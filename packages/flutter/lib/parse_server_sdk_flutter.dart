@@ -1,8 +1,11 @@
 library flutter_parse_sdk_flutter;
 
+import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
-
+import 'dart:math';
+import 'dart:ui';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,16 +13,18 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart' as sdk;
 import 'package:parse_server_sdk_flutter/src/storage/core_store_directory_io.dart'
     if (dart.library.html) 'package:parse_server_sdk_flutter/src/storage/core_store_directory_web.dart';
-import 'package:path/path.dart' as path;
 import 'package:sembast/sembast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 export 'package:parse_server_sdk/parse_server_sdk.dart'
     hide Parse, CoreStoreSembastImp;
 
-part 'src/storage/core_store_sp_impl.dart';
+part 'src/storage/core_store_shared_preferences.dart';
+part 'src/storage/core_store_sembast.dart';
 part 'src/utils/parse_live_grid.dart';
 part 'src/utils/parse_live_list.dart';
+part 'src/notification/parse_notification.dart';
+part 'src/push//parse_push.dart';
 
 class Parse extends sdk.Parse
     with WidgetsBindingObserver
@@ -87,7 +92,7 @@ class Parse extends sdk.Parse
       sessionId: sessionId,
       autoSendSessionId: autoSendSessionId,
       securityContext: securityContext,
-      coreStore: coreStore ?? await CoreStoreSharedPrefsImp.getInstance(),
+      coreStore: coreStore ?? await CoreStoreSharedPreferences.getInstance(),
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
@@ -133,77 +138,12 @@ class Parse extends sdk.Parse
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    _appResumedStreamController.sink.add(null);
+    if (state == AppLifecycleState.resumed) {
+      _appResumedStreamController.sink.add(null);
+    }
+
+    if (state == AppLifecycleState.paused) {
+      _appResumedStreamController.close();
+    }
   }
-}
-
-Future<String> dbDirectory() async {
-  String dbDirectory = '';
-  dbDirectory = await CoreStoreDirectory().getDatabaseDirectory();
-  return path.join('$dbDirectory/parse', 'parse.db');
-}
-
-class CoreStoreSembastImp implements sdk.CoreStoreSembastImp {
-  CoreStoreSembastImp._();
-
-  static sdk.CoreStore? _sembastImp;
-
-  static Future<CoreStoreSembastImp> getInstance(
-      {DatabaseFactory? factory, String? password}) async {
-    _sembastImp ??= await sdk.CoreStoreSembastImp.getInstance(
-        await dbDirectory(),
-        factory: factory,
-        password: password);
-    return CoreStoreSembastImp._();
-  }
-
-  @override
-  Future<bool> clear() async {
-    await _sembastImp!.clear();
-    return true;
-  }
-
-  @override
-  Future<bool> containsKey(String key) => _sembastImp!.containsKey(key);
-
-  @override
-  Future<dynamic> get(String key) => _sembastImp!.get(key);
-
-  @override
-  Future<bool?> getBool(String key) => _sembastImp!.getBool(key);
-
-  @override
-  Future<double?> getDouble(String key) => _sembastImp!.getDouble(key);
-
-  @override
-  Future<int?> getInt(String key) => _sembastImp!.getInt(key);
-
-  @override
-  Future<String?> getString(String key) => _sembastImp!.getString(key);
-
-  @override
-  Future<List<String>?> getStringList(String key) =>
-      _sembastImp!.getStringList(key);
-
-  @override
-  Future<void> remove(String key) => _sembastImp!.remove(key);
-
-  @override
-  Future<void> setBool(String key, bool value) =>
-      _sembastImp!.setBool(key, value);
-
-  @override
-  Future<void> setDouble(String key, double value) =>
-      _sembastImp!.setDouble(key, value);
-
-  @override
-  Future<void> setInt(String key, int value) => _sembastImp!.setInt(key, value);
-
-  @override
-  Future<void> setString(String key, String value) =>
-      _sembastImp!.setString(key, value);
-
-  @override
-  Future<void> setStringList(String key, List<String> values) =>
-      _sembastImp!.setStringList(key, values);
 }
