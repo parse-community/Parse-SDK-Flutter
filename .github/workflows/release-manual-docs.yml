@@ -5,6 +5,11 @@ on:
       tag:
         default: ''
         description: 'Version tag (dart-#.#.# or flutter-#.#.#):'
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
 env:
   package: ${{ startsWith(github.event.inputs.tag, 'dart') && 'dart' || 'flutter' }}
 jobs:
