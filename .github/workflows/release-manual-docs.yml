@@ -23,6 +23,11 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Install flutter dependencies
+        if: env.package == 'flutter'
+        run: dart pub get --directory 'packages/flutter'
       - name: Generate Docs
         run: dart doc ./packages/${{ env.package }}/ -o ./.api_docs/${{ env.package }}/
       - name: Deploy
