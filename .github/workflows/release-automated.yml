@@ -54,6 +54,6 @@ jobs:
         run: dart pub publish --force
   docs-publish:
     needs: release
-    uses: parse-community/Parse-SDK-Flutter/.github/workflows/release-manual-docs@master
+    uses: parse-community/Parse-SDK-Flutter/.github/workflows/release-manual-docs.yml@master
     with:
       tag: ${{ github.ref_name }}
