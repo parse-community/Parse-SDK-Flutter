@@ -23,7 +23,8 @@ jobs:
       #     cache: true
       - name: Generate Docs
         run: |
-          dart doc ./packages/flutter/ -o ./.api_docs/
+          dart doc ./packages/dart/ -o ./.api_docs/dart/
+          dart doc ./packages/flutter/ -o ./.api_docs/flutter/
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
