@@ -1,5 +1,6 @@
 part of flutter_parse_sdk_flutter;
 
+/// A class that provides a mechanism for handling push notifications in the app.
 class ParsePush {
   static final ParsePush instance = ParsePush._internal();
 
@@ -48,6 +49,7 @@ class ParsePush {
     _handlePush(pushId, timestamp, channel, data);
   }
 
+  /// Processes the incoming push notification message.
   void _handlePush(String pushId, String timestamp, String channel,
       Map<String, dynamic>? data) {
     if (pushId.isEmpty || timestamp.isEmpty) {

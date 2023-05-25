@@ -1,15 +1,21 @@
 part of flutter_parse_sdk_flutter;
 
-class CoreStoreSharedPrefsImp implements sdk.CoreStore {
-  CoreStoreSharedPrefsImp._internal(this._store);
+/// A class that implements the `sdk.CoreStore` interface using `SharedPreferences`.
+class CoreStoreSharedPreferences implements sdk.CoreStore {
+  CoreStoreSharedPreferences._internal(this._store);
 
-  static CoreStoreSharedPrefsImp? _instance;
+  static CoreStoreSharedPreferences? _instance;
 
-  static Future<CoreStoreSharedPrefsImp> getInstance(
+  /// Returns a new instance of `CoreStoreSharedPrefsImp`.
+  ///
+  /// If no instance exists, this function creates a new instance of
+  /// `SharedPreferences` and passes it as a parameter to the constructor of
+  /// `CoreStoreSharedPrefsImp`.
+  static Future<CoreStoreSharedPreferences> getInstance(
       {SharedPreferences? store}) async {
     if (_instance == null) {
       store ??= await SharedPreferences.getInstance();
-      _instance = CoreStoreSharedPrefsImp._internal(store);
+      _instance = CoreStoreSharedPreferences._internal(store);
     }
 
     return _instance!;
