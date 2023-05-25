@@ -23,9 +23,8 @@ jobs:
         with:
           channel: 'stable'
           cache: true
-       - name: Generate Docs
-        run: |
-          dart doc ./packages/${{ env.package }}/ -o ./.api_docs/${{ env.package }}/
+      - name: Generate Docs
+        run: dart doc ./packages/${{ env.package }}/ -o ./.api_docs/${{ env.package }}/
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
