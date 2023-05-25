@@ -52,3 +52,12 @@ jobs:
       - name: Publish package
         working-directory: 'packages/${{ env.package }}'
         run: dart pub publish --force
+  docs-publish:
+    needs: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Publish docs
+        uses: parse-community/Parse-SDK-Flutter/.github/workflows/release-manual-docs@master
+        with:
+          tag: ${{ github.ref_name }}
