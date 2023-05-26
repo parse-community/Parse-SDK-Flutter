@@ -2,7 +2,7 @@
 
 ---
 
-[![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter) ![Pub Likes](https://img.shields.io/pub/likes/parse_server_sdk_flutter)  ![Pub Popularity](https://img.shields.io/pub/popularity/parse_server_sdk_flutter) ![Pub Points](https://img.shields.io/pub/points/parse_server_sdk_flutter)
+[![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter) [![Pub Likes](https://img.shields.io/pub/likes/parse_server_sdk_flutter)](https://pub.dev/packages/parse_server_sdk_flutter/score)  [![Pub Popularity](https://img.shields.io/pub/popularity/parse_server_sdk_flutter)](https://pub.dev/packages/parse_server_sdk_flutter/score) [![Pub Points](https://img.shields.io/pub/points/parse_server_sdk_flutter)](https://pub.dev/packages/parse_server_sdk_flutter/score)
 
 [![Build Status](https://github.com/parse-community/Parse-SDK-Flutter/workflows/ci/badge.svg?branch=master)](https://github.com/parse-community/Parse-SDK-Flutter/actions?query=workflow%3Aci+branch%3Amaster)
 [![Coverage](https://img.shields.io/codecov/c/github/parse-community/Parse-SDK-Flutter/master)](https://app.codecov.io/gh/parse-community/Parse-SDK-Flutter/branch/master)
