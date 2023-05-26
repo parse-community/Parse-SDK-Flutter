@@ -17,7 +17,7 @@
 
 ---
 
-This library gives you access to the powerful Parse Server backend from your Dart app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org).
+This library gives you access to the powerful Parse Server backend from your Flutter app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org).
 
 ---
 
