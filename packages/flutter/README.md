@@ -2,6 +2,8 @@
 
 ---
 
+[![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter) ![Pub Likes](https://img.shields.io/pub/likes/parse_server_sdk_flutter)  ![Pub Popularity](https://img.shields.io/pub/popularity/parse_server_sdk_flutter) ![Pub Points](https://img.shields.io/pub/points/parse_server_sdk_flutter)
+
 [![Build Status](https://github.com/parse-community/Parse-SDK-Flutter/workflows/ci/badge.svg?branch=master)](https://github.com/parse-community/Parse-SDK-Flutter/actions?query=workflow%3Aci+branch%3Amaster)
 [![Coverage](https://img.shields.io/codecov/c/github/parse-community/Parse-SDK-Flutter/master)](https://app.codecov.io/gh/parse-community/Parse-SDK-Flutter/branch/master)
 [![auto-release](https://img.shields.io/badge/%F0%9F%9A%80-auto--release-9e34eb.svg)](https://github.com/parse-community/Parse-SDK-Flutter/releases)
