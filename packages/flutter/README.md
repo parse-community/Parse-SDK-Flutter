@@ -1,4 +1,4 @@
-![parse-repository-header-sdk-flutter](https://user-images.githubusercontent.com/5673677/166121333-2a144ce3-95bc-45d6-8840-d5b2885f2046.png)
+<img src="https://user-images.githubusercontent.com/5673677/166121333-2a144ce3-95bc-45d6-8840-d5b2885f2046.png" alt="parse-repository-header-sdk-flutter" style="max-width: 100%;">
 
 ---
 

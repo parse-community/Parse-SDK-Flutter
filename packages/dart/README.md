@@ -1,4 +1,4 @@
-![parse-repository-header-sdk-dart](https://user-images.githubusercontent.com/5673677/166120960-ea1f58e3-a62b-4770-b541-f64186859339.png)
+<img src="https://user-images.githubusercontent.com/5673677/166120960-ea1f58e3-a62b-4770-b541-f64186859339.png" alt="parse-repository-header-sdk-dart" style="max-width: 100%;">
 
 ---
 
