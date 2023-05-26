@@ -1,0 +1,49 @@
+![parse-repository-header-sdk-dart](https://user-images.githubusercontent.com/5673677/166120960-ea1f58e3-a62b-4770-b541-f64186859339.png)
+
+---
+
+[![Build Status](https://github.com/parse-community/Parse-SDK-Flutter/workflows/ci/badge.svg?branch=master)](https://github.com/parse-community/Parse-SDK-Flutter/actions?query=workflow%3Aci+branch%3Amaster)
+[![Coverage](https://img.shields.io/codecov/c/github/parse-community/Parse-SDK-Flutter/master)](https://app.codecov.io/gh/parse-community/Parse-SDK-Flutter/branch/master)
+[![auto-release](https://img.shields.io/badge/%F0%9F%9A%80-auto--release-9e34eb.svg)](https://github.com/parse-community/Parse-SDK-flutter/releases)
+
+[![Backers on Open Collective](https://opencollective.com/parse-server/backers/badge.svg)][open-collective-link]
+[![Sponsors on Open Collective](https://opencollective.com/parse-server/sponsors/badge.svg)][open-collective-link]
+[![License](https://img.shields.io/badge/license-Apache%202.0-lightgrey.svg)](https://github.com/parse-community/Parse-SDK-Flutter/blob/master/LICENSE)
+[![Forum](https://img.shields.io/discourse/https/community.parseplatform.org/topics.svg)](https://community.parseplatform.org/c/parse-server)
+[![Twitter Follow](https://img.shields.io/twitter/follow/ParsePlatform.svg?label=Follow%20us&style=social)](https://twitter.com/intent/follow?screen_name=ParsePlatform)
+[![Chat](https://img.shields.io/badge/Chat-Join!-%23fff?style=social&logo=slack)](https://chat.parseplatform.org)
+---
+
+This library gives you access to the powerful Parse Server backend from your Dart app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org).
+
+---
+
+- [Compatibility](#compatibility)
+- [Getting Started](#getting-started)
+
+---
+## Compatibility
+
+The Parse Dart SDK is continuously tested with the most recent release of the Dart framework to ensure compatibility. To give developers time to upgrade their app to the newest Dart framework, previous Dart framework releases are supported for at least 1 year after their [release date](https://dart.dev/get-dart/archive).
+
+| Version   | Latest Version | End of Support | Compatible                                   |
+|-----------|----------------|----------------|----------------------------------------------|
+| Dart 3.0  | 3.0.0          | May 2024       | ✅ Yes                                        |
+| Dart 2.19 | 2.19.6         | Mar 2024       | ✅ Yes                                        |
+| Dart 2.18 | 2.18.7         | Jan 2024       | ✅ Yes                                        |
+| Dart 2.17 | 2.17.7         | Aug 2023       | ❌ No (Parse Dart SDK requires Dart >=2.18.0) |
+
+## Getting Started
+
+To install, either add [dependency in your pubspec.yaml file](https://pub.dev/packages/parse_server_sdk/install).
+
+See the SDK Usage [guide][guide].
+
+# Contributing
+
+We want to make contributing to this project as easy and transparent as possible. Please refer to the [Contribution Guidelines](../../CONTRIBUTING.md).
+
+---
+
+[guide]: http://docs.parseplatform.org/flutter/guide/
+[open-collective-link]: https://opencollective.com/parse-server
