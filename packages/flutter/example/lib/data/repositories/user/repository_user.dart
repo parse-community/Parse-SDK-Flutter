@@ -8,8 +8,8 @@ import 'provider_db_user.dart';
 
 class UserRepository implements UserProviderContract {
   static UserRepository init(Database dbConnection,
-      {UserProviderContract mockDBProvider,
-      UserProviderContract mockAPIProvider}) {
+      {UserProviderContract? mockDBProvider,
+      UserProviderContract? mockAPIProvider}) {
     final UserRepository repository = UserRepository();
 
     if (mockDBProvider != null) {
@@ -29,8 +29,8 @@ class UserRepository implements UserProviderContract {
     return repository;
   }
 
-  UserProviderContract api;
-  UserProviderContract db;
+  late UserProviderContract api;
+  late UserProviderContract db;
 
   @override
   Future<User> createUser(
@@ -38,15 +38,10 @@ class UserRepository implements UserProviderContract {
     api.createUser(username, password, emailAddress);
 
     final User user = await api.createUser(username, password, emailAddress);
-    if (user != null) {
-      await db.createUser(username, password, emailAddress);
-    }
+    await db.createUser(username, password, emailAddress);
 
     return user;
   }
-
-  @override
-  Future<User> currentUser() => db.currentUser();
 
   @override
   Future<ApiResponse> destroy(User user) async {
@@ -56,20 +51,20 @@ class UserRepository implements UserProviderContract {
   }
 
   @override
-  Future<ApiResponse> allUsers() => api.allUsers();
+  Future<ApiResponse?>? allUsers() => api.allUsers();
 
   @override
-  Future<ApiResponse> getCurrentUserFromServer() =>
+  Future<ApiResponse?>? getCurrentUserFromServer() =>
       api.getCurrentUserFromServer();
 
   @override
-  Future<ApiResponse> login(User user) => api.login(user);
+  Future<ApiResponse?>? login(User user) => api.login(user);
 
   @override
   void logout(User user) => api.logout(user);
 
   @override
-  Future<ApiResponse> requestPasswordReset(User user) =>
+  Future<ApiResponse?>? requestPasswordReset(User user) =>
       api.requestPasswordReset(user);
 
   @override
@@ -80,8 +75,13 @@ class UserRepository implements UserProviderContract {
   }
 
   @override
-  Future<ApiResponse> signUp(User user) => api.signUp(user);
+  Future<ApiResponse?>? signUp(User user) => api.signUp(user);
 
   @override
-  Future<ApiResponse> verificationEmailRequest(User user) => api.signUp(user);
+  Future<ApiResponse?>? verificationEmailRequest(User user) => api.signUp(user);
+
+  @override
+  Future<User?>? currentUser() {
+    return db.currentUser();
+  }
 }

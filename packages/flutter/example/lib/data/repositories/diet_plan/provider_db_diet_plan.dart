@@ -4,7 +4,7 @@ import 'package:flutter_plugin_example/data/base/api_error.dart';
 import 'package:flutter_plugin_example/data/base/api_response.dart';
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/contract_provider_diet_plan.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:sembast/sembast.dart';
 
 class DietPlanProviderDB implements DietPlanProviderContract {
@@ -16,19 +16,19 @@ class DietPlanProviderDB implements DietPlanProviderContract {
   @override
   Future<ApiResponse> add(DietPlan item) async {
     final Map<String, dynamic> values = convertItemToStorageMap(item);
-    await _store.record(item.objectId).put(_db, values);
-    final Map<String, dynamic> recordFromDB =
-        await _store.record(item.objectId).get(_db);
+    await _store.record(item.objectId ?? "").put(_db, values);
+    final Map<String, dynamic>? recordFromDB =
+        await _store.record(item.objectId ?? "").get(_db);
 
     return ApiResponse(
         true, 200, <dynamic>[convertRecordToItem(values: recordFromDB)], null);
   }
 
   @override
-  Future<ApiResponse> addAll(List<DietPlan> items) async {
+  Future<ApiResponse> addAll(List<dynamic>? items) async {
     final List<DietPlan> itemsInDb = <DietPlan>[];
 
-    for (final DietPlan item in items) {
+    for (final DietPlan item in items!) {
       final ApiResponse response = await add(item);
       if (response.success) {
         final DietPlan itemInDB = response.result;
@@ -56,8 +56,10 @@ class DietPlanProviderDB implements DietPlanProviderContract {
     if (records.isNotEmpty) {
       for (final RecordSnapshot<String, Map<String, dynamic>> record
           in records) {
-        final DietPlan userFood = convertRecordToItem(record: record);
-        foodItems.add(userFood);
+        final DietPlan? userFood = convertRecordToItem(record: record);
+        if (userFood != null) {
+          foodItems.add(userFood);
+        }
       }
     } else {
       return errorResponse;
@@ -70,10 +72,10 @@ class DietPlanProviderDB implements DietPlanProviderContract {
   Future<ApiResponse> getById(String id) async {
     final Finder finder = Finder(filter: Filter.equals('objectId', id));
 
-    final RecordSnapshot<String, Map<String, dynamic>> record =
+    final RecordSnapshot<String, Map<String, dynamic>>? record =
         await _store.findFirst(_db, finder: finder);
     if (record != null) {
-      final DietPlan userFood = convertRecordToItem(record: record);
+      final DietPlan? userFood = convertRecordToItem(record: record);
       return ApiResponse(true, 200, <dynamic>[userFood], null);
     } else {
       return errorResponse;
@@ -92,11 +94,13 @@ class DietPlanProviderDB implements DietPlanProviderContract {
         await _store.find(_db, finder: finder);
 
     for (final RecordSnapshot<String, Map<String, dynamic>> record in records) {
-      final DietPlan convertedDietPlan = convertRecordToItem(record: record);
-      foodItems.add(convertedDietPlan);
+      final DietPlan? convertedDietPlan = convertRecordToItem(record: record);
+      if (convertedDietPlan != null) {
+        foodItems.add(convertedDietPlan);
+      }
     }
 
-    if (records == null) {
+    if (records.isNotEmpty) {
       return errorResponse;
     }
 
@@ -112,10 +116,10 @@ class DietPlanProviderDB implements DietPlanProviderContract {
   }
 
   @override
-  Future<ApiResponse> updateAll(List<DietPlan> items) async {
+  Future<ApiResponse> updateAll(List<dynamic>? items) async {
     final List<DietPlan> updatedItems = <DietPlan>[];
 
-    for (final DietPlan item in items) {
+    for (final DietPlan item in items!) {
       final ApiResponse response = await update(item);
       if (response.success) {
         final DietPlan responseItem = response.result;
@@ -123,7 +127,7 @@ class DietPlanProviderDB implements DietPlanProviderContract {
       }
     }
 
-    if (updatedItems == null) {
+    if (updatedItems.isNotEmpty) {
       return errorResponse;
     }
 
@@ -149,20 +153,21 @@ class DietPlanProviderDB implements DietPlanProviderContract {
     // ignore: invalid_use_of_protected_member
     values['value'] = json.jsonEncode(item.toJson(full: true));
     values[keyVarObjectId] = item.objectId;
-    if (item.updatedAt != null) {
-      values[keyVarUpdatedAt] = item.updatedAt.millisecondsSinceEpoch;
+    final updatedAt = item.updatedAt;
+    if (updatedAt != null) {
+      values[keyVarUpdatedAt] = updatedAt.millisecondsSinceEpoch;
     }
 
     return values;
   }
 
-  DietPlan convertRecordToItem(
-      {RecordSnapshot<String, Map<String, dynamic>> record,
-      Map<String, dynamic> values}) {
+  DietPlan? convertRecordToItem(
+      {RecordSnapshot<String, Map<String, dynamic>>? record,
+      Map<String, dynamic>? values}) {
     try {
-      values ??= record.value;
+      values ??= record?.value;
       final DietPlan item =
-          DietPlan.clone().fromJson(json.jsonDecode(values['value']));
+          DietPlan.clone().fromJson(json.jsonDecode(values?['value']));
       return item;
     } catch (e) {
       return null;

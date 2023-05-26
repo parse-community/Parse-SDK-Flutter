@@ -5,7 +5,7 @@ import 'package:flutter_plugin_example/data/repositories/diet_plan/provider_api_
 import 'package:flutter_plugin_example/data/repositories/diet_plan/provider_db_diet_plan.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:mockito/mockito.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:path/path.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
@@ -38,7 +38,7 @@ DietPlan getDummyDietPlan() {
     ..status = false;
 }
 
-Future<void> deleteFromApi(List<dynamic> results) async {
+Future<void> deleteFromApi(List<dynamic>? results) async {
   if (results != null && results.isNotEmpty) {
     for (final ParseObject item in results) {
       await item.delete();

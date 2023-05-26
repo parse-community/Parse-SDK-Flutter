@@ -1,29 +1,59 @@
+# To authenticate on pub.dev to publish a release via GitHub Actions, a tag
+# needs to be pushed, see: https://dart.dev/tools/pub/automated-publishing
+#
+# Publishing cannot currently be triggered manually via a "workflow_dispatch",
+# see: https://dart.dev/go/publishing-from-github
+
 name: release-automated
 on:
-  release:
-    types: [ published ]
+  push:
+    tags:
+      - "dart-[0-9]+.[0-9]+.[0-9]+*"
+      - "flutter-[0-9]+.[0-9]+.[0-9]+*"
+env:
+  package: ${{ startsWith(github.ref_name, 'dart') && 'dart' || 'flutter' }}
 jobs:
   release:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write # This is required for requesting the JWT
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Publish dart package
-        if: ${{ startsWith(github.ref_name, 'dart') }}
-        uses: k-paxian/dart-package-publisher@v1.4
         with:
-          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
-          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
-          relativePath: packages/dart
-          format: true
-          dryRunOnly: false
-      - name: Publish flutter package
-        if: ${{ startsWith(github.ref_name, 'flutter') }}
-        uses: k-paxian/dart-package-publisher@v1.4
+          ref: ${{ github.ref_name }}
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
         with:
-          accessToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_ACCESS_TOKEN  }}
-          refreshToken: ${{ secrets.PUBDEV_GOOGLE_ACCOUNT_REFRESH_TOKEN }}
-          relativePath: packages/flutter
-          flutter: true
-          format: true
-          dryRunOnly: false
+          sdk: '3.0.0' # Set to 3.0.0 due to Parse Dart SDK compatibility, can be removed later on
+      - name: Setup flutter
+        if: env.package == 'flutter'
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Install flutter dependencies
+        if: env.package == 'flutter'
+        run: dart pub get --directory 'packages/flutter'
+      - name: Analyze dart
+        if: env.package == 'dart'
+        run: dart analyze --fatal-infos 'packages/${{ env.package }}'
+      - name: Analyze flutter
+        if: env.package == 'flutter'
+        run: flutter analyze --fatal-infos 'packages/${{ env.package }}'
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed 'packages/${{ env.package }}'
+      - name: Publish package (dry-run)
+        working-directory: 'packages/${{ env.package }}'
+        run: dart pub publish --dry-run
+      - name: Publish package
+        working-directory: 'packages/${{ env.package }}'
+        run: dart pub publish --force
+  docs-publish:
+    needs: release
+    uses: parse-community/Parse-SDK-Flutter/.github/workflows/release-manual-docs.yml@master
+    with:
+      tag: ${{ github.ref_name }}

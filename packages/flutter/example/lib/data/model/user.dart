@@ -1,9 +1,9 @@
 import 'dart:core';
 
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class User extends ParseUser implements ParseCloneable {
-  User(String username, String password, String emailAddress)
+  User(String? username, String? password, String? emailAddress)
       : super(username, password, emailAddress);
 
   User.clone() : this(null, null, null);
@@ -19,25 +19,25 @@ class User extends ParseUser implements ParseCloneable {
   static const String keyDisplayPicture = 'DisplayPicture';
   static const String keyProUser = 'ProUser';
 
-  DateTime get dob => get<DateTime>(keyDob);
-  set dob(DateTime dob) => set<DateTime>(keyDob, dob);
+  DateTime? get dob => get<DateTime>(keyDob);
+  set dob(DateTime? dob) => set<DateTime>(keyDob, dob!);
 
-  num get gender => get<num>(keyGender);
+  num get gender => get<num>(keyGender) ?? 0;
   set gender(num gender) => set<num>(keyGender, gender);
 
-  num get height => get<num>(keyHeight);
+  num get height => get<num>(keyHeight) ?? 0;
   set height(num height) => set<num>(keyHeight, height);
 
-  String get firebaseId => get<String>(keyHeight);
+  String get firebaseId => get<String>(keyHeight) ?? "";
   set firebaseId(String firebaseId) => set<String>(keyHeight, firebaseId);
 
-  String get name => get<String>(keyName);
+  String get name => get<String>(keyName) ?? "";
   set name(String name) => set<String>(keyName, name);
 
-  String get displayPicture => get<String>(keyDisplayPicture);
+  String get displayPicture => get<String>(keyDisplayPicture) ?? "";
   set displayPicture(String displayPicture) =>
       set<String>(keyDisplayPicture, displayPicture);
 
-  bool get proUser => get<bool>(keyProUser);
+  bool get proUser => get<bool>(keyProUser) ?? false;
   set proUser(bool proUser) => set<bool>(keyProUser, proUser);
 }

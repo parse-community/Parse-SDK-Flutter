@@ -1,7 +1,7 @@
 import 'dart:core';
 
 import 'package:flutter_plugin_example/data/model/user.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class Day extends ParseObject implements ParseCloneable {
   Day() : super(_keyTableName);
@@ -25,15 +25,15 @@ class Day extends ParseObject implements ParseCloneable {
   static const String keyOwner = 'Owner';
   static const String keyStatus = 'Status';
 
-  DateTime get date => get<DateTime>(keyDate);
+  DateTime? get date => get<DateTime>(keyDate);
 
-  set date(DateTime date) => set<DateTime>(keyDate, date);
+  set date(DateTime? date) => set<DateTime>(keyDate, date!);
 
-  User get owner => get<User>(keyOwner);
+  User? get owner => get<User>(keyOwner);
 
-  set owner(User owner) => set<User>(keyOwner, owner);
+  set owner(User? owner) => set<User>(keyOwner, owner!);
 
-  int get status => get<int>(keyStatus);
+  int get status => get<int>(keyStatus) ?? 0;
 
   set status(int status) => set<int>(keyStatus, status);
 }

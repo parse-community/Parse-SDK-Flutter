@@ -6,11 +6,11 @@ import 'package:test/test.dart';
 import '../../../test_utils.dart';
 
 void main() {
-  group('handleResponse()', () {
-    setUp(() async {
-      await initializeParse();
-    });
+  setUpAll(() async {
+    await initializeParse();
+  });
 
+  group('handleResponse()', () {
     group('when batch', () {
       test(
           'should return a ParseResponse holds a list of created/updated ParseObjects',

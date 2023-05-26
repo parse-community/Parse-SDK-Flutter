@@ -7,9 +7,9 @@ import 'package:flutter_plugin_example/domain/utils/collection_utils.dart';
 import 'package:sembast/sembast.dart';
 
 class DietPlanRepository implements DietPlanProviderContract {
-  static DietPlanRepository init(Database dbConnection,
-      {DietPlanProviderContract mockDBProvider,
-      DietPlanProviderContract mockAPIProvider}) {
+  static DietPlanRepository init(Database? dbConnection,
+      {DietPlanProviderContract? mockDBProvider,
+      DietPlanProviderContract? mockAPIProvider}) {
     final DietPlanRepository repository = DietPlanRepository();
 
     if (mockDBProvider != null) {
@@ -17,7 +17,7 @@ class DietPlanRepository implements DietPlanProviderContract {
     } else {
       final StoreRef<String, Map<String, dynamic>> store =
           stringMapStoreFactory.store('repository_diet');
-      repository.db = DietPlanProviderDB(dbConnection, store);
+      repository.db = DietPlanProviderDB(dbConnection!, store);
     }
 
     if (mockAPIProvider != null) {
@@ -29,8 +29,8 @@ class DietPlanRepository implements DietPlanProviderContract {
     return repository;
   }
 
-  DietPlanProviderContract api;
-  DietPlanProviderContract db;
+  late DietPlanProviderContract api;
+  late DietPlanProviderContract db;
 
   @override
   Future<ApiResponse> add(DietPlan item,
@@ -51,7 +51,7 @@ class DietPlanRepository implements DietPlanProviderContract {
   }
 
   @override
-  Future<ApiResponse> addAll(List<DietPlan> items,
+  Future<ApiResponse> addAll(List<dynamic>? items,
       {bool apiOnly = false, bool dbOnly = false}) async {
     if (apiOnly) {
       return await api.addAll(items);
@@ -146,7 +146,7 @@ class DietPlanRepository implements DietPlanProviderContract {
   }
 
   @override
-  Future<ApiResponse> updateAll(List<DietPlan> items,
+  Future<ApiResponse> updateAll(List<dynamic>? items,
       {bool apiOnly = false, bool dbOnly = false}) async {
     if (apiOnly) {
       await api.updateAll(items);

@@ -1,6 +1,6 @@
 import 'dart:core';
 
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 const String keyDietPlan = 'Diet_Plans';
 const String keyName = 'Name';
@@ -17,22 +17,22 @@ class DietPlan extends ParseObject implements ParseCloneable {
   @override
   DietPlan clone(Map<String, dynamic> map) => DietPlan.clone()..fromJson(map);
 
-  String get name => get<String>(keyName);
+  String get name => get<String>(keyName) ?? "";
   set name(String name) => set<String>(keyName, name);
 
-  String get description => get<String>(keyDescription);
+  String get description => get<String>(keyDescription) ?? "";
   set description(String description) => set<String>(keyDescription, name);
 
-  num get protein => get<num>(keyProtein);
+  num get protein => get<num>(keyProtein) ?? 0;
   set protein(num protein) => super.set<num>(keyProtein, protein);
 
-  num get carbs => get<num>(keyCarbs);
+  num get carbs => get<num>(keyCarbs) ?? 0;
   set carbs(num carbs) => set<num>(keyCarbs, carbs);
 
-  num get fat => get<num>(keyFat);
+  num get fat => get<num>(keyFat) ?? 0;
   set fat(num fat) => set<num>(keyFat, fat);
 
-  bool get status => get<bool>(keyStatus);
+  bool get status => get<bool>(keyStatus) ?? false;
 
   set status(bool status) => set<bool>(keyStatus, status);
 }

@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:universal_io/io.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:http/io_client.dart';
+
 import 'package:parse_server_sdk/parse_server_sdk.dart';
+
+import 'http_client_io.dart' if (dart.library.js) 'http_client_js.dart';
 
 class ParseHTTPClient extends ParseClient {
   ParseHTTPClient(
@@ -117,7 +119,7 @@ class _ParseHTTPClient extends http.BaseClient {
       {bool sendSessionId = false, SecurityContext? securityContext})
       : _sendSessionId = sendSessionId,
         _client = securityContext != null
-            ? IOClient(HttpClient(context: securityContext))
+            ? getClient(securityContext)
             : http.Client();
 
   final http.Client _client;

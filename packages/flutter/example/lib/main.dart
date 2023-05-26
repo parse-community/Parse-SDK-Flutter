@@ -22,7 +22,7 @@ void main() {
 }
 
 void _setTargetPlatformForDesktop() {
-  TargetPlatform targetPlatform;
+  TargetPlatform? targetPlatform;
 
   if (Platform.isMacOS) {
     targetPlatform = TargetPlatform.iOS;
@@ -35,15 +35,15 @@ void _setTargetPlatformForDesktop() {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  DietPlanRepository dietPlanRepo;
-  UserRepository userRepo;
+  DietPlanRepository? dietPlanRepo;
+  UserRepository? userRepo;
 
   String text = '';
 
@@ -61,7 +61,6 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: const Center(
-          //child: Text(text),
           child: DecisionPage(),
           //child: HomePage(),
         ),
@@ -72,20 +71,16 @@ class _MyAppState extends State<MyApp> {
   Future<void> initData() async {
     // Initialize repository
     await initRepository();
-    await initCoreStore();
 
     // Initialize parse
     await Parse().initialize(keyParseApplicationId, keyParseServerUrl,
-        clientKey: keyParseClientKey,
-        debug: true,
-        coreStore: await CoreStoreSharedPrefsImp.getInstance());
+        clientKey: keyParseClientKey, debug: true);
 
     //parse serve with secure store and desktop support
 
     //    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
     //        clientKey: keyParseClientKey,
-    //        debug: true,
-    //        coreStore: CoreStoreSharedPrefsImp.getInstance());
+    //        debug: true);
 
     // Check server is healthy and live - Debug is on in this instance so check logs for result
     final ParseResponse response = await Parse().healthCheck();
@@ -155,7 +150,7 @@ class _MyAppState extends State<MyApp> {
     final ParseResponse apiResponse = await newObject.create();
 
     if (apiResponse.success && apiResponse.count > 0) {
-      print(keyAppName + ': ' + apiResponse.result.toString());
+      print('$keyAppName: ${apiResponse.result}');
     }
   }
 
@@ -164,8 +159,8 @@ class _MyAppState extends State<MyApp> {
         await ParseObject('TestObjectForApi').getAll();
 
     if (apiResponse.success && apiResponse.count > 0) {
-      for (final ParseObject testObject in apiResponse.results) {
-        print(keyAppName + ': ' + testObject.toString());
+      for (final ParseObject testObject in apiResponse.results!) {
+        print('$keyAppName: $testObject');
       }
     }
   }
@@ -174,11 +169,11 @@ class _MyAppState extends State<MyApp> {
     final ParseResponse apiResponse = await DietPlan().getAll();
 
     if (apiResponse.success && apiResponse.count > 0) {
-      for (final DietPlan plan in apiResponse.results) {
-        print(keyAppName + ': ' + plan.name);
+      for (final DietPlan plan in apiResponse.results!) {
+        print('$keyAppName: ${plan.name}');
       }
     } else {
-      print(keyAppName + ': ' + apiResponse.error.message);
+      print('$keyAppName: ${apiResponse.error?.message}');
     }
   }
 
@@ -190,7 +185,7 @@ class _MyAppState extends State<MyApp> {
 
       // Shows example of storing values in their proper type and retrieving them
       dietPlan.set<int>('RandomInt', 8);
-      final int randomInt = dietPlan.get<int>('RandomInt');
+      final int? randomInt = dietPlan.get<int>('RandomInt');
 
       if (randomInt is int) {
         print('Saving generic value worked!');
@@ -200,13 +195,13 @@ class _MyAppState extends State<MyApp> {
       await dietPlan.pin();
 
       // shows example of retrieving a pin
-      final DietPlan newDietPlanFromPin =
+      final DietPlan? newDietPlanFromPin =
           await DietPlan().fromPin('R5EonpUDWy');
       if (newDietPlanFromPin != null) {
         print('Retreiving from pin worked!');
       }
     } else {
-      print(keyAppName + ': ' + apiResponse.error.message);
+      print('$keyAppName: ${apiResponse.error?.message}');
     }
   }
 
@@ -219,10 +214,10 @@ class _MyAppState extends State<MyApp> {
 
     if (apiResponse.success && apiResponse.count > 0) {
       final List<ParseObject> listFromApi = apiResponse.result;
-      final ParseObject parseObject = listFromApi?.first;
+      final ParseObject parseObject = listFromApi.first;
       print('Result: ${parseObject.toString()}');
     } else {
-      print('Result: ${apiResponse.error.message}');
+      print('Result: ${apiResponse.error?.message}');
     }
   }
 
@@ -241,7 +236,7 @@ class _MyAppState extends State<MyApp> {
     user1.authData;
 
     /// Login
-    ParseResponse response = await user.login();
+    ParseResponse? response = await user.login();
     if (response.success) {
       user = response.result;
     }
@@ -263,14 +258,14 @@ class _MyAppState extends State<MyApp> {
 
     /// Update current user from server - Best done to verify user is still a valid user
     response = await ParseUser.getCurrentUserFromServer(
-        user?.get<String>(keyHeaderSessionToken));
+        user.get<String>(keyHeaderSessionToken)!);
     if (response?.success ?? false) {
-      user = response.result;
+      user = response?.result;
     }
 
     /// log user out
-    response = await user?.logout();
-    if (response?.success ?? false) {
+    response = await user.logout();
+    if (response.success) {
       user = response.result;
     }
 
@@ -303,7 +298,7 @@ class _MyAppState extends State<MyApp> {
     if (apiResponse.success && apiResponse.count > 0) {
       final List<ParseUser> users = response.result;
       for (final ParseUser user in users) {
-        print(keyAppName + ': ' + user.toString());
+        print('$keyAppName: $user');
       }
     }
   }
@@ -345,10 +340,10 @@ class _MyAppState extends State<MyApp> {
   Future<void> repositoryAddUser() async {
     final User user = User('test_username', 'password', 'test@gmail.com');
 
-    final ApiResponse response = await userRepo.save(user);
+    final ApiResponse response = await userRepo!.save(user);
 
     if (!response.success) {
-      await userRepo.login(user);
+      await userRepo!.login(user);
     }
 
     final User currentUser =
@@ -368,14 +363,14 @@ class _MyAppState extends State<MyApp> {
     }
 
     await initRepository();
-    final ApiResponse response = await dietPlanRepo.addAll(dietPlans);
+    final ApiResponse response = await dietPlanRepo!.addAll(dietPlans);
     if (response.success) {
       print(response.result);
     }
   }
 
   Future<void> repositoryGetAllItems() async {
-    final ApiResponse response = await dietPlanRepo.getAll();
+    final ApiResponse response = await dietPlanRepo!.getAll();
     if (response.success) {
       print(response.result);
     }
@@ -384,14 +379,6 @@ class _MyAppState extends State<MyApp> {
   Future<void> initRepository() async {
     dietPlanRepo ??= DietPlanRepository.init(await getDB());
     userRepo ??= UserRepository.init(await getDB());
-  }
-
-  /// Available options:
-  /// SharedPreferences - Not secure but will work with older versions of SDK - CoreStoreSharedPrefsImpl
-  /// Sembast - NoSQL DB - Has security - CoreStoreSembastImpl
-  Future<CoreStore> initCoreStore() async {
-    //return CoreStoreSembastImp.getInstance();
-    return CoreStoreSharedPrefsImp.getInstance();
   }
 }
 

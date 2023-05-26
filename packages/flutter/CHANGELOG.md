@@ -1,3 +1,32 @@
+## [5.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.0.1...flutter-5.1.0) (2023-05-22)
+
+### Features
+
+* Add support for push notifications via `ParsePush`, `ParseNotification` ([#914](https://github.com/parse-community/Parse-SDK-Flutter/pull/914))
+
+## [5.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.0.0...flutter-5.0.1) (2023-05-20)
+
+### Bug Fixes
+
+* Attributes `reverse`, `padding`, `physics`, `controller`, `scrollDirection`, `shrinkWrap` not implemented in `ParseLiveGridWidget` ([#761](https://github.com/parse-community/Parse-SDK-Flutter/pull/761))
+
+## [5.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-4.0.0...flutter-5.0.0) (2023-05-14)
+
+### BREAKING CHANGES
+
+* The minimum required Dart SDK version is 2.18.0. ([#867](https://github.com/parse-community/Parse-SDK-Flutter/pull/867))
+* Upgrades the dependency `parse_server_sdk` to `5.x.x`. ([#868](https://github.com/parse-community/Parse-SDK-Flutter/pull/868))
+* The deprecated parameter `vsync` from `AnimatedSize` is removed. ([#864](https://github.com/parse-community/Parse-SDK-Flutter/pull/864))
+
+### Features
+
+* Upgrade `parse_server_sdk` to `5.x.x` ([#868](https://github.com/parse-community/Parse-SDK-Flutter/pull/868))
+
+### Bug Fixes
+
+* Incorrect Dart and Flutter SDKs compatibility range ([#867](https://github.com/parse-community/Parse-SDK-Flutter/pull/867))
+* Remove deprecated parameter `vsync` from `AnimatedSize` ([#864](https://github.com/parse-community/Parse-SDK-Flutter/pull/864))
+
 ## [4.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-3.1.4...flutter-4.0.0) (2023-03-19)
 
 ### BREAKING CHANGES

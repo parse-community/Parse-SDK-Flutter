@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/base/api_response.dart';
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/contract_provider_diet_plan.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage(this._dietPlanProvider, {Key key}) : super(key: key);
+  const HomePage(this._dietPlanProvider, {Key? key}) : super(key: key);
 
   final DietPlanProviderContract _dietPlanProvider;
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () async {
                     final ParseUser user = await ParseUser.currentUser();
                     user.logout(deleteLocalUserData: true);
-                    Navigator.pop(context, true);
+                    Navigator.pop(context as dynamic, true);
                   })
             ],
           ),
@@ -71,9 +71,9 @@ class _HomePageState extends State<HomePage> {
         future: widget._dietPlanProvider.getAll(),
         builder: (BuildContext context, AsyncSnapshot<ApiResponse> snapshot) {
           if (snapshot.hasData) {
-            if (snapshot.data.success) {
-              if (snapshot.data.results == null ||
-                  snapshot.data.results.isEmpty) {
+            if (snapshot.data!.success) {
+              if (snapshot.data?.results == null ||
+                  snapshot.data!.results!.isEmpty) {
                 return const Center(
                   child: Text('No Data'),
                 );
@@ -81,15 +81,15 @@ class _HomePageState extends State<HomePage> {
             }
             return ListView.builder(
                 shrinkWrap: true,
-                itemCount: snapshot.data.results.length,
+                itemCount: snapshot.data!.results!.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final DietPlan dietPlan = snapshot.data.results[index];
-                  final String id = dietPlan.objectId;
+                  final DietPlan dietPlan = snapshot.data!.results![index];
+                  final String? id = dietPlan.objectId;
                   final String name = dietPlan.name;
                   final String description = dietPlan.description;
                   final bool status = dietPlan.status;
                   return Dismissible(
-                    key: Key(id),
+                    key: Key(id!),
                     background: Container(color: Colors.red),
                     onDismissed: (DismissDirection direction) async {
                       widget._dietPlanProvider.remove(dietPlan);

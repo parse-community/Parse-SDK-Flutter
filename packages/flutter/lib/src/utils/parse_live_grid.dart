@@ -1,5 +1,14 @@
 part of flutter_parse_sdk_flutter;
 
+/// A widget that displays a live grid of Parse objects.
+///
+/// The `ParseLiveGridWidget` is initialized with a `query` that retrieves the
+/// objects to display in the grid. The `gridDelegate` is used to specify the
+/// layout of the grid, and the `itemBuilder` function is used to specify how
+/// each object in the grid should be displayed.
+///
+/// The `ParseLiveGridWidget` also provides support for error handling and
+/// refreshing the live list of objects.
 class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   const ParseLiveGridWidget({
     Key? key,
@@ -151,6 +160,12 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       ),
     );
     return GridView.builder(
+        reverse: widget.reverse,
+        padding: widget.padding,
+        physics: widget.scrollPhysics,
+        controller: widget.scrollController,
+        scrollDirection: widget.scrollDirection,
+        shrinkWrap: widget.shrinkWrap,
         itemCount: liveGrid.size,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: widget.crossAxisCount,

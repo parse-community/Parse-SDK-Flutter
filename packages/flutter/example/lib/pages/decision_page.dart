@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/provider_api_diet_plan.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 import 'home_page.dart';
 import 'login_page.dart';
 
 class DecisionPage extends StatefulWidget {
-  const DecisionPage({Key key}) : super(key: key);
+  const DecisionPage({Key? key}) : super(key: key);
 
   @override
-  _DecisionPageState createState() => _DecisionPageState();
+  State<DecisionPage> createState() => _DecisionPageState();
 }
 
 class _DecisionPageState extends State<DecisionPage> {
@@ -65,11 +65,11 @@ class _DecisionPageState extends State<DecisionPage> {
           clientKey: keyParseClientKey, debug: true);
       final ParseResponse response = await Parse().healthCheck();
       if (response.success) {
-        final ParseUser user = await ParseUser.currentUser();
+        ParseUser? user = await ParseUser.currentUser();
         if (user != null) {
-          _redirectToPage(context, HomePage(DietPlanProviderApi()));
+          _redirectToPage(context as dynamic, HomePage(DietPlanProviderApi()));
         } else {
-          _redirectToPage(context, const LoginPage());
+          _redirectToPage(context as dynamic, const LoginPage());
         }
       } else {
         setState(() {
@@ -84,11 +84,11 @@ class _DecisionPageState extends State<DecisionPage> {
     }
   }
 
-  Future<void> _redirectToPage(BuildContext context, Widget page) async {
+  Future<void> _redirectToPage(dynamic context, Widget page) async {
     final MaterialPageRoute<bool> newRoute =
         MaterialPageRoute<bool>(builder: (BuildContext context) => page);
 
-    final bool nav = await Navigator.of(context)
+    final bool? nav = await Navigator.of(context)
         .pushAndRemoveUntil<bool>(newRoute, ModalRoute.withName('/'));
     if (nav == true) {
       _initParse();

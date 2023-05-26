@@ -2,31 +2,31 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/model/user.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 enum FormMode { login, signUp }
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  String _email;
-  String _password;
-  String _errorMessage;
+  String _email = "";
+  String _password = "";
+  String? _errorMessage = "";
 
   // Initial form is login form
   FormMode _formMode = FormMode.login;
-  bool _isLoading;
+  bool _isLoading = false;
 
   // Check if form is valid before perform login or signup
   bool _validateAndSave() {
-    final FormState form = _formKey.currentState;
+    final FormState form = _formKey.currentState!;
     if (form.validate()) {
       form.save();
       return true;
@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
         });
         if (response.success) {
           if (_formMode == FormMode.login) {
-            Navigator.pop(context, true);
+            Navigator.pop(context as dynamic, true);
           }
         } else {
           setState(() {
@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
         print('Error: $e');
         setState(() {
           _isLoading = false;
-          _errorMessage = e.message;
+          _errorMessage = e.toString();
         });
       }
     }
@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _changeFormToSignUp() {
-    _formKey.currentState.reset();
+    _formKey.currentState?.reset();
     _errorMessage = '';
     setState(() {
       _formMode = FormMode.signUp;
@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _changeFormToLogin() {
-    _formKey.currentState.reset();
+    _formKey.currentState?.reset();
     _errorMessage = '';
     setState(() {
       _formMode = FormMode.login;
@@ -146,9 +146,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _showErrorMessage() {
-    if (_errorMessage.isNotEmpty && _errorMessage != null) {
+    if (_errorMessage!.isNotEmpty && _errorMessage != null) {
       return Text(
-        _errorMessage,
+        _errorMessage!,
         style: const TextStyle(
             fontSize: 13.0,
             color: Colors.red,
@@ -189,9 +189,9 @@ class _LoginPageState extends State<LoginPage> {
               Icons.mail,
               color: Colors.grey,
             )),
-        validator: (String value) =>
-            value.isEmpty ? 'Email can\'t be empty' : null,
-        onSaved: (String value) => _email = value,
+        validator: (String? value) =>
+            value!.isEmpty ? 'Email can\'t be empty' : null,
+        onSaved: (String? value) => _email = value!,
       ),
     );
   }
@@ -209,23 +209,23 @@ class _LoginPageState extends State<LoginPage> {
               Icons.lock,
               color: Colors.grey,
             )),
-        validator: (String value) =>
-            value.isEmpty ? 'Password can\'t be empty' : null,
-        onSaved: (String value) => _password = value,
+        validator: (String? value) =>
+            value!.isEmpty ? 'Password can\'t be empty' : null,
+        onSaved: (String? value) => _password = value!,
       ),
     );
   }
 
   Widget _showSecondaryButton() {
     return TextButton(
+      onPressed: _formMode == FormMode.login
+          ? _changeFormToSignUp
+          : _changeFormToLogin,
       child: _formMode == FormMode.login
           ? const Text('Create an account',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
           : const Text('Have an account? Sign in',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
-      onPressed: _formMode == FormMode.login
-          ? _changeFormToSignUp
-          : _changeFormToLogin,
     );
   }
 
@@ -241,12 +241,12 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(30.0)),
               elevation: 5.0,
             ),
+            onPressed: _validateAndSubmit,
             child: _formMode == FormMode.login
                 ? const Text('Login',
                     style: TextStyle(fontSize: 20.0, color: Colors.white))
                 : const Text('Create account',
                     style: TextStyle(fontSize: 20.0, color: Colors.white)),
-            onPressed: _validateAndSubmit,
           ),
         ));
   }

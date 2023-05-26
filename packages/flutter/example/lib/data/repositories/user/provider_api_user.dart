@@ -1,6 +1,6 @@
 import 'package:flutter_plugin_example/data/base/api_response.dart';
 import 'package:flutter_plugin_example/data/model/user.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 import 'contract_provider_user.dart';
 
@@ -12,15 +12,15 @@ class UserProviderApi implements UserProviderContract {
   }
 
   @override
-  Future<User> currentUser() {
-    return ParseUser.currentUser();
+  Future<User>? currentUser() {
+    return ParseUser.currentUser() as Future<User>;
   }
 
   @override
   Future<ApiResponse> getCurrentUserFromServer() async {
     final ParseUser user = await ParseUser.currentUser();
     return getApiResponse<User>(await ParseUser.getCurrentUserFromServer(
-        user?.get<String>(keyHeaderSessionToken)));
+        user.get<String>(keyHeaderSessionToken)!));
   }
 
   @override

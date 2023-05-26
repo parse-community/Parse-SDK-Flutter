@@ -4,11 +4,11 @@ import 'package:flutter_plugin_example/data/model/diet_plan.dart';
 abstract class DietPlanProviderContract {
   Future<ApiResponse> add(DietPlan item);
 
-  Future<ApiResponse> addAll(List<DietPlan> items);
+  Future<ApiResponse> addAll(List<dynamic>? items);
 
   Future<ApiResponse> update(DietPlan item);
 
-  Future<ApiResponse> updateAll(List<DietPlan> items);
+  Future<ApiResponse> updateAll(List<dynamic>? items);
 
   Future<ApiResponse> remove(DietPlan item);
 

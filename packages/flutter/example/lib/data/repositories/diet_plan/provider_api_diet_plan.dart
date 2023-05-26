@@ -1,7 +1,7 @@
 import 'package:flutter_plugin_example/data/base/api_response.dart';
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/contract_provider_diet_plan.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class DietPlanProviderApi implements DietPlanProviderContract {
   DietPlanProviderApi();
@@ -12,17 +12,17 @@ class DietPlanProviderApi implements DietPlanProviderContract {
   }
 
   @override
-  Future<ApiResponse> addAll(List<DietPlan> items) async {
-    final List<DietPlan> responses = <DietPlan>[];
+  Future<ApiResponse> addAll(List<dynamic>? items) async {
+    final List<dynamic> responses = <DietPlan>[];
 
-    for (final DietPlan item in items) {
+    for (final DietPlan item in items!) {
       final ApiResponse response = await add(item);
 
       if (!response.success) {
         return response;
       }
 
-      response?.results?.forEach(responses.add);
+      response.results?.forEach(responses.add);
     }
 
     return ApiResponse(true, 200, responses, null);
@@ -56,17 +56,17 @@ class DietPlanProviderApi implements DietPlanProviderContract {
   }
 
   @override
-  Future<ApiResponse> updateAll(List<DietPlan> items) async {
-    final List<DietPlan> responses = <DietPlan>[];
+  Future<ApiResponse> updateAll(List<dynamic>? items) async {
+    final List<dynamic> responses = <DietPlan>[];
 
-    for (final DietPlan item in items) {
+    for (final DietPlan item in items!) {
       final ApiResponse response = await update(item);
 
       if (!response.success) {
         return response;
       }
 
-      response?.results?.forEach(responses.add);
+      response.results?.forEach(responses.add);
     }
 
     return ApiResponse(true, 200, responses, null);

@@ -3,7 +3,7 @@ import 'dart:convert' as json;
 import 'package:flutter_plugin_example/data/base/api_error.dart';
 import 'package:flutter_plugin_example/data/base/api_response.dart';
 import 'package:flutter_plugin_example/data/model/user.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:sembast/sembast.dart';
 
 import 'contract_provider_user.dart';
@@ -19,19 +19,19 @@ class UserProviderDB implements UserProviderContract {
       String username, String password, String emailAddress) async {
     final User user = User(username, password, emailAddress);
     final Map<String, dynamic> values = convertItemToStorageMap(user);
-    await _store.record(user.objectId).put(_db, values);
-    final Map<String, dynamic> recordFromDB =
-        await _store.record(user.objectId).get(_db);
-    return convertRecordToItem(record: recordFromDB);
+    await _store.record(user.objectId ?? "").put(_db, values);
+    final Map<String, dynamic>? recordFromDB =
+        await _store.record(user.objectId ?? "").get(_db);
+    return convertRecordToItem(record: recordFromDB)!;
   }
 
   @override
-  Future<User> currentUser() {
+  Future<User>? currentUser() {
     return null;
   }
 
   @override
-  Future<ApiResponse> getCurrentUserFromServer() async {
+  Future<ApiResponse?> getCurrentUserFromServer() async {
     return null;
   }
 
@@ -44,37 +44,37 @@ class UserProviderDB implements UserProviderContract {
   }
 
   @override
-  Future<ApiResponse> login(User user) async {
+  Future<ApiResponse?> login(User user) async {
     return null;
   }
 
   @override
-  Future<ApiResponse> requestPasswordReset(User user) async {
+  Future<ApiResponse?> requestPasswordReset(User user) async {
     return null;
   }
 
   @override
   Future<ApiResponse> save(User user) async {
     final Map<String, dynamic> values = convertItemToStorageMap(user);
-    await _store.record(user.objectId).put(_db, values);
-    final Map<String, dynamic> recordFromDB =
-        await _store.record(user.objectId).get(_db);
+    await _store.record(user.objectId ?? "").put(_db, values);
+    final Map<String, dynamic>? recordFromDB =
+        await _store.record(user.objectId ?? "").get(_db);
     return ApiResponse(
         true, 200, <dynamic>[convertRecordToItem(record: recordFromDB)], null);
   }
 
   @override
-  Future<ApiResponse> signUp(User user) {
+  Future<ApiResponse>? signUp(User user) {
     return null;
   }
 
   @override
-  Future<ApiResponse> verificationEmailRequest(User user) async {
+  Future<ApiResponse?> verificationEmailRequest(User user) async {
     return null;
   }
 
   @override
-  Future<ApiResponse> allUsers() async {
+  Future<ApiResponse?> allUsers() async {
     return null;
   }
 
@@ -87,15 +87,16 @@ class UserProviderDB implements UserProviderContract {
     values['value'] = json.jsonEncode(item.toJson(full: true));
     values[keyVarObjectId] = item.objectId;
     item.updatedAt != null
-        ? values[keyVarUpdatedAt] = item.updatedAt.millisecondsSinceEpoch
+        ? values[keyVarUpdatedAt] = item.updatedAt?.millisecondsSinceEpoch
         : values[keyVarCreatedAt] = DateTime.now().millisecondsSinceEpoch;
     return values;
   }
 
-  User convertRecordToItem({dynamic record, Map<String, dynamic> values}) {
+  User? convertRecordToItem({dynamic record, Map<String, dynamic>? values}) {
     try {
       values ??= record.value;
-      final User item = User.clone().fromJson(json.jsonDecode(values['value']));
+      final User item =
+          User.clone().fromJson(json.jsonDecode(values?['value']));
       return item;
     } catch (e) {
       return null;

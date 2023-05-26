@@ -50,6 +50,12 @@ class QueryBuilder<T extends ParseObject> {
   T object;
   List<MapEntry<String, dynamic>> queries = <MapEntry<String, dynamic>>[];
   final Map<String, dynamic> limiters = <String, dynamic>{};
+  final Map<String, dynamic> extraOptions = <String, dynamic>{};
+
+  /// Used by ParseRelation getQuery()
+  void setRedirectClassNameForKey(String key) {
+    extraOptions['redirectClassNameForKey'] = key;
+  }
 
   /// Adds a limit to amount of results return from Parse
   void setLimit(int limit) {
@@ -408,13 +414,13 @@ class QueryBuilder<T extends ParseObject> {
   /// Builds the query for Parse
   String buildQuery() {
     queries = _checkForMultipleColumnInstances(queries);
-    return 'where={${buildQueries(queries)}}${getLimiters(limiters)}';
+    return 'where={${buildQueries(queries)}}${getLimiters(limiters)}${getExtraOptions(extraOptions)}';
   }
 
   /// Builds the query relational for Parse
   String _buildQueryRelational(String className) {
     queries = _checkForMultipleColumnInstances(queries);
-    return '{"where":{${buildQueries(queries)}},"className":"$className"${getLimitersRelational(limiters)}}';
+    return '{"where":{${buildQueries(queries)}},"className":"$className",${getLimitersRelational(limiters)}}';
   }
 
   /// Builds the query relational with Key for Parse
@@ -521,6 +527,15 @@ class QueryBuilder<T extends ParseObject> {
 
   /// Adds the limiters to the query, i.e. skip=10, limit=10
   String getLimiters(Map<String, dynamic> map) {
+    String result = '';
+    map.forEach((String key, dynamic value) {
+      result = '$result&$key=$value';
+    });
+    return result;
+  }
+
+  /// Adds extra options to the query
+  String getExtraOptions(Map<String, dynamic> map) {
     String result = '';
     map.forEach((String key, dynamic value) {
       result = '$result&$key=$value';

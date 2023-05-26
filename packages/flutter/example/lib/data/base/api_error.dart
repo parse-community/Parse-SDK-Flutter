@@ -3,6 +3,6 @@ class ApiError {
 
   final int code;
   final String message;
-  final Exception exception;
-  final String type;
+  final Exception? exception;
+  final String? type;
 }
