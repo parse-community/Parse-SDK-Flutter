@@ -25,16 +25,10 @@ These packages are available in this repository:
 | Dart    | [parse_server_sdk](./packages/dart)            | [![pub package](https://img.shields.io/pub/v/parse_server_sdk.svg)](https://pub.dev/packages/parse_server_sdk) [![Pub Likes](https://img.shields.io/pub/likes/parse_server_sdk)](https://pub.dev/packages/parse_server_sdk/score) [![Pub Popularity](https://img.shields.io/pub/popularity/parse_server_sdk)](https://pub.dev/packages/parse_server_sdk/score) [![Pub Points](https://img.shields.io/pub/points/parse_server_sdk)](https://pub.dev/packages/parse_server_sdk/score)|
 | Flutter | [parse_server_sdk_flutter](./packages/flutter) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter) [![Pub Likes](https://img.shields.io/pub/likes/parse_server_sdk_flutter)](https://pub.dev/packages/parse_server_sdk_flutter/score)  [![Pub Popularity](https://img.shields.io/pub/popularity/parse_server_sdk_flutter)](https://pub.dev/packages/parse_server_sdk_flutter/score) [![Pub Points](https://img.shields.io/pub/points/parse_server_sdk_flutter)](https://pub.dev/packages/parse_server_sdk_flutter/score)|
 
-
-# Guide
-
-See the SDK Usage [guide][guide].
-
 # Contributing
 
 We want to make contributing to this project as easy and transparent as possible. Please refer to the [Contribution Guidelines](CONTRIBUTING.md).
 
 ---
 
-[guide]: https://docs.parseplatform.org/flutter/guide/
 [open-collective-link]: https://opencollective.com/parse-server
