@@ -12,6 +12,7 @@
 [![Forum](https://img.shields.io/discourse/https/community.parseplatform.org/topics.svg)](https://community.parseplatform.org/c/parse-server)
 [![Twitter Follow](https://img.shields.io/twitter/follow/ParsePlatform.svg?label=Follow%20us&style=social)](https://twitter.com/intent/follow?screen_name=ParsePlatform)
 [![Chat](https://img.shields.io/badge/Chat-Join!-%23fff?style=social&logo=slack)](https://chat.parseplatform.org)
+
 ---
 
 This library gives you access to the powerful Parse Server backend from your Dart app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org).
@@ -22,6 +23,7 @@ This library gives you access to the powerful Parse Server backend from your Dar
 - [Getting Started](#getting-started)
 
 ---
+
 ## Compatibility
 
 The Parse Flutter SDK is continuously tested with the most recent release of the Flutter framework to ensure compatibility. To give developers time to upgrade their app to the newest Flutter framework, previous Flutter framework releases are supported for at least 1 year after their [release date](https://docs.flutter.dev/release/archive?tab=linux). The Parse Flutter SDK depends on the Parse Dart SDK which may require a higher Dart framework version than the Flutter framework version, in which case the Flutter framework version cannot be supported even though its release date may have been less than a year ago.
