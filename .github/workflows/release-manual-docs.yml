@@ -1,0 +1,44 @@
+name: release-manual-docs
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        default: ''
+        description: 'Version tag (dart-#.#.# or flutter-#.#.#):'
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+env:
+  package: ${{ startsWith(github.event.inputs.tag, 'dart') && 'dart' || 'flutter' }}
+jobs:
+  docs-publish:
+    if: github.event.inputs.tag != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.tag }}
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: Setup flutter
+        if: env.package == 'flutter'
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Install flutter dependencies
+        if: env.package == 'flutter'
+        run: dart pub get --directory 'packages/flutter'
+      - name: Generate Docs
+        run: dart doc ./packages/${{ env.package }}/ -o ./.api_docs/${{ env.package }}/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3.7.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./.api_docs/${{ env.package }}/
+          destination_dir: ${{ env.package }}
