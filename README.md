@@ -29,6 +29,14 @@ These packages are available in this repository:
 
 We want to make contributing to this project as easy and transparent as possible. Please refer to the [Contribution Guidelines](CONTRIBUTING.md).
 
+# Contributors
+
+This project exists thanks to all the people who contribute... we'd love to see your face on this list!
+
+<a href="https://github.com/parse-community/Parse-SDK-Flutter/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=parse-community/Parse-SDK-Flutter" />
+</a>
+
 ---
 
 [open-collective-link]: https://opencollective.com/parse-server
