@@ -48,5 +48,5 @@ We want to make contributing to this project as easy and transparent as possible
 
 ---
 
-[guide]: https://docs.parseplatform.org/flutter/guide/
+[guide]: https://docs.parseplatform.org/dart/guide/
 [open-collective-link]: https://opencollective.com/parse-server
