@@ -40,7 +40,9 @@ The Parse Dart SDK is continuously tested with the most recent release of the Da
 
 To install, add the Parse Dart SDK as a [dependency](https://pub.dev/packages/parse_server_sdk/install) in your `pubspec.yaml` file.
 
-See the SDK Usage [guide][guide].
+## Documentation
+
+Find the full documentation in the [Parse Dart SDK guide][guide].
 
 ## Contributing
 
