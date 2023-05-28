@@ -40,7 +40,9 @@ The Parse Flutter SDK is continuously tested with the most recent release of the
 
 To install, add the Parse Flutter SDK as a [dependency](https://pub.dev/packages/parse_server_sdk_flutter/install) in your `pubspec.yaml` file.
 
-See the SDK Usage [guide][guide].
+## Documentation
+
+Find the full documentation in the [Parse Flutter SDK guide][guide].
 
 # Contributing
 
