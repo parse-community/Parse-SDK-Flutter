@@ -44,7 +44,7 @@ To install, add the Parse Flutter SDK as a [dependency](https://pub.dev/packages
 
 Find the full documentation in the [Parse Flutter SDK guide][guide].
 
-# Contributing
+## Contributing
 
 We want to make contributing to this project as easy and transparent as possible. Please refer to the [Contribution Guidelines](../../CONTRIBUTING.md).
 
