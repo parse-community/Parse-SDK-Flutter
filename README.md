@@ -19,14 +19,20 @@ These libraries give you access to the powerful Parse Server backend from your D
 
 These packages are available in this repository:
 
-| Type    | Name                                           | Pub                                 | Document                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-|---------|------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| Dart    | [parse_server_sdk](./packages/dart)            | [![pub package](https://img.shields.io/pub/v/parse_server_sdk.svg)](https://pub.dev/packages/parse_server_sdk) [![Pub Likes](https://img.shields.io/pub/likes/parse_server_sdk)](https://pub.dev/packages/parse_server_sdk/score) [![Pub Popularity](https://img.shields.io/pub/popularity/parse_server_sdk)](https://pub.dev/packages/parse_server_sdk/score) [![Pub Points](https://img.shields.io/pub/points/parse_server_sdk)](https://pub.dev/packages/parse_server_sdk/score)|[![Document](https://img.shields.io/badge/docs-passing-brightgreen)](https://docs.parseplatform.org/dart/guide/)|
-| Flutter | [parse_server_sdk_flutter](./packages/flutter) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter) [![Pub Likes](https://img.shields.io/pub/likes/parse_server_sdk_flutter)](https://pub.dev/packages/parse_server_sdk_flutter/score)  [![Pub Popularity](https://img.shields.io/pub/popularity/parse_server_sdk_flutter)](https://pub.dev/packages/parse_server_sdk_flutter/score) [![Pub Points](https://img.shields.io/pub/points/parse_server_sdk_flutter)](https://pub.dev/packages/parse_server_sdk_flutter/score)|[![Document](https://img.shields.io/badge/docs-passing-brightgreen)](https://docs.parseplatform.org/flutter/guide/)|
+| Type    | Name                                           | Pub                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+|---------|------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Dart    | [parse_server_sdk](./packages/dart)| [![pub package](https://img.shields.io/pub/v/parse_server_sdk.svg)](https://pub.dev/packages/parse_server_sdk)|
+| Flutter | [parse_server_sdk_flutter](./packages/flutter) | [![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter)|
 
 # Contributing
 
 We want to make contributing to this project as easy and transparent as possible. Please refer to the [Contribution Guidelines](CONTRIBUTING.md).
+
+# Backers
+
+Support us with a monthly donation and help us continue our activities. [Become a backer!](https://opencollective.com/parse-server#backer)
+
+<a href="https://opencollective.com/parse-server#backers" target="_blank"><img src="https://opencollective.com/parse-server/backers.svg?width=890" /></a>
 
 # Contributors
 
