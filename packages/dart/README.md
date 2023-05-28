@@ -22,6 +22,8 @@ This library gives you access to the powerful Parse Server backend from your Dar
 
 - [Compatibility](#compatibility)
 - [Getting Started](#getting-started)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
 
 ---
 
