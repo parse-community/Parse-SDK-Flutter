@@ -49,7 +49,5 @@ Find the full documentation in the [Parse Flutter SDK guide][guide].
 
 We want to make contributing to this project as easy and transparent as possible. Please refer to the [Contribution Guidelines](../../CONTRIBUTING.md).
 
----
-
 [guide]: https://docs.parseplatform.org/flutter/guide/
 [open-collective-link]: https://opencollective.com/parse-server

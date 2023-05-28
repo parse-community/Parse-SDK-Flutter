@@ -47,10 +47,7 @@ Find the full documentation in the [Parse Dart SDK guide][guide].
 
 ## Contributing
 
-
 We want to make contributing to this project as easy and transparent as possible. Please refer to the [Contribution Guidelines](../../CONTRIBUTING.md).
-
----
 
 [guide]: https://docs.parseplatform.org/dart/guide/
 [open-collective-link]: https://opencollective.com/parse-server
