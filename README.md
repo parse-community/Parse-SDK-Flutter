@@ -42,6 +42,4 @@ This project exists thanks to all the people who contribute... we'd love to see 
   <img src="https://contrib.rocks/image?repo=parse-community/Parse-SDK-Flutter" />
 </a>
 
----
-
 [open-collective-link]: https://opencollective.com/parse-server
