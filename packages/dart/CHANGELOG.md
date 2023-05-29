@@ -1,8 +1,8 @@
-## [5.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.1.1...dart-5.1.2) (2023-05-27)
+## [5.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.1.1...dart-5.1.2) (2023-05-29)
 
 ### Bug Fixes
 
-* ParseQuery does not return the correct result when a query contains special characters ([#866](https://github.com/parse-community/Parse-SDK-Flutter/pull/866))
+* Incorrect results when `ParseQuery` contains special characters ([#866](https://github.com/parse-community/Parse-SDK-Flutter/pull/866))
 
 ## [5.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.1.0...dart-5.1.1) (2023-05-20)
 
