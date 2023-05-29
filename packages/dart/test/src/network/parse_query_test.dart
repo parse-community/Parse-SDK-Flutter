@@ -465,5 +465,45 @@ void main() {
       // assert
       expect(result.query.contains("%22object2%22,%22include%22"), true);
     });
+
+    test('the result query should contains encoded special characters values',
+        () {
+      // arrange
+      final queryBuilder = QueryBuilder.name('Diet_Plans');
+
+      // act
+      queryBuilder.whereEqualTo('some-column', 'some+test=test');
+      queryBuilder.whereStartsWith('some-other-column', 'pre+fix');
+      queryBuilder.whereEndsWith('some-column2', 'end+with');
+      queryBuilder.whereNotEqualTo('some-column3', 'not+equal');
+      queryBuilder.whereContains('some-column3', 'WW+E');
+      queryBuilder.whereContainsWholeWord(
+        'some-column3',
+        'Programming++',
+        orderByScore: false,
+      );
+
+      // assert
+      final queryString = queryBuilder.buildQuery();
+      const encodedPlusChar = '%2B'; // +
+      const encodedEqualChar = '%3D'; // =
+
+      expect(queryString, contains(encodedPlusChar));
+      expect(queryString, contains(encodedEqualChar));
+
+      final expectedQueryString = StringBuffer();
+      expectedQueryString.writeAll([
+        'where={',
+        '"some-column": "some${encodedPlusChar}test${encodedEqualChar}test",',
+        '"some-other-column":{"\$regex": "^pre${encodedPlusChar}fix", "\$options": "i"},',
+        '"some-column2":{"\$regex": "end${encodedPlusChar}with\$", "\$options": "i"},',
+        '"some-column3":{ "\$ne":"not${encodedPlusChar}equal"},',
+        '"some-column3":{"\$regex": "WW${encodedPlusChar}E", "\$options": "i"},',
+        '"some-column3":{"\$text":{"\$search":{"\$term": "Programming$encodedPlusChar$encodedPlusChar", "\$caseSensitive": false , "\$diacriticSensitive": false }}}',
+        '}',
+      ]);
+
+      expect(queryString, equals(expectedQueryString.toString()));
+    });
   });
 }
