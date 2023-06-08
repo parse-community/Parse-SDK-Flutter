@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'package:http/browser_client.dart';
 
-getClient(SecurityContext securityContext) {
+getClient(dynamic securityContext) {
   return BrowserClient();
 }
