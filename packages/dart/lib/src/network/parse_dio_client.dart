@@ -30,7 +30,7 @@ class ParseDioClient extends ParseClient {
         data: dioResponse.data!,
         statusCode: dioResponse.statusCode!,
       );
-    } on dio.DioError catch (error) {
+    } on dio.DioException catch (error) {
       return ParseNetworkResponse(
         data: error.response?.data ?? _fallbackErrorData,
         statusCode: error.response?.statusCode ?? ParseError.otherCause,
@@ -57,7 +57,7 @@ class ParseDioClient extends ParseClient {
         bytes: dioResponse.data,
         statusCode: dioResponse.statusCode!,
       );
-    } on dio.DioError catch (error) {
+    } on dio.DioException catch (error) {
       if (error.response != null) {
         return ParseNetworkByteResponse(
           data: error.response?.data ?? _fallbackErrorData,
@@ -84,7 +84,7 @@ class ParseDioClient extends ParseClient {
         data: dioResponse.data!,
         statusCode: dioResponse.statusCode!,
       );
-    } on dio.DioError catch (error) {
+    } on dio.DioException catch (error) {
       return ParseNetworkResponse(
         data: error.response?.data ?? _fallbackErrorData,
         statusCode: error.response?.statusCode ?? ParseError.otherCause,
@@ -106,7 +106,7 @@ class ParseDioClient extends ParseClient {
         data: dioResponse.data!,
         statusCode: dioResponse.statusCode!,
       );
-    } on dio.DioError catch (error) {
+    } on dio.DioException catch (error) {
       return ParseNetworkResponse(
         data: error.response?.data ?? _fallbackErrorData,
         statusCode: error.response?.statusCode ?? ParseError.otherCause,
@@ -133,7 +133,7 @@ class ParseDioClient extends ParseClient {
         data: dioResponse.data!,
         statusCode: dioResponse.statusCode!,
       );
-    } on dio.DioError catch (error) {
+    } on dio.DioException catch (error) {
       if (error.response != null) {
         return ParseNetworkResponse(
           data: error.response?.data ?? _fallbackErrorData,
@@ -165,7 +165,7 @@ class ParseDioClient extends ParseClient {
         data: dioResponse.data!,
         statusCode: dioResponse.statusCode!,
       );
-    } on dio.DioError catch (error) {
+    } on dio.DioException catch (error) {
       return ParseNetworkResponse(
         data: error.response?.data ?? _fallbackErrorData,
         statusCode: error.response?.statusCode ?? ParseError.otherCause,
