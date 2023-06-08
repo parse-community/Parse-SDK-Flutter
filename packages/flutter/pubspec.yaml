@@ -16,26 +16,24 @@ dependencies:
   #   path: ../dart
 
   # Networking
-  dio: ^5.2.0+1
   connectivity_plus: ^4.0.1
 
   #Database
   shared_preferences: ^2.1.2
+  sembast: ^3.4.6+1
+  sembast_web: ^2.1.3
 
   # Utils
   path_provider: ^2.0.15
   package_info_plus: ^4.0.2
-  sembast: ^3.4.6+1
-  sembast_web: ^2.1.3
-  path: ^1.8.2
   awesome_notifications: ^0.7.4+1
+  path: ^1.8.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^2.0.1
-  mockito: ^5.4.1
   path_provider_platform_interface: ^2.0.6
   plugin_platform_interface: ^2.1.4
 
