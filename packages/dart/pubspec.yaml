@@ -27,7 +27,7 @@ dependencies:
   collection: ^1.17.1
 
 dev_dependencies:
-  lints: ^2.1.1
+  lints: ^2.0.1
 
   # Testing
   build_runner: ^2.3.3
