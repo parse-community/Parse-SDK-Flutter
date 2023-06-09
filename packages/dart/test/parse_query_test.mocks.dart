@@ -3,7 +3,6 @@
 // Do not manually edit this file.
 
 import 'dart:async' as i3;
-
 import 'package:mockito/mockito.dart' as i1;
 import 'package:parse_server_sdk/parse_server_sdk.dart' as i2;
 
