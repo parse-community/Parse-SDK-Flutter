@@ -16,7 +16,7 @@ dependencies:
   #   path: ../dart
 
   # Networking
-  connectivity_plus: ^4.0.1
+  connectivity_plus: ^3.0.6
 
   #Database
   shared_preferences: ^2.1.2
