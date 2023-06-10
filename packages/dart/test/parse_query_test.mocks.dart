@@ -39,7 +39,6 @@ class MockParseClient extends i1.Mock implements i2.ParseClient {
               returnValue: Future<i2.ParseNetworkResponse>.value(
                   _FakeParseNetworkResponse()))
           as i3.Future<i2.ParseNetworkResponse>);
-
   @override
   i3.Future<i2.ParseNetworkResponse> put(String? path,
           {String? data, i2.ParseNetworkOptions? options}) =>
@@ -52,11 +51,10 @@ class MockParseClient extends i1.Mock implements i2.ParseClient {
   @override
   i3.Future<i2.ParseNetworkResponse> post(String? path,
           {String? data, i2.ParseNetworkOptions? options}) =>
-      (super.noSuchMethod(
+      super.noSuchMethod(
           Invocation.method(#post, [path], {#data: data, #options: options}),
           returnValue: Future<i2.ParseNetworkResponse>.value(
-              _FakeParseNetworkResponse())) as i3
-          .Future<i2.ParseNetworkResponse>);
+              _FakeParseNetworkResponse()));
 
   @override
   i3.Future<i2.ParseNetworkResponse> postBytes(String? path,
