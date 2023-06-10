@@ -33,9 +33,6 @@ jobs:
           - name: Dart 2.18
             os: ubuntu-latest
             sdk: 2.18.7
-          - name: Dart beta
-            os: ubuntu-latest
-            sdk: beta
       fail-fast: false
     name: Test ${{ matrix.name }}
     steps:
