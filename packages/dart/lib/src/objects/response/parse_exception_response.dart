@@ -2,7 +2,7 @@ part of flutter_parse_sdk;
 
 /// Handles exception instead of throwing an exception
 ParseResponse buildParseResponseWithException(Exception exception) {
-  if (exception is DioError) {
+  if (exception is DioException) {
     Map<String, dynamic> errorResponse = {};
     try {
       errorResponse = json.decode(exception.response?.data?.toString() ?? '{}');

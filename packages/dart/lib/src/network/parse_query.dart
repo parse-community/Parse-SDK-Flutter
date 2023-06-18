@@ -116,32 +116,49 @@ class QueryBuilder<T extends ParseObject> {
     limiters['include'] = concatenateArray(objectTypes);
   }
 
-  /// Returns an object where the [String] column starts with [value]
-  void whereStartsWith(String column, String query,
-      {bool caseSensitive = false}) {
+  /// Add a constraint for finding objects where the String value in [column]
+  /// starts with [prefix]
+  void whereStartsWith(
+    String column,
+    String prefix, {
+    bool caseSensitive = false,
+  }) {
+    prefix = Uri.encodeComponent(prefix);
+
     if (caseSensitive) {
       queries.add(MapEntry<String, dynamic>(
-          _singleQuery, '"$column":{"\$regex": "^$query"}'));
+          _singleQuery, '"$column":{"\$regex": "^$prefix"}'));
     } else {
       queries.add(MapEntry<String, dynamic>(
-          _singleQuery, '"$column":{"\$regex": "^$query", "\$options": "i"}'));
+          _singleQuery, '"$column":{"\$regex": "^$prefix", "\$options": "i"}'));
     }
   }
 
-  /// Returns an object where the [String] column ends with [value]
-  void whereEndsWith(String column, String query,
-      {bool caseSensitive = false}) {
+  /// Add a constraint for finding objects where the String value in [column]
+  /// ends with [prefix]
+  void whereEndsWith(
+    String column,
+    String prefix, {
+    bool caseSensitive = false,
+  }) {
+    prefix = Uri.encodeComponent(prefix);
+
     if (caseSensitive) {
       queries.add(MapEntry<String, dynamic>(
-          _singleQuery, '"$column":{"\$regex": "$query\$"}'));
+          _singleQuery, '"$column":{"\$regex": "$prefix\$"}'));
     } else {
-      queries.add(MapEntry<String, dynamic>(
-          _singleQuery, '"$column":{"\$regex": "$query\$", "\$options": "i"}'));
+      queries.add(MapEntry<String, dynamic>(_singleQuery,
+          '"$column":{"\$regex": "$prefix\$", "\$options": "i"}'));
     }
   }
 
-  /// Returns an object where the [String] column equals [value]
+  /// Add a constraint to the query that requires a particular [column]'s value
+  /// to be equal to the provided [value]
   void whereEqualTo(String column, dynamic value) {
+    if (value is String) {
+      value = Uri.encodeComponent(value);
+    }
+
     queries.add(_buildQueryWithColumnValueAndOperator(
         MapEntry<String, dynamic>(column, value), _noOperatorNeeded));
   }
@@ -174,8 +191,13 @@ class QueryBuilder<T extends ParseObject> {
         MapEntry<String, dynamic>(column, value), '\$gte'));
   }
 
-  /// Returns an object where the [String] column is not equal to value
+  /// Add a constraint to the query that requires a particular [column]'s value
+  /// to be not equal to the provided [value]
   void whereNotEqualTo(String column, dynamic value) {
+    if (value is String) {
+      value = Uri.encodeComponent(value);
+    }
+
     queries.add(_buildQueryWithColumnValueAndOperator(
         MapEntry<String, dynamic>(column, value), '\$ne'));
   }
@@ -229,26 +251,38 @@ class QueryBuilder<T extends ParseObject> {
         MapEntry<String, dynamic>(column, value), '\$regex'));
   }
 
-  /// Performs a search to see if [String] contains other string
-  void whereContains(String column, String value,
-      {bool caseSensitive = false}) {
+  /// Add a constraint for finding String values that contain the provided
+  /// [substring]
+  void whereContains(
+    String column,
+    String substring, {
+    bool caseSensitive = false,
+  }) {
+    substring = Uri.encodeComponent(substring);
+
     if (caseSensitive) {
       queries.add(MapEntry<String, dynamic>(
-          _singleQuery, '"$column":{"\$regex": "$value"}'));
+          _singleQuery, '"$column":{"\$regex": "$substring"}'));
     } else {
-      queries.add(MapEntry<String, dynamic>(
-          _singleQuery, '"$column":{"\$regex": "$value", "\$options": "i"}'));
+      queries.add(MapEntry<String, dynamic>(_singleQuery,
+          '"$column":{"\$regex": "$substring", "\$options": "i"}'));
     }
   }
 
-  /// Powerful search for containing whole words. This search is much quicker than regex and can search for whole words including whether they are case sensitive or not.
-  /// This search can also order by the score of the search
-  void whereContainsWholeWord(String column, String query,
-      {bool caseSensitive = false,
-      bool orderByScore = true,
-      bool diacriticSensitive = false}) {
+  /// Powerful search for containing whole words. This search is much quicker
+  /// than regex and can search for whole words including whether they are case
+  /// sensitive or not. This search can also order by the score of the search
+  void whereContainsWholeWord(
+    String column,
+    String searchTerm, {
+    bool caseSensitive = false,
+    bool orderByScore = true,
+    bool diacriticSensitive = false,
+  }) {
+    searchTerm = Uri.encodeComponent(searchTerm);
+
     queries.add(MapEntry<String, dynamic>(_singleQuery,
-        '"$column":{"\$text":{"\$search":{"\$term": "$query", "\$caseSensitive": $caseSensitive , "\$diacriticSensitive": $diacriticSensitive }}}'));
+        '"$column":{"\$text":{"\$search":{"\$term": "$searchTerm", "\$caseSensitive": $caseSensitive , "\$diacriticSensitive": $diacriticSensitive }}}'));
     if (orderByScore) {
       orderByAscending('\$score');
       keysToReturn(['\$score']);

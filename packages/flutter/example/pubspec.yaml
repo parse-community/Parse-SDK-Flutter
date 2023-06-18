@@ -2,7 +2,7 @@ name: flutter_plugin_example
 description: Demonstrates how to use the flutter_plugin plugin.
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0
 
 environment:
   sdk: ">=2.18.0 <4.0.0"
@@ -11,14 +11,14 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.2
   parse_server_sdk_flutter:
     path: ../
 
+  cupertino_icons: ^1.0.5
   path: ^1.8.2
   path_provider: ^2.0.15
-  sembast: ^3.4.4
-  shared_preferences: ^2.1.1
+  sembast: ^3.4.6+1
+  shared_preferences: ^2.1.2
 
 dependency_overrides:
   # Override to local mono-repo path so devs can test this repo
@@ -30,8 +30,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.0
-  mockito: ^5.4.0
+  flutter_lints: ^2.0.1
+  mockito: ^5.3.2
 
 
 flutter:

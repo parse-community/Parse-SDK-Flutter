@@ -6,7 +6,6 @@ on:
       - "development"
     paths-ignore:
       - "**/README.md"
-      - "docs/**"
   pull_request:
     branches:
       - "**"
