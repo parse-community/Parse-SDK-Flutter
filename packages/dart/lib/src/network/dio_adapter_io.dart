@@ -7,8 +7,9 @@ HttpClientAdapter createHttpClientAdapter(SecurityContext? securityContext) {
   final IOHttpClientAdapter defaultHttpClientAdapter = IOHttpClientAdapter();
 
   if (securityContext != null) {
-    defaultHttpClientAdapter.onHttpClientCreate =
-        (HttpClient client) => HttpClient(context: securityContext);
+    defaultHttpClientAdapter.createHttpClient = () {
+      return HttpClient(context: securityContext);
+    };
   }
   return defaultHttpClientAdapter;
 }
