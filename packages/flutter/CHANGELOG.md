@@ -2,7 +2,7 @@
 
 ### Bug Fixes
 
-* Changing `awesome_notifications` package to `flutter_local_notifications` in `ParseNotification` ([#761](https://github.com/parse-community/Parse-SDK-Flutter/pull/761))
+* Changing `awesome_notifications` package to `flutter_local_notifications` in `ParseNotification` ([#940](https://github.com/parse-community/Parse-SDK-Flutter/pull/940))
 
 ## [5.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.0.1...flutter-5.1.0) (2023-05-22)
 
