@@ -1,8 +1,8 @@
-## [5.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.1.0...flutter-5.1.1) (2023-06-21)
+## [5.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.1.0...flutter-5.1.1) (2023-06-28)
 
 ### Bug Fixes
 
-* Changing `awesome_notifications` package to `flutter_local_notifications` in `ParseNotification` ([#940](https://github.com/parse-community/Parse-SDK-Flutter/pull/940))
+* Push notifications in iOS not working; this changes the dependency in `ParseNotification` from `awesome_notifications` to `flutter_local_notifications` ([#940](https://github.com/parse-community/Parse-SDK-Flutter/pull/940))
 
 ## [5.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.0.1...flutter-5.1.0) (2023-05-22)
 
