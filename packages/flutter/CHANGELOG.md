@@ -2,7 +2,7 @@
 
 ### Bug Fixes
 
-* `dbDirectory` not exist in `core_store_directory_web` in web ([#948](https://github.com/parse-community/Parse-SDK-Flutter/pull/948))
+* `dbDirectory` does not exist in `core_store_directory_web` in web ([#948](https://github.com/parse-community/Parse-SDK-Flutter/pull/948))
 
 ## [5.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.1.0...flutter-5.1.1) (2023-06-28)
 
