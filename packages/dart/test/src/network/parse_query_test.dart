@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
@@ -463,7 +464,7 @@ void main() {
       )).captured.single);
 
       // assert
-      expect(result.query.contains("%22object2%22,%22include%22"), true);
+      expect(result.query.contains("%22object2%22,%22%22include%22"), true);
     });
 
     test('the result query should contains encoded special characters values',
