@@ -17,7 +17,6 @@ dependencies:
 
   # Networking
   connectivity_plus: ^4.0.1
-  js: ^0.6.5
 
   #Database
   shared_preferences: ^2.1.2
@@ -37,6 +36,9 @@ dev_dependencies:
   flutter_lints: ^2.0.1
   path_provider_platform_interface: ^2.0.6
   plugin_platform_interface: ^2.1.4
+
+dependency_overrides:
+  js: ^0.6.5
 
 screenshots:
   - description: Parse Platform logo.
