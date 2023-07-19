@@ -17,7 +17,18 @@ class ParsePush {
   Future<void> initialize(
     firebaseMessaging, {
     String? vapidKey,
+    AndroidInitializationSettings? androidNotificationSettings,
+    DarwinInitializationSettings? iOSNotificationSettings,
+    DarwinInitializationSettings? macOSNotificationSettings,
+    LinuxInitializationSettings? linuxNotificationSettings,
   }) async {
+    // Parse Notification settings
+    ParseNotification.instance.setNotificationSettings(
+        androidNotificationSettings: androidNotificationSettings,
+        iOSNotificationSettings: iOSNotificationSettings,
+        linuxNotificationSettings: linuxNotificationSettings,
+        macOSNotificationSettings: macOSNotificationSettings);
+
     // Get Google Cloud Messaging (GCM) token
     firebaseMessaging
         .getToken(vapidKey: vapidKey)

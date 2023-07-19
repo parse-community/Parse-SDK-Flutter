@@ -1,3 +1,15 @@
+## [5.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.1.1...flutter-5.1.2) (2023-07-11)
+
+### Bug Fixes
+
+* Building web app fails because `dbDirectory` does not exist in `core_store_directory_web` ([#948](https://github.com/parse-community/Parse-SDK-Flutter/pull/948))
+
+## [5.1.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.1.0...flutter-5.1.1) (2023-06-28)
+
+### Bug Fixes
+
+* Push notifications in iOS not working; this changes the dependency in `ParseNotification` from `awesome_notifications` to `flutter_local_notifications` ([#940](https://github.com/parse-community/Parse-SDK-Flutter/pull/940))
+
 ## [5.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.0.1...flutter-5.1.0) (2023-05-22)
 
 ### Features

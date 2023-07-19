@@ -9,10 +9,16 @@ class CoreStoreSembast implements sdk.CoreStoreSembastImp {
   static Future<CoreStoreSembast> getInstance(
       {DatabaseFactory? factory, String? password}) async {
     _sembastImp ??= await sdk.CoreStoreSembastImp.getInstance(
-        await CoreStoreDirectory().dbDirectory(),
+        await _dbDirectory(),
         factory: factory,
         password: password);
     return CoreStoreSembast._();
+  }
+
+  /// Returns the database directory.
+  static Future<String> _dbDirectory() async {
+    String dbDirectory = await CoreStoreDirectory().getDatabaseDirectory();
+    return path.join('$dbDirectory/parse', 'parse.db');
   }
 
   @override
