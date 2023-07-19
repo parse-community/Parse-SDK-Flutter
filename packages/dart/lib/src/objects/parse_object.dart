@@ -272,7 +272,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
       // TODO(yulingtianxia): lazy User
       /* Batch requests have currently a limit of 50 packaged requests per single request
-      This splitting will split the overall array into segments of upto 50 requests
+      This splitting will split the overall array into segments of up to 50 requests
       and execute them concurrently with a wrapper task for all of them. */
       final List<List<ParseObject>> chunks = <List<ParseObject>>[];
       for (int i = 0; i < current.length; i += 50) {
@@ -723,7 +723,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
-  static Future<ParseResponse?> submitEventually(
+  static Future<void> submitEventually() async {
+    await submitSaveEventually();
+    await submitDeleteEventually();
+
+    Parse.objectsExistForEventually = await checkObjectsExistForEventually();
+  }
+
+  static Future<ParseResponse?> submitSaveEventually(
       {ParseClient? client, bool? autoSendSessionId}) async {
     // get client
     ParseClient localClient = client ??
@@ -735,7 +742,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     // preparation ParseCoreData
     final CoreStore coreStore = ParseCoreData().getStore();
 
-    // ---> save
+    // save
     // get json parse saved objects
     List<String>? listSaves =
         await coreStore.getStringList(keyParseStoreObjects);
@@ -761,7 +768,15 @@ class ParseObject extends ParseBase implements ParseCloneable {
       return response;
     }
 
-    // ---> delete
+    return null;
+  }
+
+  static Future<ParseResponse?> submitDeleteEventually(
+      {ParseClient? client, bool? autoSendSessionId}) async {
+    // preparation ParseCoreData
+    final CoreStore coreStore = ParseCoreData().getStore();
+
+    // delete
     // get json parse saved objects
     List<String>? listDeletes =
         await coreStore.getStringList(keyParseStoreDeletes);
@@ -773,8 +788,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
         dynamic object = json.decode(element);
 
         // crate parse object
-        ParseObject parseObject =
-            ParseObject(object[keyVarClassName]).fromJson(object);
+        ParseObject parseObject = ParseObject(object[keyVarClassName],
+                client: client, autoSendSessionId: autoSendSessionId)
+            .fromJson(object);
 
         // delete parse object
         ParseResponse deleteResponse = await parseObject.delete();
