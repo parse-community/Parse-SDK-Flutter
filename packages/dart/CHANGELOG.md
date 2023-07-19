@@ -1,3 +1,9 @@
+## [5.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.1.2...dart-5.1.3) (2023-07-18)
+
+### Bug Fixes
+
+* Malformed JSON in `whereMatchesQuery` ([#955](https://github.com/parse-community/Parse-SDK-Flutter/pull/955))
+
 ## [5.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.1.1...dart-5.1.2) (2023-05-29)
 
 ### Bug Fixes
