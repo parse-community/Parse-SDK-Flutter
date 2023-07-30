@@ -17,7 +17,7 @@ dependencies:
   cupertino_icons: ^1.0.5
   path: ^1.8.2
   path_provider: ^2.0.15
-  sembast: ^3.5.0+1
+  sembast: ^3.4.6+1
   shared_preferences: ^2.2.0
 
 dependency_overrides:
