@@ -21,13 +21,6 @@ class CoreStoreDirectory {
     return (await path_provider.getApplicationDocumentsDirectory()).path;
   }
 
-  /// Returns the database directory.
-  Future<String> dbDirectory() async {
-    String dbDirectory = '';
-    dbDirectory = await CoreStoreDirectory().getDatabaseDirectory();
-    return path.join('$dbDirectory/parse', 'parse.db');
-  }
-
   /// A migration algorithm for the internal SDK database file on iOS. This
   /// function moves the database file from the documents directory to the
   /// library directory to prevent issues with Parse SDK Flutter on iOS.
