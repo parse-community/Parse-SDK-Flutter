@@ -1,5 +1,5 @@
 name: flutter_plugin_example
-description: Demonstrates how to use the flutter_plugin plugin.
+description: Demonstrates how to use the parse_server_sdk_flutter plugin.
 publish_to: 'none'
 
 version: 1.0.0
@@ -15,14 +15,12 @@ dependencies:
     path: ../
 
   cupertino_icons: ^1.0.5
-  path: ^1.8.2
+  path: ^1.8.3
   path_provider: ^2.0.15
-  sembast: ^3.4.6+1
-  shared_preferences: ^2.1.2
+  sembast: ^3.5.0+1
+  shared_preferences: ^2.2.0
 
 dependency_overrides:
-  # Override to local mono-repo path so devs can test this repo
-  # against changes that they're making to other mono-repo packages.
   parse_server_sdk:
     path: ../../dart
 
@@ -30,9 +28,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.1
-  mockito: ^5.3.2
-
+  flutter_lints: ^2.0.2
+  mockito: ^5.4.2
 
 flutter:
   uses-material-design: true
@@ -53,4 +50,3 @@ flutter:
           weight: 700
         - asset: fonts/Roboto/Roboto-Black.ttf
           weight: 900
-

@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/model/user.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
