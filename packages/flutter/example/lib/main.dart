@@ -75,7 +75,6 @@ class _MyAppState extends State<MyApp> {
         clientKey: keyParseClientKey, debug: true);
 
     //parse serve with secure store and desktop support
-
     //    Parse().initialize(keyParseApplicationId, keyParseServerUrl,
     //        clientKey: keyParseClientKey,
     //        debug: true);
