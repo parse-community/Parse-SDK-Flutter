@@ -12,7 +12,10 @@ funding:
 
 topics:
   - parse
+  - parse-platform
   - SDK
+  - node-js
+  - back-end
 
 environment:
   sdk: ">=2.18.0 <4.0.0"
