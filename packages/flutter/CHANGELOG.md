@@ -4,6 +4,10 @@
 
 * Add new new push notification interface `ParseNotification` for managing push notifications. ([#949](https://github.com/parse-community/Parse-SDK-Flutter/pull/949))
 
+### Features
+
+* Add new new push notification interface ParseNotification for managing push notifications ([#949](https://github.com/parse-community/Parse-SDK-Flutter/pull/949))
+
 ## [5.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.1.1...flutter-5.1.2) (2023-07-11)
 
 ### Bug Fixes
