@@ -1,3 +1,13 @@
+## [6.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.1.2...flutter-6.0.0) (2023-08-06)
+
+### BREAKING CHANGES
+
+* The push notification library flutter_local_notifications is replaced with the new push notification interface `ParseNotification` ([#949](https://github.com/parse-community/Parse-SDK-Flutter/pull/949))
+
+### Features
+
+* Add new new push notification interface `ParseNotification` for managing push notifications ([#949](https://github.com/parse-community/Parse-SDK-Flutter/pull/949))
+
 ## [5.1.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.1.1...flutter-5.1.2) (2023-07-11)
 
 ### Bug Fixes

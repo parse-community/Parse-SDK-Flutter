@@ -3,7 +3,6 @@ library flutter_parse_sdk_flutter;
 import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 import 'dart:ui';
 import 'package:path/path.dart' as path;
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -15,7 +14,6 @@ import 'package:parse_server_sdk_flutter/src/storage/core_store_directory_io.dar
     if (dart.library.html) 'package:parse_server_sdk_flutter/src/storage/core_store_directory_web.dart';
 import 'package:sembast/sembast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 export 'package:parse_server_sdk/parse_server_sdk.dart'
     hide Parse, CoreStoreSembastImp;
