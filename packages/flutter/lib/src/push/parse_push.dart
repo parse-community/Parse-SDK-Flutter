@@ -7,6 +7,8 @@ class ParsePush {
   static String keyType = "gcm";
   static String keyPushType = 'pushType';
 
+  late ParseNotification _parseNotification;
+
   factory ParsePush() {
     return instance;
   }
@@ -17,17 +19,9 @@ class ParsePush {
   Future<void> initialize(
     firebaseMessaging, {
     String? vapidKey,
-    AndroidInitializationSettings? androidNotificationSettings,
-    DarwinInitializationSettings? iOSNotificationSettings,
-    DarwinInitializationSettings? macOSNotificationSettings,
-    LinuxInitializationSettings? linuxNotificationSettings,
+    required ParseNotification parseNotification,
   }) async {
-    // Parse Notification settings
-    ParseNotification.instance.setNotificationSettings(
-        androidNotificationSettings: androidNotificationSettings,
-        iOSNotificationSettings: iOSNotificationSettings,
-        linuxNotificationSettings: linuxNotificationSettings,
-        macOSNotificationSettings: macOSNotificationSettings);
+    _parseNotification = parseNotification;
 
     // Get Google Cloud Messaging (GCM) token
     firebaseMessaging
@@ -69,7 +63,7 @@ class ParsePush {
 
     if (data != null) {
       // Show push notification
-      ParseNotification.instance.showNotification(data["alert"]);
+      _parseNotification.showNotification(data["alert"]);
     }
   }
 
