@@ -18,7 +18,7 @@ topics:
   - backend
 
 environment:
-  sdk: ^2.12.0
+  sdk: ^2.18.0
 
 dependencies:
   # Networking
