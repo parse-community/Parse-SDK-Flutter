@@ -1,7 +1,8 @@
 name: example
-description: example
-version: 1.0.0
+description: Demonstrates how to use the parse_server_sdk packages.
 publish_to: 'none'
+
+version: 1.0.0
 
 environment:
   sdk: ">=2.18.0 <4.0.0"
