@@ -38,7 +38,6 @@ The Parse Dart SDK is continuously tested with the most recent release of the Da
 | Dart 2.19 | 2.19.6         | Mar 2024       | ✅ Yes      |
 | Dart 2.18 | 2.18.5         | Nov 2023       | ❌ No       |
 
-> Parse Dart SDK requires **Dart >=2.19.6**
 
 ## Getting Started
 
