@@ -15,9 +15,7 @@
 
 ---
 
-This library gives you access to the powerful Parse Server backend from your Flutter app. For more
-information on Parse Platform and its features,
-visit [parseplatform.org](https://parseplatform.org).
+This library gives you access to the powerful Parse Server backend from your Flutter app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org).
 
 ---
 
@@ -30,13 +28,7 @@ visit [parseplatform.org](https://parseplatform.org).
 
 ## Compatibility
 
-The Parse Flutter SDK is continuously tested with the most recent release of the Flutter framework
-to ensure compatibility. To give developers time to upgrade their app to the newest Flutter
-framework, previous Flutter framework releases are supported for at least 1 year after
-their [release date](https://docs.flutter.dev/release/archive?tab=linux). The Parse Flutter SDK
-depends on the Parse Dart SDK which may require a higher Dart framework version than the Flutter
-framework version, in which case the Flutter framework version cannot be supported even though its
-release date may have been less than a year ago.
+The Parse Flutter SDK is continuously tested with the most recent release of the Flutter framework to ensure compatibility. To give developers time to upgrade their app to the newest Flutter framework, previous Flutter framework releases are supported for at least 1 year after their [release date](https://docs.flutter.dev/release/archive?tab=linux). The Parse Flutter SDK depends on the Parse Dart SDK which may require a higher Dart framework version than the Flutter framework version, in which case the Flutter framework version cannot be supported even though its release date may have been less than a year ago.
 
 | Version      | Latest Version | End of Support | Compatible |
 |--------------|----------------|----------------|------------|
@@ -50,9 +42,7 @@ release date may have been less than a year ago.
 
 ## Getting Started
 
-To install, add the Parse Flutter SDK as
-a [dependency](https://pub.dev/packages/parse_server_sdk_flutter/install) in your `pubspec.yaml`
-file.
+To install, add the Parse Flutter SDK as a [dependency](https://pub.dev/packages/parse_server_sdk_flutter/install) in your `pubspec.yaml` file.
 
 ## Documentation
 
@@ -60,8 +50,7 @@ Find the full documentation in the [Parse Flutter SDK guide][guide].
 
 ## Contributing
 
-We want to make contributing to this project as easy and transparent as possible. Please refer to
-the [Contribution Guidelines](https://github.com/parse-community/Parse-SDK-Flutter/blob/master/CONTRIBUTING.md).
+We want to make contributing to this project as easy and transparent as possible. Please refer to the [Contribution Guidelines](https://github.com/parse-community/Parse-SDK-Flutter/blob/master/CONTRIBUTING.md).
 
 [guide]: https://docs.parseplatform.org/flutter/guide/
 

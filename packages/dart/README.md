@@ -15,9 +15,7 @@
 
 ---
 
-This library gives you access to the powerful Parse Server backend from your Dart app. For more
-information on Parse Platform and its features,
-visit [parseplatform.org](https://parseplatform.org).
+This library gives you access to the powerful Parse Server backend from your Dart app. For more information on Parse Platform and its features, visit [parseplatform.org](https://parseplatform.org).
 
 ---
 
@@ -30,10 +28,7 @@ visit [parseplatform.org](https://parseplatform.org).
 
 ## Compatibility
 
-The Parse Dart SDK is continuously tested with the most recent release of the Dart framework to
-ensure compatibility. To give developers time to upgrade their app to the newest Dart framework,
-previous Dart framework releases are supported for at least 1 year after
-their [release date](https://dart.dev/get-dart/archive).
+The Parse Dart SDK is continuously tested with the most recent release of the Dart framework to ensure compatibility. To give developers time to upgrade their app to the newest Dart framework, previous Dart framework releases are supported for at least 1 year after their [release date](https://dart.dev/get-dart/archive).
 
 | Version   | Latest Version | End of Support | Compatible |
 |-----------|----------------|----------------|------------|
@@ -46,8 +41,7 @@ their [release date](https://dart.dev/get-dart/archive).
 
 ## Getting Started
 
-To install, add the Parse Dart SDK as
-a [dependency](https://pub.dev/packages/parse_server_sdk/install) in your `pubspec.yaml` file.
+To install, add the Parse Dart SDK as a [dependency](https://pub.dev/packages/parse_server_sdk/install) in your `pubspec.yaml` file.
 
 ## Documentation
 
@@ -55,8 +49,7 @@ Find the full documentation in the [Parse Dart SDK guide][guide].
 
 ## Contributing
 
-We want to make contributing to this project as easy and transparent as possible. Please refer to
-the [Contribution Guidelines](https://github.com/parse-community/Parse-SDK-Flutter/blob/master/CONTRIBUTING.md).
+We want to make contributing to this project as easy and transparent as possible. Please refer to the [Contribution Guidelines](https://github.com/parse-community/Parse-SDK-Flutter/blob/master/CONTRIBUTING.md).
 
 [guide]: https://docs.parseplatform.org/dart/guide/
 
