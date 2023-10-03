@@ -162,7 +162,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       return response;
     } else {
       // if have network connection error
-      if ((response.error?.message ?? "") == "NetworkError") {
+      if ((response.error?.message ?? "").contains("NetworkError")) {
         // save this object in CoreStore
         await _addThisObjectToParseCoreDataList(keyParseStoreObjects);
       } else {
@@ -653,7 +653,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       return response;
     } else {
       // if have network connection error
-      if ((response.error?.message ?? "") == "NetworkError") {
+      if ((response.error?.message ?? "").contains("NetworkError")) {
         // save this object in CoreStore
         await _addThisObjectToParseCoreDataList(keyParseStoreDeletes);
       } else {
@@ -723,9 +723,12 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
-  static Future<void> submitEventually() async {
-    await submitSaveEventually();
-    await submitDeleteEventually();
+  static Future<void> submitEventually(
+      {ParseClient? client, bool? autoSendSessionId}) async {
+    await submitSaveEventually(
+        client: client, autoSendSessionId: autoSendSessionId);
+    await submitDeleteEventually(
+        client: client, autoSendSessionId: autoSendSessionId);
 
     Parse.objectsExistForEventually = await checkObjectsExistForEventually();
   }
@@ -783,6 +786,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
     if (listDeletes != null) {
       int firstLength = listDeletes.length;
+      List<String> elementsToRemove = [];
       for (var element in listDeletes) {
         // decode json
         dynamic object = json.decode(element);
@@ -797,8 +801,13 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
         if (deleteResponse.success) {
           // remove from list Deletes
-          listDeletes.remove(element);
+          elementsToRemove.add(element);
         }
+      }
+
+      // Remove the elements after the loop
+      for (var elementToRemove in elementsToRemove) {
+        listDeletes.remove(elementToRemove);
       }
 
       // set new list deletes in coreStore
