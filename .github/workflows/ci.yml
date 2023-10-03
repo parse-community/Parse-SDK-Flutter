@@ -14,31 +14,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        include:
-          # Dart 3.1
-          - name: Dart 3.1, Ubuntu
-            os: ubuntu-latest
-            sdk: 3.1.2
-          - name: Dart 3.0, macOS
-            os: macos-latest
-            sdk: 3.1.2
-          - name: Dart 3.0, Windows
-            os: windows-latest
-            sdk: 3.1.2
-          # Dart 3.0
-          - name: Dart 3.0
-            os: ubuntu-latest
-            sdk: 3.0.7
-          # Dart 2.19
-          - name: Dart 2.19
-            os: ubuntu-latest
-            sdk: 2.19.6
-          # Dart beta
-          - name: Dart beta
-            os: ubuntu-latest
-            sdk: beta
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        sdk:
+          - 3.1.2
+          - 3.0.7
+          - 2.19.6
+          - beta
       fail-fast: false
-    name: Test ${{ matrix.name }}
+    name: Test ${{ matrix.sdk }}, ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
