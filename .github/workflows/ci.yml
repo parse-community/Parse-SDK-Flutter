@@ -25,6 +25,8 @@ jobs:
           - name: Dart 3.0, Windows
             os: windows-latest
             sdk: 3.1.2
+          # Only the latest Dart framework version (above) is tested with all architectures. Previous
+          # Dart framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
           - name: Dart 3.0
             os: ubuntu-latest
             sdk: 3.0.7
@@ -84,6 +86,8 @@ jobs:
           - name: Flutter 3.13, Windows
             os: windows-latest
             sdk: 3.13.6
+          # Only the latest Flutter framework version (above) is tested with all architectures. Previous
+          # Flutter framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
           - name: Flutter 3.10
             os: ubuntu-latest
             sdk: 3.10.6
