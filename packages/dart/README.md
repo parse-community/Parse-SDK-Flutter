@@ -36,7 +36,6 @@ The Parse Dart SDK is continuously tested with the most recent release of the Da
 | Dart 3.0  | 3.0.7          | May 2024       | ✅ Yes      |
 | Dart 2.19 | 2.19.6         | Mar 2024       | ✅ Yes      |
 
-
 ## Getting Started
 
 To install, add the Parse Dart SDK as a [dependency](https://pub.dev/packages/parse_server_sdk/install) in your `pubspec.yaml` file.
