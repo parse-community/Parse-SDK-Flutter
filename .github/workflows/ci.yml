@@ -59,31 +59,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        include:
-          # Flutter 3.13
-          - name: Flutter 3.13, Ubuntu
-            os: ubuntu-latest
-            sdk: 3.13.6
-          - name: Flutter 3.13, macOS
-            os: macos-latest
-            sdk: 3.13.6
-          - name: Flutter 3.13, Windows
-            os: windows-latest
-            sdk: 3.13.6
-          # Flutter 3.10
-          - name: Flutter 3.10
-            os: ubuntu-latest
-            sdk: 3.10.6
-          # Flutter 3.7
-          - name: Flutter 3.7
-            os: ubuntu-latest
-            sdk: 3.7.12
-          # Flutter beta
-          - name: Flutter beta
-            os: ubuntu-latest
-            sdk: beta
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        sdk:
+          - 3.13.6
+          - 3.10.6
+          - 3.7.12
+          - beta
       fail-fast: false
-    name: Test ${{ matrix.name }}
+    name: Test Flutter ${{ matrix.sdk }}, ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
