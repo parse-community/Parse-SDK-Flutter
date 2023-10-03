@@ -21,7 +21,7 @@ jobs:
           - 2.19.6
           - beta
       fail-fast: false
-    name: Test ${{ matrix.sdk }}, ${{ matrix.os }}
+    name: Test Dart ${{ matrix.sdk }}, ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
