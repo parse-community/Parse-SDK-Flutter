@@ -83,5 +83,6 @@ const String keyVarInstallationId = 'installationId';
 // Error
 const String keyError = 'error';
 const String keyCode = 'code';
+const String keyNetworkError = 'NetworkError';
 
 const bool parseIsWeb = identical(0, 0.0);

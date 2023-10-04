@@ -162,7 +162,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
       return response;
     } else {
       // if have network connection error
-      if (response.error == null || response.success == false) {
+      if ((response.error?.message ?? "").contains(keyNetworkError)) {
+        // save this object in CoreStore
         await _addThisObjectToParseCoreDataList(keyParseStoreObjects);
       } else {
         return response;
@@ -652,7 +653,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
       return response;
     } else {
       // if have network connection error
-      if (response.error == null || response.success == false) {
+      if ((response.error?.message ?? "").contains(keyNetworkError)) {
+        // save this object in CoreStore
         await _addThisObjectToParseCoreDataList(keyParseStoreDeletes);
       } else {
         return response;
