@@ -28,14 +28,14 @@ This library gives you access to the powerful Parse Server backend from your Flu
 
 ## Compatibility
 
-The Parse Flutter SDK is continuously tested with the most recent release of the Flutter framework to ensure compatibility. To give developers time to upgrade their app to a newer Flutter framework, previous Flutter framework releases are supported for at least 1 year after the [release date](https://docs.flutter.dev/release/archive?tab=linux) of the next higher significant version. The Parse Flutter SDK depends on the Parse Dart SDK which may require a higher Dart framework version than the Flutter framework version, in which case the specific Flutter framework version cannot be supported.
+The Parse Flutter SDK is continuously tested with the most recent release of the Flutter framework to ensure compatibility. To give developers time to upgrade their app to the newest Flutter framework, previous Flutter framework releases are supported for at least 1 year after their [release date](https://docs.flutter.dev/release/archive?tab=linux). The Parse Flutter SDK depends on the Parse Dart SDK which may require a higher Dart framework version than the Flutter framework version, in which case the Flutter framework version cannot be supported even though its release date may have been less than a year ago.
 
-| Version      | Latest Version | End of Support | Compatible |
-|--------------|----------------|----------------|------------|
-| Flutter 3.13 | 3.13.6         | Sep 2024       | ✅ Yes      |
-| Flutter 3.10 | 3.10.6         | Jul 2024       | ✅ Yes      |
-| Flutter 3.7  | 3.7.12         | Apr 2024       | ✅ Yes      |
-| Flutter 3.3  | 3.3.10         | Dec 2024       | ✅ Yes      |
+| Version      | End of Support | Compatible                                   |
+|--------------|----------------|----------------------------------------------|
+| Flutter 3.10 | May 2024       | ❌ No                                         |
+| Flutter 3.7  | Apr 2024       | ✅ Yes                                        |
+| Flutter 3.3  | Jan 2024       | ✅ Yes                                         |
+| Flutter 3.0  | Jul 2023       | ❌ No (Parse Flutter SDK requires Flutter >=3.3.0) |
 
 ## Getting Started
 
