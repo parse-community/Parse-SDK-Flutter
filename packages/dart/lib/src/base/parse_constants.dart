@@ -27,6 +27,7 @@ const String keyVarEmail = 'email';
 const String keyVarPassword = 'password';
 const String keyVarSessionToken = 'sessionToken';
 const String keyVarAuthData = 'authData';
+const String keyVarContext = '_context';
 const String keyVarAcl = 'ACL';
 const String keyVarName = 'name';
 const String keyVarURL = 'url';

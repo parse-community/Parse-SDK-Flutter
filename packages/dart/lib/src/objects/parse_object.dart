@@ -86,11 +86,16 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Creates a new object and saves it online
   ///
   /// Prefer using [save] over [create]
-  Future<ParseResponse> create({bool allowCustomObjectId = false}) async {
+  Future<ParseResponse> create(
+      {bool allowCustomObjectId = false, dynamic context}) async {
     try {
+      // add context list in private context
+      if (context != null) _context = context;
+
       final Uri url = getSanitisedUri(_client, _path);
       final String body = json.encode(toJson(
         forApiRQ: true,
+        context: context != null,
         allowCustomObjectId: allowCustomObjectId,
       ));
 
@@ -120,15 +125,21 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// The object should hold an [objectId] in order to update it
   ///
   /// Prefer using [save] over [update]
-  Future<ParseResponse> update() async {
+  Future<ParseResponse> update({dynamic context}) async {
     assert(
       objectId != null && (objectId?.isNotEmpty ?? false),
       "Can't update a parse object while the objectId property is null or empty",
     );
 
     try {
+      // add context list in private context
+      if (context != null) _context = context;
+
       final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-      final String body = json.encode(toJson(forApiRQ: true));
+      final String body = json.encode(toJson(
+        forApiRQ: true,
+        context: context != null,
+      ));
 
       _saveChanges();
 
@@ -185,14 +196,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Its safe to call this function aging if an error occurred while saving.
   ///
   /// Prefer using [save] over [update] and [create]
-  Future<ParseResponse> save() async {
+  Future<ParseResponse> save({dynamic context}) async {
     final ParseResponse childrenResponse = await _saveChildren(this);
     if (childrenResponse.success) {
       ParseResponse? response;
       if (objectId == null) {
-        response = await create();
+        response = await create(context: context);
       } else if (_isDirty(false)) {
-        response = await update();
+        response = await update(context: context);
       }
 
       if (response != null) {

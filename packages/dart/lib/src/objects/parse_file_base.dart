@@ -30,6 +30,7 @@ abstract class ParseFileBase extends ParseObject {
   @override
   Map<String, dynamic> toJson({
     bool full = false,
+    bool context = false,
     bool forApiRQ = false,
     bool allowCustomObjectId = false,
   }) =>
@@ -40,7 +41,7 @@ abstract class ParseFileBase extends ParseObject {
 
   /// Uploads a file to Parse Server
   @override
-  Future<ParseResponse> save() async {
+  Future<ParseResponse> save({dynamic context}) async {
     return upload();
   }
 
