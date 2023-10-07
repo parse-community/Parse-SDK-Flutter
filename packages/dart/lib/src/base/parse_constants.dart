@@ -27,7 +27,6 @@ const String keyVarEmail = 'email';
 const String keyVarPassword = 'password';
 const String keyVarSessionToken = 'sessionToken';
 const String keyVarAuthData = 'authData';
-const String keyVarContext = '_context';
 const String keyVarAcl = 'ACL';
 const String keyVarName = 'name';
 const String keyVarURL = 'url';
@@ -45,6 +44,7 @@ const String keyFileClassname = 'ParseFile';
 // Headers
 const String keyHeaderSessionToken = 'X-Parse-Session-Token';
 const String keyHeaderRevocableSession = 'X-Parse-Revocable-Session';
+const String keyHeaderCloudContext = 'X-Parse-Cloud-Context';
 const String keyHeaderUserAgent = 'user-agent';
 const String keyHeaderApplicationId = 'X-Parse-Application-Id';
 const String keyHeaderContentType = 'content-type';

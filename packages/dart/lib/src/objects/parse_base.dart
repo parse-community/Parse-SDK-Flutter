@@ -6,7 +6,6 @@ abstract class ParseBase {
   final bool _dirty = false; // reserved property
   final Map<String, dynamic> _unsavedChanges = <String, dynamic>{};
   final Map<String, dynamic> _savingChanges = <String, dynamic>{};
-  dynamic _context;
 
   /// Stores all the values of a class
   Map<String, dynamic> _objectData = <String, dynamic>{};
@@ -74,7 +73,6 @@ abstract class ParseBase {
   /// Converts object to [String] in JSON format
   Map<String, dynamic> toJson({
     bool full = false,
-    bool context = false,
     bool forApiRQ = false,
     bool allowCustomObjectId = false,
   }) {
@@ -106,10 +104,6 @@ abstract class ParseBase {
         map.remove(key);
       }
     });
-
-    if (context) {
-      map[keyVarContext] = parseEncode(_context, full: full);
-    }
 
     if (forApiRQ) {
       map.remove(keyVarCreatedAt);

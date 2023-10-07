@@ -89,20 +89,21 @@ class ParseObject extends ParseBase implements ParseCloneable {
   Future<ParseResponse> create(
       {bool allowCustomObjectId = false, dynamic context}) async {
     try {
-      // add context list in private context
-      if (context != null) _context = context;
-
       final Uri url = getSanitisedUri(_client, _path);
       final String body = json.encode(toJson(
         forApiRQ: true,
-        context: context != null,
         allowCustomObjectId: allowCustomObjectId,
       ));
 
       _saveChanges();
 
-      final ParseNetworkResponse result =
-          await _client.post(url.toString(), data: body);
+      final Map<String, String> headers = {
+        keyHeaderContentType: keyHeaderContentTypeJson,
+        keyHeaderCloudContext: json.encode(parseEncode(context))
+      };
+
+      final ParseNetworkResponse result = await _client.post(url.toString(),
+          data: body, options: ParseNetworkOptions(headers: headers));
 
       final response = handleResponse<ParseObject>(
           this, result, ParseApiRQ.create, _debug, parseClassName);
@@ -132,19 +133,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
     );
 
     try {
-      // add context list in private context
-      if (context != null) _context = context;
-
       final Uri url = getSanitisedUri(_client, '$_path/$objectId');
-      final String body = json.encode(toJson(
-        forApiRQ: true,
-        context: context != null,
-      ));
+      final String body = json.encode(toJson(forApiRQ: true));
 
       _saveChanges();
 
       final Map<String, String> headers = {
-        keyHeaderContentType: keyHeaderContentTypeJson
+        keyHeaderContentType: keyHeaderContentTypeJson,
+        keyHeaderCloudContext: json.encode(parseEncode(context))
       };
 
       final ParseNetworkResponse result = await _client.put(url.toString(),
