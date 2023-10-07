@@ -30,7 +30,6 @@ abstract class ParseFileBase extends ParseObject {
   @override
   Map<String, dynamic> toJson({
     bool full = false,
-    bool context = false,
     bool forApiRQ = false,
     bool allowCustomObjectId = false,
   }) =>
