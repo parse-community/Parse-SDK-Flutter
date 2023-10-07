@@ -99,8 +99,12 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
       final Map<String, String> headers = {
         keyHeaderContentType: keyHeaderContentTypeJson,
-        keyHeaderCloudContext: json.encode(parseEncode(context))
       };
+
+      if (context != null) {
+        headers
+            .addAll({keyHeaderCloudContext: json.encode(parseEncode(context))});
+      }
 
       final ParseNetworkResponse result = await _client.post(url.toString(),
           data: body, options: ParseNetworkOptions(headers: headers));
@@ -140,8 +144,12 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
       final Map<String, String> headers = {
         keyHeaderContentType: keyHeaderContentTypeJson,
-        keyHeaderCloudContext: json.encode(parseEncode(context))
       };
+
+      if (context != null) {
+        headers
+            .addAll({keyHeaderCloudContext: json.encode(parseEncode(context))});
+      }
 
       final ParseNetworkResponse result = await _client.put(url.toString(),
           data: body, options: ParseNetworkOptions(headers: headers));
