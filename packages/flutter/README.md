@@ -5,7 +5,7 @@
 [![Build Status](https://github.com/parse-community/Parse-SDK-Flutter/workflows/ci/badge.svg?branch=master)](https://github.com/parse-community/Parse-SDK-Flutter/actions?query=workflow%3Aci+branch%3Amaster)
 [![Coverage](https://img.shields.io/codecov/c/github/parse-community/Parse-SDK-Flutter/master)](https://app.codecov.io/gh/parse-community/Parse-SDK-Flutter/branch/master)
 
-[![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter)
+[![pub package](https://img.shields.io/pub/v/parse_server_sdk_flutter.svg)](https://pub.dev/packages/parse_server_sdk_flutter) 
 
 [![Forum](https://img.shields.io/discourse/https/community.parseplatform.org/topics.svg)](https://community.parseplatform.org/c/parse-server)
 [![Backers on Open Collective](https://opencollective.com/parse-server/backers/badge.svg)][open-collective-link]
