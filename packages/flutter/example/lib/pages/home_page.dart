@@ -33,37 +33,34 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: const Text('Parse Server demo'),
-            actions: <Widget>[
-              TextButton(
-                  child: const Text('Logout',
-                      style: TextStyle(fontSize: 17.0, color: Colors.white)),
-                  onPressed: () async {
-                    final ParseUser user = await ParseUser.currentUser();
-                    user.logout(deleteLocalUserData: true);
-                    Navigator.pop(context as dynamic, true);
-                  })
-            ],
-          ),
-          body: _showDietList(),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              final DietPlan dietPlan =
-                  randomDietPlans[Random().nextInt(randomDietPlans.length - 1)];
-              final ParseUser user = await ParseUser.currentUser();
-              dietPlan.set('user', user);
-              await widget._dietPlanProvider.add(dietPlan);
-              setState(() {});
-            },
-            tooltip: 'Add Diet Plans',
-            child: const Icon(Icons.add),
-          )),
-    );
+    return Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Text('Parse Server demo'),
+          actions: <Widget>[
+            TextButton(
+                child: const Text('Logout',
+                    style: TextStyle(fontSize: 17.0, color: Colors.white)),
+                onPressed: () async {
+                  final ParseUser user = await ParseUser.currentUser();
+                  user.logout(deleteLocalUserData: true);
+                  Navigator.pop(context as dynamic, true);
+                })
+          ],
+        ),
+        body: _showDietList(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            final DietPlan dietPlan =
+                randomDietPlans[Random().nextInt(randomDietPlans.length - 1)];
+            final ParseUser user = await ParseUser.currentUser();
+            dietPlan.set('user', user);
+            await widget._dietPlanProvider.add(dietPlan);
+            setState(() {});
+          },
+          tooltip: 'Add Diet Plans',
+          child: const Icon(Icons.add),
+        ));
   }
 
   Widget _showDietList() {
