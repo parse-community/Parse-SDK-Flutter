@@ -1,3 +1,9 @@
+## [5.2.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.1.3...dart-5.2.0) (2023-10-09)
+
+### Features
+
+* Add `context` in `ParseObject` ([#970](https://github.com/parse-community/Parse-SDK-Flutter/pull/970))
+
 ## [5.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.1.2...dart-5.1.3) (2023-07-18)
 
 ### Bug Fixes
