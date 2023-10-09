@@ -1,3 +1,13 @@
+## [6.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.1.3...flutter-6.0.0) (2023-07-18)
+
+### BREAKING CHANGES
+
+* This release removes support for Dart 2.18 ([#969](https://github.com/parse-community/Parse-SDK-Flutter/pull/969))
+
+### Features
+
+* Add support for Dart 3.1, remove support for Dart 2.18 ([#969](https://github.com/parse-community/Parse-SDK-Flutter/pull/969))
+ 
 ## [5.1.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-5.1.2...dart-5.1.3) (2023-07-18)
 
 ### Bug Fixes
