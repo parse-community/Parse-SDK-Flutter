@@ -112,11 +112,6 @@ void testUnmergeableOperationShouldThrow({
   for (final operation in operationsFuncRefWithArgs.entries) {
     parseObject.unset(testingOnKey, offlineOnly: true);
 
-    ParseObject object=ParseObject(className);
-    ...
-    object.save(context: {
-      "key","value"
-    });
     final functionRef = operation.key;
     final positionalArguments = operation.value;
 
