@@ -1,0 +1,75 @@
+name: ci
+on:
+  push:
+    branches:
+      - "master"
+    paths-ignore:
+      - "**/README.md"
+  pull_request:
+    branches:
+      - "**"
+jobs:
+  check-dart:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # Dart framework may contain breaking changes in minor version releases, not following semver.
+          - name: Dart 3.1, Ubuntu
+            os: ubuntu-latest
+            sdk: 3.1.2
+          - name: Dart 3.0, macOS
+            os: macos-latest
+            sdk: 3.1.2
+          - name: Dart 3.0, Windows
+            os: windows-latest
+            sdk: 3.1.2
+          # Only the latest Dart framework version (above) is tested with all architectures. Previous
+          # Dart framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          - name: Dart 3.0
+            os: ubuntu-latest
+            sdk: 3.0.7
+          - name: Dart 2.19
+            os: ubuntu-latest
+            sdk: 2.19.6
+          - name: Dart beta
+            os: ubuntu-latest
+            sdk: beta
+      fail-fast: false
+    name: Test ${{ matrix.name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1.5.0
+        with:
+          sdk: ${{ matrix.sdk }}
+      - name: Install dependencies
+        run: dart pub get --directory packages/dart
+      - name: Run build_runner
+        run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
+      - name: Analyze code
+        run: dart analyze packages/dart --fatal-infos
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed packages/dart
+      - name: Publish dry run
+        run: cd packages/dart && dart pub publish --dry-run
+      - name: Run tests
+        run: (cd packages/dart && dart test --coverage=coverage)
+      - name: Convert code coverage
+        # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
+        working-directory: packages/dart
+        run: |
+          dart pub global activate coverage
+          dart pub global run coverage:format_coverage -i coverage/test -o coverage/lcov.info --lcov --packages=.dart_tool/package_config.json --report-on=lib
+      - name: Upload code coverage
+        uses: codecov/codecov-action@v2
+        # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
+        with:
+          files: packages/dart/coverage/lcov.info
+          fail_ci_if_error: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
