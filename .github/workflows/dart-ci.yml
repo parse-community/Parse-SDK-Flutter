@@ -1,4 +1,4 @@
-name: ci
+name: Dart CI
 on:
   push:
     branches:
