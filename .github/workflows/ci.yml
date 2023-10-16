@@ -70,6 +70,81 @@ jobs:
         with:
           files: packages/dart/coverage/lcov.info
           fail_ci_if_error: true
+  check-flutter:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # Flutter framework may contain breaking changes in minor version releases, not following semver.
+          - name: Flutter 3.10, Ubuntu
+            os: ubuntu-latest
+            sdk: 3.10.x
+          - name: Flutter 3.10, macOS
+            os: macos-latest
+            sdk: 3.10.x
+          - name: Flutter 3.10, Windows
+            os: windows-latest
+            sdk: 3.10.x
+          # Only the latest Flutter framework version (above) is tested with all architectures. Previous
+          # Flutter framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          - name: Flutter 3.7
+            os: ubuntu-latest
+            sdk: 3.7.x
+          - name: Flutter 3.3
+            os: ubuntu-latest
+            sdk: 3.3.x
+          - name: Flutter beta
+            os: ubuntu-latest
+            sdk: beta
+      fail-fast: false
+    name: Test ${{ matrix.name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup flutter (beta)
+        if: ${{ matrix.sdk == 'beta' }}
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "beta"
+          cache: true
+      - name: Setup flutter
+        if: ${{  matrix.sdk != 'beta' }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.sdk }}
+          cache: true
+      - name: Install dependencies on Ubuntu and MacOS
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
+        run: |
+          (cd packages/dart && flutter pub get)
+          (cd packages/flutter && flutter pub get)
+      - name: Install dependencies on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          cmd /c "cd packages\dart && flutter pub get"
+          cmd /c "cd packages\flutter && flutter pub get"
+      - name: Analyze code
+        run: flutter analyze packages/flutter --fatal-infos
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed packages/flutter
+      - name: Publish dry run
+        run: cd packages/flutter && dart pub publish --dry-run
+      - name: Run tests
+        run: (cd packages/flutter && flutter test --coverage)
+      - name: Convert code coverage
+        # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
+        working-directory: packages/flutter
+        run: |
+          escapedPath="$(echo `pwd` | sed 's/\//\\\//g')"
+          sed "s/^SF:lib/SF:$escapedPath\/lib/g" coverage/lcov.info > coverage/lcov-full.info
+      - name: Upload code coverage
+        uses: codecov/codecov-action@v2
+        # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
+        with:
+          files: packages/flutter/coverage/lcov-full.info
+          fail_ci_if_error: true
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
