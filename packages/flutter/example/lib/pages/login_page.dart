@@ -98,20 +98,17 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: const Text('Parse Server demo'),
-          ),
-          body: Stack(
-            children: <Widget>[
-              _showBody(),
-              _showCircularProgress(),
-            ],
-          )),
-    );
+    return Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Text('Parse Server demo'),
+        ),
+        body: Stack(
+          children: <Widget>[
+            _showBody(),
+            _showCircularProgress(),
+          ],
+        ));
   }
 
   Widget _showCircularProgress() {

@@ -5,7 +5,8 @@ publish_to: 'none'
 version: 1.0.0
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
+  sdk: ">=2.19.6 <4.0.0"
+  flutter: ">=3.3.10"
 
 dependencies:
   flutter:
@@ -20,9 +21,10 @@ dependencies:
   sembast: ^3.4.6+1
   shared_preferences: ^2.2.0
 
-dependency_overrides:
-  parse_server_sdk:
-    path: ../../dart
+# Uncomment for local testing
+# dependency_overrides:
+#   parse_server_sdk:
+#     path: ../../dart
 
 dev_dependencies:
   flutter_test:

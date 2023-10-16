@@ -113,7 +113,8 @@ class ParseInstallation extends ParseObject {
   }
 
   @override
-  Future<ParseResponse> create({bool allowCustomObjectId = false}) async {
+  Future<ParseResponse> create(
+      {bool allowCustomObjectId = false, dynamic context}) async {
     final bool isCurrent = await ParseInstallation.isCurrent(this);
     if (isCurrent) {
       await _updateInstallation();
@@ -130,7 +131,7 @@ class ParseInstallation extends ParseObject {
 
   /// Saves the current installation
   @override
-  Future<ParseResponse> save() async {
+  Future<ParseResponse> save({dynamic context}) async {
     final bool isCurrent = await ParseInstallation.isCurrent(this);
     if (isCurrent) {
       await _updateInstallation();
