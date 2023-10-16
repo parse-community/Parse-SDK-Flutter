@@ -21,6 +21,11 @@ dependencies:
   sembast: ^3.4.6+1
   shared_preferences: ^2.2.0
 
+# Uncomment for local testing
+# dependency_overrides:
+#   parse_server_sdk:
+#     path: ../../dart
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
