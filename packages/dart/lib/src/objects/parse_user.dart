@@ -393,7 +393,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// If changes are made to the current user, call save to sync them with
   /// Parse Server
   @override
-  Future<ParseResponse> save() async {
+  Future<ParseResponse> save({dynamic context}) async {
     if (objectId == null) {
       return await signUp();
     } else {
@@ -406,7 +406,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   @override
-  Future<ParseResponse> update() async {
+  Future<ParseResponse> update({dynamic context}) async {
     if (objectId == null) {
       return await signUp();
     } else {
