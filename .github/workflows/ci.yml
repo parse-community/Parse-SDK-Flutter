@@ -15,17 +15,17 @@ jobs:
       matrix:
         include:
           # Dart framework may contain breaking changes in minor version releases, not following semver.
+          # The latest Dart framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
           - name: Dart 3.1, Ubuntu
             os: ubuntu-latest
             sdk: 3.1.2
-          - name: Dart 3.0, macOS
+          - name: Dart 3.1, macOS
             os: macos-latest
             sdk: 3.1.2
-          - name: Dart 3.0, Windows
+          - name: Dart 3.1, Windows
             os: windows-latest
             sdk: 3.1.2
-          # Only the latest Dart framework version (above) is tested with all architectures. Previous
-          # Dart framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          # Older Dart framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
           - name: Dart 3.0
             os: ubuntu-latest
             sdk: 3.0.7
@@ -76,6 +76,7 @@ jobs:
       matrix:
         include:
           # Flutter framework may contain breaking changes in minor version releases, not following semver.
+          # The latest Flutter framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
           - name: Flutter 3.13, Ubuntu
             os: ubuntu-latest
             sdk: 3.13.6
@@ -85,8 +86,7 @@ jobs:
           - name: Flutter 3.13, Windows
             os: windows-latest
             sdk: 3.13.6
-          # Only the latest Flutter framework version (above) is tested with all architectures. Previous
-          # Flutter framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          # Older Flutter framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
           - name: Flutter 3.10
             os: ubuntu-latest
             sdk: 3.10.6
