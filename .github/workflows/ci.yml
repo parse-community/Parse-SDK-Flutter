@@ -127,7 +127,7 @@ jobs:
       - name: Publish dry run
         run: cd packages/flutter && dart pub publish --dry-run
       - name: Run tests
-        run: cd packages/flutter && flutter test --coverage
+        run: (cd packages/flutter && flutter test --coverage)
       - name: Convert code coverage
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
