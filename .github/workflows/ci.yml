@@ -116,7 +116,7 @@ jobs:
           cache: true
       - name: Install dependencies on Ubuntu and MacOS
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
-        run: cd packages/flutter && flutter pub get
+        run: (cd packages/flutter && flutter pub get)
       - name: Install dependencies on Windows
         if: matrix.os == 'windows-latest'
         run: cmd /c "cd packages\flutter && flutter pub get"
