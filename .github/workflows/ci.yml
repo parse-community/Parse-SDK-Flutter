@@ -101,7 +101,7 @@ jobs:
     name: Test ${{ matrix.name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup flutter (beta)
         if: ${{ matrix.sdk == 'beta' }}
         uses: subosito/flutter-action@v2
@@ -116,14 +116,10 @@ jobs:
           cache: true
       - name: Install dependencies on Ubuntu and MacOS
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
-        run: |
-          (cd packages/dart && flutter pub get)
-          (cd packages/flutter && flutter pub get)
+        run: cd packages/flutter && flutter pub get
       - name: Install dependencies on Windows
         if: matrix.os == 'windows-latest'
-        run: |
-          cmd /c "cd packages\dart && flutter pub get"
-          cmd /c "cd packages\flutter && flutter pub get"
+        run: cmd /c "cd packages\flutter && flutter pub get"
       - name: Analyze code
         run: flutter analyze packages/flutter --fatal-infos
       - name: Lint
@@ -131,7 +127,7 @@ jobs:
       - name: Publish dry run
         run: cd packages/flutter && dart pub publish --dry-run
       - name: Run tests
-        run: (cd packages/flutter && flutter test --coverage)
+        run: cd packages/flutter && flutter test --coverage
       - name: Convert code coverage
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
