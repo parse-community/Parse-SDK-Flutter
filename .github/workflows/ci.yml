@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: dart pub get --directory packages/dart
       - name: Run build_runner
-        run: cd packages/dart && dart run build_runner build --delete-conflicting-outputs
+        run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
       - name: Analyze code
         run: dart analyze packages/dart --fatal-infos
       - name: Lint
@@ -55,7 +55,7 @@ jobs:
       - name: Publish dry run
         run: cd packages/dart && dart pub publish --dry-run
       - name: Run tests
-        run: cd packages/dart && dart test --coverage=coverage
+        run: (cd packages/dart && dart test --coverage=coverage)
       - name: Convert code coverage
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
