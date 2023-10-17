@@ -86,7 +86,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Creates a new object and saves it online
   ///
   /// Prefer using [save] over [create]
-  Future<ParseResponse> create({bool allowCustomObjectId = false}) async {
+  Future<ParseResponse> create(
+      {bool allowCustomObjectId = false, dynamic context}) async {
     try {
       final Uri url = getSanitisedUri(_client, _path);
       final String body = json.encode(toJson(
@@ -96,8 +97,17 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
       _saveChanges();
 
-      final ParseNetworkResponse result =
-          await _client.post(url.toString(), data: body);
+      final Map<String, String> headers = {
+        keyHeaderContentType: keyHeaderContentTypeJson,
+      };
+
+      if (context != null) {
+        headers
+            .addAll({keyHeaderCloudContext: json.encode(parseEncode(context))});
+      }
+
+      final ParseNetworkResponse result = await _client.post(url.toString(),
+          data: body, options: ParseNetworkOptions(headers: headers));
 
       final response = handleResponse<ParseObject>(
           this, result, ParseApiRQ.create, _debug, parseClassName);
@@ -120,7 +130,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// The object should hold an [objectId] in order to update it
   ///
   /// Prefer using [save] over [update]
-  Future<ParseResponse> update() async {
+  Future<ParseResponse> update({dynamic context}) async {
     assert(
       objectId != null && (objectId?.isNotEmpty ?? false),
       "Can't update a parse object while the objectId property is null or empty",
@@ -133,8 +143,13 @@ class ParseObject extends ParseBase implements ParseCloneable {
       _saveChanges();
 
       final Map<String, String> headers = {
-        keyHeaderContentType: keyHeaderContentTypeJson
+        keyHeaderContentType: keyHeaderContentTypeJson,
       };
+
+      if (context != null) {
+        headers
+            .addAll({keyHeaderCloudContext: json.encode(parseEncode(context))});
+      }
 
       final ParseNetworkResponse result = await _client.put(url.toString(),
           data: body, options: ParseNetworkOptions(headers: headers));
@@ -185,14 +200,14 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Its safe to call this function aging if an error occurred while saving.
   ///
   /// Prefer using [save] over [update] and [create]
-  Future<ParseResponse> save() async {
+  Future<ParseResponse> save({dynamic context}) async {
     final ParseResponse childrenResponse = await _saveChildren(this);
     if (childrenResponse.success) {
       ParseResponse? response;
       if (objectId == null) {
-        response = await create();
+        response = await create(context: context);
       } else if (_isDirty(false)) {
-        response = await update();
+        response = await update(context: context);
       }
 
       if (response != null) {
