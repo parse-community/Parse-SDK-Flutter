@@ -33,7 +33,6 @@ dependencies:
   # Networking
   connectivity_plus: ^5.0.1
 
-
   #Database
   shared_preferences: ^2.1.2
   sembast: ^3.4.6+1
