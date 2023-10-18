@@ -229,6 +229,8 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
       _logCUrl(options, data, path);
     }
 
+    checkForSubmitEventually();
+
     return super.request(
       path,
       data: data,
