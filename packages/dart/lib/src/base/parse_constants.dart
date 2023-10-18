@@ -1,7 +1,7 @@
 part of flutter_parse_sdk;
 
 // Library
-const String keySdkVersion = '6.1.0';
+const String keySdkVersion = '6.2.0';
 const String keyLibraryName = 'Flutter Parse SDK';
 
 // End Points
@@ -59,6 +59,8 @@ const String keyParamSessionToken = 'sessionToken';
 // Storage
 const String keyParseStoreBase = 'flutter_parse_sdk_';
 const String keyParseStoreUser = '${keyParseStoreBase}user';
+const String keyParseStoreObjects = '${keyParseStoreBase}objects';
+const String keyParseStoreDeletes = '${keyParseStoreBase}deletes';
 const String keyParseStoreInstallation = '${keyParseStoreBase}installation';
 
 // Installation
@@ -82,5 +84,6 @@ const String keyVarInstallationId = 'installationId';
 // Error
 const String keyError = 'error';
 const String keyCode = 'code';
+const String keyNetworkError = 'NetworkError';
 
 const bool parseIsWeb = identical(0, 0.0);

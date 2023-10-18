@@ -158,6 +158,8 @@ class _ParseHTTPClient extends http.BaseClient {
       _logCUrl(request);
     }
 
+    checkForSubmitEventually();
+
     return _client.send(request);
   }
 
