@@ -22,6 +22,7 @@ class Subscription<T extends ParseObject> {
     'error'
   ];
   Map<String, Function> eventCallbacks = <String, Function>{};
+
   void on(LiveQueryEvent op, Function callback) {
     eventCallbacks[_liveQueryEvent[op.index]] = callback;
   }
@@ -140,8 +141,10 @@ class LiveQueryClient {
     reconnectingController = LiveQueryReconnectingController(
         () => reconnect(userInitialized: false), getClientEventStream, _debug);
   }
+
   static LiveQueryClient get instance => _getInstance();
   static LiveQueryClient? _instance;
+
   static LiveQueryClient _getInstance({bool? debug, bool? autoSendSessionId}) {
     String? liveQueryURL = ParseCoreData().liveQueryURL;
     if (liveQueryURL == null) {
@@ -180,7 +183,7 @@ class LiveQueryClient {
 
   Future<void> reconnect({bool userInitialized = false}) async {
     await _connect(userInitialized: userInitialized);
-    _connectLiveQuery();
+    await _connectLiveQuery();
   }
 
   int readyState() {
@@ -315,7 +318,7 @@ class LiveQueryClient {
     }
   }
 
-  void _connectLiveQuery() {
+  Future<void> _connectLiveQuery() async {
     WebSocketChannel? channel = _channel;
     if (channel == null) {
       return;
@@ -333,10 +336,22 @@ class LiveQueryClient {
         connectMessage['sessionToken'] = sessionId;
       }
     }
+
     String? clientKey = ParseCoreData().clientKey;
+    if (clientKey != null) {
+      connectMessage['clientKey'] = clientKey;
+    }
+
     String? masterKey = ParseCoreData().masterKey;
-    if (clientKey != null) connectMessage['clientKey'] = clientKey;
-    if (masterKey != null) connectMessage['masterKey'] = masterKey;
+    if (masterKey != null) {
+      connectMessage['masterKey'] = masterKey;
+    }
+
+    String? parseInstallation =
+        (await ParseInstallation.currentInstallation()).installationId;
+    if (parseInstallation != null) {
+      connectMessage['installationId'] = parseInstallation;
+    }
 
     if (_debug) {
       print('$_printConstLiveQuery: ConnectMessage: $connectMessage');
