@@ -3,10 +3,11 @@ import 'package:test/test.dart';
 
 const serverUrl = 'https://example.com';
 
-Future<void> initializeParse() async {
+Future<void> initializeParse({String? liveQueryUrl}) async {
   await Parse().initialize(
     'appId',
     serverUrl,
+    liveQueryUrl: liveQueryUrl,
     debug: true,
     // to prevent automatic detection
     fileDirectory: 'someDirectory',
