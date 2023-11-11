@@ -177,6 +177,7 @@ class LiveQueryClient {
   bool _connecting = false;
   late StreamController<LiveQueryClientEvent> _clientEventStreamController;
   late Stream<LiveQueryClientEvent> _clientEventStream;
+  StreamController<String>? chanelStream;
   late LiveQueryReconnectingController reconnectingController;
 
   final Map<int, Subscription> _requestSubscription = <int, Subscription>{};
@@ -289,6 +290,8 @@ class LiveQueryClient {
       _channel = channel;
       channel.stream.listen((dynamic message) {
         _handleMessage(message);
+
+        chanelStream?.sink.add(message);
       }, onDone: () {
         _clientEventStreamController.sink
             .add(LiveQueryClientEvent.disconnected);
