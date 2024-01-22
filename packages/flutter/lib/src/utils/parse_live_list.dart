@@ -1,4 +1,4 @@
-part of '../../parse_server_sdk_flutter.dart';
+part of 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 /// The type of function that builds a child widget for a ParseLiveList element.
 typedef ChildBuilder<T extends sdk.ParseObject> = Widget Function(

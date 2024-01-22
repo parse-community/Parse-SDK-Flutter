@@ -1,4 +1,4 @@
-part of '../../parse_server_sdk_flutter.dart';
+part of 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 /// A widget that displays a live grid of Parse objects.
 ///
