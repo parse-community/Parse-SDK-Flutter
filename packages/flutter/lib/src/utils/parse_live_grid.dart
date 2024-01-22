@@ -1,4 +1,4 @@
-part of flutter_parse_sdk_flutter;
+part of '../../parse_server_sdk_flutter.dart';
 
 /// A widget that displays a live grid of Parse objects.
 ///
@@ -11,7 +11,7 @@ part of flutter_parse_sdk_flutter;
 /// refreshing the live list of objects.
 class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   const ParseLiveGridWidget({
-    Key? key,
+    super.key,
     required this.query,
     this.gridLoadingElement,
     this.queryEmptyElement,
@@ -34,7 +34,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.crossAxisSpacing = 5.0,
     this.mainAxisSpacing = 5.0,
     this.childAspectRatio = 0.80,
-  }) : super(key: key);
+  });
 
   final sdk.QueryBuilder<T> query;
   final Widget? gridLoadingElement;

@@ -1,4 +1,4 @@
-part of flutter_parse_sdk_flutter;
+part of '../../parse_server_sdk_flutter.dart';
 
 /// The type of function that builds a child widget for a ParseLiveList element.
 typedef ChildBuilder<T extends sdk.ParseObject> = Widget Function(
@@ -20,7 +20,7 @@ typedef DataGetter<T extends sdk.ParseObject> = T? Function();
 /// lazy loading of objects in the list.
 class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   const ParseLiveListWidget({
-    Key? key,
+    super.key,
     required this.query,
     this.listLoadingElement,
     this.queryEmptyElement,
@@ -38,7 +38,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.listeningIncludes,
     this.lazyLoading = true,
     this.preloadedColumns,
-  }) : super(key: key);
+  });
 
   final sdk.QueryBuilder<T> query;
   final Widget? listLoadingElement;
@@ -209,14 +209,13 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
 class ParseLiveListElementWidget<T extends sdk.ParseObject>
     extends StatefulWidget {
   const ParseLiveListElementWidget(
-      {Key? key,
+      {super.key,
       this.stream,
       this.loadedData,
       this.preLoadedData,
       required this.sizeFactor,
       required this.duration,
-      required this.childBuilder})
-      : super(key: key);
+      required this.childBuilder});
 
   final StreamGetter<T>? stream;
   final DataGetter<T>? loadedData;

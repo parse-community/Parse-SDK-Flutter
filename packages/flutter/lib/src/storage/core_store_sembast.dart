@@ -1,4 +1,4 @@
-part of flutter_parse_sdk_flutter;
+part of '../../parse_server_sdk_flutter.dart';
 
 /// provides database operations using Sembast
 class CoreStoreSembast implements sdk.CoreStoreSembastImp {

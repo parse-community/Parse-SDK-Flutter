@@ -1,4 +1,4 @@
-part of flutter_parse_sdk_flutter;
+part of '../../parse_server_sdk_flutter.dart';
 
 /// A class that provides a mechanism for handling push notifications in the app.
 class ParsePush {
