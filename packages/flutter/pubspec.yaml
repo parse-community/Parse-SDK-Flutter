@@ -49,7 +49,7 @@ dev_dependencies:
 
   flutter_lints: ^3.0.1
   path_provider_platform_interface: ^2.1.2
-  plugin_platform_interface: ^2.1.8
+  plugin_platform_interface: ^2.1.6
 
 screenshots:
   - description: Parse Platform logo.
