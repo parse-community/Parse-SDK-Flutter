@@ -82,7 +82,7 @@ class ParseFile extends ParseFileBase {
 
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader:
-          mime(file!.path) ?? 'application/octet-stream',
+          lookupMimeType(file!.path) ?? 'application/octet-stream',
       HttpHeaders.contentLengthHeader: '${file!.lengthSync()}',
     };
 

@@ -99,26 +99,33 @@ class ParseXFile extends ParseFileBase {
     Map<String, String> headers;
     if (parseIsWeb) {
       headers = <String, String>{
-        HttpHeaders.contentTypeHeader:
-            mime(url ?? name) ?? 'application/octet-stream',
+        HttpHeaders.contentTypeHeader: lookupMimeType(url ?? name,
+                headerBytes: await file?.readAsBytes()) ??
+            'application/octet-stream',
       };
     } else {
       headers = <String, String>{
         HttpHeaders.contentTypeHeader:
-            mime(file!.path) ?? 'application/octet-stream',
+            lookupMimeType(file!.path) ?? 'application/octet-stream',
         HttpHeaders.contentLengthHeader: '${file!.length()}',
       };
     }
 
     try {
       final String uri = ParseCoreData().serverUrl + _path;
+
+      Stream<List<int>>? data;
+      if (parseIsWeb) {
+        data = Stream<List<int>>.fromIterable(
+            <List<int>>[await file!.readAsBytes()]);
+      } else {
+        data = file!.openRead();
+      }
+
       final ParseNetworkResponse response = await _client.postBytes(
         uri,
         options: ParseNetworkOptions(headers: headers),
-        data: parseIsWeb
-            ? Stream<List<int>>.fromIterable(
-                <List<int>>[List<int>.from(file!.readAsBytes() as Iterable)])
-            : file!.openRead(),
+        data: data,
         onSendProgress: progressCallback,
         cancelToken: _cancelToken,
       );
