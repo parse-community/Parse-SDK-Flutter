@@ -99,14 +99,16 @@ class ParseXFile extends ParseFileBase {
     Map<String, String> headers;
     if (parseIsWeb) {
       headers = <String, String>{
-        HttpHeaders.contentTypeHeader: lookupMimeType(url ?? name,
+        HttpHeaders.contentTypeHeader: file?.mimeType ??
+            lookupMimeType(url ?? file?.name ?? name,
                 headerBytes: await file?.readAsBytes()) ??
             'application/octet-stream',
       };
     } else {
       headers = <String, String>{
-        HttpHeaders.contentTypeHeader:
-            lookupMimeType(file!.path) ?? 'application/octet-stream',
+        HttpHeaders.contentTypeHeader: file?.mimeType ??
+            lookupMimeType(file!.path) ??
+            'application/octet-stream',
         HttpHeaders.contentLengthHeader: '${file!.length()}',
       };
     }
