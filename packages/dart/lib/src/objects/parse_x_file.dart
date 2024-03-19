@@ -109,7 +109,7 @@ class ParseXFile extends ParseFileBase {
         HttpHeaders.contentTypeHeader: file?.mimeType ??
             lookupMimeType(file!.path) ??
             'application/octet-stream',
-        HttpHeaders.contentLengthHeader: '${file!.length()}',
+        HttpHeaders.contentLengthHeader: '${await file!.length()}',
       };
     }
 
