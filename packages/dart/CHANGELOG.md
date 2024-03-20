@@ -1,4 +1,4 @@
-## [6.4.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-6.3.0...dart-6.4.0) (2023-11-11)
+## [6.4.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-6.3.0...dart-6.4.0) (2024-03-20)
 
 ### Features
 
