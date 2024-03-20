@@ -61,7 +61,7 @@ class ParseWebFile extends ParseFileBase {
 
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader:
-          mime(url ?? name) ?? 'application/octet-stream',
+          lookupMimeType(url ?? name) ?? 'application/octet-stream',
     };
     try {
       final String uri = ParseCoreData().serverUrl + _path;

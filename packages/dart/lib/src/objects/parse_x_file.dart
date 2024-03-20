@@ -1,10 +1,10 @@
 part of flutter_parse_sdk;
 
-class ParseFile extends ParseFileBase {
-  /// Creates a new file
+class ParseXFile extends ParseFileBase {
+  /// Creates a new file base XFile
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
-  ParseFile(this.file,
+  ParseXFile(this.file,
       {String? name,
       String? url,
       bool? debug,
@@ -18,14 +18,19 @@ class ParseFile extends ParseFileBase {
           autoSendSessionId: autoSendSessionId,
         );
 
-  File? file;
+  XFile? file;
   CancelToken? _cancelToken;
   ProgressCallback? _progressCallback;
 
-  Future<ParseFile> loadStorage() async {
-    final File possibleFile = File('${ParseCoreData().fileDirectory}/$name');
+  Future<ParseXFile> loadStorage() async {
+    // Web not need load storage.
+    if (parseIsWeb) {
+      return this;
+    }
+
+    final XFile possibleFile = XFile('${ParseCoreData().fileDirectory}/$name');
     // ignore: avoid_slow_async_io
-    final bool exists = await possibleFile.exists();
+    final bool exists = await File(possibleFile.path).exists();
 
     if (exists) {
       file = possibleFile;
@@ -37,24 +42,36 @@ class ParseFile extends ParseFileBase {
   }
 
   @override
-  Future<ParseFile> download({ProgressCallback? progressCallback}) async {
+  Future<ParseXFile> download({ProgressCallback? progressCallback}) async {
     if (url == null) {
       return this;
     }
-
-    file = File('${ParseCoreData().fileDirectory}/$name');
-    await file!.create();
 
     progressCallback ??= _progressCallback;
 
     _cancelToken = CancelToken();
 
-    final ParseNetworkByteResponse response = await _client.getBytes(
-      url!,
-      onReceiveProgress: progressCallback,
-      cancelToken: _cancelToken,
-    );
-    await file!.writeAsBytes(response.bytes!);
+    if (parseIsWeb) {
+      final ParseNetworkByteResponse response = await _client.getBytes(
+        url!,
+        onReceiveProgress: progressCallback,
+        cancelToken: _cancelToken,
+      );
+
+      if (response.bytes != null) {
+        file = XFile.fromData(response.bytes as Uint8List);
+      }
+    } else {
+      file = XFile('${ParseCoreData().fileDirectory}/$name');
+      await File(file!.path).create();
+
+      final ParseNetworkByteResponse response = await _client.getBytes(
+        url!,
+        onReceiveProgress: progressCallback,
+        cancelToken: _cancelToken,
+      );
+      await File(file!.path).writeAsBytes(response.bytes!);
+    }
 
     return this;
   }
@@ -68,7 +85,7 @@ class ParseFile extends ParseFileBase {
         'url': url!,
         'name': name
       };
-      return handleResponse<ParseFile>(
+      return handleResponse<ParseXFile>(
           this,
           ParseNetworkResponse(data: json.encode(response), statusCode: 201),
           ParseApiRQ.upload,
@@ -79,19 +96,38 @@ class ParseFile extends ParseFileBase {
     progressCallback ??= _progressCallback;
 
     _cancelToken = CancelToken();
-
-    final Map<String, String> headers = <String, String>{
-      HttpHeaders.contentTypeHeader:
-          lookupMimeType(file!.path) ?? 'application/octet-stream',
-      HttpHeaders.contentLengthHeader: '${file!.lengthSync()}',
-    };
+    Map<String, String> headers;
+    if (parseIsWeb) {
+      headers = <String, String>{
+        HttpHeaders.contentTypeHeader: file?.mimeType ??
+            lookupMimeType(url ?? file?.name ?? name,
+                headerBytes: await file?.readAsBytes()) ??
+            'application/octet-stream',
+      };
+    } else {
+      headers = <String, String>{
+        HttpHeaders.contentTypeHeader: file?.mimeType ??
+            lookupMimeType(file!.path) ??
+            'application/octet-stream',
+        HttpHeaders.contentLengthHeader: '${await file!.length()}',
+      };
+    }
 
     try {
       final String uri = ParseCoreData().serverUrl + _path;
+
+      Stream<List<int>>? data;
+      if (parseIsWeb) {
+        data = Stream<List<int>>.fromIterable(
+            <List<int>>[await file!.readAsBytes()]);
+      } else {
+        data = file!.openRead();
+      }
+
       final ParseNetworkResponse response = await _client.postBytes(
         uri,
         options: ParseNetworkOptions(headers: headers),
-        data: file!.openRead(),
+        data: data,
         onSendProgress: progressCallback,
         cancelToken: _cancelToken,
       );
@@ -100,8 +136,7 @@ class ParseFile extends ParseFileBase {
         url = map['url'].toString();
         name = map['name'].toString();
       }
-
-      return handleResponse<ParseFile>(
+      return handleResponse<ParseXFile>(
           this, response, ParseApiRQ.upload, _debug, parseClassName);
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.upload, _debug, parseClassName);
