@@ -2,7 +2,7 @@
 
 ### Features
 
-* Add `ParseXFile` ([#990](https://github.com/parse-community/Parse-SDK-Flutter/pull/990))
+* Add `ParseXFile` for cross-platform `XFile` support ([#990](https://github.com/parse-community/Parse-SDK-Flutter/pull/990))
 
 ## [6.3.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-6.2.0...dart-6.3.0) (2023-11-11)
 
