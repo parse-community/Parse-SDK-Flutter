@@ -46,7 +46,7 @@ dev_dependencies:
 
   # Testing
   build_runner: ^2.4.9
-  mockito: ^5.4.2
+  mockito: ^5.4.1
   test: ^1.25.2
 
 screenshots:
