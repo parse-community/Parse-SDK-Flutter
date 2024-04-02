@@ -31,6 +31,7 @@ class ParseLiveList<T extends ParseObject> {
   }
 
   final QueryBuilder<T> _query;
+
   //The included Items, where LiveList should look for updates.
   final Map<String, dynamic> _listeningIncludes;
   final bool _lazyLoading;
@@ -539,6 +540,10 @@ class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
               super.object = parseResponse.result.first;
             }
             break;
+          case LiveQueryClientEvent.disconnected:
+            break;
+          case LiveQueryClientEvent.userDisconnected:
+            break;
         }
       });
     });
@@ -742,6 +747,7 @@ class PathKey {
 
   final String key;
   Subscription<ParseObject>? subscription;
+
   @override
   String toString() {
     return 'PathKey(key: $key, subscription: ${subscription?.requestId})';
