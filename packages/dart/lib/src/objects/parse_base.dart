@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 abstract class ParseBase {
   /// refers to the Table Name in your Parse Server

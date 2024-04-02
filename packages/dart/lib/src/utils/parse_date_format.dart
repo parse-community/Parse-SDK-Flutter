@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 final _ParseDateFormat _parseDateFormat = _ParseDateFormat._internal();
 

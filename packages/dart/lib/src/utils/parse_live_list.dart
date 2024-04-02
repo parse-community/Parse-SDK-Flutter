@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 // ignore_for_file: invalid_use_of_protected_member
 class ParseLiveList<T extends ParseObject> {
@@ -767,17 +767,17 @@ abstract class ParseLiveListEvent<T extends ParseObject> {
 
 class ParseLiveListAddEvent<T extends ParseObject>
     extends ParseLiveListEvent<T> {
-  ParseLiveListAddEvent(int index, T object) : super(index, object);
+  ParseLiveListAddEvent(super.index, super.object);
 }
 
 class ParseLiveListUpdateEvent<T extends ParseObject>
     extends ParseLiveListEvent<T> {
-  ParseLiveListUpdateEvent(int index, T object) : super(index, object);
+  ParseLiveListUpdateEvent(super.index, super.object);
 }
 
 class ParseLiveListDeleteEvent<T extends ParseObject>
     extends ParseLiveListEvent<T> {
-  ParseLiveListDeleteEvent(int index, T object) : super(index, object);
+  ParseLiveListDeleteEvent(super.index, super.object);
 }
 
 class ParseLiveListElementSnapshot<T extends ParseObject> {

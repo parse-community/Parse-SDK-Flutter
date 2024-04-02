@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 /// A unified interface used to expose the internal state of a private class.
 ///

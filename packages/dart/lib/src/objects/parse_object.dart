@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 /// [ParseObject] is a local representation of data that can be saved and
 /// retrieved from the Parse cloud.

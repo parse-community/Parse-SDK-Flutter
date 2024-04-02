@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 typedef ParseClientCreator = ParseClient Function(
     {required bool sendSessionId, SecurityContext? securityContext});
@@ -93,12 +93,9 @@ class ParseNetworkResponse {
 class ParseNetworkByteResponse extends ParseNetworkResponse {
   ParseNetworkByteResponse({
     this.bytes,
-    final String data = 'byte response',
-    final int statusCode = -1,
-  }) : super(
-          data: data,
-          statusCode: statusCode,
-        );
+    super.data = 'byte response',
+    super.statusCode,
+  });
 
   final List<int>? bytes;
 }

@@ -1,8 +1,8 @@
-part of flutter_parse_sdk;
+part of '../../../parse_server_sdk.dart';
 
 /// An operation that adds new objects to a [ParseRelation]
 class _ParseAddRelationOperation extends _ParseRelationOperation {
-  _ParseAddRelationOperation(Set<ParseObject> value) : super(value);
+  _ParseAddRelationOperation(super.value);
 
   @override
   String get operationName => 'AddRelation';

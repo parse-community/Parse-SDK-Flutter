@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 Map<String, dynamic> facebook(String token, String id, DateTime expires) {
   return <String, dynamic>{

@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 /// Class to create complex queries
 class QueryBuilder<T extends ParseObject> {
