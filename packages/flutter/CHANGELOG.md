@@ -1,4 +1,4 @@
-## [8.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-7.0.0...flutter-8.0.0) (2023-10-16)
+## [8.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-7.0.0...flutter-8.0.0) (2024-04-11)
 
 ### BREAKING CHANGES
 
