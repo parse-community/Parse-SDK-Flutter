@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - "master"
-      - "development"
     paths-ignore:
       - "**/README.md"
   pull_request:
@@ -16,23 +15,23 @@ jobs:
       matrix:
         include:
           # Dart framework may contain breaking changes in minor version releases, not following semver.
-          - name: Dart 3.0, Ubuntu
+          # The latest Dart framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
+          - name: Dart 3.1, Ubuntu
             os: ubuntu-latest
-            sdk: 3.0.0
-          - name: Dart 3.0, macOS
+            sdk: 3.1.2
+          - name: Dart 3.1, macOS
             os: macos-latest
-            sdk: 3.0.0
-          - name: Dart 3.0, Windows
+            sdk: 3.1.2
+          - name: Dart 3.1, Windows
             os: windows-latest
-            sdk: 3.0.0
-          # Only the latest Dart framework version (above) is tested with all architectures. Previous
-          # Dart framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
+            sdk: 3.1.2
+          # Older Dart framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          - name: Dart 3.0
+            os: ubuntu-latest
+            sdk: 3.0.7
           - name: Dart 2.19
             os: ubuntu-latest
             sdk: 2.19.6
-          - name: Dart 2.18
-            os: ubuntu-latest
-            sdk: 2.18.7
           - name: Dart beta
             os: ubuntu-latest
             sdk: beta
@@ -40,7 +39,7 @@ jobs:
     name: Test ${{ matrix.name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup dart
         uses: dart-lang/setup-dart@v1.5.0
         with:
@@ -77,23 +76,23 @@ jobs:
       matrix:
         include:
           # Flutter framework may contain breaking changes in minor version releases, not following semver.
-          - name: Flutter 3.10, Ubuntu
+          # The latest Flutter framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
+          - name: Flutter 3.13, Ubuntu
             os: ubuntu-latest
-            sdk: 3.10.x
-          - name: Flutter 3.10, macOS
+            sdk: 3.13.6
+          - name: Flutter 3.13, macOS
             os: macos-latest
-            sdk: 3.10.x
-          - name: Flutter 3.10, Windows
+            sdk: 3.13.6
+          - name: Flutter 3.13, Windows
             os: windows-latest
-            sdk: 3.10.x
-          # Only the latest Flutter framework version (above) is tested with all architectures. Previous
-          # Flutter framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
+            sdk: 3.13.6
+          # Older Flutter framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          - name: Flutter 3.10
+            os: ubuntu-latest
+            sdk: 3.10.6
           - name: Flutter 3.7
             os: ubuntu-latest
-            sdk: 3.7.x
-          - name: Flutter 3.3
-            os: ubuntu-latest
-            sdk: 3.3.x
+            sdk: 3.7.12
           - name: Flutter beta
             os: ubuntu-latest
             sdk: beta
@@ -101,7 +100,7 @@ jobs:
     name: Test ${{ matrix.name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup flutter (beta)
         if: ${{ matrix.sdk == 'beta' }}
         uses: subosito/flutter-action@v2
@@ -116,14 +115,10 @@ jobs:
           cache: true
       - name: Install dependencies on Ubuntu and MacOS
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
-        run: |
-          (cd packages/dart && flutter pub get)
-          (cd packages/flutter && flutter pub get)
+        run: (cd packages/flutter && flutter pub get)
       - name: Install dependencies on Windows
         if: matrix.os == 'windows-latest'
-        run: |
-          cmd /c "cd packages\dart && flutter pub get"
-          cmd /c "cd packages\flutter && flutter pub get"
+        run: cmd /c "cd packages\flutter && flutter pub get"
       - name: Analyze code
         run: flutter analyze packages/flutter --fatal-infos
       - name: Lint

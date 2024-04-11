@@ -127,3 +127,41 @@ List removeDuplicateParseObjectByObjectId(Iterable iterable) {
 
   return list;
 }
+
+// check the coreStore for existing objects to delete or save eventually
+Future<bool> checkObjectsExistForEventually() async {
+  // preparation ParseCoreData
+  final CoreStore coreStore = ParseCoreData().getStore();
+
+  List<String>? listSaves = await coreStore.getStringList(keyParseStoreObjects);
+
+  if (listSaves != null) {
+    if (listSaves.isNotEmpty) {
+      return true;
+    }
+  }
+
+  List<String>? listDeletes =
+      await coreStore.getStringList(keyParseStoreDeletes);
+
+  if (listDeletes != null) {
+    if (listDeletes.isNotEmpty) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// To get out of the cycle
+bool _inSubmitEventually = false;
+
+Future<void> checkForSubmitEventually() async {
+  if (_inSubmitEventually) return;
+
+  if (Parse.objectsExistForEventually) {
+    _inSubmitEventually = true;
+    await ParseObject.submitEventually();
+    _inSubmitEventually = false;
+  }
+}

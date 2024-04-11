@@ -40,7 +40,7 @@ abstract class ParseFileBase extends ParseObject {
 
   /// Uploads a file to Parse Server
   @override
-  Future<ParseResponse> save() async {
+  Future<ParseResponse> save({dynamic context}) async {
     return upload();
   }
 

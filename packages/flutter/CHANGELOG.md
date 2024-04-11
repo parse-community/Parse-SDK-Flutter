@@ -1,3 +1,19 @@
+## [7.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-7.0.0...flutter-7.0.1) (2024-02-03)
+
+### Bug Fixes
+
+* Conflict with new version of `connectivity_plus` dependency ([#987](https://github.com/parse-community/Parse-SDK-Flutter/pull/987))
+
+## [7.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-6.0.0...flutter-7.0.0) (2023-10-16)
+
+### BREAKING CHANGES
+
+* This release removes support for Flutter 3.0 ([#971](https://github.com/parse-community/Parse-SDK-Flutter/pull/971))
+
+### Features
+
+* Add support for Flutter 3.10 and 3.13, remove support for Flutter 3.0 ([#971](https://github.com/parse-community/Parse-SDK-Flutter/pull/971))
+
 ## [6.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-5.1.2...flutter-6.0.0) (2023-08-06)
 
 ### BREAKING CHANGES

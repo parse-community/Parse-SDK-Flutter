@@ -6,9 +6,10 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
-import 'package:mime_type/mime_type.dart';
+import 'package:mime/mime.dart';
 import 'package:path/path.dart' as path;
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
@@ -41,15 +42,15 @@ part 'src/objects/parse_base.dart';
 part 'src/objects/parse_cloneable.dart';
 part 'src/objects/parse_config.dart';
 part 'src/objects/parse_error.dart';
+part 'src/objects/parse_exception.dart';
 part 'src/objects/parse_file.dart';
-part 'src/objects/parse_number.dart';
 part 'src/objects/parse_file_base.dart';
 part 'src/objects/parse_file_web.dart';
 part 'src/objects/parse_function.dart';
 part 'src/objects/parse_geo_point.dart';
 part 'src/objects/parse_installation.dart';
+part 'src/objects/parse_number.dart';
 part 'src/objects/parse_object.dart';
-part 'src/objects/parse_exception.dart';
 part 'src/objects/parse_operation/parse_add_operation.dart';
 part 'src/objects/parse_operation/parse_add_relation_operation.dart';
 part 'src/objects/parse_operation/parse_add_unique_operation.dart';
@@ -62,6 +63,7 @@ part 'src/objects/parse_response.dart';
 part 'src/objects/parse_save_state_aware_child.dart';
 part 'src/objects/parse_session.dart';
 part 'src/objects/parse_user.dart';
+part 'src/objects/parse_x_file.dart';
 part 'src/objects/response/parse_error_response.dart';
 part 'src/objects/response/parse_exception_response.dart';
 part 'src/objects/response/parse_response_builder.dart';
@@ -82,6 +84,8 @@ part 'src/utils/valuable.dart';
 
 class Parse {
   bool _hasBeenInitialized = false;
+
+  static bool objectsExistForEventually = false;
 
   /// To initialize Parse Server in your application
   ///
@@ -147,6 +151,12 @@ class Parse {
     );
 
     _hasBeenInitialized = true;
+
+    objectsExistForEventually = await checkObjectsExistForEventually();
+
+    if (objectsExistForEventually) {
+      ParseObject.submitEventually();
+    }
 
     return this;
   }
