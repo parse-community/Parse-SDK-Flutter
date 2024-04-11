@@ -64,12 +64,13 @@ jobs:
           dart pub global activate coverage
           dart pub global run coverage:format_coverage -i coverage/test -o coverage/lcov.info --lcov --packages=.dart_tool/package_config.json --report-on=lib
       - name: Upload code coverage
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/dart/coverage/lcov.info
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
   check-flutter:
     runs-on: ${{ matrix.os }}
     strategy:
