@@ -32,9 +32,10 @@ The Parse Dart SDK is continuously tested with the most recent release of the Da
 
 | Version   | Latest Version | End of Support | Compatible |
 |-----------|----------------|----------------|------------|
-| Dart 3.1  | 3.1.2          | Sep 2024       | ✅ Yes      |
+| Dart 3.3  | 3.3.3          | Mar 2025       | ✅ Yes      |
+| Dart 3.2  | 3.2.6          | Jan 2025       | ✅ Yes      |
+| Dart 3.1  | 3.1.5          | Oct 2024       | ✅ Yes      |
 | Dart 3.0  | 3.0.7          | May 2024       | ✅ Yes      |
-| Dart 2.19 | 2.19.6         | Mar 2024       | ✅ Yes      |
 
 ## Getting Started
 

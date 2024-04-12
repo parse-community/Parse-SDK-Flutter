@@ -1,8 +1,8 @@
-part of flutter_parse_sdk;
+part of '../../../parse_server_sdk.dart';
 
 /// An operation that adds a new element to an array
 class _ParseAddOperation extends _ParseArrayOperation {
-  _ParseAddOperation(List value) : super(value);
+  _ParseAddOperation(super.value);
 
   @override
   String get operationName => 'Add';

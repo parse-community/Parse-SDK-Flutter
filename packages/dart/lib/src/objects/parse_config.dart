@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 class ParseConfig extends ParseObject {
   /// Creates an instance of ParseConfig so that you can grab all configs from the server

@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 void logAPIResponse(
     String className, String type, ParseResponse parseResponse) {

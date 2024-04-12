@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 /// [ParseACL] is used to control which users can access or modify a particular object
 /// [ParseObject] can have its own [ParseACL]
