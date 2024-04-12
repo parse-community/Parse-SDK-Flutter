@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../../parse_server_sdk.dart';
 
 /// Represents an operation performed on Parse data. It defines the core
 /// functionality of any operation performed on Parse data.
@@ -182,7 +182,7 @@ abstract class _ParseOperation<T> implements _Valuable<T> {
 }
 
 abstract class _ParseArrayOperation extends _ParseOperation<List> {
-  _ParseArrayOperation(List value) : super(value) {
+  _ParseArrayOperation(super.value) {
     super.valueForApiRequest = [];
   }
 
@@ -229,7 +229,7 @@ abstract class _ParseArrayOperation extends _ParseOperation<List> {
 
 abstract class _ParseRelationOperation
     extends _ParseOperation<Set<ParseObject>> {
-  _ParseRelationOperation(Set<ParseObject> value) : super(value) {
+  _ParseRelationOperation(super.value) {
     super.valueForApiRequest = {};
   }
 

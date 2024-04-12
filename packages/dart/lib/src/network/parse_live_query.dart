@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 enum LiveQueryEvent { create, enter, update, leave, delete, error }
 
