@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 // ignore_for_file: deprecated_member_use
 class CoreStoreSembastImp implements CoreStore {

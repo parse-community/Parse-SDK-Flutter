@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 class ParseCloudFunction extends ParseObject {
   /// Creates a new cloud function object

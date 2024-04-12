@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 // ignore_for_file: invalid_use_of_protected_member
 class ParseLiveList<T extends ParseObject> {
@@ -31,6 +31,7 @@ class ParseLiveList<T extends ParseObject> {
   }
 
   final QueryBuilder<T> _query;
+
   //The included Items, where LiveList should look for updates.
   final Map<String, dynamic> _listeningIncludes;
   final bool _lazyLoading;
@@ -539,6 +540,10 @@ class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
               super.object = parseResponse.result.first;
             }
             break;
+          case LiveQueryClientEvent.disconnected:
+            break;
+          case LiveQueryClientEvent.userDisconnected:
+            break;
         }
       });
     });
@@ -742,6 +747,7 @@ class PathKey {
 
   final String key;
   Subscription<ParseObject>? subscription;
+
   @override
   String toString() {
     return 'PathKey(key: $key, subscription: ${subscription?.requestId})';
@@ -761,17 +767,17 @@ abstract class ParseLiveListEvent<T extends ParseObject> {
 
 class ParseLiveListAddEvent<T extends ParseObject>
     extends ParseLiveListEvent<T> {
-  ParseLiveListAddEvent(int index, T object) : super(index, object);
+  ParseLiveListAddEvent(super.index, super.object);
 }
 
 class ParseLiveListUpdateEvent<T extends ParseObject>
     extends ParseLiveListEvent<T> {
-  ParseLiveListUpdateEvent(int index, T object) : super(index, object);
+  ParseLiveListUpdateEvent(super.index, super.object);
 }
 
 class ParseLiveListDeleteEvent<T extends ParseObject>
     extends ParseLiveListEvent<T> {
-  ParseLiveListDeleteEvent(int index, T object) : super(index, object);
+  ParseLiveListDeleteEvent(super.index, super.object);
 }
 
 class ParseLiveListElementSnapshot<T extends ParseObject> {

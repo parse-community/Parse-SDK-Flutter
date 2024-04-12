@@ -272,33 +272,11 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
 
 class _Options extends dio.Options {
   _Options({
-    String? method,
-    Duration? sendTimeout,
-    Duration? receiveTimeout,
-    Map<String, dynamic>? extra,
-    Map<String, dynamic>? headers,
-    dio.ResponseType? responseType,
+    super.headers,
+    super.responseType,
     String? contentType,
-    dio.ValidateStatus? validateStatus,
-    bool? receiveDataWhenStatusError,
-    bool? followRedirects,
-    int? maxRedirects,
-    dio.RequestEncoder? requestEncoder,
-    dio.ResponseDecoder? responseDecoder,
   }) : super(
-          method: method,
-          sendTimeout: sendTimeout,
-          receiveTimeout: receiveTimeout,
-          extra: extra,
-          headers: headers,
-          responseType: responseType,
           contentType: contentType ??
               (headers ?? <String, dynamic>{})[dio.Headers.contentTypeHeader],
-          validateStatus: validateStatus,
-          receiveDataWhenStatusError: receiveDataWhenStatusError,
-          followRedirects: followRedirects,
-          maxRedirects: maxRedirects,
-          requestEncoder: requestEncoder,
-          responseDecoder: responseDecoder,
         );
 }

@@ -26,7 +26,7 @@ jobs:
       - name: Setup dart
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: '3.0.0' # Set to 3.0.0 due to Parse Dart SDK compatibility, can be removed later on
+          sdk: '3.0'
       - name: Setup flutter
         if: env.package == 'flutter'
         uses: subosito/flutter-action@v2
