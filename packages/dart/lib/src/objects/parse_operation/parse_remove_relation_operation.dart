@@ -1,8 +1,8 @@
-part of flutter_parse_sdk;
+part of '../../../parse_server_sdk.dart';
 
 /// An operation that Removes objects from a [ParseRelation]
 class _ParseRemoveRelationOperation extends _ParseRelationOperation {
-  _ParseRemoveRelationOperation(Set<ParseObject> value) : super(value);
+  _ParseRemoveRelationOperation(super.value);
 
   @override
   String get operationName => 'RemoveRelation';

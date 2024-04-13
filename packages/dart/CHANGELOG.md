@@ -1,3 +1,13 @@
+## [7.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-6.4.0...dart-7.0.0) (2024-04-12)
+
+### BREAKING CHANGES
+
+* This release removes support for Dart 2.19 ([#993](https://github.com/parse-community/Parse-SDK-Flutter/pull/993))
+
+### Features
+
+* Add support for Dart 3.1, 3.2, 3.3; remove support for Dart 2.19 ([#993](https://github.com/parse-community/Parse-SDK-Flutter/pull/993))
+
 ## [6.4.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-6.3.0...dart-6.4.0) (2024-03-30)
 
 ### Features

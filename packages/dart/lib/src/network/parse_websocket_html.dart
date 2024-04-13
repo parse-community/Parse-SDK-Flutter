@@ -1,4 +1,5 @@
 /// If you change this file, you should apply the same changes to the 'parse_websocket_io.dart' file
+library;
 
 import 'dart:html' as html;
 

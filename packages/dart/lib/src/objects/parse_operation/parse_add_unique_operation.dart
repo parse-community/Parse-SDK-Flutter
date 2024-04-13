@@ -1,9 +1,9 @@
-part of flutter_parse_sdk;
+part of '../../../parse_server_sdk.dart';
 
 /// An operation that adds a new element to an array field,
 /// only if it wasn't already present
 class _ParseAddUniqueOperation extends _ParseArrayOperation {
-  _ParseAddUniqueOperation(List value) : super(value);
+  _ParseAddUniqueOperation(super.value);
 
   @override
   String get operationName => 'AddUnique';

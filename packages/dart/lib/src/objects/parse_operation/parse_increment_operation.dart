@@ -1,8 +1,8 @@
-part of flutter_parse_sdk;
+part of '../../../parse_server_sdk.dart';
 
 /// An operation that increment a numeric value by a given amount
 class _ParseIncrementOperation extends _ParseNumberOperation {
-  _ParseIncrementOperation(num value) : super(value);
+  _ParseIncrementOperation(super.value);
 
   @override
   String get operationName => 'Increment';

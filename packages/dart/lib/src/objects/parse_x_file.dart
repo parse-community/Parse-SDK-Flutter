@@ -1,4 +1,4 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 class ParseXFile extends ParseFileBase {
   /// Creates a new file base XFile
@@ -6,16 +6,12 @@ class ParseXFile extends ParseFileBase {
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseXFile(this.file,
       {String? name,
-      String? url,
-      bool? debug,
-      ParseClient? client,
-      bool? autoSendSessionId})
+      super.url,
+      super.debug,
+      super.client,
+      super.autoSendSessionId})
       : super(
           name: file != null ? path.basename(file.path) : name!,
-          url: url,
-          debug: debug,
-          client: client,
-          autoSendSessionId: autoSendSessionId,
         );
 
   XFile? file;

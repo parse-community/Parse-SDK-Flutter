@@ -16,22 +16,25 @@ jobs:
         include:
           # Dart framework may contain breaking changes in minor version releases, not following semver.
           # The latest Dart framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
-          - name: Dart 3.1, Ubuntu
+          - name: Dart 3.3, Ubuntu
             os: ubuntu-latest
-            sdk: 3.1.2
-          - name: Dart 3.1, macOS
+            sdk: 3.3.3
+          - name: Dart 3.3, macOS
             os: macos-latest
-            sdk: 3.1.2
-          - name: Dart 3.1, Windows
+            sdk: 3.3.3
+          - name: Dart 3.3, Windows
             os: windows-latest
-            sdk: 3.1.2
+            sdk: 3.3.3
           # Older Dart framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          - name: Dart 3.2
+            os: ubuntu-latest
+            sdk: 3.2.6
+          - name: Dart 3.1
+            os: ubuntu-latest
+            sdk: 3.1.5
           - name: Dart 3.0
             os: ubuntu-latest
             sdk: 3.0.7
-          - name: Dart 2.19
-            os: ubuntu-latest
-            sdk: 2.19.6
           - name: Dart beta
             os: ubuntu-latest
             sdk: beta
@@ -64,12 +67,13 @@ jobs:
           dart pub global activate coverage
           dart pub global run coverage:format_coverage -i coverage/test -o coverage/lcov.info --lcov --packages=.dart_tool/package_config.json --report-on=lib
       - name: Upload code coverage
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/dart/coverage/lcov.info
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
   check-flutter:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -138,12 +142,13 @@ jobs:
           escapedPath="$(echo `pwd` | sed 's/\//\\\//g')"
           sed "s/^SF:lib/SF:$escapedPath\/lib/g" coverage/lcov.info > coverage/lcov-full.info
       - name: Upload code coverage
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/flutter/coverage/lcov-full.info
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

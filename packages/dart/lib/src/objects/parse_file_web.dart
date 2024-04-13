@@ -1,19 +1,12 @@
-part of flutter_parse_sdk;
+part of '../../parse_server_sdk.dart';
 
 class ParseWebFile extends ParseFileBase {
   ParseWebFile(this.file,
-      {required String name,
-      String? url,
-      bool? debug,
-      ParseClient? client,
-      bool? autoSendSessionId})
-      : super(
-          name: name,
-          url: url,
-          debug: debug,
-          client: client,
-          autoSendSessionId: autoSendSessionId,
-        );
+      {required super.name,
+      super.url,
+      super.debug,
+      super.client,
+      super.autoSendSessionId});
 
   Uint8List? file;
   CancelToken? _cancelToken;
