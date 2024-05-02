@@ -18,7 +18,7 @@ topics:
   - backend
 
 environment:
-  sdk: ">=3.0.6 <4.0.0"
+  sdk: ">=3.0.7 <4.0.0"
   flutter: ">=3.10.6"
 
 dependencies:
