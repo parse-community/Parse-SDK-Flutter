@@ -32,10 +32,10 @@ The Parse Flutter SDK is continuously tested with the most recent release of the
 
 | Version      | Latest Version | End of Support | Compatible |
 |--------------|----------------|----------------|------------|
-| Flutter 3.13 | 3.13.6         | Sep 2024       | ✅ Yes      |
 | Flutter 3.10 | 3.10.6         | Jul 2024       | ✅ Yes      |
-| Flutter 3.7  | 3.7.12         | Apr 2024       | ✅ Yes      |
-| Flutter 3.3  | 3.3.10         | Dec 2024       | ✅ Yes      |
+| Flutter 3.13 | 3.13.9         | Oct 2024       | ✅ Yes      |
+| Flutter 3.16 | 3.16.9         | Jan 2025       | ✅ Yes      |
+| Flutter 3.19 | 3.19.5         | Mar 2025       | ✅ Yes      |
 
 ## Getting Started
 
