@@ -28,7 +28,6 @@ part 'src/push//parse_push.dart';
 class Parse extends sdk.Parse
     with WidgetsBindingObserver
     implements sdk.ParseConnectivityProvider {
-class Parse extends sdk.Parse with WidgetsBindingObserver implements sdk.ParseConnectivityProvider {
   late Connectivity _connectivity;
 
   /// To initialize Parse Server in your application
