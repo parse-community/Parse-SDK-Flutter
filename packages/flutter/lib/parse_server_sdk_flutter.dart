@@ -112,31 +112,31 @@ class Parse extends sdk.Parse
   final StreamController<void> _appResumedStreamController =
       StreamController<void>();
 
-  @override
-  Future<sdk.ParseConnectivityResult> checkConnectivity() async {
-    switch (await Connectivity().checkConnectivity()) {
-      case ConnectivityResult.wifi:
-        return sdk.ParseConnectivityResult.wifi;
-      case ConnectivityResult.mobile:
-        return sdk.ParseConnectivityResult.mobile;
-      case ConnectivityResult.none:
-        return sdk.ParseConnectivityResult.none;
-      default:
-        return sdk.ParseConnectivityResult.wifi;
+  sdk.ParseConnectivityResult _mapConnectivityResults(List<ConnectivityResult> connectivityResults) {
+    if (connectivityResults.contains(ConnectivityResult.none)) {
+      // ConnectivityPlus documentation says that if result is none there will only ever be one result and results
+      // will never be empty. So we can safely assume that if none is present, it is the only result.
+      return sdk.ParseConnectivityResult.none;
+    } else if (connectivityResults.contains(ConnectivityResult.wifi)) {
+      return sdk.ParseConnectivityResult.wifi;
+    } else if (connectivityResults.contains(ConnectivityResult.mobile)) {
+      return sdk.ParseConnectivityResult.mobile;
+    } else {
+      // anything else is considered wifi
+      return sdk.ParseConnectivityResult.wifi;
     }
   }
 
   @override
+  Future<sdk.ParseConnectivityResult> checkConnectivity() async {
+    final connectivityResults = await _connectivity.checkConnectivity();
+    return _mapConnectivityResults(connectivityResults);
+  }
+
+  @override
   Stream<sdk.ParseConnectivityResult> get connectivityStream {
-    return Connectivity().onConnectivityChanged.map((ConnectivityResult event) {
-      switch (event) {
-        case ConnectivityResult.wifi:
-          return sdk.ParseConnectivityResult.wifi;
-        case ConnectivityResult.mobile:
-          return sdk.ParseConnectivityResult.mobile;
-        default:
-          return sdk.ParseConnectivityResult.none;
-      }
+    return _connectivity.onConnectivityChanged.map((connectivityResults) {
+      return _mapConnectivityResults(connectivityResults);
     });
   }
 
