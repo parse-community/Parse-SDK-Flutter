@@ -15,7 +15,8 @@ import 'package:parse_server_sdk_flutter/src/storage/core_store_directory_io.dar
 import 'package:sembast/sembast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-export 'package:parse_server_sdk/parse_server_sdk.dart' hide Parse, CoreStoreSembastImp;
+export 'package:parse_server_sdk/parse_server_sdk.dart'
+    hide Parse, CoreStoreSembastImp;
 
 part 'src/storage/core_store_shared_preferences.dart';
 part 'src/storage/core_store_sembast.dart';
@@ -24,6 +25,9 @@ part 'src/utils/parse_live_list.dart';
 part 'src/notification/parse_notification.dart';
 part 'src/push//parse_push.dart';
 
+class Parse extends sdk.Parse
+    with WidgetsBindingObserver
+    implements sdk.ParseConnectivityProvider {
 class Parse extends sdk.Parse with WidgetsBindingObserver implements sdk.ParseConnectivityProvider {
   late Connectivity _connectivity;
 
@@ -83,7 +87,10 @@ class Parse extends sdk.Parse with WidgetsBindingObserver implements sdk.ParseCo
       appName: appName,
       appVersion: appVersion,
       appPackageName: appPackageName,
-      locale: locale ?? (sdk.parseIsWeb ? PlatformDispatcher.instance.locale.toString() : Platform.localeName),
+      locale: locale ??
+          (sdk.parseIsWeb
+              ? PlatformDispatcher.instance.locale.toString()
+              : Platform.localeName),
       liveQueryUrl: liveQueryUrl,
       clientKey: clientKey,
       masterKey: masterKey,
@@ -96,39 +103,41 @@ class Parse extends sdk.Parse with WidgetsBindingObserver implements sdk.ParseCo
       parseFileConstructor: parseFileConstructor,
       liveListRetryIntervals: liveListRetryIntervals,
       connectivityProvider: connectivityProvider ?? this,
-      fileDirectory: fileDirectory ?? (await CoreStoreDirectory().getTempDirectory()),
+      fileDirectory:
+          fileDirectory ?? (await CoreStoreDirectory().getTempDirectory()),
       appResumedStream: appResumedStream ?? _appResumedStreamController.stream,
       clientCreator: clientCreator,
     ) as Parse;
   }
 
-  final StreamController<void> _appResumedStreamController = StreamController<void>();
+  final StreamController<void> _appResumedStreamController =
+      StreamController<void>();
 
-  sdk.ParseConnectivityResult _mapConnectivityResults(List<ConnectivityResult> connectivityResults) {
-    if (connectivityResults.contains(ConnectivityResult.none)) {
-      // ConnectivityPlus documentation says that if result is none there will only ever be one result and results
-      // will never be empty. So we can safely assume that if none is present, it is the only result.
-      return sdk.ParseConnectivityResult.none;
-    } else if (connectivityResults.contains(ConnectivityResult.wifi)) {
-      return sdk.ParseConnectivityResult.wifi;
-    } else if (connectivityResults.contains(ConnectivityResult.mobile)) {
-      return sdk.ParseConnectivityResult.mobile;
-    } else {
-      // anything else is considered wifi
-      return sdk.ParseConnectivityResult.wifi;
+  @override
+  Future<sdk.ParseConnectivityResult> checkConnectivity() async {
+    switch (await Connectivity().checkConnectivity()) {
+      case ConnectivityResult.wifi:
+        return sdk.ParseConnectivityResult.wifi;
+      case ConnectivityResult.mobile:
+        return sdk.ParseConnectivityResult.mobile;
+      case ConnectivityResult.none:
+        return sdk.ParseConnectivityResult.none;
+      default:
+        return sdk.ParseConnectivityResult.wifi;
     }
   }
 
   @override
-  Future<sdk.ParseConnectivityResult> checkConnectivity() async {
-    final connectivityResults = await _connectivity.checkConnectivity();
-    return _mapConnectivityResults(connectivityResults);
-  }
-
-  @override
   Stream<sdk.ParseConnectivityResult> get connectivityStream {
-    return _connectivity.onConnectivityChanged.map((connectivityResults) {
-      return _mapConnectivityResults(connectivityResults);
+    return Connectivity().onConnectivityChanged.map((ConnectivityResult event) {
+      switch (event) {
+        case ConnectivityResult.wifi:
+          return sdk.ParseConnectivityResult.wifi;
+        case ConnectivityResult.mobile:
+          return sdk.ParseConnectivityResult.mobile;
+        default:
+          return sdk.ParseConnectivityResult.none;
+      }
     });
   }
 
