@@ -28,7 +28,10 @@ part 'src/push//parse_push.dart';
 class Parse extends sdk.Parse
     with WidgetsBindingObserver
     implements sdk.ParseConnectivityProvider {
-  late Connectivity _connectivity;
+  final Connectivity _connectivity;
+
+  Parse([Connectivity? connectivity])
+      : _connectivity = connectivity ?? Connectivity();
 
   /// To initialize Parse Server in your application
   ///
@@ -68,10 +71,7 @@ class Parse extends sdk.Parse
     String? fileDirectory,
     Stream<void>? appResumedStream,
     sdk.ParseClientCreator? clientCreator,
-    Connectivity? connectivity,
   }) async {
-    _connectivity = connectivity ?? Connectivity();
-
     if (appName == null || appVersion == null || appPackageName == null) {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
       appName ??= packageInfo.appName;
@@ -112,7 +112,8 @@ class Parse extends sdk.Parse
   final StreamController<void> _appResumedStreamController =
       StreamController<void>();
 
-  sdk.ParseConnectivityResult _mapConnectivityResults(List<ConnectivityResult> connectivityResults) {
+  sdk.ParseConnectivityResult _mapConnectivityResults(
+      List<ConnectivityResult> connectivityResults) {
     if (connectivityResults.contains(ConnectivityResult.none)) {
       // ConnectivityPlus documentation says that if result is none there will only ever be one result and results
       // will never be empty. So we can safely assume that if none is present, it is the only result.

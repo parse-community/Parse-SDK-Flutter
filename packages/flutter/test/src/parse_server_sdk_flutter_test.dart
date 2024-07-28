@@ -15,9 +15,12 @@ import 'storage/core_store_directory_io_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late Parse parse;
+  late FakeConnectivity fakeConnectivity;
 
   setUp(() {
-    parse = Parse();
+    fakeConnectivity = FakeConnectivity();
+    parse = Parse(fakeConnectivity);
+
     PackageInfo.setMockInitialValues(
       appName: 'appName',
       packageName: 'packageName',
@@ -31,13 +34,7 @@ void main() {
 
   group('Connectivity static checks', () {
     test('Check when connectivity is None', () async {
-      final fakeConnectivity = FakeConnectivity();
       fakeConnectivity.addConnectivityStatus(ConnectivityResult.none);
-      await parse.initialize(
-        'appId',
-        'serverUrl',
-        connectivity: fakeConnectivity,
-      );
 
       // sut
       final result = await parse.checkConnectivity();
@@ -46,13 +43,7 @@ void main() {
     });
 
     test('Check when connectivity is Wifi', () async {
-      final fakeConnectivity = FakeConnectivity();
       fakeConnectivity.addConnectivityStatus(ConnectivityResult.wifi);
-      await parse.initialize(
-        'appId',
-        'serverUrl',
-        connectivity: fakeConnectivity,
-      );
 
       // sut
       final result = await parse.checkConnectivity();
@@ -61,13 +52,7 @@ void main() {
     });
 
     test('Check when connectivity is Mobile', () async {
-      final fakeConnectivity = FakeConnectivity();
       fakeConnectivity.addConnectivityStatus(ConnectivityResult.mobile);
-      await parse.initialize(
-        'appId',
-        'serverUrl',
-        connectivity: fakeConnectivity,
-      );
 
       // sut
       final result = await parse.checkConnectivity();
@@ -76,14 +61,8 @@ void main() {
     });
 
     test('Check when connectivity is Mobile and VPN', () async {
-      final fakeConnectivity = FakeConnectivity();
       fakeConnectivity.addConnectivityStatus(ConnectivityResult.vpn);
       fakeConnectivity.addConnectivityStatus(ConnectivityResult.mobile);
-      await parse.initialize(
-        'appId',
-        'serverUrl',
-        connectivity: fakeConnectivity,
-      );
 
       // sut
       final result = await parse.checkConnectivity();
@@ -91,15 +70,10 @@ void main() {
       expect(result, ParseConnectivityResult.mobile);
     });
 
-    test('Check when connectivity is Wifi + Mobile that Wifi is preferred', () async {
-      final fakeConnectivity = FakeConnectivity();
+    test('Check when connectivity is Wifi + Mobile that Wifi is preferred',
+        () async {
       fakeConnectivity.addConnectivityStatus(ConnectivityResult.mobile);
       fakeConnectivity.addConnectivityStatus(ConnectivityResult.wifi);
-      await parse.initialize(
-        'appId',
-        'serverUrl',
-        connectivity: fakeConnectivity,
-      );
 
       // sut
       final result = await parse.checkConnectivity();
@@ -107,14 +81,10 @@ void main() {
       expect(result, ParseConnectivityResult.wifi);
     });
 
-    test('Check when connectivity is Other that we preserve old behavior that Wifi is assumed', () async {
-      final fakeConnectivity = FakeConnectivity();
+    test(
+        'Check when connectivity is Other that we preserve old behavior that Wifi is assumed',
+        () async {
       fakeConnectivity.addConnectivityStatus(ConnectivityResult.other);
-      await parse.initialize(
-        'appId',
-        'serverUrl',
-        connectivity: fakeConnectivity,
-      );
 
       // sut
       final result = await parse.checkConnectivity();
@@ -126,13 +96,7 @@ void main() {
   group('Connectivity stream tests', () {
     test('Update stream when connectivity changes to None', () async {
       final completer = Completer<ParseConnectivityResult>();
-      final fakeConnectivity = FakeConnectivity();
       fakeConnectivity.addConnectivityStatus(ConnectivityResult.mobile);
-      await parse.initialize(
-        'appId',
-        'serverUrl',
-        connectivity: fakeConnectivity,
-      );
       parse.connectivityStream.listen((event) {
         if (event == ParseConnectivityResult.none) {
           completer.complete(event);
@@ -150,13 +114,7 @@ void main() {
 
   test('Update stream when connectivity changes to Wifi', () async {
     final completer = Completer<ParseConnectivityResult>();
-    final fakeConnectivity = FakeConnectivity();
     fakeConnectivity.addConnectivityStatus(ConnectivityResult.none);
-    await parse.initialize(
-      'appId',
-      'serverUrl',
-      connectivity: fakeConnectivity,
-    );
     parse.connectivityStream.listen((event) {
       print('event: $event');
       if (event == ParseConnectivityResult.wifi) {
@@ -172,15 +130,11 @@ void main() {
     expect(result, ParseConnectivityResult.wifi);
   }, timeout: const Timeout(Duration(seconds: 1)));
 
-  test('Update stream when connectivity even though connectivity stayed the same', () async {
+  test(
+      'Update stream when connectivity even though connectivity stayed the same',
+      () async {
     final completer = Completer<ParseConnectivityResult>();
-    final fakeConnectivity = FakeConnectivity();
     fakeConnectivity.addConnectivityStatus(ConnectivityResult.mobile);
-    await parse.initialize(
-      'appId',
-      'serverUrl',
-      connectivity: fakeConnectivity,
-    );
     parse.connectivityStream.listen((event) {
       print('event: $event');
       if (event == ParseConnectivityResult.mobile) {
@@ -203,7 +157,8 @@ Connectivity get fakeConnectivity {
 
 class FakeConnectivity extends Fake implements Connectivity {
   final List<ConnectivityResult> _results = List.empty(growable: true);
-  final StreamController<List<ConnectivityResult>> _streamController = StreamController.broadcast();
+  final StreamController<List<ConnectivityResult>> _streamController =
+      StreamController.broadcast();
 
   void updateConnectivityStatus(ConnectivityResult result) {
     _results.clear();
