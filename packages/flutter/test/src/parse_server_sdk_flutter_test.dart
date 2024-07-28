@@ -107,7 +107,6 @@ void main() {
       fakeConnectivity.updateConnectivityStatus(ConnectivityResult.none);
       final result = await completer.future;
 
-      // assert
       expect(result, ParseConnectivityResult.none);
     }, timeout: const Timeout(Duration(seconds: 1)));
   });
@@ -116,7 +115,6 @@ void main() {
     final completer = Completer<ParseConnectivityResult>();
     fakeConnectivity.addConnectivityStatus(ConnectivityResult.none);
     parse.connectivityStream.listen((event) {
-      print('event: $event');
       if (event == ParseConnectivityResult.wifi) {
         completer.complete(event);
       }
@@ -126,7 +124,6 @@ void main() {
     fakeConnectivity.updateConnectivityStatus(ConnectivityResult.wifi);
     final result = await completer.future;
 
-    // assert
     expect(result, ParseConnectivityResult.wifi);
   }, timeout: const Timeout(Duration(seconds: 1)));
 
@@ -136,7 +133,6 @@ void main() {
     final completer = Completer<ParseConnectivityResult>();
     fakeConnectivity.addConnectivityStatus(ConnectivityResult.mobile);
     parse.connectivityStream.listen((event) {
-      print('event: $event');
       if (event == ParseConnectivityResult.mobile) {
         completer.complete(event);
       }
