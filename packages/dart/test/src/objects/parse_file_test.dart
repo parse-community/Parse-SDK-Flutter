@@ -11,13 +11,8 @@ void main() {
 
   group('Parse X File', () {
     test('should return a correct name', () {
-      // arrange
       File file = File('/sdcard/aa/aa.jpg');
-
-      // act
       final parseFile = ParseFile(file, name: 'bb.jpg');
-
-      // assert
       expect(parseFile.name, 'bb.jpg');
     });
   });
