@@ -7,7 +7,6 @@ import 'package:flutter_plugin_example/domain/constants/application_constants.da
 import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:path/path.dart';
-import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
 class MockDietPlanProviderApi extends Mock implements DietPlanProviderApi {}

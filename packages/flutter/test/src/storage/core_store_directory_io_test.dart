@@ -1,5 +1,5 @@
 @TestOn('dart-vm')
-@Timeout.factor(2)
+library;
 
 import 'dart:io';
 import 'dart:math';

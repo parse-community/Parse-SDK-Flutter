@@ -81,25 +81,25 @@ jobs:
         include:
           # Flutter framework may contain breaking changes in minor version releases, not following semver.
           # The latest Flutter framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
-          - name: Flutter 3.19, Ubuntu
+          - name: Flutter 3.24, Ubuntu
             os: ubuntu-latest
-            sdk: 3.19.5
-          - name: Flutter 3.19, macOS
+            sdk: 3.24.3
+          - name: Flutter 3.24, macOS
             os: macos-latest
-            sdk: 3.19.5
-          - name: Flutter 3.19, Windows
+            sdk: 3.24.3
+          - name: Flutter 3.24, Windows
             os: windows-latest
-            sdk: 3.19.5
+            sdk: 3.24.3
           # Older Flutter framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          - name: Flutter 3.22
+            os: ubuntu-latest
+            sdk: 3.22.3
+          - name: Flutter 3.19
+            os: ubuntu-latest
+            sdk: 3.19.6
           - name: Flutter 3.16
             os: ubuntu-latest
             sdk: 3.16.9
-          - name: Flutter 3.13
-            os: ubuntu-latest
-            sdk: 3.13.9
-          - name: Flutter 3.10
-            os: ubuntu-latest
-            sdk: 3.10.6
           - name: Flutter beta
             os: ubuntu-latest
             sdk: beta
