@@ -1,3 +1,9 @@
+## [7.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-7.0.0...dart-7.0.1) (2024-10-16)
+
+### Bug Fixes
+
+* Select input name instead of file in `ParseFile` ([#1012](https://github.com/parse-community/Parse-SDK-Flutter/pull/1012))
+
 ## [7.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-6.4.0...dart-7.0.0) (2024-04-12)
 
 ### BREAKING CHANGES
