@@ -40,7 +40,7 @@ dependencies:
 
   # Utils
   path_provider: ^2.1.4
-  package_info_plus: ^8.0.3
+  package_info_plus: ^5.0.1
   path: ^1.8.3
 
 dev_dependencies:
