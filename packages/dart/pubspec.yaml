@@ -34,7 +34,7 @@ dependencies:
   uuid: ^4.5.1
   meta: ^1.16.0
   path: ^1.9.0
-  mime: ^2.0.0
+  mime: ^1.0.0
   timezone: ^0.9.4
   universal_io: ^2.2.2
   xxtea: ^2.1.0
