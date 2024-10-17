@@ -2,7 +2,7 @@
 
 ### BREAKING CHANGES
 
-* This release removes support for Dart 3.0,3.1 ([#1016](https://github.com/parse-community/Parse-SDK-Flutter/pull/1016))
+* This release removes support for Dart 3.0, 3.1 ([#1016](https://github.com/parse-community/Parse-SDK-Flutter/pull/1016))
 
 ### Features
 
