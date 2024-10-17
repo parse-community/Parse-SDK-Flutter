@@ -80,7 +80,7 @@ class QueryBuilder<T extends ParseObject> {
     if (!limiters.containsKey('order')) {
       limiters['order'] = order;
     } else {
-      limiters['order'] = limiters['order'] + ',' + order;
+      limiters['order'] = '${limiters['order']},$order';
     }
   }
 
