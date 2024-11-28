@@ -1,3 +1,9 @@
+## [8.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-8.0.0...flutter-8.0.1) (2024-11-28)
+
+### Features
+
+* Add access client in parse clients ([#1025](https://github.com/parse-community/Parse-SDK-Flutter/pull/1025))
+
 ## [8.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-7.0.1...dart-8.0.0) (2024-10-17)
 
 ### BREAKING CHANGES
