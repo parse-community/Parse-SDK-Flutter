@@ -14,6 +14,8 @@ class ParseDioClient extends ParseClient {
 
   late _ParseDioClient _client;
 
+  dio.Dio get dioClient => _client;
+
   @override
   Future<ParseNetworkResponse> get(
     String path, {
