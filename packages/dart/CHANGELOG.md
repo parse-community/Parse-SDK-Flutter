@@ -1,4 +1,4 @@
-## [8.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-8.0.0...flutter-8.1.0) (2024-12-18)
+## [8.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.0...dart-8.1.0) (2024-12-18)
 
 ### Features
 
