@@ -18,6 +18,8 @@ class ParseHTTPClient extends ParseClient {
 
   late _ParseHTTPClient _client;
 
+  http.BaseClient get client => _client;
+
   Map<String, String>? get additionalHeaders => _client.additionalHeaders;
 
   set additionalHeaders(Map<String, String>? additionalHeaders) =>
