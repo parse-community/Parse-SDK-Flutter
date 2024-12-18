@@ -18,7 +18,7 @@ void main() {
 
     test('should return an instance of Dio from dioClient', () {
       // arrange
-      final dioClient = parseDioClient.dioClient;
+      final dioClient = parseDioClient.client;
 
       // assert
       expect(dioClient, isNotNull);

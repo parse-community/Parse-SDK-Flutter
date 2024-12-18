@@ -18,7 +18,7 @@ class ParseHTTPClient extends ParseClient {
 
   late _ParseHTTPClient _client;
 
-  http.BaseClient get httpClient => _client;
+  http.BaseClient get client => _client;
 
   Map<String, String>? get additionalHeaders => _client.additionalHeaders;
 
