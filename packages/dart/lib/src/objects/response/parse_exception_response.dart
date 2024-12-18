@@ -22,6 +22,12 @@ ParseResponse buildParseResponseWithException(Exception exception) {
     ));
   }
 
+  if (exception is ClientException) {
+    return ParseResponse(
+      error: ParseError(message: exception.message, exception: exception),
+    );
+  }
+
   return ParseResponse(
       error: ParseError(message: exception.toString(), exception: exception));
 }
