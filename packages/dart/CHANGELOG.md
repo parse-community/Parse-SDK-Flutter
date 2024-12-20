@@ -1,10 +1,4 @@
-## [8.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.0...dart-8.1.0) (2024-12-18)
-
-### Features
-
-* Add client access via `ParseDioClient.dioClient` and `ParseHTTPClient.httpClient` ([#1025](https://github.com/parse-community/Parse-SDK-Flutter/pull/1025))
-
-## [8.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-7.0.1...dart-8.0.0) (2024-10-17)
+## [8.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-7.0.1...dart-8.0.0) (2024-12-20)
 
 ### BREAKING CHANGES
 
@@ -13,6 +7,7 @@
 ### Features
 
 * Add support for Dart 3.4, 3.5; remove support for Dart 3.0, 3.1 ([#1016](https://github.com/parse-community/Parse-SDK-Flutter/pull/1016))
+* Add client access via `ParseDioClient.dioClient` and `ParseHTTPClient.httpClient` ([#1025](https://github.com/parse-community/Parse-SDK-Flutter/pull/1025))
 
 ## [7.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-7.0.0...dart-7.0.1) (2024-10-16)
 
