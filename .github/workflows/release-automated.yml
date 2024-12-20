@@ -31,6 +31,7 @@ jobs:
         if: env.package == 'flutter'
         uses: subosito/flutter-action@v2
         with:
+          cache: true
           channel: stable
           flutter-version: 3.16.9
       - name: Install dart dependencies
