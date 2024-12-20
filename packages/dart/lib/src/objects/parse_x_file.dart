@@ -11,7 +11,7 @@ class ParseXFile extends ParseFileBase {
       super.client,
       super.autoSendSessionId})
       : super(
-          name: file != null ? path.basename(file.path) : name!,
+          name: name ?? path.basename(file?.path ?? ''),
         );
 
   XFile? file;

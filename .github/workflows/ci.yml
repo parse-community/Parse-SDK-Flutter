@@ -16,25 +16,25 @@ jobs:
         include:
           # Dart framework may contain breaking changes in minor version releases, not following semver.
           # The latest Dart framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
-          - name: Dart 3.3, Ubuntu
+          - name: Dart 3.5, Ubuntu
             os: ubuntu-latest
-            sdk: 3.3.3
-          - name: Dart 3.3, macOS
+            sdk: 3.5.3
+          - name: Dart 3.5, macOS
             os: macos-latest
-            sdk: 3.3.3
-          - name: Dart 3.3, Windows
+            sdk: 3.5.3
+          - name: Dart 3.5, Windows
             os: windows-latest
-            sdk: 3.3.3
+            sdk: 3.5.3
           # Older Dart framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
+          - name: Dart 3.4
+            os: ubuntu-latest
+            sdk: 3.4.4
+          - name: Dart 3.3
+            os: ubuntu-latest
+            sdk: 3.3.4
           - name: Dart 3.2
             os: ubuntu-latest
             sdk: 3.2.6
-          - name: Dart 3.1
-            os: ubuntu-latest
-            sdk: 3.1.5
-          - name: Dart 3.0
-            os: ubuntu-latest
-            sdk: 3.0.7
           - name: Dart beta
             os: ubuntu-latest
             sdk: beta
@@ -81,22 +81,25 @@ jobs:
         include:
           # Flutter framework may contain breaking changes in minor version releases, not following semver.
           # The latest Flutter framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
-          - name: Flutter 3.13, Ubuntu
+          - name: Flutter 3.24, Ubuntu
             os: ubuntu-latest
-            sdk: 3.13.6
-          - name: Flutter 3.13, macOS
+            sdk: 3.24.3
+          - name: Flutter 3.24, macOS
             os: macos-latest
-            sdk: 3.13.6
-          - name: Flutter 3.13, Windows
+            sdk: 3.24.3
+          - name: Flutter 3.24, Windows
             os: windows-latest
-            sdk: 3.13.6
+            sdk: 3.24.3
           # Older Flutter framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
-          - name: Flutter 3.10
+          - name: Flutter 3.22
             os: ubuntu-latest
-            sdk: 3.10.6
-          - name: Flutter 3.7
+            sdk: 3.22.3
+          - name: Flutter 3.19
             os: ubuntu-latest
-            sdk: 3.7.12
+            sdk: 3.19.6
+          - name: Flutter 3.16
+            os: ubuntu-latest
+            sdk: 3.16.9
           - name: Flutter beta
             os: ubuntu-latest
             sdk: beta

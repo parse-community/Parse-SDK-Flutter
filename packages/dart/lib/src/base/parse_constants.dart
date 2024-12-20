@@ -1,7 +1,7 @@
 part of '../../parse_server_sdk.dart';
 
 // Library
-const String keySdkVersion = '7.0.0';
+const String keySdkVersion = '8.1.0';
 const String keyLibraryName = 'Flutter Parse SDK';
 
 // End Points

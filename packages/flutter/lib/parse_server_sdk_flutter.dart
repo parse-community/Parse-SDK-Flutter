@@ -1,4 +1,4 @@
-library flutter_parse_sdk_flutter;
+library;
 
 import 'dart:convert';
 import 'dart:async';
@@ -19,10 +19,15 @@ export 'package:parse_server_sdk/parse_server_sdk.dart'
     hide Parse, CoreStoreSembastImp;
 
 part 'src/storage/core_store_shared_preferences.dart';
+
 part 'src/storage/core_store_sembast.dart';
+
 part 'src/utils/parse_live_grid.dart';
+
 part 'src/utils/parse_live_list.dart';
+
 part 'src/notification/parse_notification.dart';
+
 part 'src/push//parse_push.dart';
 
 class Parse extends sdk.Parse
@@ -109,30 +114,30 @@ class Parse extends sdk.Parse
 
   @override
   Future<sdk.ParseConnectivityResult> checkConnectivity() async {
-    switch (await Connectivity().checkConnectivity()) {
-      case ConnectivityResult.wifi:
-        return sdk.ParseConnectivityResult.wifi;
-      case ConnectivityResult.mobile:
-        return sdk.ParseConnectivityResult.mobile;
-      case ConnectivityResult.none:
-        return sdk.ParseConnectivityResult.none;
-      default:
-        return sdk.ParseConnectivityResult.wifi;
+    List<ConnectivityResult> list = await Connectivity().checkConnectivity();
+
+    if (list.contains(ConnectivityResult.wifi)) {
+      return sdk.ParseConnectivityResult.wifi;
+    } else if (list.contains(ConnectivityResult.mobile)) {
+      return sdk.ParseConnectivityResult.mobile;
+    } else {
+      return sdk.ParseConnectivityResult.none;
     }
   }
 
   @override
   Stream<sdk.ParseConnectivityResult> get connectivityStream {
-    return Connectivity().onConnectivityChanged.map((ConnectivityResult event) {
-      switch (event) {
-        case ConnectivityResult.wifi:
+    return Connectivity().onConnectivityChanged.map(
+      (List<ConnectivityResult> event) {
+        if (event.contains(ConnectivityResult.wifi)) {
           return sdk.ParseConnectivityResult.wifi;
-        case ConnectivityResult.mobile:
+        } else if (event.contains(ConnectivityResult.mobile)) {
           return sdk.ParseConnectivityResult.mobile;
-        default:
+        } else {
           return sdk.ParseConnectivityResult.none;
-      }
-    });
+        }
+      },
+    );
   }
 
   @override

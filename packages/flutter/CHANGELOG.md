@@ -1,3 +1,23 @@
+## [9.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-8.0.0...flutter-9.0.0) (2024-10-16)
+
+### BREAKING CHANGES
+
+* This release removes support for Flutter 3.10, 3.13 ([#1014](https://github.com/parse-community/Parse-SDK-Flutter/pull/1014))
+
+### Features
+
+* Add support for Flutter 3.22, 3.24; remove support for Flutter 3.10, 3.13 ([#1014](https://github.com/parse-community/Parse-SDK-Flutter/pull/1014))
+
+## [8.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-7.0.0...flutter-8.0.0) (2024-05-15)
+
+### BREAKING CHANGES
+
+* This release removes support for Flutter 3.3, 3.7 ([#994](https://github.com/parse-community/Parse-SDK-Flutter/pull/994))
+
+### Features
+
+* Add support for Flutter 3.13, 3.16, 3.19; remove support for Flutter 3.3, 3.7 ([#994](https://github.com/parse-community/Parse-SDK-Flutter/pull/994))
+
 ## [7.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-7.0.0...flutter-7.0.1) (2024-02-03)
 
 ### Bug Fixes
