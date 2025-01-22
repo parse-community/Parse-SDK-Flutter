@@ -1,4 +1,4 @@
-part of '../../parse_server_sdk.dart';
+part of flutter_parse_sdk;
 
 // ignore_for_file: deprecated_member_use
 class CoreStoreSembastImp implements CoreStore {
@@ -83,7 +83,13 @@ class CoreStoreSembastImp implements CoreStore {
 
   @override
   Future<List<String>?> getStringList(String key) async {
-    final List<String>? storedItem = await get(key);
+    List<String>? storedItem = [];
+
+    if (await get(key) != null) {
+      for (var i in await get(key)) {
+        storedItem.add(i);
+      }
+    }
     return storedItem;
   }
 

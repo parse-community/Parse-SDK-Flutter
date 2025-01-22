@@ -1,4 +1,6 @@
-part of '../../parse_server_sdk.dart';
+part of flutter_parse_sdk;
+
+enum DataSource { NONE, LOCAL, REMOTE }
 
 class ParseResponse {
   ParseResponse({
@@ -19,4 +21,7 @@ class ParseResponse {
   List? results;
   int count = 0;
   ParseError? error;
+
+  /// Data source
+  DataSource dataSource = DataSource.NONE;
 }

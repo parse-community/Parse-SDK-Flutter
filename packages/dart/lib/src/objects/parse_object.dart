@@ -1,4 +1,4 @@
-part of '../../parse_server_sdk.dart';
+part of flutter_parse_sdk;
 
 /// [ParseObject] is a local representation of data that can be saved and
 /// retrieved from the Parse cloud.
@@ -172,12 +172,15 @@ class ParseObject extends ParseBase implements ParseCloneable {
     // save object
     final ParseResponse response = await save();
 
+    await pin();
+
     if (response.success) {
       // return success response
       return response;
     } else {
       // if have network connection error
-      if ((response.error?.message ?? "").contains(keyNetworkError)) {
+      if ((response.error?.message ?? "").contains(keyNetworkError) ||
+          (response.error?.message ?? "").contains('Failed host lookup:')) {
         // save this object in CoreStore
         await _addThisObjectToParseCoreDataList(keyParseStoreObjects);
       } else {
@@ -251,7 +254,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
 
     if (object is ParseObject) {
-      uniqueObjects.remove(object);
+      //uniqueObjects.remove(object);
+      uniqueObjects.add(object);
     }
 
     for (ParseFileBase file in uniqueFiles) {
@@ -635,15 +639,54 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Can be used to create custom queries
   Future<ParseResponse> query<T extends ParseObject>(String query,
       {ProgressCallback? progressCallback}) async {
+    final String hash = query.replaceAll(' ', '').hashCode.toString();
+
     try {
       final Uri url = getSanitisedUri(_client, _path, query: query);
       final ParseNetworkResponse result = await _client.get(
         url.toString(),
         onReceiveProgress: progressCallback,
       );
-      return handleResponse<T>(
+      final ParseResponse response = handleResponse<T>(
           this, result, ParseApiRQ.query, _debug, parseClassName);
+
+      if (response.success) {
+        List<T> results =
+            response.results?.map((e) => e as T).toList() ?? <T>[];
+
+        List<String> ids = [];
+
+        for (var result in results) {
+          result.pin();
+          ids.add(result.objectId!);
+        }
+
+        await ParseCoreData().getStore().setString(hash, jsonEncode(ids));
+
+        response.dataSource = DataSource.REMOTE;
+      }
+
+      return response;
     } on Exception catch (e) {
+      if (await ParseCoreData().getStore().containsKey(hash)) {
+        List<dynamic> ids =
+            jsonDecode(await ParseCoreData().getStore().getString(hash) ?? '');
+
+        ParseResponse response = ParseResponse();
+
+        response.results = [];
+        for (var id in ids) {
+          final o = ParseObject(parseClassName);
+          response.results?.add(await o.fromPin(id));
+        }
+
+        response.count = ids.length;
+        response.success = true;
+        response.dataSource = DataSource.LOCAL;
+
+        return response;
+      }
+
       return handleException(e, ParseApiRQ.query, _debug, parseClassName);
     }
   }
@@ -765,7 +808,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     List<String>? listSaves =
         await coreStore.getStringList(keyParseStoreObjects);
 
-    if (listSaves != null) {
+    if (listSaves != null && listSaves.isNotEmpty) {
       List<ParseObject> parseObjectList = [];
       for (var element in listSaves) {
         // decode json
