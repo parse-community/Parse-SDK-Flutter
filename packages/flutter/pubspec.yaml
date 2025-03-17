@@ -25,29 +25,29 @@ dependencies:
   flutter:
     sdk: flutter
 
-  parse_server_sdk: ^6.4.0
-  # Uncomment for local testing
-  #parse_server_sdk:
-  #   path: ../dart
+#  parse_server_sdk: ^8.0.0
+#   Uncomment for local testing
+  parse_server_sdk:
+     path: ../dart
 
   # Networking
   connectivity_plus: ^6.0.3
 
   #Database
-  shared_preferences: ^2.2.3
-  sembast: ^3.6.0
+  shared_preferences: ^2.5.2
+  sembast: ^3.8.2
   sembast_web: ^2.2.0
 
   # Utils
   path_provider: ^2.1.4
-  package_info_plus: ^5.0.1
+  package_info_plus: ^8.3.0
   path: ^1.8.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   path_provider_platform_interface: ^2.1.2
   plugin_platform_interface: ^2.1.8
 
