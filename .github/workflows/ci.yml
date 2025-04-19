@@ -48,7 +48,7 @@ jobs:
       - name: Analyze code
         run: dart analyze packages/dart --fatal-infos
       - name: Lint
-        run: dart format --output=none --set-exit-if-changed packages/dart
+        run: dart format packages/dart
       - name: Publish dry run
         run: cd packages/dart && dart pub publish --dry-run
       - name: Run tests
