@@ -28,7 +28,7 @@ dependencies:
 
   #Database
   sembast: ^3.8.5
-  sembast_web: ^2.4.1
+  sembast_web: ^2.4.0+4
 
   # Utils
   uuid: ^4.5.1
