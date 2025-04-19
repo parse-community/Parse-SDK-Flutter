@@ -52,19 +52,8 @@ jobs:
       - name: Lint
         run: dart format --output=none --set-exit-if-changed packages/dart
       - name: Rollback uncommitted changes for Fix Bug mocks
-        shell: pwsh
         run: |
-          $files = @(
-            "packages\dart\test\src\network\parse_query_test.mocks.dart",
-            "packages\dart\test\src\objects\parse_object\parse_object_test.mocks.dart"
-          )
-          $files | ForEach-Object {
-            if (Test-Path $_) {
-              git checkout -- $_
-            } else {
-              Write-Host "File $_ does not exist, skipping checkout."
-            }
-          }
+          git checkout HEAD .
       - name: Publish dry run
         run: cd packages/dart && dart pub publish --dry-run
       - name: Run tests
