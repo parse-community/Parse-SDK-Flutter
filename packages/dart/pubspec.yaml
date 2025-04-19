@@ -49,6 +49,9 @@ dev_dependencies:
   mockito: ^5.4.5
   test: ^1.25.15
 
+  # For bug https://github.com/dart-lang/mockito/issues/810
+  analyzer: 7.3.0
+
 screenshots:
   - description: Parse Platform logo.
     path: screenshots/logo.png
