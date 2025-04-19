@@ -1,6 +1,3 @@
-// ignore_for_file: unnecessary_import
-library flutter_parse_sdk;
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -12,7 +9,6 @@ import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as path;
-import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:sembast_web/sembast_web.dart';
 import 'package:timezone/data/latest.dart' as tz;

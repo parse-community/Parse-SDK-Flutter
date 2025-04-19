@@ -28,14 +28,12 @@ This library gives you access to the powerful Parse Server backend from your Dar
 
 ## Compatibility
 
-The Parse Dart SDK is continuously tested with the most recent release of the Dart framework to ensure compatibility. To give developers time to upgrade their app to a newer Dart framework, previous Dart framework releases are supported for at least 1 year after the [release date](https://dart.dev/get-dart/archive) of the next higher significant version.
+The Parse Dart SDK is continuously tested with the most recent release of the Dart framework to ensure compatibility. To give developers time to upgrade their app to a newer Dart framework, previous Dart framework releases are supported for at least 6 month after the [release date](https://dart.dev/get-dart/archive) of the next higher significant version.
 
-| Version   | Latest Version | End of Support | Compatible |
-|-----------|----------------|----------------|------------|
-| Dart 3.2  | 3.2.6          | Jan 2025       | ✅ Yes      |
-| Dart 3.3  | 3.3.4          | Apr 2025       | ✅ Yes      |
-| Dart 3.4  | 3.4.4          | Jun 2025       | ✅ Yes      |
-| Dart 3.5  | 3.5.3          | Sep 2025       | ✅ Yes      |
+| Version  | Latest Version | Release Date | End of Support | Compatible |
+|----------|----------------|--------------|----------------|------------|
+| Dart 3.6 | 3.6.2          | Jan 2025     | Jun 2025       | ✅ Yes      |
+| Dart 3.7 | 3.7.3          | Apr 2025     | Sep 2025       | ✅ Yes      |
 
 ## Getting Started
 
