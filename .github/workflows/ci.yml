@@ -47,6 +47,8 @@ jobs:
         run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
       - name: Analyze code
         run: dart analyze packages/dart --fatal-infos
+      - name: Lint For Fix Bug mocks
+        run: dart format packages/dart/test/src
       - name: Lint
         run: dart format --output=none --set-exit-if-changed packages/dart
       - name: Publish dry run
