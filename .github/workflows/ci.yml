@@ -53,13 +53,7 @@ jobs:
         run: dart format --output=none --set-exit-if-changed packages/dart
       - name: Rollback uncommitted changes for Fix Bug mocks
         run: |
-          git status --porcelain
-          if ($?) {
-            echo "There are uncommitted changes. Rolling back the following files:"
-            git checkout -- test/src/network/parse_query_test.mocks.dart test/src/objects/parse_object/parse_object_test.mocks.dart
-          } else {
-            echo "No uncommitted changes found."
-          }
+          git checkout -- test/src/network/parse_query_test.mocks.dart test/src/objects/parse_object/parse_object_test.mocks.dart
       - name: Publish dry run
         run: cd packages/dart && dart pub publish --dry-run
       - name: Run tests
