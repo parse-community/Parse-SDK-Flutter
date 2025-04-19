@@ -27,7 +27,7 @@ dependencies:
   web_socket_channel: ^3.0.3
 
   #Database
-  sembast: ^3.8.5
+  sembast: ^3.8.3
   sembast_web: ^2.4.0+4
 
   # Utils
