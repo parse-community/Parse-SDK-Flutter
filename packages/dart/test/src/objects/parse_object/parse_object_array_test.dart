@@ -5,8 +5,8 @@ import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
 
-import '../../../parse_query_test.mocks.dart';
 import '../../../test_utils.dart';
+import '../../network/parse_query_test.mocks.dart';
 
 void main() {
   setUpAll(() async {
