@@ -49,12 +49,17 @@ jobs:
         run: dart analyze packages/dart --fatal-infos
       - name: Lint
         run: dart format packages/dart
-      - name: Show formatted files
+      - name: Print contents of changed Dart files
         run: |
-          git diff --name-only | grep '\.dart$' | while read file; do
-            echo "Changed $file:"
-            cat "$file"
-            echo ""
+          echo "Listing changed .dart files:"
+          changed_files=$(git diff --name-only)
+
+          for file in $changed_files; do
+            if [[ "$file" == *.dart ]]; then
+              echo "===== Changed: $file ====="
+              cat "$file"
+              echo ""
+            fi
           done
       - name: Publish dry run
         run: cd packages/dart && dart pub publish --dry-run
