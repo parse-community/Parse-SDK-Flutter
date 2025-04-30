@@ -14,7 +14,7 @@ Future<void> main() async {
     ..set('Name', 'Ketogenic')
     ..set('Fat', 65);
 
-    // ParseAggregate('className', pipeline: {}).execute();
+
 
   var response = await dietPlan.save();
 
@@ -22,4 +22,10 @@ Future<void> main() async {
     dietPlan = response.results?.first;
     print("Response received successfully");
   }
+
+  final res = await ParseAggregate('DietPlan', pipeline: {
+    r'$match': {'Name': 'Ketogenic'}
+  }).execute();
+
+  print(res);
 }
