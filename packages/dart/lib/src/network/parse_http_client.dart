@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:universal_io/io.dart';
 
 import 'package:http/http.dart' as http;
-
 import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk/src/utils/url_replace.dart';
+import 'package:universal_io/io.dart';
 
 import 'http_client_io.dart' if (dart.library.js) 'http_client_js.dart';
 
@@ -30,9 +30,20 @@ class ParseHTTPClient extends ParseClient {
     String path, {
     ParseNetworkOptions? options,
     ProgressCallback? onReceiveProgress,
+    UrlReplace? replace
   }) async {
     final http.Response response = await _client.get(
-      Uri.parse(path),
+      replace != null ? Uri.parse(path).replace(
+        scheme:replace.scheme,
+        userInfo:replace.userInfo,
+        host:replace.host,
+        port:replace.port,
+        path:replace.path,
+        pathSegments:replace.pathSegments,
+        query:replace.query,
+        queryParameters:replace.queryParameters,
+        fragment:replace.fragment,
+      ): Uri.parse(path),
       headers: options?.headers,
     );
     return ParseNetworkResponse(

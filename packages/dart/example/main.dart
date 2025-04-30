@@ -14,6 +14,8 @@ Future<void> main() async {
     ..set('Name', 'Ketogenic')
     ..set('Fat', 65);
 
+    // ParseAggregate('className', pipeline: {}).execute();
+
   var response = await dietPlan.save();
 
   if (response.success) {
