@@ -1,110 +1,102 @@
-import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart' as sdk;
 
-/// A cache wrapper for ParseLiveList to improve performance with proper lazy loading support.
+import 'dart:collection';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart' as sdk;
+import 'package:flutter/foundation.dart';
+
+/// A wrapper around ParseLiveList that provides memory-efficient caching
 class CachedParseLiveList<T extends sdk.ParseObject> {
-  /// The original ParseLiveList being wrapped
-  final sdk.ParseLiveList<T> _originalLiveList;
+  CachedParseLiveList(this._parseLiveList, this.cacheSize) 
+      : _cache = _LRUCache<String, T>(cacheSize);
   
-  /// Internal cache of items indexed by position
-  final Map<int, T> _cache = {};
+  final sdk.ParseLiveList<T> _parseLiveList;
+  final int cacheSize;
+  final _LRUCache<String, T> _cache;
+
+  /// Get the stream of events from the underlying ParseLiveList
+  Stream<sdk.ParseLiveListEvent<T>> get stream => _parseLiveList.stream;
   
-  /// Maximum number of items to keep in cache
-  final int? _cacheSize;
+  /// Get the size of the list
+  int get size => _parseLiveList.size;
   
-  /// Whether lazy loading is enabled
-  final bool _lazyLoading;
-  
-  CachedParseLiveList(this._originalLiveList, [this._cacheSize, this._lazyLoading = false]);
-  
-  Stream<sdk.ParseLiveListEvent<sdk.ParseObject>> get stream => _originalLiveList.stream;
-  int get size => _originalLiveList.size;
-  
-  String getIdentifier(int index) => _originalLiveList.getIdentifier(index);
-  
-  /// Get a stream for the item at the specified index
-  Stream<T> getAt(int index) {
-    // When lazy loading is enabled, we need to use the original stream
-    // and populate our cache with the results
-    final stream = _originalLiveList.getAt(index);
-    
-    return stream.map((item) {
-      // Cache the item when it comes through the stream
-      _cache[index] = item;
-      _trimCacheIfNeeded();
-      return item;
-    });
-  }
-  
-  /// Get the loaded data at the specified index
+  /// Get a loaded object at the specified index
   T? getLoadedAt(int index) {
-    // Try to get from cache first
-    if (_cache.containsKey(index)) {
-      return _cache[index];
+    final result = _parseLiveList.getLoadedAt(index);
+    if (result != null && result.objectId != null) {
+      _cache.put(result.objectId!, result);
     }
-    
-    // With lazy loading, the item might not be loaded yet
-    // so use the original method
-    final item = _originalLiveList.getLoadedAt(index);
-    
-    // Only cache if we got an actual item
-    if (item != null) {
-      _cache[index] = item;
-      _trimCacheIfNeeded();
-    }
-    return item;
+    return result;
   }
   
-  /// Get the pre-loaded data at the specified index
+  /// Get a pre-loaded object at the specified index
   T? getPreLoadedAt(int index) {
-    // Try to get from cache first
-    if (_cache.containsKey(index)) {
-      return _cache[index];
+    final objectId = _parseLiveList.idOf(index);
+    
+    // Try cache first
+    if (objectId != 'NotFound' && _cache.contains(objectId)) {
+      return _cache.get(objectId);
     }
     
-    // If lazy loading is enabled, there might not be pre-loaded data
-    final item = _originalLiveList.getPreLoadedAt(index);
-    
-    // Only cache if we got an actual item
-    if (item != null) {
-      _cache[index] = item;
-      _trimCacheIfNeeded();
+    // Fall back to original method
+    final result = _parseLiveList.getPreLoadedAt(index);
+    if (result != null && result.objectId != null) {
+      _cache.put(result.objectId!, result);
     }
-    return item;
+    return result;
   }
   
-  /// Trims the cache if it exceeds the configured size
-  void _trimCacheIfNeeded() {
-    if (_cacheSize == null || _cache.length <= _cacheSize!) return;
-    
-    // Remove oldest entries if cache gets too big
-    final keysToRemove = _cache.keys.toList()..sort();
-    final numToRemove = _cache.length - _cacheSize!;
-    if (numToRemove > 0) {
-      for (int i = 0; i < numToRemove; i++) {
-        _cache.remove(keysToRemove[i]);
-      }
-    }
+  /// Get the unique identifier for an object at the specified index
+  String getIdentifier(int index) => _parseLiveList.getIdentifier(index);
+  
+  /// Get a stream of updates for an object at the specified index
+  Stream<T> getAt(int index) {
+    // We don't cache the stream itself, just the objects
+    return _parseLiveList.getAt(index);
   }
   
-  /// Update the cache when an item changes or is added
-  void updateCache(int index, T item) {
-    _cache[index] = item;
-    _trimCacheIfNeeded();
-  }
-  
-  /// Remove an item from the cache
-  void removeFromCache(int index) {
-    _cache.remove(index);
-  }
-  
-  /// Clear the entire cache
-  void clearCache() {
-    _cache.clear();
-  }
-  
-  /// Dispose of resources
+  /// Clean up resources
   void dispose() {
-    _originalLiveList.dispose();
+    _parseLiveList.dispose();
     _cache.clear();
+  }
+}
+
+/// LRU Cache for efficient memory management
+class _LRUCache<K, V> {
+  _LRUCache(this.capacity);
+  
+  final int capacity;
+  final Map<K, V> _cache = {};
+  final LinkedHashSet<K> _accessOrder = LinkedHashSet<K>();
+  
+  V? get(K key) {
+    if (!_cache.containsKey(key)) return null;
+    
+    // Update access order (move to most recently used)
+    _accessOrder.remove(key);
+    _accessOrder.add(key);
+    
+    return _cache[key];
+  }
+  
+  bool contains(K key) => _cache.containsKey(key);
+  
+  void put(K key, V value) {
+    if (_cache.containsKey(key)) {
+      // Already exists, update access order
+      _accessOrder.remove(key);
+    } else if (_cache.length >= capacity) {
+      // At capacity, remove least recently used item
+      final K leastUsed = _accessOrder.first;
+      _accessOrder.remove(leastUsed);
+      _cache.remove(leastUsed);
+    }
+    
+    _cache[key] = value;
+    _accessOrder.add(key);
+  }
+  
+  void clear() {
+    _cache.clear();
+    _accessOrder.clear();
   }
 }
