@@ -95,7 +95,7 @@ class ParseLiveListPageView<T extends sdk.ParseObject> extends StatefulWidget {
 class _ParseLiveListPageViewState<T extends sdk.ParseObject>
     extends State<ParseLiveListPageView<T>> {
   late PageController _pageController;
-  sdk.ParseLiveList<T>? _liveList;
+  CachedParseLiveList<T>? _liveList;
   List<T> _items = [];
   int _currentPage = 0;
   bool _hasMoreData = true;
@@ -134,7 +134,7 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
     }
   }
 
-  /// Loads the data for the live list.
+  /// Loads the data for the live list with caching.
   Future<void> _loadData() async {
     try {
       _currentPage = 0;
@@ -151,16 +151,17 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
         listeningIncludes: widget.listeningIncludes,
         lazyLoading: widget.lazyLoading,
         preloadedColumns: widget.preloadedColumns,
-        // excludedColumns and cacheSize parameters will be added when SDK supports them
+        // excludedColumns: widget.excludedColumns,
       );
 
-      // Store the live list
-      _liveList = originalLiveList;
+      // Wrap with our caching layer
+      final liveList = CachedParseLiveList<T>(originalLiveList, widget.cacheSize);
+      _liveList = liveList;
 
       // Get initial items
-      if (originalLiveList.size > 0) {
-        for (int i = 0; i < originalLiveList.size; i++) {
-          final item = originalLiveList.getPreLoadedAt(i);
+      if (liveList.size > 0) {
+        for (int i = 0; i < liveList.size; i++) {
+          final item = liveList.getPreLoadedAt(i);
           if (item != null) {
             _items.add(item);
           }
@@ -170,14 +171,19 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
       _noDataNotifier.value = _items.isEmpty;
 
       // Listen for real-time updates
-      originalLiveList.stream.listen((event) {
+      liveList.stream.listen((event) {
         if (event is sdk.ParseLiveListAddEvent<sdk.ParseObject>) {
           setState(() {
             _items.insert(event.index, event.object as T);
+            // Cache the new item
+            liveList.updateCache(event.index, event.object as T);
           });
         } else if (event is sdk.ParseLiveListDeleteEvent<sdk.ParseObject>) {
           setState(() {
             _items.removeAt(event.index);
+            // Remove from cache
+            liveList.removeFromCache(event.index);
+            
             // If current page would be out of bounds after deletion, adjust
             if (_pageController.hasClients && 
                 _pageController.page!.round() >= _items.length) {
@@ -187,6 +193,8 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
         } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
           setState(() {
             _items[event.index] = event.object as T;
+            // Update the cache
+            liveList.updateCache(event.index, event.object as T);
           });
         }
 
@@ -195,6 +203,19 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
     } catch (e) {
       debugPrint('Error loading data: $e');
     }
+  }
+
+  /// Refreshes the data by disposing the existing live list and loading fresh data
+  Future<void> _refreshData() async {
+    final liveList = _liveList;
+    if (liveList != null) {
+      // Clear cache before disposing
+      liveList.clearCache();
+      liveList.dispose();
+      _liveList = null;
+    }
+    
+    await _loadData();
   }
 
   /// Loads more data when scrolling near the end with pagination enabled
@@ -254,86 +275,71 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
           return widget.queryEmptyElement ?? const Center(child: Text('No items found'));
         }
 
-        return Stack(
-          children: [
-            PageView.builder(
-              controller: _pageController,
-              scrollDirection: widget.scrollDirection,
-              reverse: widget.reverse,
-              physics: widget.scrollPhysics,
-              itemCount: _items.length,
-              onPageChanged: (int page) {
-                // Handle internal page tracking
-                if (widget.pagination && 
-                    page >= _items.length - widget.paginationThreshold) {
-                  _loadMoreData();
-                }
+        return RefreshIndicator(
+          onRefresh: _refreshData, // Add pull-to-refresh capability
+          child: Stack(
+            children: [
+              PageView.builder(
+                controller: _pageController,
+                scrollDirection: widget.scrollDirection,
+                reverse: widget.reverse,
+                physics: widget.scrollPhysics,
+                itemCount: _items.length,
+                onPageChanged: (int page) {
+                  // Handle internal page tracking
+                  if (widget.pagination && 
+                      page >= _items.length - widget.paginationThreshold) {
+                    _loadMoreData();
+                  }
 
-                // Forward the callback to the user's implementation
-                widget.onPageChanged?.call(page);
-              },
-              itemBuilder: (context, index) {
-                // For pages already in the live list
-                if (index < (_liveList?.size ?? 0)) {
+                  // Forward the callback to the user's implementation
+                  widget.onPageChanged?.call(page);
+                },
+                itemBuilder: (context, index) {
+                  // Use the more efficient direct approach for items
+                  final item = _items[index];
+                  
                   return ParseLiveListElementWidget<T>(
-                    key: ValueKey<String>('page_${_items[index].objectId}'),
-                    stream: () => _liveList!.getAt(index),
-                    loadedData: () => _liveList!.getLoadedAt(index),
-                    preLoadedData: () => _liveList!.getPreLoadedAt(index),
+                    key: ValueKey<String>('page_${item.objectId ?? index.toString()}'),
+                    // Use a direct stream from the item for better performance
+                    stream: () => Stream.value(item),
+                    loadedData: () => item,
+                    preLoadedData: () => item,
                     sizeFactor: const AlwaysStoppedAnimation<double>(1.0),
                     duration: widget.duration,
                     childBuilder: widget.childBuilder ?? ParseLiveListPageView.defaultChildBuilder,
                     index: index, // Pass the index to the element widget
                   );
-                } else {
-                  // For paginated items that aren't in the live list
-                  final snapshot = sdk.ParseLiveListElementSnapshot<T>(
-                    loadedData: _items[index],
-                    preLoadedData: _items[index],
-                  );
-
-                  return (widget.childBuilder ?? ParseLiveListPageView.defaultChildBuilder)(
-                    context, 
-                    snapshot, 
-                    index
-                  );
-                }
-              },
-            ),
-
-            // Show loading indicator at the bottom when loading more items
-            if (_loadMoreStatus == LoadMoreStatus.loading)
-              Positioned(
-                bottom: 20,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: widget.loadingIndicator ?? 
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.black45,
-                          borderRadius: BorderRadius.circular(16)
-                        ),
-                        child: const SizedBox(
-                          width: 24, 
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2)
-                        ),
-                      ),
-                ),
+                },
               ),
-          ],
+
+              // Show loading indicator at the bottom when loading more items
+              if (_loadMoreStatus == LoadMoreStatus.loading)
+                Positioned(
+                  bottom: 20,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: widget.loadingIndicator ?? 
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.black45,
+                            borderRadius: BorderRadius.circular(16)
+                          ),
+                          child: const SizedBox(
+                            width: 24, 
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2)
+                          ),
+                        ),
+                  ),
+                ),
+            ],
+          ),
         );
       },
     );
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
   }
 
   @override
