@@ -342,13 +342,61 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
           return widget.queryEmptyElement ?? Container();
         }
         
-        return Stack(
-          children: <Widget>[
-            buildAnimatedList(),
-          ],
+        return RefreshIndicator(
+          onRefresh: _refreshData,
+          child: Stack(
+            children: <Widget>[
+              buildAnimatedList(),
+            ],
+          ),
         );
       }
     );
+  }
+
+  /// Refreshes data by disposing existing LiveList and reloading
+  Future<void> _refreshData() async {
+    setState(() {
+      // Show loading state during refresh
+      _loadMoreStatus = LoadMoreStatus.loading;
+    });
+    
+    try {
+      // Dispose of the old live list
+      _liveList?.dispose();
+      _liveList = null;
+      
+      // Clear existing items
+      final AnimatedListState? animatedListState = _animatedListKey.currentState;
+      
+      // Remove all items from the animated list
+      if (animatedListState != null) {
+        final int itemCount = _items.length;
+        for (int i = itemCount - 1; i >= 0; i--) {
+          final T item = _items[i];
+          animatedListState.removeItem(
+            i,
+            (context, animation) => SizedBox.shrink(),
+            duration: Duration.zero,
+          );
+        }
+      }
+      
+      // Reset state
+      _items.clear();
+      _currentPage = 0;
+      _hasMoreData = true;
+      
+      // Load data with a slight delay to ensure proper animation
+      await Future.delayed(Duration(milliseconds: 100));
+      await _loadData();
+      
+    } catch (e) {
+      debugPrint('Error refreshing data: $e');
+      setState(() {
+        _loadMoreStatus = LoadMoreStatus.error;
+      });
+    }
   }
 
   Widget buildAnimatedList() {
