@@ -69,7 +69,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.paginationLoadingElement,
     this.footerBuilder,
     this.loadMoreOffset = 200.0, // Provide a default value or make it required
-    this.cacheSize,
+    this.cacheSize = 50, // Default cache size
   });
 
   final sdk.QueryBuilder<T> query;
@@ -101,7 +101,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final double loadMoreOffset;
   final int pageSize;
   final int nonPaginatedLimit;
-  final int? cacheSize;
+  final int cacheSize;
 
   @override
   State<ParseLiveListWidget<T>> createState() => _ParseLiveListWidgetState<T>();
@@ -211,12 +211,12 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         listenOnAllSubItems: widget.listenOnAllSubItems,
         listeningIncludes: widget.listeningIncludes,
         lazyLoading: widget.lazyLoading,
-        preloadedColumns: widget.preloadedColumns,
+        preloadedColumns: widget.lazyLoading ? (widget.preloadedColumns ?? []) : null,
         // excludedColumns: widget.excludedColumns,
       );
 
       // Wrap it with our caching layer
-      final liveList = CachedParseLiveList<T>(originalLiveList, widget.cacheSize!);
+      final liveList = CachedParseLiveList<T>(originalLiveList, widget.cacheSize, widget.lazyLoading);
       _liveList = liveList;
       
       // Store initial items in our local list
@@ -292,11 +292,27 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                   itemBuilder: (context, index) {
                     final item = _items[index]; // Get item from local list
                     
+                    // Get data from LiveList if available, otherwise use direct item
+                    StreamGetter<T>? itemStream;
+                    DataGetter<T>? loadedData;
+                    DataGetter<T>? preLoadedData;
+
+                    final liveList = _liveList;
+                    if (liveList != null && index < liveList.size) {
+                      // This part is critical for lazy loading to work
+                      itemStream = () => liveList.getAt(index);
+                      loadedData = () => liveList.getLoadedAt(index);
+                      preLoadedData = () => liveList.getPreLoadedAt(index);
+                    } else {
+                      loadedData = () => item;
+                      preLoadedData = () => item;
+                    }
+
                     return ParseLiveListElementWidget<T>(
                       key: ValueKey<String>(item.objectId ?? 'unknown-${index}'),
-                      stream: () => Stream.value(item), // Create stream from item
-                      loadedData: () => item,
-                      preLoadedData: () => item,
+                      stream: itemStream,
+                      loadedData: loadedData,
+                      preLoadedData: preLoadedData,
                       sizeFactor: const AlwaysStoppedAnimation<double>(1.0),
                       duration: widget.duration,
                       childBuilder: widget.childBuilder ??

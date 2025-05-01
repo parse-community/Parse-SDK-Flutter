@@ -1,15 +1,15 @@
-
 import 'dart:collection';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart' as sdk;
 import 'package:flutter/foundation.dart';
 
 /// A wrapper around ParseLiveList that provides memory-efficient caching
 class CachedParseLiveList<T extends sdk.ParseObject> {
-  CachedParseLiveList(this._parseLiveList, this.cacheSize) 
+  CachedParseLiveList(this._parseLiveList, [this.cacheSize = 100, this.lazyLoading = false]) 
       : _cache = _LRUCache<String, T>(cacheSize);
   
   final sdk.ParseLiveList<T> _parseLiveList;
   final int cacheSize;
+  final bool lazyLoading;
   final _LRUCache<String, T> _cache;
 
   /// Get the stream of events from the underlying ParseLiveList
@@ -49,8 +49,21 @@ class CachedParseLiveList<T extends sdk.ParseObject> {
   
   /// Get a stream of updates for an object at the specified index
   Stream<T> getAt(int index) {
-    // We don't cache the stream itself, just the objects
-    return _parseLiveList.getAt(index);
+    // Get the original stream
+    final stream = _parseLiveList.getAt(index);
+    
+    // If lazy loading is enabled, we need to update the cache as items come in
+    if (lazyLoading) {
+      return stream.map((item) {
+        if (item.objectId != null) {
+          _cache.put(item.objectId!, item);
+        }
+        return item;
+      });
+    }
+    
+    // Otherwise just return the original stream
+    return stream;
   }
   
   /// Clean up resources
