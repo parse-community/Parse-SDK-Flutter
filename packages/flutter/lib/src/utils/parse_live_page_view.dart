@@ -116,7 +116,7 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
       );
 
       // Wrap it with our caching layer
-      final liveList = CachedParseLiveList<T>(originalLiveList, widget.cacheSize);
+      final liveList =CachedParseLiveList<T>(originalLiveList, widget.cacheSize, widget.lazyLoading);   //CachedParseLiveList<T>(originalLiveList, widget.cacheSize);
       _liveList = liveList;
 
       // Store initial items in our local list

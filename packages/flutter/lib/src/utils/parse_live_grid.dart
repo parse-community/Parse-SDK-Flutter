@@ -31,7 +31,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.pageSize = 20,
     this.loadMoreOffset = 300.0,
     this.footerBuilder,
-    this.cacheSize = 200,
+    this.cacheSize = 50,
   });
 
   final sdk.QueryBuilder<T> query;
@@ -198,7 +198,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       );
 
       // Wrap it with our caching layer
-      final liveGrid = CachedParseLiveList<T>(originalLiveGrid, widget.cacheSize);
+      final liveGrid =CachedParseLiveList<T>(originalLiveGrid, widget.cacheSize, widget.lazyLoading); // CachedParseLiveList<T>(originalLiveGrid, widget.cacheSize);
       _liveGrid = liveGrid;
 
       if (liveGrid.size > 0) {
