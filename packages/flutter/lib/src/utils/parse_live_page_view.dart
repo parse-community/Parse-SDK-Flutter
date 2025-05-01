@@ -1,7 +1,5 @@
 part of 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
-
-
 /// A widget that displays a live list of Parse objects in a swipeable page view.
 ///
 /// The `ParseLiveListPageView` is initialized with a `query` that retrieves the
@@ -31,6 +29,7 @@ class ParseLiveListPageView<T extends sdk.ParseObject> extends StatefulWidget {
     this.paginationThreshold = 3,
     this.loadingIndicator,
     this.cacheSize = 50,
+    this.onPageChanged, // Add this parameter
   });
 
   final sdk.QueryBuilder<T> query;
@@ -52,6 +51,7 @@ class ParseLiveListPageView<T extends sdk.ParseObject> extends StatefulWidget {
   final int paginationThreshold;
   final Widget? loadingIndicator;
   final int cacheSize;
+  final void Function(int)? onPageChanged; // Add this field
 
   @override
   State<ParseLiveListPageView<T>> createState() => _ParseLiveListPageViewState<T>();
@@ -100,9 +100,9 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
   int _currentPage = 0;
   bool _hasMoreData = true;
   bool _isLoading = false;
-  
+
   final ValueNotifier<bool> _noDataNotifier = ValueNotifier<bool>(true);
-  
+
   // Status of load more operation
   LoadMoreStatus _loadMoreStatus = LoadMoreStatus.idle;
 
@@ -111,7 +111,7 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
     super.initState();
     _pageController = widget.pageController ?? PageController();
     _loadData();
-    
+
     // Add listener to handle pagination
     _pageController.addListener(_onScroll);
   }
@@ -122,11 +122,11 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
         _loadMoreStatus == LoadMoreStatus.loading) {
       return;
     }
-    
+
     // Calculate if we should load more based on current page
     if (_items.isNotEmpty && _pageController.hasClients) {
       final int currentPage = _pageController.page?.round() ?? 0;
-      
+
       // If we're within threshold of the end, load more
       if (currentPage >= _items.length - widget.paginationThreshold) {
         _loadMoreData();
@@ -189,7 +189,7 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
             _items[event.index] = event.object as T;
           });
         }
-        
+
         _noDataNotifier.value = _items.isEmpty;
       });
     } catch (e) {
@@ -200,7 +200,7 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
   /// Loads more data when scrolling near the end with pagination enabled
   Future<void> _loadMoreData() async {
     if (_loadMoreStatus == LoadMoreStatus.loading || !_hasMoreData) return;
-    
+
     setState(() {
       _loadMoreStatus = LoadMoreStatus.loading;
     });
@@ -212,10 +212,10 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
         ..setLimit(widget.pageSize);
 
       final response = await nextQuery.query<T>();
-      
+
       if (response.success && response.results != null) {
         final List<T> newItems = response.results as List<T>;
-        
+
         if (newItems.isEmpty) {
           setState(() {
             _hasMoreData = false;
@@ -223,7 +223,7 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
           });
           return;
         }
-        
+
         setState(() {
           _items.addAll(newItems);
           _loadMoreStatus = LoadMoreStatus.idle;
@@ -249,11 +249,11 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
         if (_items.isEmpty && _liveList == null) {
           return widget.pageLoadingElement ?? const Center(child: CircularProgressIndicator());
         }
-        
+
         if (noData && _items.isEmpty) {
           return widget.queryEmptyElement ?? const Center(child: Text('No items found'));
         }
-        
+
         return Stack(
           children: [
             PageView.builder(
@@ -262,6 +262,16 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
               reverse: widget.reverse,
               physics: widget.scrollPhysics,
               itemCount: _items.length,
+              onPageChanged: (int page) {
+                // Handle internal page tracking
+                if (widget.pagination && 
+                    page >= _items.length - widget.paginationThreshold) {
+                  _loadMoreData();
+                }
+
+                // Forward the callback to the user's implementation
+                widget.onPageChanged?.call(page);
+              },
               itemBuilder: (context, index) {
                 // For pages already in the live list
                 if (index < (_liveList?.size ?? 0)) {
@@ -281,7 +291,7 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
                     loadedData: _items[index],
                     preLoadedData: _items[index],
                   );
-                  
+
                   return (widget.childBuilder ?? ParseLiveListPageView.defaultChildBuilder)(
                     context, 
                     snapshot, 
@@ -290,7 +300,7 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
                 }
               },
             ),
-            
+
             // Show loading indicator at the bottom when loading more items
             if (_loadMoreStatus == LoadMoreStatus.loading)
               Positioned(
