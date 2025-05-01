@@ -347,6 +347,15 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
           child: Stack(
             children: <Widget>[
               buildAnimatedList(),
+              if (_loadMoreStatus == LoadMoreStatus.loading && _items.isEmpty) 
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withOpacity(0.1),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ),
             ],
           ),
         );
