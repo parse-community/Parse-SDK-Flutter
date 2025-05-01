@@ -30,7 +30,7 @@ dependencies:
     git:
       url: https://github.com/pastordee/Parse-SDK-Flutter.git 
       path: packages/dart
-      ref: p_c
+      ref: p_c_pagination
   # parse_server_sdk: ^8.0.0
   # Uncomment for local testing
   #parse_server_sdk:
