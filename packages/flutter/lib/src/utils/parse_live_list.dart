@@ -292,13 +292,12 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
 
   @override
   Widget build(BuildContext context) {
-    final Widget result = SizeTransition(
+    return SizeTransition(
       sizeFactor: widget.sizeFactor,
-      child: AnimatedSize(
-        duration: widget.duration,
-        child: widget.childBuilder(context, _snapshot, widget.index), // Pass the index to the child builder
-      ),
+        child: widget.index != null
+            ? widget.childBuilder(context, _snapshot, widget.index)
+            : widget.childBuilder(context, _snapshot),
+    
     );
-    return result;
   }
 }
