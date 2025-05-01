@@ -1,8 +1,9 @@
 part of 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 /// The type of function that builds a child widget for a ParseLiveList element.
+/// Now includes an optional index parameter that provides the item's position.
 typedef ChildBuilder<T extends sdk.ParseObject> = Widget Function(
-    BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot);
+    BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot, [int? index]);
 
 /// The type of function that returns the stream to listen for updates from.
 typedef StreamGetter<T extends sdk.ParseObject> = Stream<T> Function();
@@ -38,6 +39,8 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.listeningIncludes,
     this.lazyLoading = true,
     this.preloadedColumns,
+    this.excludedColumns,
+    this.cacheSize = 100,
   });
 
   final sdk.QueryBuilder<T> query;
@@ -61,13 +64,15 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
 
   final bool lazyLoading;
   final List<String>? preloadedColumns;
+  final List<String>? excludedColumns;
+  final int cacheSize;
 
   @override
   State<ParseLiveListWidget<T>> createState() => _ParseLiveListWidgetState<T>();
 
   /// The default child builder function used to display a ParseLiveList element.
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
-      BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot) {
+      BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot, [int? index]) {
     Widget child;
     if (snapshot.failed) {
       child = const Text('something went wrong!');
@@ -77,6 +82,8 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
           snapshot.loadedData?.get<String>(sdk.keyVarObjectId) ??
               'Missing Data!',
         ),
+        // If index is available, show it as the leading widget
+        leading: index != null ? Text('#${index + 1}') : null,
       );
     } else {
       child = const ListTile(
@@ -97,6 +104,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       listeningIncludes: widget.listeningIncludes,
       lazyLoading: widget.lazyLoading,
       preloadedColumns: widget.preloadedColumns,
+      // Exclude the excludedColumns and cacheSize parameters until SDK supports them
     ).then((sdk.ParseLiveList<T> liveList) {
       setState(() {
         _noData = liveList.size == 0;
@@ -126,6 +134,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                         duration: widget.duration,
                         loadedData: () => event.object as T,
                         preLoadedData: () => event.object as T,
+                        index: event.index, // Pass the index to the element widget
                       ),
                   duration: widget.duration);
               setState(() {
@@ -194,6 +203,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
             duration: widget.duration,
             childBuilder:
                 widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
+            index: index, // Pass the index to the element widget
           );
         });
   }
@@ -208,14 +218,16 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
 
 class ParseLiveListElementWidget<T extends sdk.ParseObject>
     extends StatefulWidget {
-  const ParseLiveListElementWidget(
-      {super.key,
+  const ParseLiveListElementWidget({
+      super.key,
       this.stream,
       this.loadedData,
       this.preLoadedData,
       required this.sizeFactor,
       required this.duration,
-      required this.childBuilder});
+      required this.childBuilder,
+      this.index, // Add the optional index parameter
+  });
 
   final StreamGetter<T>? stream;
   final DataGetter<T>? loadedData;
@@ -223,6 +235,7 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject>
   final Animation<double> sizeFactor;
   final Duration duration;
   final ChildBuilder<T> childBuilder;
+  final int? index; // Store the index
 
   @override
   State<ParseLiveListElementWidget<T>> createState() {
@@ -283,7 +296,7 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
       sizeFactor: widget.sizeFactor,
       child: AnimatedSize(
         duration: widget.duration,
-        child: widget.childBuilder(context, _snapshot),
+        child: widget.childBuilder(context, _snapshot, widget.index), // Pass the index to the child builder
       ),
     );
     return result;
