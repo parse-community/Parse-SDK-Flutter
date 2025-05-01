@@ -358,7 +358,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
               if (_loadMoreStatus == LoadMoreStatus.loading && _items.isEmpty) 
                 Positioned.fill(
                   child: Container(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: .1),
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
@@ -391,7 +391,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
           for (int i = itemCount - 1; i >= 0; i--) {
             animatedListState.removeItem(
               i,
-              (context, animation) => SizedBox.shrink(),
+              (context, animation) => const SizedBox.shrink(),
               duration: Duration.zero,
             );
           }
@@ -405,7 +405,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       
       // Load data with a slight delay to ensure proper animation if needed
       if (widget.useAnimatedList) {
-        await Future.delayed(Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 100));
       }
       
       await _loadData();
@@ -448,7 +448,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       itemBuilder: (BuildContext context, int index, Animation<double> animation) {
         // Get the actual item
         if (index >= _items.length) {
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         }
         
         final item = _items[index];
@@ -533,12 +533,12 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
     
     switch (_loadMoreStatus) {
       case LoadMoreStatus.idle:
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       
       case LoadMoreStatus.loading:
         return widget.paginationLoadingElement ?? 
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
               child: Center(child: CircularProgressIndicator()),
             );
       
@@ -548,19 +548,19 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
           child: Center(
             child: TextButton(
               onPressed: _loadMoreData,
-              child: Text('Error loading items. Tap to retry.'),
+              child: const Text('Error loading items. Tap to retry.'),
             ),
           ),
         );
       
       case LoadMoreStatus.noMoreData:
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
+        return const Padding(
+          padding: EdgeInsets.symmetric(vertical: 16.0),
           child: Center(child: Text('No more items')),
         );
       
       default:
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
     }
   }
 

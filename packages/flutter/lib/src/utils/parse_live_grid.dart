@@ -42,6 +42,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.paginationLoadingElement,           // New parameter for loading indicator
     this.footerBuilder,                      // New parameter for custom footer
     this.loadMoreOffset = 200.0,             // New parameter for triggering load more
+    this.useAnimations = true,               // New parameter to toggle animations
   });
 
   final sdk.QueryBuilder<T> query;
@@ -82,6 +83,9 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final Widget? paginationLoadingElement;
   final Widget Function(BuildContext context, LoadMoreStatus status)? footerBuilder;
   final double loadMoreOffset;
+
+  // New parameter to toggle animations
+  final bool useAnimations;
 
   @override
   State<ParseLiveGridWidget<T>> createState() => _ParseLiveGridWidgetState<T>();
@@ -294,23 +298,70 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
           return widget.queryEmptyElement ?? Container();
         }
         
-        return Column(
-          children: [
-            Expanded(
-              child: buildAnimatedGrid(),
-            ),
-            
-            // Show footer based on load more status if pagination is enabled
-            if (widget.pagination) _buildFooter(),
-          ],
+        // Wrap with RefreshIndicator to enable pull-to-refresh
+        return RefreshIndicator(
+          onRefresh: _refreshData,
+          child: Column(
+            children: [
+              Expanded(
+                child: buildAnimatedGrid(),
+              ),
+              
+              // Show footer based on load more status if pagination is enabled
+              if (widget.pagination) _buildFooter(),
+            ],
+          ),
         );
       },
     );
   }
 
+  /// Refreshes data by disposing existing LiveGrid and reloading
+  Future<void> _refreshData() async {
+    if (!mounted) return;
+    
+    // Update UI to show loading state
+    setState(() {
+      _loadMoreStatus = LoadMoreStatus.loading;
+    });
+    
+    try {
+      // Save a reference to the current list size
+      final int oldItemCount = _items.length;
+      
+      // Reset state and clear lists
+      _items = [];  // Create a new list rather than clearing the existing one
+      _currentPage = 0;
+      _hasMoreData = true;
+      
+      // Dispose old LiveGrid
+      final oldLiveGrid = _liveGrid;
+      _liveGrid = null;
+      oldLiveGrid?.dispose();
+      
+      // Load new data
+      await _loadData();
+      
+      // Force UI update after data is loaded
+      if (mounted) {
+        setState(() {
+          // Make sure UI reflects the new state
+          _loadMoreStatus = LoadMoreStatus.idle;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error refreshing data: $e');
+      if (mounted) {
+        setState(() {
+          _loadMoreStatus = LoadMoreStatus.error;
+        });
+      }
+    }
+  }
+
   Widget buildAnimatedGrid() {
     Animation<double> boxAnimation;
-    if (widget.animationController != null) {
+    if (widget.useAnimations && widget.animationController != null) {
       boxAnimation = Tween<double>(
         begin: 0.0,
         end: 1.0,
