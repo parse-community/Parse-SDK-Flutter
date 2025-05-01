@@ -130,9 +130,10 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   }
 }
 
+// Update class to use CachedParseLiveList instead of direct reference
 class _ParseLiveListWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveListWidget<T>> {
-  sdk.ParseLiveList<T>? _liveList;
+  CachedParseLiveList<T>? _liveList;
   final GlobalKey<AnimatedListState> _animatedListKey = GlobalKey<AnimatedListState>();
   final ScrollController _effectiveController = ScrollController();
   bool _noData = true;
@@ -201,15 +202,18 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         }
       }
 
-      final liveList = await sdk.ParseLiveList.create(
+      // Create the ParseLiveList
+      final originalLiveList = await sdk.ParseLiveList.create(
         initialQuery,
         listenOnAllSubItems: widget.listenOnAllSubItems,
         listeningIncludes: widget.listeningIncludes,
         lazyLoading: widget.lazyLoading,
         preloadedColumns: widget.preloadedColumns,
-        // excludedColumns and cacheSize will be added when SDK supports them
+        // excludedColumns: widget.excludedColumns,
       );
 
+      // Wrap it with our caching layer
+      final liveList = CachedParseLiveList<T>(originalLiveList, widget.cacheSize);
       _liveList = liveList;
       
       // Store initial items in our local list
@@ -221,11 +225,11 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
           }
         }
       }
-
+      
       _noDataNotifier.value = _items.isEmpty;
       _noData = _items.isEmpty;
 
-      liveList.stream.listen((sdk.ParseLiveListEvent<sdk.ParseObject> event) {
+      liveList.stream.listen((event) {
         final AnimatedListState? animatedListState = _animatedListKey.currentState;
         
         // Handle LiveQuery events
@@ -358,7 +362,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
               if (_loadMoreStatus == LoadMoreStatus.loading && _items.isEmpty) 
                 Positioned.fill(
                   child: Container(
-                    color: Colors.black.withValues(alpha: .1),
+                    color: Colors.black.withOpacity(0.1),
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),
