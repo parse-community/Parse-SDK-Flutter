@@ -59,14 +59,18 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.preloadedColumns,
     this.excludedColumns,
     this.cacheSize = 100,
-    this.pagination = false,                  // New parameter for enabling pagination
-    this.pageSize = 20,                       // New parameter for page size
-    this.nonPaginatedLimit = 1000,            // New parameter for max limit when pagination is off
-    this.paginationLoadingElement,            // New parameter for loading indicator
-    this.footerBuilder,                       // New parameter for custom footer
-    this.loadMoreOffset = 200.0,              // New parameter for triggering load more
+    this.pagination = false,                  // Pagination parameters
+    this.pageSize = 20,                       
+    this.nonPaginatedLimit = 1000,            
+    this.paginationLoadingElement,            
+    this.footerBuilder,                       
+    this.loadMoreOffset = 200.0,              
+    this.useAnimatedList = true,              // New parameter to choose list type
   });
 
+  // Add the new parameter
+  final bool useAnimatedList;
+  
   final sdk.QueryBuilder<T> query;
   final Widget? listLoadingElement;
   final Widget? queryEmptyElement;
@@ -91,7 +95,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final List<String>? excludedColumns;
   final int cacheSize;
   
-  // New pagination parameters
+  // Pagination parameters
   final bool pagination;
   final int pageSize;
   final int nonPaginatedLimit;
@@ -303,16 +307,20 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
           return;
         }
         
+        final int startIndex = _items.length;
+        
         setState(() {
-          final int startIndex = _items.length;
+          // Add new items to our list
           _items.addAll(newItems);
           _loadMoreStatus = LoadMoreStatus.idle;
           
-          // If we have an AnimatedListState, animate in the new items
-          final AnimatedListState? animatedListState = _animatedListKey.currentState;
-          if (animatedListState != null) {
-            for (int i = 0; i < newItems.length; i++) {
-              animatedListState.insertItem(startIndex + i, duration: widget.duration);
+          // If using AnimatedList, animate in the new items
+          if (widget.useAnimatedList) {
+            final AnimatedListState? animatedListState = _animatedListKey.currentState;
+            if (animatedListState != null) {
+              for (int i = 0; i < newItems.length; i++) {
+                animatedListState.insertItem(startIndex + i, duration: widget.duration);
+              }
             }
           }
         });
@@ -366,7 +374,6 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   /// Refreshes data by disposing existing LiveList and reloading
   Future<void> _refreshData() async {
     setState(() {
-      // Show loading state during refresh
       _loadMoreStatus = LoadMoreStatus.loading;
     });
     
@@ -375,29 +382,32 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       _liveList?.dispose();
       _liveList = null;
       
-      // Clear existing items
-      final AnimatedListState? animatedListState = _animatedListKey.currentState;
-      
-      // Remove all items from the animated list
-      if (animatedListState != null) {
-        final int itemCount = _items.length;
-        for (int i = itemCount - 1; i >= 0; i--) {
-          final T item = _items[i];
-          animatedListState.removeItem(
-            i,
-            (context, animation) => SizedBox.shrink(),
-            duration: Duration.zero,
-          );
+      // If using AnimatedList, handle removing items with animation
+      if (widget.useAnimatedList) {
+        final AnimatedListState? animatedListState = _animatedListKey.currentState;
+        
+        if (animatedListState != null) {
+          final int itemCount = _items.length;
+          for (int i = itemCount - 1; i >= 0; i--) {
+            animatedListState.removeItem(
+              i,
+              (context, animation) => SizedBox.shrink(),
+              duration: Duration.zero,
+            );
+          }
         }
       }
       
       // Reset state
-      _items.clear();
+      _items = []; // Create a new list rather than clearing
       _currentPage = 0;
       _hasMoreData = true;
       
-      // Load data with a slight delay to ensure proper animation
-      await Future.delayed(Duration(milliseconds: 100));
+      // Load data with a slight delay to ensure proper animation if needed
+      if (widget.useAnimatedList) {
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+      
       await _loadData();
       
     } catch (e) {
@@ -412,60 +422,107 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
     return Column(
       children: [
         Expanded(
-          child: AnimatedList(
-            key: _animatedListKey,
-            physics: widget.scrollPhysics,
-            controller: _scrollController,
-            scrollDirection: widget.scrollDirection,
-            padding: widget.padding,
-            primary: widget.primary,
-            reverse: widget.reverse,
-            shrinkWrap: widget.shrinkWrap,
-            initialItemCount: _items.length,
-            itemBuilder: (BuildContext context, int index, Animation<double> animation) {
-              // Get the actual item
-              T? item;
-              if (index < _items.length) {
-                item = _items[index];
-              }
-              
-              // If we don't have an item, show a placeholder
-              if (item == null) {
-                return SizedBox.shrink();
-              }
-              
-              // Get data from LiveList if available, otherwise use direct item
-              StreamGetter<T>? itemStream;
-              DataGetter<T>? loadedData;
-              DataGetter<T>? preLoadedData;
-              
-              final liveList = _liveList;
-              if (liveList != null && index < liveList.size) {
-                itemStream = () => liveList.getAt(index);
-                loadedData = () => liveList.getLoadedAt(index);
-                preLoadedData = () => liveList.getPreLoadedAt(index);
-              } else {
-                loadedData = () => item;
-                preLoadedData = () => item;
-              }
-              
-              return ParseLiveListElementWidget<T>(
-                key: ValueKey<String>(item.objectId ?? 'item-$index'),
-                stream: itemStream,
-                loadedData: loadedData,
-                preLoadedData: preLoadedData,
-                sizeFactor: animation,
-                duration: widget.duration,
-                childBuilder: widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
-                index: index,
-              );
-            },
-          ),
+          child: widget.useAnimatedList
+              ? _buildAnimatedList()
+              : _buildListView(),
         ),
         
         // Show footer based on load more status if pagination is enabled
         if (widget.pagination) _buildFooter(),
       ],
+    );
+  }
+
+  // Build using AnimatedList for animated insertions/removals
+  Widget _buildAnimatedList() {
+    return AnimatedList(
+      key: _animatedListKey,
+      physics: widget.scrollPhysics,
+      controller: _scrollController,
+      scrollDirection: widget.scrollDirection,
+      padding: widget.padding,
+      primary: widget.primary,
+      reverse: widget.reverse,
+      shrinkWrap: widget.shrinkWrap,
+      initialItemCount: _items.length,
+      itemBuilder: (BuildContext context, int index, Animation<double> animation) {
+        // Get the actual item
+        if (index >= _items.length) {
+          return SizedBox.shrink();
+        }
+        
+        final item = _items[index];
+        
+        // Get data from LiveList if available, otherwise use direct item
+        StreamGetter<T>? itemStream;
+        DataGetter<T>? loadedData;
+        DataGetter<T>? preLoadedData;
+        
+        final liveList = _liveList;
+        if (liveList != null && index < liveList.size) {
+          itemStream = () => liveList.getAt(index);
+          loadedData = () => liveList.getLoadedAt(index);
+          preLoadedData = () => liveList.getPreLoadedAt(index);
+        } else {
+          loadedData = () => item;
+          preLoadedData = () => item;
+        }
+        
+        return ParseLiveListElementWidget<T>(
+          key: ValueKey<String>(item.objectId ?? 'item-$index'),
+          stream: itemStream,
+          loadedData: loadedData,
+          preLoadedData: preLoadedData,
+          sizeFactor: animation,
+          duration: widget.duration,
+          childBuilder: widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
+          index: index,
+        );
+      },
+    );
+  }
+
+  // Build using ListView.builder for simpler list rendering
+  Widget _buildListView() {
+    return ListView.builder(
+      physics: widget.scrollPhysics,
+      controller: _scrollController,
+      scrollDirection: widget.scrollDirection,
+      padding: widget.padding,
+      primary: widget.primary,
+      reverse: widget.reverse,
+      shrinkWrap: widget.shrinkWrap,
+      itemCount: _items.length,
+      itemBuilder: (BuildContext context, int index) {
+        // Get the actual item
+        final item = _items[index];
+        
+        // Get data from LiveList if available, otherwise use direct item
+        StreamGetter<T>? itemStream;
+        DataGetter<T>? loadedData;
+        DataGetter<T>? preLoadedData;
+        
+        final liveList = _liveList;
+        if (liveList != null && index < liveList.size) {
+          itemStream = () => liveList.getAt(index);
+          loadedData = () => liveList.getLoadedAt(index);
+          preLoadedData = () => liveList.getPreLoadedAt(index);
+        } else {
+          loadedData = () => item;
+          preLoadedData = () => item;
+        }
+        
+        return ParseLiveListElementWidget<T>(
+          key: ValueKey<String>(item.objectId ?? 'item-$index'),
+          stream: itemStream,
+          loadedData: loadedData,
+          preLoadedData: preLoadedData,
+          sizeFactor: const AlwaysStoppedAnimation<double>(1.0), // No animation
+          duration: widget.duration,
+          childBuilder: widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
+          index: index,
+        );
+      },
     );
   }
 
