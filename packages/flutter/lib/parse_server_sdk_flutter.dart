@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:path/path.dart' as path;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -25,6 +26,8 @@ part 'src/storage/core_store_sembast.dart';
 part 'src/utils/parse_live_grid.dart';
 
 part 'src/utils/parse_live_list.dart';
+
+part 'src/utils/parse_live_page_view.dart';
 
 part 'src/notification/parse_notification.dart';
 

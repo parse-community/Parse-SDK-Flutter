@@ -23,6 +23,9 @@ enum LoadMoreStatus {
   
   /// All data has been loaded
   noMoreData, 
+
+  /// No data available
+  done,
   
   /// An error occurred during loading
   error, 
