@@ -198,16 +198,33 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         // excludedColumns: widget.excludedColumns,
       );
 
-      // Wrap it with our caching layer
-      final liveGrid = CachedParseLiveList<T>(originalLiveGrid, widget.cacheSize);
+      // Wrap it with our caching layer, passing the lazyLoading parameter through
+      final liveGrid = CachedParseLiveList<T>(
+        originalLiveGrid, 
+        widget.cacheSize, 
+        widget.lazyLoading
+      );
       _liveGrid = liveGrid;
       
-      // Store initial items in our local list
+      // Store initial items in our local list, handling lazy loading differently
       if (liveGrid.size > 0) {
-        for (int i = 0; i < liveGrid.size; i++) {
-          final item = liveGrid.getPreLoadedAt(i);
-          if (item != null) {
-            _items.add(item);
+        if (!widget.lazyLoading) {
+          // When not using lazy loading, we can get all preloaded items
+          for (int i = 0; i < liveGrid.size; i++) {
+            final item = liveGrid.getPreLoadedAt(i);
+            if (item != null) {
+              _items.add(item);
+            }
+          }
+        } else {
+          // When using lazy loading, we need to wait for items to be loaded
+          // We'll just set up the grid with placeholders and let the streaming handle loading
+          for (int i = 0; i < liveGrid.size; i++) {
+            // Try to get preloaded data, but don't rely on it
+            final item = liveGrid.getPreLoadedAt(i);
+            if (item != null) {
+              _items.add(item);
+            }
           }
         }
       }
@@ -215,12 +232,12 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       _noDataNotifier.value = _items.isEmpty;
       noData = _items.isEmpty;
 
+      // Rest of the code remains the same
       liveGrid.stream.listen((sdk.ParseLiveListEvent<sdk.ParseObject> event) {
         // Handle LiveQuery events
         if (event is sdk.ParseLiveListAddEvent) {
           setState(() {
             _items.insert(event.index, event.object as T);
-            // Cache the new item
             liveGrid.updateCache(event.index, event.object as T);
             
             noData = _items.isEmpty;
@@ -229,7 +246,6 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         } else if (event is sdk.ParseLiveListDeleteEvent) {
           setState(() {
             _items.removeAt(event.index);
-            // Remove from cache
             liveGrid.removeFromCache(event.index);
             
             noData = _items.isEmpty;
@@ -238,7 +254,6 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         } else if (event is sdk.ParseLiveListUpdateEvent) {
           setState(() {
             _items[event.index] = event.object as T;
-            // Update the cache
             liveGrid.updateCache(event.index, event.object as T);
           });
         }
@@ -332,24 +347,14 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   }
 
   Widget buildAnimatedGrid() {
-    Animation<double> boxAnimation;
-    if (widget.useAnimations && widget.animationController != null) {
-      boxAnimation = Tween<double>(
-        begin: 0.0,
-        end: 1.0,
-      ).animate(
-        CurvedAnimation(
-          parent: widget.animationController!,
-          curve: const Interval(
-            0,
-            0.5,
-            curve: Curves.decelerate,
-          ),
-        ),
-      );
-    } else {
-      boxAnimation = const AlwaysStoppedAnimation<double>(1.0);
-    }
+    Animation<double> boxAnimation = widget.useAnimations && widget.animationController != null
+        ? Tween<double>(begin: 0.0, end: 1.0).animate(
+            CurvedAnimation(
+              parent: widget.animationController!,
+              curve: const Interval(0, 0.5, curve: Curves.decelerate),
+            ),
+          )
+        : const AlwaysStoppedAnimation<double>(1.0);
     
     return GridView.builder(
       reverse: widget.reverse,
@@ -358,27 +363,45 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       controller: _scrollController,
       scrollDirection: widget.scrollDirection,
       shrinkWrap: widget.shrinkWrap,
-      itemCount: _items.length,
+      itemCount: _liveGrid?.size ?? _items.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: widget.crossAxisCount,
           crossAxisSpacing: widget.crossAxisSpacing,
           mainAxisSpacing: widget.mainAxisSpacing,
           childAspectRatio: widget.childAspectRatio),
       itemBuilder: (BuildContext context, int index) {
-        // Get the actual item
-        T item = _items[index];
+        // Handle the case when using lazy loading
+        if (widget.lazyLoading && _liveGrid != null) {
+          // Use proper stream-based approach for lazy loading
+          return ParseLiveListElementWidget<T>(
+            key: ValueKey<String>(_liveGrid!.getIdentifier(index)),
+            stream: () => _liveGrid!.getAt(index),
+            loadedData: () => _liveGrid!.getLoadedAt(index),
+            preLoadedData: () => _liveGrid!.getPreLoadedAt(index),
+            sizeFactor: boxAnimation,
+            duration: widget.duration,
+            childBuilder: widget.childBuilder ?? ParseLiveGridWidget.defaultChildBuilder,
+            index: index,
+          );
+        }
         
-        // For better performance, use the item directly from our local list
-        return ParseLiveListElementWidget<T>(
-          key: ValueKey<String>(item.objectId ?? 'item-$index'),
-          stream: () => Stream.value(item),  // Use a simple stream of the item
-          loadedData: () => item,
-          preLoadedData: () => item,
-          sizeFactor: boxAnimation,
-          duration: widget.duration,
-          childBuilder: widget.childBuilder ?? ParseLiveGridWidget.defaultChildBuilder,
-          index: index,
-        );
+        // When not using lazy loading or for cached items, use direct approach
+        if (index < _items.length) {
+          final item = _items[index];
+          return ParseLiveListElementWidget<T>(
+            key: ValueKey<String>(item.objectId ?? 'item-$index'),
+            stream: () => Stream.value(item),
+            loadedData: () => item,
+            preLoadedData: () => item,
+            sizeFactor: boxAnimation,
+            duration: widget.duration,
+            childBuilder: widget.childBuilder ?? ParseLiveGridWidget.defaultChildBuilder,
+            index: index,
+          );
+        }
+        
+        // Fallback for out of bounds indices
+        return const SizedBox.shrink();
       },
     );
   }
