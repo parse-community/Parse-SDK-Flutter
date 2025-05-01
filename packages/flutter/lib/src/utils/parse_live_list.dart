@@ -11,6 +11,23 @@ typedef StreamGetter<T extends sdk.ParseObject> = Stream<T> Function();
 /// The type of function that returns the loaded data for a ParseLiveList element.
 typedef DataGetter<T extends sdk.ParseObject> = T? Function();
 
+
+
+/// Represents the status of the load more operation
+enum LoadMoreStatus {
+  /// Initial state, no loading is happening
+  idle,
+  
+  /// Loading is in progress
+  loading,
+  
+  /// All data has been loaded
+  noMoreData, 
+  
+  /// An error occurred during loading
+  error, 
+}
+
 /// A widget that displays a live list of Parse objects.
 ///
 /// The `ParseLiveListWidget` is initialized with a `query` that retrieves the
