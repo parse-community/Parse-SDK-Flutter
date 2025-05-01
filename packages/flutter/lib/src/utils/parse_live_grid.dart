@@ -190,12 +190,22 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       final originalLiveGrid = await sdk.ParseLiveList.create(
         initialQuery,
         listenOnAllSubItems: widget.listenOnAllSubItems,
-        listeningIncludes: widget.listeningIncludes,
+        // listeningIncludes: widget.listeningIncludes,
+        listeningIncludes: widget.lazyLoading ? (widget.listeningIncludes ?? []) : widget.listeningIncludes,
         lazyLoading: widget.lazyLoading,
-        preloadedColumns: widget.preloadedColumns,
+        preloadedColumns: widget.lazyLoading ? (widget.preloadedColumns ?? []) : widget.preloadedColumns,
+        // preloadedColumns: widget.lazyLoading ? (widget.preloadedColumns ?? []) : null,
         // excludedColumns: widget.excludedColumns,
-        // Remove cacheSize parameter
       );
+      // final originalLiveGrid = await sdk.ParseLiveList.create(
+      //   initialQuery,
+      //   listenOnAllSubItems: widget.listenOnAllSubItems,
+      //   listeningIncludes: widget.listeningIncludes,
+      //   lazyLoading: widget.lazyLoading,
+      //   preloadedColumns: widget.preloadedColumns,
+      //   // excludedColumns: widget.excludedColumns,
+      //   // Remove cacheSize parameter
+      // );
 
       // Wrap it with our caching layer
       final liveGrid =CachedParseLiveList<T>(originalLiveGrid, widget.cacheSize, widget.lazyLoading); // CachedParseLiveList<T>(originalLiveGrid, widget.cacheSize);

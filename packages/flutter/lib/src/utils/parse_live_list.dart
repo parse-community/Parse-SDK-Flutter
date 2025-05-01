@@ -209,9 +209,11 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       final originalLiveList = await sdk.ParseLiveList.create(
         initialQuery,
         listenOnAllSubItems: widget.listenOnAllSubItems,
-        listeningIncludes: widget.listeningIncludes,
+        // listeningIncludes: widget.listeningIncludes,
+        listeningIncludes: widget.lazyLoading ? (widget.listeningIncludes ?? []) : widget.listeningIncludes,
         lazyLoading: widget.lazyLoading,
-        preloadedColumns: widget.lazyLoading ? (widget.preloadedColumns ?? []) : null,
+        preloadedColumns: widget.lazyLoading ? (widget.preloadedColumns ?? []) : widget.preloadedColumns,
+        // preloadedColumns: widget.lazyLoading ? (widget.preloadedColumns ?? []) : null,
         // excludedColumns: widget.excludedColumns,
       );
 

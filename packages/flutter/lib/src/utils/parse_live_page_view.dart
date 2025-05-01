@@ -105,15 +105,25 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
         ..setLimit(widget.pageSize);
 
       // Create the ParseLiveList without cacheSize parameter
-      final originalLiveList = await sdk.ParseLiveList.create<T>(
+       final originalLiveList = await sdk.ParseLiveList.create(
         initialQuery,
         listenOnAllSubItems: widget.listenOnAllSubItems,
-        listeningIncludes: widget.listeningIncludes,
+        // listeningIncludes: widget.listeningIncludes,
+        listeningIncludes: widget.lazyLoading ? (widget.listeningIncludes ?? []) : widget.listeningIncludes,
         lazyLoading: widget.lazyLoading,
-        preloadedColumns: widget.preloadedColumns,
+        preloadedColumns: widget.lazyLoading ? (widget.preloadedColumns ?? []) : widget.preloadedColumns,
+        // preloadedColumns: widget.lazyLoading ? (widget.preloadedColumns ?? []) : null,
         // excludedColumns: widget.excludedColumns,
-        // Remove cacheSize parameter
       );
+      // final originalLiveList = await sdk.ParseLiveList.create<T>(
+      //   initialQuery,
+      //   listenOnAllSubItems: widget.listenOnAllSubItems,
+      //   listeningIncludes: widget.listeningIncludes,
+      //   lazyLoading: widget.lazyLoading,
+      //   preloadedColumns: widget.preloadedColumns,
+      //   // excludedColumns: widget.excludedColumns,
+      //   // Remove cacheSize parameter
+      // );
 
       // Wrap it with our caching layer
       final liveList =CachedParseLiveList<T>(originalLiveList, widget.cacheSize, widget.lazyLoading);   //CachedParseLiveList<T>(originalLiveList, widget.cacheSize);
