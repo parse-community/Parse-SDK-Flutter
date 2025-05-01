@@ -195,7 +195,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         listeningIncludes: widget.listeningIncludes,
         lazyLoading: widget.lazyLoading,
         preloadedColumns: widget.preloadedColumns,
-        excludedColumns: widget.excludedColumns,
+        // excludedColumns: widget.excludedColumns,
       );
 
       // Wrap it with our caching layer
@@ -419,6 +419,45 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       default:
         return const SizedBox.shrink();
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_liveGrid == null) {
+      // Initial loading state
+      return widget.gridLoadingElement ??
+          const Center(child: CircularProgressIndicator.adaptive());
+    }
+
+    return ValueListenableBuilder<bool>(
+      valueListenable: _noDataNotifier,
+      builder: (context, noData, _) {
+        if (noData && _loadMoreStatus != LoadMoreStatus.loading) {
+          // Empty state after loading
+          return widget.queryEmptyElement ??
+              const Center(child: Text('No data found'));
+        }
+
+        // Build the main content, potentially wrapped in RefreshIndicator
+        Widget content = buildAnimatedGrid();
+
+        // Add footer if pagination is enabled
+        if (widget.pagination) {
+          content = Column(
+            children: [
+              Expanded(child: content),
+              _buildFooter(),
+            ],
+          );
+        }
+
+        // Wrap with RefreshIndicator for pull-to-refresh
+        return RefreshIndicator(
+          onRefresh: _refreshData,
+          child: content,
+        );
+      },
+    );
   }
 
   @override
