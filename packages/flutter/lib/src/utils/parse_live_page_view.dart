@@ -91,6 +91,12 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
         _pageController.page! >= _items.length - widget.paginationThreshold) {
       _loadMoreData();
     }
+    
+    // Also preload the upcoming pages even if we're not at the threshold yet
+    if (_pageController.page != null && widget.lazyLoading) {
+      int currentPage = _pageController.page!.round();
+      _preloadAdjacentPages(currentPage);
+    }
   }
 
   /// Loads the data for the live list.
@@ -214,6 +220,22 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
     await _loadData();
   }
 
+  /// Preloads adjacent pages for smoother transitions
+  void _preloadAdjacentPages(int currentIndex) {
+    if (!widget.lazyLoading || _liveList == null) return;
+    
+    // Preload current page and next 2-3 pages
+    final startIdx = max(0, currentIndex - 1);
+    final endIdx = min(_items.length - 1, currentIndex + 3);
+    
+    for (int i = startIdx; i <= endIdx; i++) {
+      if (i < _liveList!.size) {
+        // This triggers lazy loading of these pages
+        _liveList!.getAt(i);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
@@ -239,6 +261,11 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
                 physics: widget.scrollPhysics,
                 itemCount: _items.length + (_hasMoreData ? 1 : 0),
                 onPageChanged: (index) {
+                  // Preload adjacent pages when page changes
+                  if (widget.lazyLoading) {
+                    _preloadAdjacentPages(index);
+                  }
+
                   // Check if we need to load more data
                   if (widget.pagination &&
                       _hasMoreData &&
@@ -258,12 +285,33 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
                         const Center(child: CircularProgressIndicator());
                   }
 
+                  // Preload adjacent pages for smoother experience
+                  _preloadAdjacentPages(index);
+                  
                   final item = _items[index];
+                  
+                  // Get data from LiveList if available, otherwise use direct item
+                  StreamGetter<T>? itemStream;
+                  DataGetter<T>? loadedData;
+                  DataGetter<T>? preLoadedData;
+                  
+                  final liveList = _liveList;
+                  if (liveList != null && index < liveList.size && widget.lazyLoading) {
+                    itemStream = () => liveList.getAt(index);
+                    loadedData = () => liveList.getLoadedAt(index);
+                    preLoadedData = () => liveList.getPreLoadedAt(index);
+                  } else {
+                    // Fallback to direct item when not using lazy loading
+                    // or when the item isn't in the LiveList
+                    loadedData = () => item;
+                    preLoadedData = () => item;
+                  }
+                  
                   return ParseLiveListElementWidget<T>(
                     key: ValueKey<String>(item.objectId ?? 'unknown-$index'),
-                    stream: () => Stream.value(item),
-                    loadedData: () => item,
-                    preLoadedData: () => item,
+                    stream: itemStream,
+                    loadedData: loadedData,
+                    preLoadedData: preLoadedData,
                     sizeFactor: const AlwaysStoppedAnimation<double>(1.0),
                     duration: widget.duration,
                     childBuilder: widget.childBuilder ??

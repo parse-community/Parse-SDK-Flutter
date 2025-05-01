@@ -32,6 +32,8 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.loadMoreOffset = 300.0,
     this.footerBuilder,
     this.cacheSize = 50,
+    this.lazyBatchSize = 0,  // 0 means auto-calculate based on crossAxisCount
+    this.lazyTriggerOffset = 500.0,  // Distance from visible area to preload
   });
 
   final sdk.QueryBuilder<T> query;
@@ -70,6 +72,9 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final int pageSize;
   final double loadMoreOffset;
   final FooterBuilder? footerBuilder;
+
+  final int lazyBatchSize;
+  final double lazyTriggerOffset;
 
   @override
   State<ParseLiveGridWidget<T>> createState() => _ParseLiveGridWidgetState<T>();
@@ -126,6 +131,22 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     if (offset < widget.loadMoreOffset) {
       _loadMoreData();
     }
+
+    // Also add batch loading for upcoming items during scroll
+    if (widget.lazyLoading) {
+      final visibleMaxIndex = _calculateVisibleMaxIndex(scrollController.offset);
+      final preloadIndex = visibleMaxIndex + widget.crossAxisCount * 2;
+
+      if (preloadIndex < _items.length) {
+        _triggerBatchLoading(preloadIndex);
+      }
+    }
+  }
+
+  int _calculateVisibleMaxIndex(double offset) {
+    // Estimate which items are currently visible based on scroll position
+    final itemHeight = widget.childAspectRatio * (MediaQuery.of(context).size.width / widget.crossAxisCount);
+    return min((offset + MediaQuery.of(context).size.height) ~/ itemHeight * widget.crossAxisCount, _items.length - 1);
   }
 
   Future<void> _loadMoreData() async {
@@ -190,25 +211,13 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       final originalLiveGrid = await sdk.ParseLiveList.create(
         initialQuery,
         listenOnAllSubItems: widget.listenOnAllSubItems,
-        // listeningIncludes: widget.listeningIncludes,
         listeningIncludes: widget.lazyLoading ? (widget.listeningIncludes ?? []) : widget.listeningIncludes,
         lazyLoading: widget.lazyLoading,
         preloadedColumns: widget.lazyLoading ? (widget.preloadedColumns ?? []) : widget.preloadedColumns,
-        // preloadedColumns: widget.lazyLoading ? (widget.preloadedColumns ?? []) : null,
-        // excludedColumns: widget.excludedColumns,
       );
-      // final originalLiveGrid = await sdk.ParseLiveList.create(
-      //   initialQuery,
-      //   listenOnAllSubItems: widget.listenOnAllSubItems,
-      //   listeningIncludes: widget.listeningIncludes,
-      //   lazyLoading: widget.lazyLoading,
-      //   preloadedColumns: widget.preloadedColumns,
-      //   // excludedColumns: widget.excludedColumns,
-      //   // Remove cacheSize parameter
-      // );
 
       // Wrap it with our caching layer
-      final liveGrid =CachedParseLiveList<T>(originalLiveGrid, widget.cacheSize, widget.lazyLoading); // CachedParseLiveList<T>(originalLiveGrid, widget.cacheSize);
+      final liveGrid = CachedParseLiveList<T>(originalLiveGrid, widget.cacheSize, widget.lazyLoading);
       _liveGrid = liveGrid;
 
       if (liveGrid.size > 0) {
@@ -331,12 +340,30 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       ),
       itemBuilder: (BuildContext context, int index) {
         final item = _items[index];
+        
+        // Trigger batch loading for visible grid items
+        _triggerBatchLoading(index);
+
+        // Get data from LiveList if available, otherwise use direct item
+        StreamGetter<T>? itemStream;
+        DataGetter<T>? loadedData;
+        DataGetter<T>? preLoadedData;
+
+        final liveGrid = _liveGrid;
+        if (liveGrid != null && index < liveGrid.size) {
+          itemStream = () => liveGrid.getAt(index);
+          loadedData = () => liveGrid.getLoadedAt(index);
+          preLoadedData = () => liveGrid.getPreLoadedAt(index);
+        } else {
+          loadedData = () => item;
+          preLoadedData = () => item;
+        }
 
         return ParseLiveListElementWidget<T>(
           key: ValueKey<String>(item.objectId ?? 'unknown-${index}'),
-          stream: () => Stream.value(item),
-          loadedData: () => item,
-          preLoadedData: () => item,
+          stream: itemStream,
+          loadedData: loadedData,
+          preLoadedData: preLoadedData,
           sizeFactor: boxAnimation,
           duration: widget.duration,
           childBuilder: widget.childBuilder ??
@@ -345,6 +372,28 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         );
       },
     );
+  }
+
+  void _triggerBatchLoading(int currentIndex) {
+    if (!widget.lazyLoading || _liveGrid == null) return;
+    
+    // Define how many items to load at once - adjust based on your grid size
+    final batchSize = widget.lazyBatchSize > 0
+        ? widget.lazyBatchSize
+        : widget.crossAxisCount * 2; // Load 2 rows at a time
+    
+    // Calculate the start and end indices for the batch
+    final startIdx = max(0, currentIndex - widget.crossAxisCount);
+    final endIdx = min(_items.length - 1, currentIndex + batchSize);
+    
+    // Trigger loading for this batch of items
+    for (int i = startIdx; i <= endIdx; i++) {
+      if (i < _liveGrid!.size) {
+        // This just accesses the item to trigger lazy loading
+        // We don't need to store the result as it's handled by the cache
+        _liveGrid!.getAt(i);
+      }
+    }
   }
 
   @override
