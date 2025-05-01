@@ -122,11 +122,12 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
 
 class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveGridWidget<T>> {
-  sdk.ParseLiveList<T>? _liveGrid;
+  // Change from sdk.ParseLiveList to CachedParseLiveList
+  CachedParseLiveList<T>? _liveGrid;
   final ScrollController _effectiveController = ScrollController();
   bool noData = true;
   
-  // Pagination related fields
+  // Pagination related fields remain the same
   List<T> _items = [];
   int _currentPage = 0;
   bool _hasMoreData = true;
@@ -140,7 +141,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   void initState() {
     super.initState();
     
-    // Add scroll listener for pagination
+    // Initialization remains the same
     if (widget.pagination) {
       _scrollController.addListener(_onScroll);
     }
@@ -178,27 +179,27 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       final initialQuery = QueryBuilder<T>.copy(widget.query);
       
       if (widget.pagination) {
-        // For pagination, use the pageSize
         initialQuery
           ..setAmountToSkip(0)
           ..setLimit(widget.pageSize);
       } else {
-        // When pagination is disabled, use a very high limit to get all items
-        // or respect the user's original limit if they set one
         if (!initialQuery.limiters.containsKey('limit')) {
           initialQuery.setLimit(widget.nonPaginatedLimit);
         }
       }
 
-      final liveGrid = await sdk.ParseLiveList.create(
+      // Create the original ParseLiveList
+      final originalLiveGrid = await sdk.ParseLiveList.create(
         initialQuery,
         listenOnAllSubItems: widget.listenOnAllSubItems,
         listeningIncludes: widget.listeningIncludes,
         lazyLoading: widget.lazyLoading,
         preloadedColumns: widget.preloadedColumns,
-        // excludedColumns and cacheSize will be added when SDK supports them
+        excludedColumns: widget.excludedColumns,
       );
 
+      // Wrap it with our caching layer
+      final liveGrid = CachedParseLiveList<T>(originalLiveGrid, widget.cacheSize);
       _liveGrid = liveGrid;
       
       // Store initial items in our local list
@@ -219,18 +220,26 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         if (event is sdk.ParseLiveListAddEvent) {
           setState(() {
             _items.insert(event.index, event.object as T);
+            // Cache the new item
+            liveGrid.updateCache(event.index, event.object as T);
+            
             noData = _items.isEmpty;
             _noDataNotifier.value = _items.isEmpty;
           });
         } else if (event is sdk.ParseLiveListDeleteEvent) {
           setState(() {
             _items.removeAt(event.index);
+            // Remove from cache
+            liveGrid.removeFromCache(event.index);
+            
             noData = _items.isEmpty;
             _noDataNotifier.value = _items.isEmpty;
           });
         } else if (event is sdk.ParseLiveListUpdateEvent) {
           setState(() {
             _items[event.index] = event.object as T;
+            // Update the cache
+            liveGrid.updateCache(event.index, event.object as T);
           });
         }
       });
@@ -285,56 +294,21 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (_items.isEmpty && _liveGrid == null) {
-      return widget.gridLoadingElement ?? Container();
-    }
-    
-    return ValueListenableBuilder<bool>(
-      valueListenable: _noDataNotifier,
-      builder: (context, noData, _) {
-        if (noData) {
-          return widget.queryEmptyElement ?? Container();
-        }
-        
-        // Wrap with RefreshIndicator to enable pull-to-refresh
-        return RefreshIndicator(
-          onRefresh: _refreshData,
-          child: Column(
-            children: [
-              Expanded(
-                child: buildAnimatedGrid(),
-              ),
-              
-              // Show footer based on load more status if pagination is enabled
-              if (widget.pagination) _buildFooter(),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   /// Refreshes data by disposing existing LiveGrid and reloading
   Future<void> _refreshData() async {
     if (!mounted) return;
     
-    // Update UI to show loading state
     setState(() {
       _loadMoreStatus = LoadMoreStatus.loading;
     });
     
     try {
-      // Save a reference to the current list size
-      final int oldItemCount = _items.length;
-      
       // Reset state and clear lists
-      _items = [];  // Create a new list rather than clearing the existing one
+      _items = [];
       _currentPage = 0;
       _hasMoreData = true;
       
-      // Dispose old LiveGrid
+      // Dispose old LiveGrid properly
       final oldLiveGrid = _liveGrid;
       _liveGrid = null;
       oldLiveGrid?.dispose();
@@ -342,10 +316,8 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       // Load new data
       await _loadData();
       
-      // Force UI update after data is loaded
       if (mounted) {
         setState(() {
-          // Make sure UI reflects the new state
           _loadMoreStatus = LoadMoreStatus.idle;
         });
       }
@@ -376,7 +348,6 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         ),
       );
     } else {
-      // Provide default animation that's always at its end value
       boxAnimation = const AlwaysStoppedAnimation<double>(1.0);
     }
     
@@ -395,33 +366,14 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
           childAspectRatio: widget.childAspectRatio),
       itemBuilder: (BuildContext context, int index) {
         // Get the actual item
-        T? item = _items[index];
-        if (item == null) {
-          return const SizedBox.shrink();
-        }
+        T item = _items[index];
         
-        // Get data from LiveList if available, otherwise use direct item
-        Stream<T>? itemStream;
-        T? loadedData;
-        T? preLoadedData;
-        
-        final liveGrid = _liveGrid;
-        if (liveGrid != null && index < liveGrid.size) {
-          itemStream = liveGrid.getAt(index);
-          loadedData = liveGrid.getLoadedAt(index);
-          preLoadedData = liveGrid.getPreLoadedAt(index);
-        } else {
-          // If liveGrid is null or index is out of bounds, use the item directly
-          // itemStream remains null in this case
-          loadedData = item;
-          preLoadedData = item;
-        }
-        
+        // For better performance, use the item directly from our local list
         return ParseLiveListElementWidget<T>(
           key: ValueKey<String>(item.objectId ?? 'item-$index'),
-          stream: itemStream != null ? () => itemStream! : null, // Keep the stream function wrapper here
-          loadedData: loadedData != null ? () => loadedData : null,
-          preLoadedData: preLoadedData != null ? () => preLoadedData : null,
+          stream: () => Stream.value(item),  // Use a simple stream of the item
+          loadedData: () => item,
+          preLoadedData: () => item,
           sizeFactor: boxAnimation,
           duration: widget.duration,
           childBuilder: widget.childBuilder ?? ParseLiveGridWidget.defaultChildBuilder,
