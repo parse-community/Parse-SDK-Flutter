@@ -26,11 +26,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  parse_server_sdk:
-    git:
-      url: https://github.com/pastordee/Parse-SDK-Flutter.git 
-      path: packages/dart
-      ref: pc_cached_1 
+  # parse_server_sdk:
+  #   git:
+  #     url: https://github.com/pastordee/Parse-SDK-Flutter.git 
+  #     path: packages/dart
+  #     ref: pc_cached_1 
+
   # parse_server_sdk: ^8.0.0
   # Uncomment for local testing
   #parse_server_sdk:
