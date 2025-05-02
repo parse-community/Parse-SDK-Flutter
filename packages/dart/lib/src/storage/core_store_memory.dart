@@ -47,10 +47,6 @@ class CoreStoreMemoryImp implements CoreStore {
     return null;
   } 
 
-  // @override
-  // Future<List<String>?> getStringList(String key) async {
-  //   return _data[key];
-  // }
 
   @override
   Future<dynamic> remove(String key) async {
