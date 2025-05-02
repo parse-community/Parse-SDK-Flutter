@@ -45,7 +45,7 @@ class CoreStoreMemoryImp implements CoreStore {
     if (value is List<String>) return value;
     if (value is Iterable) return value.map((e) => e.toString()).toList();
     return null;
-  }
+  } 
 
   // @override
   // Future<List<String>?> getStringList(String key) async {
