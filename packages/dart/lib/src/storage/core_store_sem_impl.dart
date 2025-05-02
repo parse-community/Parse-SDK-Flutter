@@ -90,6 +90,12 @@ Future<List<String>?> getStringList(String key) async {
   return null;
 }
 
+// @override
+//   Future<List<String>?> getStringList(String key) async {
+//     final List<String>? storedItem = await get(key);
+//     return storedItem;
+//   }
+
   @override
   Future<void> remove(String key) {
     return _store.record(key).delete(_database);

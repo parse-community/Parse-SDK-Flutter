@@ -1,5 +1,7 @@
 part of 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
+
+
 /// The type of function that builds a child widget for a ParseLiveList element.
 typedef ChildBuilder<T extends sdk.ParseObject> = Widget Function(
     BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot, [int? index]);
@@ -136,14 +138,22 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   }
 
   Future<void> _checkConnectivityAndLoad() async {
+  final connectivityResult = await Connectivity().checkConnectivity();
+  _isOffline = connectivityResult == ConnectivityResult.none;
+  if (_isOffline) {
     if (widget.offlineMode) {
-      _isOffline = true;
       await _loadFromCache();
     } else {
-      _isOffline = false;
-      await _loadData();
+      // Show a message or empty state, since offlineMode is not enabled
+      setState(() {
+        _items.clear();
+        _noDataNotifier.value = true;
+      });
     }
+  } else {
+    await _loadData();
   }
+}
 
   Future<void> _loadFromCache() async {
     _items.clear();
@@ -193,8 +203,10 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
           final item = liveList.getPreLoadedAt(i);
           if (item != null) {
             _items.add(item);
-            // Save to offline cache as user browses
-            item.saveToLocalCache();
+            // Only save to offline cache if offlineMode is enabled
+            if (widget.offlineMode) {
+              item.saveToLocalCache();
+            }
           }
         }
       }
@@ -205,17 +217,23 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         if (event is sdk.ParseLiveListAddEvent<sdk.ParseObject>) {
           setState(() {
             _items.insert(event.index, event.object as T);
-            (event.object as T).saveToLocalCache();
+            if (widget.offlineMode) {
+              (event.object as T).saveToLocalCache();
+            }
           });
         } else if (event is sdk.ParseLiveListDeleteEvent<sdk.ParseObject>) {
           setState(() {
             _items.removeAt(event.index);
-            (event.object as T).removeFromLocalCache();
+            if (widget.offlineMode) {
+              (event.object as T).removeFromLocalCache();
+            }
           });
         } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
           setState(() {
             _items[event.index] = event.object as T;
-            (event.object as T).saveToLocalCache();
+            if (widget.offlineMode) {
+              (event.object as T).saveToLocalCache();
+            }
           });
         }
         _noDataNotifier.value = _items.isEmpty;
