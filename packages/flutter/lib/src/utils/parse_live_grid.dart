@@ -108,6 +108,9 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   int _currentPage = 0;
   bool _hasMoreData = true;
 
+  // Add this to your state class
+  final Set<int> _loadingIndices = {};
+
   @override
   void initState() {
     super.initState();
@@ -244,6 +247,16 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
 
         _noDataNotifier.value = _items.isEmpty;
       });
+
+      if (widget.lazyLoading) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final visibleMaxIndex = _calculateVisibleMaxIndex(0);
+          final preloadIndex = visibleMaxIndex + widget.crossAxisCount * 2;
+          if (preloadIndex < _items.length) {
+            _triggerBatchLoading(preloadIndex);
+          }
+        });
+      }
     } catch (e) {
       debugPrint('Error loading data: $e');
     }
@@ -376,22 +389,30 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
 
   void _triggerBatchLoading(int currentIndex) {
     if (!widget.lazyLoading || _liveGrid == null) return;
-    
-    // Define how many items to load at once - adjust based on your grid size
+
     final batchSize = widget.lazyBatchSize > 0
         ? widget.lazyBatchSize
-        : widget.crossAxisCount * 2; // Load 2 rows at a time
-    
-    // Calculate the start and end indices for the batch
+        : widget.crossAxisCount * 2;
+
     final startIdx = max(0, currentIndex - widget.crossAxisCount);
     final endIdx = min(_items.length - 1, currentIndex + batchSize);
-    
-    // Trigger loading for this batch of items
+
     for (int i = startIdx; i <= endIdx; i++) {
-      if (i < _liveGrid!.size) {
-        // This just accesses the item to trigger lazy loading
-        // We don't need to store the result as it's handled by the cache
-        _liveGrid!.getAt(i);
+      if (i < _liveGrid!.size && !_loadingIndices.contains(i)) {
+        _loadingIndices.add(i);
+        _liveGrid!.getAt(i).first.then((item) {
+          _loadingIndices.remove(i);
+          if (item != null && mounted) {
+            setState(() {
+              if (i < _items.length) {
+                _items[i] = item;
+              }
+            });
+          }
+        }).catchError((e) {
+          _loadingIndices.remove(i);
+          debugPrint('Error lazy loading item at index $i: $e');
+        });
       }
     }
   }
