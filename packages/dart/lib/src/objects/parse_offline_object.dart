@@ -9,7 +9,10 @@ extension ParseObjectOffline on ParseObject {
   static Future<ParseObject?> loadFromLocalCache(String className, String objectId) async {
     final CoreStore coreStore = ParseCoreData().getStore();
     final String cacheKey = 'offline_cache_$className';
-    List<String> cached = await coreStore.getStringList(cacheKey) ?? [];
+    final rawList = await coreStore.getStringList(cacheKey);
+    final List<String> cached = rawList == null
+        ? []
+        : rawList.map((e) => e.toString()).toList();
     for (final s in cached) {
       final jsonObj = json.decode(s);
       if (jsonObj['objectId'] == objectId) {
@@ -23,7 +26,10 @@ extension ParseObjectOffline on ParseObject {
   Future<void> saveToLocalCache() async {
     final CoreStore coreStore = ParseCoreData().getStore();
     final String cacheKey = 'offline_cache_${parseClassName}';
-    List<String> cached = await coreStore.getStringList(cacheKey) ?? [];
+    final rawList = await coreStore.getStringList(cacheKey);
+    final List<String> cached = rawList == null
+        ? []
+        : rawList.map((e) => e.toString()).toList();
     // Remove any existing object with the same objectId
     cached.removeWhere((s) {
       final jsonObj = json.decode(s);
@@ -37,7 +43,10 @@ extension ParseObjectOffline on ParseObject {
   Future<void> removeFromLocalCache() async {
     final CoreStore coreStore = ParseCoreData().getStore();
     final String cacheKey = 'offline_cache_${parseClassName}';
-    List<String> cached = await coreStore.getStringList(cacheKey) ?? [];
+    final rawList = await coreStore.getStringList(cacheKey);
+    final List<String> cached = rawList == null
+        ? []
+        : rawList.map((e) => e.toString()).toList();
     cached.removeWhere((s) {
       final jsonObj = json.decode(s);
       return jsonObj['objectId'] == objectId;
@@ -49,7 +58,10 @@ extension ParseObjectOffline on ParseObject {
   static Future<List<ParseObject>> loadAllFromLocalCache(String className) async {
     final CoreStore coreStore = ParseCoreData().getStore();
     final String cacheKey = 'offline_cache_$className';
-    List<String> cached = await coreStore.getStringList(cacheKey) ?? [];
+   final rawList = await coreStore.getStringList(cacheKey);
+    final List<String> cached = rawList == null
+        ? []
+        : rawList.map((e) => e.toString()).toList();
     return cached.map<ParseObject>((s) {
       final jsonObj = json.decode(s);
       return ParseObject(className).fromJson(jsonObj);
@@ -60,7 +72,10 @@ extension ParseObjectOffline on ParseObject {
   Future<void> updateInLocalCache(Map<String, dynamic> updates) async {
     final CoreStore coreStore = ParseCoreData().getStore();
     final String cacheKey = 'offline_cache_${parseClassName}';
-    List<String> cached = await coreStore.getStringList(cacheKey) ?? [];
+    final rawList = await coreStore.getStringList(cacheKey);
+    final List<String> cached = rawList == null
+        ? []
+        : rawList.map((e) => e.toString()).toList();
     for (int i = 0; i < cached.length; i++) {
       final jsonObj = json.decode(cached[i]);
       if (jsonObj['objectId'] == objectId) {
@@ -81,7 +96,10 @@ extension ParseObjectOffline on ParseObject {
 static Future<bool> existsInLocalCache(String className, String objectId) async {
   final CoreStore coreStore = ParseCoreData().getStore();
   final String cacheKey = 'offline_cache_$className';
-  List<String> cached = await coreStore.getStringList(cacheKey) ?? [];
+  final rawList = await coreStore.getStringList(cacheKey);
+    final List<String> cached = rawList == null
+        ? []
+        : rawList.map((e) => e.toString()).toList();
   for (final s in cached) {
     final jsonObj = json.decode(s);
     if (jsonObj['objectId'] == objectId) {
@@ -93,7 +111,10 @@ static Future<bool> existsInLocalCache(String className, String objectId) async 
 static Future<List<String>> getAllObjectIdsInLocalCache(String className) async {
   final CoreStore coreStore = ParseCoreData().getStore();
   final String cacheKey = 'offline_cache_$className';
-  List<String> cached = await coreStore.getStringList(cacheKey) ?? [];
+  final rawList = await coreStore.getStringList(cacheKey);
+    final List<String> cached = rawList == null
+        ? []
+        : rawList.map((e) => e.toString()).toList();
   return cached.map((s) => json.decode(s)['objectId'] as String).toList();
 }
 
