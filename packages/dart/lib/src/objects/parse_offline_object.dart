@@ -105,6 +105,14 @@ static Future<void> syncLocalCacheWithServer(String className) async {
 }
 
 static Future<List<String>> _getStringListAsStrings(CoreStore coreStore, String cacheKey) async {
+
+//   final rawList = await coreStore.getStringList(cacheKey);
+// final List<String> cached = [];
+// if (rawList != null) {
+//   for (final e in rawList) {
+//     cached.add(e.toString());
+//   }
+// }
     final rawList = await coreStore.getStringList(cacheKey);
     if (rawList == null) return [];
     return List<String>.from(rawList.map((e) => e.toString()));
