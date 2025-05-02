@@ -1,7 +1,5 @@
 part of 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
-
-
 /// The type of function that builds a child widget for a ParseLiveList element.
 typedef ChildBuilder<T extends sdk.ParseObject> = Widget Function(
     BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot, [int? index]);
@@ -53,6 +51,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.loadMoreOffset = 200.0,
     this.cacheSize = 50,
     this.offlineMode = false,
+    required this.fromJson,
   });
 
   final sdk.QueryBuilder<T> query;
@@ -86,6 +85,8 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final int nonPaginatedLimit;
   final int cacheSize;
   final bool offlineMode;
+
+  final T Function(Map<String, dynamic> json) fromJson;
 
   @override
   State<ParseLiveListWidget<T>> createState() => _ParseLiveListWidgetState<T>();
@@ -138,29 +139,26 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   }
 
   Future<void> _checkConnectivityAndLoad() async {
-  final connectivityResult = await Connectivity().checkConnectivity();
-  _isOffline = connectivityResult == ConnectivityResult.none;
-  if (_isOffline) {
-    if (widget.offlineMode) {
-      await _loadFromCache();
-    } else {
-      // Show a message or empty state, since offlineMode is not enabled
-      setState(() {
-        _items.clear();
-        _noDataNotifier.value = true;
-      });
+    final connectivityResult = await Connectivity().checkConnectivity();
+    _isOffline = connectivityResult == ConnectivityResult.none;
+
+    // Always try to load from cache first
+    await _loadFromCache();
+
+    // If cache is empty and we're online, load from server
+    if (_items.isEmpty && !_isOffline) {
+      await _loadData();
     }
-  } else {
-    await _loadData();
   }
-}
 
   Future<void> _loadFromCache() async {
     _items.clear();
     final cached = await sdk.ParseObjectOffline.loadAllFromLocalCache(
       widget.query.object.parseClassName,
     );
-    _items.addAll(cached.cast<T>());
+    for (final obj in cached) {
+      _items.add(widget.fromJson(obj.toJson(full: true)));
+    }
     _noDataNotifier.value = _items.isEmpty;
     setState(() {});
   }

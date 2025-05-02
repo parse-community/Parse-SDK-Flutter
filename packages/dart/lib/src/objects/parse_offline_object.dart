@@ -1,10 +1,6 @@
 part of '../../parse_server_sdk.dart';
 
-
-
 extension ParseObjectOffline on ParseObject {
-
-
   /// Load a single object by objectId from local storage.
   static Future<ParseObject?> loadFromLocalCache(String className, String objectId) async {
     final CoreStore coreStore = ParseCoreData().getStore();
@@ -13,6 +9,7 @@ extension ParseObjectOffline on ParseObject {
     for (final s in cached) {
       final jsonObj = json.decode(s);
       if (jsonObj['objectId'] == objectId) {
+        print('Loaded object $objectId from local cache for $className');
         return ParseObject(className).fromJson(jsonObj);
       }
     }
@@ -31,9 +28,10 @@ extension ParseObjectOffline on ParseObject {
     });
     cached.add(json.encode(toJson(full: true)));
     await coreStore.setStringList(cacheKey, cached);
+    print('Saved object ${objectId ?? "(no objectId)"} to local cache for $parseClassName');
   }
 
-   /// Remove this object from local storage (CoreStore).
+  /// Remove this object from local storage (CoreStore).
   Future<void> removeFromLocalCache() async {
     final CoreStore coreStore = ParseCoreData().getStore();
     final String cacheKey = 'offline_cache_${parseClassName}';
@@ -43,19 +41,20 @@ extension ParseObjectOffline on ParseObject {
       return jsonObj['objectId'] == objectId;
     });
     await coreStore.setStringList(cacheKey, cached);
+    print('Removed object ${objectId ?? "(no objectId)"} from local cache for $parseClassName');
   }
 
   /// Load all objects of this class from local storage.
   static Future<List<ParseObject>> loadAllFromLocalCache(String className) async {
     final CoreStore coreStore = ParseCoreData().getStore();
     final String cacheKey = 'offline_cache_$className';
-   final List<String> cached = await _getStringListAsStrings(coreStore, cacheKey);
+    final List<String> cached = await _getStringListAsStrings(coreStore, cacheKey);
+    print('Loaded ${cached.length} objects from local cache for $className');
     return cached.map<ParseObject>((s) {
       final jsonObj = json.decode(s);
       return ParseObject(className).fromJson(jsonObj);
     }).toList();
   }
-
 
   Future<void> updateInLocalCache(Map<String, dynamic> updates) async {
     final CoreStore coreStore = ParseCoreData().getStore();
@@ -70,54 +69,50 @@ extension ParseObjectOffline on ParseObject {
       }
     }
     await coreStore.setStringList(cacheKey, cached);
+    print('Updated object ${objectId ?? "(no objectId)"} in local cache for $parseClassName');
   }
 
   static Future<void> clearLocalCacheForClass(String className) async {
-  final CoreStore coreStore = ParseCoreData().getStore();
-  final String cacheKey = 'offline_cache_$className';
-  await coreStore.setStringList(cacheKey, []);
-}
+    final CoreStore coreStore = ParseCoreData().getStore();
+    final String cacheKey = 'offline_cache_$className';
+    await coreStore.setStringList(cacheKey, []);
+    print('Cleared local cache for $className');
+  }
 
-static Future<bool> existsInLocalCache(String className, String objectId) async {
-  final CoreStore coreStore = ParseCoreData().getStore();
-  final String cacheKey = 'offline_cache_$className';
-  final List<String> cached = await _getStringListAsStrings(coreStore, cacheKey);
-  for (final s in cached) {
-    final jsonObj = json.decode(s);
-    if (jsonObj['objectId'] == objectId) {
-      return true;
+  static Future<bool> existsInLocalCache(String className, String objectId) async {
+    final CoreStore coreStore = ParseCoreData().getStore();
+    final String cacheKey = 'offline_cache_$className';
+    final List<String> cached = await _getStringListAsStrings(coreStore, cacheKey);
+    for (final s in cached) {
+      final jsonObj = json.decode(s);
+      if (jsonObj['objectId'] == objectId) {
+        print('Object $objectId exists in local cache for $className');
+        return true;
+      }
     }
+    print('Object $objectId does not exist in local cache for $className');
+    return false;
   }
-  return false;
-}
-static Future<List<String>> getAllObjectIdsInLocalCache(String className) async {
-  final CoreStore coreStore = ParseCoreData().getStore();
-  final String cacheKey = 'offline_cache_$className';
-  final List<String> cached = await _getStringListAsStrings(coreStore, cacheKey);
-  return cached.map((s) => json.decode(s)['objectId'] as String).toList();
-}
 
-static Future<void> syncLocalCacheWithServer(String className) async {
-  final objects = await loadAllFromLocalCache(className);
-  for (final obj in objects) {
-    await obj.save();
+  static Future<List<String>> getAllObjectIdsInLocalCache(String className) async {
+    final CoreStore coreStore = ParseCoreData().getStore();
+    final String cacheKey = 'offline_cache_$className';
+    final List<String> cached = await _getStringListAsStrings(coreStore, cacheKey);
+    print('Fetched all objectIds from local cache for $className');
+    return cached.map((s) => json.decode(s)['objectId'] as String).toList();
   }
-}
 
-static Future<List<String>> _getStringListAsStrings(CoreStore coreStore, String cacheKey) async {
+  static Future<void> syncLocalCacheWithServer(String className) async {
+    final objects = await loadAllFromLocalCache(className);
+    for (final obj in objects) {
+      await obj.save();
+    }
+    print('Synced local cache with server for $className');
+  }
 
-//   final rawList = await coreStore.getStringList(cacheKey);
-// final List<String> cached = [];
-// if (rawList != null) {
-//   for (final e in rawList) {
-//     cached.add(e.toString());
-//   }
-// }
+  static Future<List<String>> _getStringListAsStrings(CoreStore coreStore, String cacheKey) async {
     final rawList = await coreStore.getStringList(cacheKey);
     if (rawList == null) return [];
     return List<String>.from(rawList.map((e) => e.toString()));
   }
 }
-
-// await object.saveToLocalCache();
-// final offlineObjects = await ParseObjectOffline.loadAllFromLocalCache('YourClassName');
