@@ -210,8 +210,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         } else if (event is sdk.ParseLiveListDeleteEvent<sdk.ParseObject>) {
           setState(() {
             _items.removeAt(event.index);
-            event.index.removeFromLocalCache();
-            // Optionally: remove from offline cache if you implement a remove method
+            (event.object as T).removeFromLocalCache();
           });
         } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
           setState(() {
