@@ -104,7 +104,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
 }
 
 class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
-    extends State<ParseLiveGridWidget<T>>  with ConnectivityHandlerMixin<ParseLiveGridWidget<T>> {
+    extends State<ParseLiveGridWidget<T>> with ConnectivityHandlerMixin<ParseLiveGridWidget<T>> {
   CachedParseLiveList<T>? _liveGrid;
   final ValueNotifier<bool> _noDataNotifier = ValueNotifier<bool>(true);
   final List<T> _items = <T>[];
@@ -121,7 +121,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   final Connectivity _connectivity = Connectivity();
   ConnectivityResult? _connectionStatus;
 
-   // --- Implement Mixin Requirements ---
+  // --- Implement Mixin Requirements ---
   @override
   Future<void> loadDataFromServer() => _loadData(); // Map to existing method
 
@@ -153,79 +153,8 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       _scrollController.addListener(_onScroll);
     }
 
-     initConnectivityHandler();
-
-    // _initConnectivity();
-
-    // _connectivitySubscription =
-    //     _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
-    //   final newResult = results.contains(ConnectivityResult.mobile)
-    //       ? ConnectivityResult.mobile
-    //       : results.contains(ConnectivityResult.wifi)
-    //           ? ConnectivityResult.wifi
-    //           : results.contains(ConnectivityResult.none)
-    //               ? ConnectivityResult.none
-    //               : ConnectivityResult.other;
-
-    //   _updateConnectionStatus(newResult);
-    // });
+    initConnectivityHandler();
   }
-
-  // Future<void> _initConnectivity() async {
-  //   try {
-  //     var connectivityResults = await _connectivity.checkConnectivity();
-  //     final initialResult = connectivityResults.contains(ConnectivityResult.mobile)
-  //         ? ConnectivityResult.mobile
-  //         : connectivityResults.contains(ConnectivityResult.wifi)
-  //             ? ConnectivityResult.wifi
-  //             : connectivityResults.contains(ConnectivityResult.none)
-  //                 ? ConnectivityResult.none
-  //                 : ConnectivityResult.other;
-
-  //     await _updateConnectionStatus(initialResult, isInitialCheck: true);
-  //   } catch (e) {
-  //     debugPrint('Error during initial connectivity check: $e');
-  //     await _updateConnectionStatus(ConnectivityResult.none, isInitialCheck: true);
-  //   }
-  // }
-
-  // Future<void> _updateConnectionStatus(ConnectivityResult result, {bool isInitialCheck = false}) async {
-  //   if (result == _connectionStatus) {
-  //     debugPrint('Grid Connectivity status unchanged: $result');
-  //     return;
-  //   }
-
-  //   debugPrint('Grid Connectivity status changed: From $_connectionStatus to $result');
-  //   final previousStatus = _connectionStatus;
-  //   _connectionStatus = result;
-
-  //   bool wasOnline = previousStatus != null && previousStatus != ConnectivityResult.none;
-  //   bool isOnline = result == ConnectivityResult.mobile || result == ConnectivityResult.wifi;
-
-  //   if (isOnline && !wasOnline) {
-  //     _isOffline = false;
-  //     debugPrint('Grid Transitioning Online: $result. Loading data from server...');
-  //     await _loadData();
-  //   } else if (!isOnline && wasOnline) {
-  //     _isOffline = true;
-  //     debugPrint('Grid Transitioning Offline: $result. Disposing liveGrid and loading from cache...');
-  //     _liveGrid?.dispose();
-  //     _liveGrid = null;
-  //     await _loadFromCache();
-  //   } else if (isInitialCheck) {
-  //     if (isOnline) {
-  //       _isOffline = false;
-  //       debugPrint('Grid Initial State Online: $result. Loading data from server...');
-  //       await _loadData();
-  //     } else {
-  //       _isOffline = true;
-  //       debugPrint('Grid Initial State Offline: $result. Loading from cache...');
-  //       await _loadFromCache();
-  //     }
-  //   } else {
-  //     debugPrint('Grid Connectivity changed within same state (Online/Offline): $result');
-  //   }
-  // }
 
   Future<void> _loadFromCache() async {
     if (!isOfflineModeEnabled) {
@@ -364,14 +293,14 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
 
   Future<void> _loadData() async {
     if (isOffline) {
-      debugPrint('Offline: Skipping server load, relying on cache.');
+      debugPrint('$connectivityLogPrefix Offline: Skipping server load, relying on cache.');
       if (isOfflineModeEnabled) {
-         await loadDataFromCache();
+        await loadDataFromCache();
       }
       return;
     }
 
-    debugPrint('Grid loading initial data from server...');
+    debugPrint('$connectivityLogPrefix Loading initial data from server...');
     try {
       _currentPage = 0;
       _loadMoreStatus = LoadMoreStatus.idle;
@@ -405,36 +334,36 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       _liveGrid?.dispose();
       _liveGrid = liveGrid;
 
+      final List<T> initialItems = [];
+      final List<T> itemsToFetchAndCache = [];
+
       if (liveGrid.size > 0) {
         for (int i = 0; i < liveGrid.size; i++) {
           final item = liveGrid.getPreLoadedAt(i);
           if (item != null) {
+            initialItems.add(item);
             if (widget.offlineMode) {
-              try {
-                if (widget.lazyLoading) {
-                  await item.fetch();
-                }
-                await item.saveToLocalCache();
-              } catch (e) {
-                debugPrint('Error saving initial object ${item.objectId} to cache: $e');
-              }
+              itemsToFetchAndCache.add(item);
             }
-            _items.add(item);
           }
         }
       }
 
+      _items.addAll(initialItems);
       _noDataNotifier.value = _items.isEmpty;
-
       if (mounted) {
         setState(() {});
+      }
+
+      if (itemsToFetchAndCache.isNotEmpty) {
+        _fetchAndCacheItemsInBackground(itemsToFetchAndCache);
       }
 
       liveGrid.stream.listen((event) {
         T? objectToCache;
 
         if (event is sdk.ParseLiveListAddEvent<sdk.ParseObject>) {
-          final addedItem = event.object as T;
+          final addedItem = event.object;
           if (mounted) {
             setState(() {
               _items.insert(event.index, addedItem);
@@ -451,10 +380,10 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
               removedItem.removeFromLocalCache();
             }
           } else {
-            debugPrint('Grid LiveList Delete Event: Invalid index ${event.index}, list size ${_items.length}');
+            debugPrint('$connectivityLogPrefix LiveList Delete Event: Invalid index ${event.index}, list size ${_items.length}');
           }
         } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
-          final updatedItem = event.object as T;
+          final updatedItem = event.object;
           if (event.index >= 0 && event.index < _items.length) {
             if (mounted) {
               setState(() {
@@ -463,7 +392,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
             }
             objectToCache = updatedItem;
           } else {
-            debugPrint('Grid LiveList Update Event: Invalid index ${event.index}, list size ${_items.length}');
+            debugPrint('$connectivityLogPrefix LiveList Update Event: Invalid index ${event.index}, list size ${_items.length}');
           }
         }
 
@@ -485,10 +414,29 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         });
       }
     } catch (e) {
-      debugPrint('Error loading grid data: $e');
+      debugPrint('$connectivityLogPrefix Error loading data: $e');
       _noDataNotifier.value = _items.isEmpty;
       if (mounted) setState(() {});
     }
+  }
+
+  Future<void> _fetchAndCacheItemsInBackground(List<T> items) async {
+    debugPrint('$connectivityLogPrefix Starting background fetch/cache for ${items.length} items...');
+    for (final item in items) {
+      try {
+        if (!mounted) return;
+
+        if (widget.lazyLoading) {
+          
+            await item.fetch();
+          
+        }
+        await item.saveToLocalCache();
+      } catch (e) {
+        debugPrint('$connectivityLogPrefix Error background saving object ${item.objectId} to cache: $e');
+      }
+    }
+    debugPrint('$connectivityLogPrefix Finished background fetch/cache.');
   }
 
   Future<void> _refreshData() async {
@@ -603,7 +551,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         DataGetter<T>? preLoadedData;
 
         final liveGrid = _liveGrid;
-         if (!isOffline && liveGrid != null && index < liveGrid.size) {
+        if (!isOffline && liveGrid != null && index < liveGrid.size) {
           itemStream = () => liveGrid.getAt(index);
           loadedData = () => liveGrid.getLoadedAt(index);
           preLoadedData = () => liveGrid.getPreLoadedAt(index);
@@ -611,8 +559,6 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
           loadedData = () => item;
           preLoadedData = () => item;
         }
-
-       
 
         return ParseLiveListElementWidget<T>(
           key: ValueKey<String>(item.objectId ?? 'unknown-$index'),
@@ -674,6 +620,4 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     }
     super.dispose();
   }
-  
-
 }
