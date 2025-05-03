@@ -31,6 +31,53 @@ extension ParseObjectOffline on ParseObject {
     print('Saved object ${objectId ?? "(no objectId)"} to local cache for $parseClassName');
   }
 
+  /// Save a list of objects to local storage efficiently.
+  static Future<void> saveAllToLocalCache(String className, List<ParseObject> objectsToSave) async {
+    if (objectsToSave.isEmpty) return;
+
+    final CoreStore coreStore = ParseCoreData().getStore();
+    final String cacheKey = 'offline_cache_$className';
+    final List<String> cachedStrings = await _getStringListAsStrings(coreStore, cacheKey);
+
+    // Use a Map for efficient lookup and update of existing objects
+    final Map<String, String> objectMap = {};
+    for (final s in cachedStrings) {
+      try {
+        final jsonObj = json.decode(s);
+        final objectId = jsonObj['objectId'] as String?;
+        if (objectId != null) {
+          objectMap[objectId] = s; // Store the original JSON string
+        }
+      } catch (e) {
+         print('Error decoding cached object string during batch save: $e');
+      }
+    }
+
+    int added = 0;
+    int updated = 0;
+
+    // Update the map with the new objects
+    for (final obj in objectsToSave) {
+      final objectId = obj.objectId;
+      if (objectId != null) {
+        if (objectMap.containsKey(objectId)) {
+          updated++;
+        } else {
+          added++;
+        }
+        // Encode the new object data and replace/add it in the map
+        objectMap[objectId] = json.encode(obj.toJson(full: true));
+      } else {
+         print('Skipping object without objectId during batch save for $className');
+      }
+    }
+
+    // Convert the map values back to a list and save
+    final List<String> updatedCachedStrings = objectMap.values.toList();
+    await coreStore.setStringList(cacheKey, updatedCachedStrings);
+    print('Batch saved to local cache for $className. Added: $added, Updated: $updated, Total: ${updatedCachedStrings.length}');
+  }
+
   /// Remove this object from local storage (CoreStore).
   Future<void> removeFromLocalCache() async {
     final CoreStore coreStore = ParseCoreData().getStore();

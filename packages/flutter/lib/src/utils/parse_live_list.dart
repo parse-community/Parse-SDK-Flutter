@@ -68,7 +68,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   final bool shrinkWrap;
 
   final ChildBuilder<T>? childBuilder;
-  final ChildBuilder<T>? removedItemBuilder;
+  final ChildBuilder<T>? removedItemBuilder; // Note: removedItemBuilder is not currently used in the state logic
 
   final bool? listenOnAllSubItems;
   final List<String>? listeningIncludes;
@@ -143,20 +143,20 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   void initState() {
     super.initState();
 
+    // Initialize ScrollController
     if (widget.scrollController == null) {
       _scrollController = ScrollController();
     } else {
-      if (widget.pagination) {
-        _scrollController = widget.scrollController!;
-      } else {
-        _scrollController = widget.scrollController ?? ScrollController();
-      }
+      // Use provided controller, but ensure it's the one we listen to if pagination is on
+      _scrollController = widget.scrollController!;
     }
 
+    // Add listener only if pagination is enabled and we own the controller or are using the provided one
     if (widget.pagination) {
       _scrollController.addListener(_onScroll);
     }
 
+    // Initialize connectivity and load initial data
     initConnectivityHandler();
   }
 
@@ -177,7 +177,11 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         widget.query.object.parseClassName,
       );
       for (final obj in cached) {
-        _items.add(widget.fromJson(obj.toJson(full: true)));
+        try {
+          _items.add(widget.fromJson(obj.toJson(full: true)));
+        } catch (e) {
+           debugPrint('$connectivityLogPrefix Error deserializing cached object: $e');
+        }
       }
       debugPrint('$connectivityLogPrefix Loaded ${_items.length} items from cache for ${widget.query.object.parseClassName}');
     } catch (e) {
@@ -191,6 +195,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   }
 
   Future<void> _loadData() async {
+    // If offline, attempt to load from cache and exit
     if (isOffline) {
       debugPrint('$connectivityLogPrefix Offline: Skipping server load, relying on cache.');
       if (isOfflineModeEnabled) {
@@ -199,31 +204,32 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       return;
     }
 
+    // --- Online Loading Logic ---
     debugPrint('$connectivityLogPrefix Loading initial data from server...');
+    List<T> itemsToCacheBatch = []; // Prepare list for batch caching
+
     try {
+      // Reset pagination and state
       if (widget.pagination) {
         _currentPage = 0;
         _loadMoreStatus = LoadMoreStatus.idle;
         _hasMoreData = true;
       }
-
       _items.clear();
-      _noDataNotifier.value = true; // Assume no data initially
-      // Set loading state visually *before* async work
-      if (mounted) setState(() {});
+      _noDataNotifier.value = true;
+      if (mounted) setState(() {}); // Show loading state immediately
 
+      // Prepare query
       final initialQuery = QueryBuilder<T>.copy(widget.query);
-
       if (widget.pagination) {
-        initialQuery
-          ..setAmountToSkip(0)
-          ..setLimit(widget.pageSize);
+        initialQuery..setAmountToSkip(0)..setLimit(widget.pageSize);
       } else {
         if (!initialQuery.limiters.containsKey('limit')) {
           initialQuery.setLimit(widget.nonPaginatedLimit);
         }
       }
 
+      // Fetch from server using ParseLiveList for live updates
       final originalLiveList = await sdk.ParseLiveList.create(
         initialQuery,
         listenOnAllSubItems: widget.listenOnAllSubItems,
@@ -233,142 +239,214 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       );
 
       final liveList = CachedParseLiveList<T>(originalLiveList, widget.cacheSize, widget.lazyLoading);
-      _liveList?.dispose();
+      _liveList?.dispose(); // Dispose previous list if any
       _liveList = liveList;
 
-      // --- Refactored Initial Item Handling ---
-      final List<T> initialItems = [];
-      final List<T> itemsToFetchAndCache = []; // Items needing background processing
-
+      // Populate _items directly from server data and collect for caching
       if (liveList.size > 0) {
         for (int i = 0; i < liveList.size; i++) {
+          // Use preLoaded data for initial display speed
           final item = liveList.getPreLoadedAt(i);
           if (item != null) {
-            initialItems.add(item); // Add preloaded item for immediate display
-            // If offline mode is on, mark for background fetch/cache
+            _items.add(item);
+            // Add the item fetched from server to the cache batch if offline mode is on
             if (widget.offlineMode) {
-              itemsToFetchAndCache.add(item);
+               itemsToCacheBatch.add(item);
             }
           }
         }
       }
 
-      // Update the UI immediately with preloaded items
-      _items.addAll(initialItems);
+      // --- Update UI FIRST ---
       _noDataNotifier.value = _items.isEmpty;
       if (mounted) {
-        setState(() {});
+        setState(() {}); // Display fetched items
       }
-      // --- End Refactored Initial Item Handling ---
+      // --- End UI Update ---
 
-      // --- Start Background Fetching and Caching (if needed) ---
-      if (itemsToFetchAndCache.isNotEmpty) {
-        // Don't await this block, let it run in the background
-        _fetchAndCacheItemsInBackground(itemsToFetchAndCache);
+      // --- Trigger Background Batch Cache AFTER UI update ---
+      if (itemsToCacheBatch.isNotEmpty) {
+        // Don't await, let it run in background
+        _saveBatchToCache(itemsToCacheBatch);
       }
-      // --- End Background Fetching and Caching ---
+      // --- End Trigger ---
 
-      // --- Stream Listener (remains the same) ---
+      // --- Stream Listener ---
       liveList.stream.listen((event) {
-        T? objectToCache;
+        if (!mounted) return; // Avoid processing if widget is disposed
 
-        if (event is sdk.ParseLiveListAddEvent<sdk.ParseObject>) {
-          final addedItem = event.object as T; // Cast needed
-          if (mounted) {
+        T? objectToCache; // For single item cache updates from stream
+
+        try { // Wrap event processing in try-catch
+          if (event is sdk.ParseLiveListAddEvent<sdk.ParseObject>) {
+            final addedItem = event.object as T;
             setState(() { _items.insert(event.index, addedItem); });
-          }
-          objectToCache = addedItem;
-        } else if (event is sdk.ParseLiveListDeleteEvent<sdk.ParseObject>) {
-          if (event.index >= 0 && event.index < _items.length) {
-            final removedItem = _items.removeAt(event.index);
-            if (mounted) {
+            objectToCache = addedItem;
+          } else if (event is sdk.ParseLiveListDeleteEvent<sdk.ParseObject>) {
+            if (event.index >= 0 && event.index < _items.length) {
+              final removedItem = _items.removeAt(event.index);
               setState(() {});
+              if (widget.offlineMode) {
+                // Remove deleted item from cache immediately
+                removedItem.removeFromLocalCache().catchError((e) {
+                   debugPrint('$connectivityLogPrefix Error removing item ${removedItem.objectId} from cache: $e');
+                });
+              }
+            } else {
+              debugPrint('$connectivityLogPrefix LiveList Delete Event: Invalid index ${event.index}, list size ${_items.length}');
             }
-            if (widget.offlineMode) {
-              removedItem.removeFromLocalCache();
-            }
-          } else {
-            debugPrint('$connectivityLogPrefix LiveList Delete Event: Invalid index ${event.index}, list size ${_items.length}');
-          }
-        } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
-          final updatedItem = event.object as T; // Cast needed
-          if (event.index >= 0 && event.index < _items.length) {
-            if (mounted) {
+          } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
+            final updatedItem = event.object as T;
+            if (event.index >= 0 && event.index < _items.length) {
               setState(() { _items[event.index] = updatedItem; });
+              objectToCache = updatedItem;
+            } else {
+              debugPrint('$connectivityLogPrefix LiveList Update Event: Invalid index ${event.index}, list size ${_items.length}');
             }
-            objectToCache = updatedItem;
-          } else {
-            debugPrint('$connectivityLogPrefix LiveList Update Event: Invalid index ${event.index}, list size ${_items.length}');
           }
+
+          // Save single updates from stream immediately if offline mode is on
+          if (widget.offlineMode && objectToCache != null) {
+            // Fetch might be needed if stream update is partial and lazy loading is on
+            // For simplicity, assuming stream provides complete object or fetch isn't critical here
+            objectToCache.saveToLocalCache().catchError((e) {
+               debugPrint('$connectivityLogPrefix Error saving stream update for ${objectToCache?.objectId} to cache: $e');
+            });
+          }
+
+          _noDataNotifier.value = _items.isEmpty;
+
+        } catch (e) {
+           debugPrint('$connectivityLogPrefix Error processing stream event: $e');
+           // Optionally update state to reflect error
         }
 
-        // Save updates from stream immediately (usually less performance critical than initial load)
-        if (widget.offlineMode && objectToCache != null) {
-          // Consider if fetch is needed for stream events too, though often they are complete
-          objectToCache.saveToLocalCache();
-        }
-
-        _noDataNotifier.value = _items.isEmpty;
+      }, onError: (error) {
+         debugPrint('$connectivityLogPrefix LiveList Stream Error: $error');
+         // Optionally handle stream errors (e.g., show error message)
+         if (mounted) {
+            setState(() { /* Potentially update state to show error */ });
+         }
       });
       // --- End Stream Listener ---
 
     } catch (e) {
       debugPrint('$connectivityLogPrefix Error loading data: $e');
       _noDataNotifier.value = _items.isEmpty;
-      if (mounted) {
-        setState(() {});
-      }
+      if (mounted) setState(() {}); // Update UI to potentially show empty/error state
     }
   }
 
-  // --- Helper for Background Caching ---
-  Future<void> _fetchAndCacheItemsInBackground(List<T> items) async {
-     debugPrint('$connectivityLogPrefix Starting background fetch/cache for ${items.length} items...');
-     for (final item in items) {
-       try {
-         // Check if still mounted within the loop if operations are long
-         if (!mounted) return;
+  // --- Helper to Save Batch to Cache (Handles Fetch if Lazy Loading) ---
+  Future<void> _saveBatchToCache(List<T> itemsToSave) async {
+    if (itemsToSave.isEmpty || !widget.offlineMode) return;
 
-         // Fetch *only* if lazy loading is enabled to ensure cached data is complete
-         if (widget.lazyLoading) {
-           // Fetch the full object data before saving to cache when lazy loading.
-           // We assume that if lazy loading is on, the initial object might be incomplete.
-           await item.fetch();
-         }
-         await item.saveToLocalCache();
-       } catch (e) {
-         // Log error but continue with the next item
-         debugPrint('$connectivityLogPrefix Error background saving object ${item.objectId} to cache: $e');
-       }
-     }
-     debugPrint('$connectivityLogPrefix Finished background fetch/cache.');
+    debugPrint('$connectivityLogPrefix Saving batch of ${itemsToSave.length} items to cache...');
+    Stopwatch stopwatch = Stopwatch()..start();
+
+    List<T> itemsToSaveFinal = [];
+    List<Future<void>> fetchFutures = [];
+
+    // First, handle potential fetches if lazy loading is enabled
+    if (widget.lazyLoading) {
+      for (final item in itemsToSave) {
+        // Check if a key typically set by the server (like updatedAt) is missing,
+        // indicating the object might need fetching.
+        if (!item.containsKey(sdk.keyVarUpdatedAt)) {
+          // Collect fetch futures to run concurrently
+          fetchFutures.add(item.fetch().then((_) {
+             // Add successfully fetched items to the final list
+             itemsToSaveFinal.add(item);
+          }).catchError((fetchError) {
+             debugPrint('$connectivityLogPrefix Error fetching object ${item.objectId} during batch save pre-fetch: $fetchError');
+             // Optionally add partially loaded item anyway? itemsToSaveFinal.add(item);
+          }));
+        } else {
+          // Item data is already available, add directly
+          itemsToSaveFinal.add(item);
+        }
+      }
+      // Wait for all necessary fetches to complete
+      if (fetchFutures.isNotEmpty) {
+         await Future.wait(fetchFutures);
+      }
+    } else {
+      // Not lazy loading, just use the original list
+      itemsToSaveFinal = itemsToSave;
+    }
+
+
+    // Now, save the final list (with fetched data if applicable) using the efficient batch method
+    if (itemsToSaveFinal.isNotEmpty) {
+      try {
+        // Ensure we have the className, assuming all items are the same type
+        final className = itemsToSaveFinal.first.parseClassName;
+        await sdk.ParseObjectOffline.saveAllToLocalCache(className, itemsToSaveFinal);
+      } catch (e) {
+         debugPrint('$connectivityLogPrefix Error during batch save operation: $e');
+      }
+    }
+
+    stopwatch.stop();
+    // Adjust log message as the static method now prints details
+    debugPrint('$connectivityLogPrefix Finished batch save processing in ${stopwatch.elapsedMilliseconds}ms.');
+  }
+  // --- End Helper ---
+
+  // --- Helper to Proactively Cache the Next Page ---
+  Future<void> _proactivelyCacheNextPage(int pageNumberToCache) async {
+    // Only run if online, offline mode is on, and pagination is enabled
+    if (isOffline || !widget.offlineMode || !widget.pagination) return;
+
+    debugPrint('$connectivityLogPrefix Proactively caching page $pageNumberToCache...');
+    final skipCount = pageNumberToCache * widget.pageSize;
+    final query = QueryBuilder<T>.copy(widget.query)
+      ..setAmountToSkip(skipCount)
+      ..setLimit(widget.pageSize);
+
+    try {
+      final response = await query.query();
+      if (response.success && response.results != null) {
+        final List<T> results = (response.results as List).cast<T>();
+        if (results.isNotEmpty) {
+          // Use the existing batch save helper (it handles lazy fetching if needed)
+          // Await is fine here as this whole function runs in the background
+          await _saveBatchToCache(results);
+        } else {
+           debugPrint('$connectivityLogPrefix Proactive cache: Page $pageNumberToCache was empty.');
+        }
+      } else {
+         debugPrint('$connectivityLogPrefix Proactive cache failed for page $pageNumberToCache: ${response.error?.message}');
+      }
+    } catch (e) {
+       debugPrint('$connectivityLogPrefix Proactive cache exception for page $pageNumberToCache: $e');
+    }
   }
   // --- End Helper ---
 
   Future<void> _loadMoreData() async {
+    // Prevent loading more if offline, already loading, or no more data
     if (isOffline) {
       debugPrint('$connectivityLogPrefix Cannot load more data while offline.');
       return;
     }
-
     if (_loadMoreStatus == LoadMoreStatus.loading || !_hasMoreData) {
       return;
     }
 
     debugPrint('$connectivityLogPrefix Loading more data...');
-    setState(() {
-      _loadMoreStatus = LoadMoreStatus.loading;
-    });
+    setState(() { _loadMoreStatus = LoadMoreStatus.loading; });
+
+    List<T> itemsToCacheBatch = []; // Prepare list for batch caching
 
     try {
       _currentPage++;
       final skipCount = _currentPage * widget.pageSize;
-
       final nextPageQuery = QueryBuilder<T>.copy(widget.query)
         ..setAmountToSkip(skipCount)
         ..setLimit(widget.pageSize);
 
-      debugPrint('$connectivityLogPrefix Loading page $_currentPage, Skip: $skipCount, Limit: ${widget.pageSize}');
+      // Fetch next page from server
       final parseResponse = await nextPageQuery.query();
       debugPrint('$connectivityLogPrefix LoadMore Response: Success=${parseResponse.success}, Count=${parseResponse.count}, Results=${parseResponse.results?.length}, Error: ${parseResponse.error?.message}');
 
@@ -381,65 +459,72 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
             _loadMoreStatus = LoadMoreStatus.noMoreData;
             _hasMoreData = false;
           });
-          return;
+          return; // No more items found
         }
 
+        // Collect fetched items for caching if offline mode is on
         if (widget.offlineMode) {
-          for (final item in results) {
-            try {
-              if (widget.lazyLoading) {
-                await item.fetch();
-              }
-              await item.saveToLocalCache();
-            } catch (e) {
-              debugPrint('$connectivityLogPrefix Error saving fetched object ${item.objectId} from loadMore to cache: $e');
-            }
-          }
+          itemsToCacheBatch.addAll(results);
         }
 
+        // --- Update UI FIRST ---
         setState(() {
           _items.addAll(results);
           _loadMoreStatus = LoadMoreStatus.idle;
         });
+        // --- End UI Update ---
+
+        // --- Trigger Background Batch Cache AFTER UI update ---
+        if (itemsToCacheBatch.isNotEmpty) {
+          // Don't await, let it run in background
+          _saveBatchToCache(itemsToCacheBatch);
+        }
+        // --- End Trigger ---
+
+        // --- Trigger Proactive Cache for Next Page ---
+        if (_hasMoreData) { // Check if the current load didn't signal the end
+           _proactivelyCacheNextPage(_currentPage + 1); // Start caching page N+1
+        }
+        // --- End Proactive Cache Trigger ---
+
       } else {
-        setState(() {
-          _loadMoreStatus = LoadMoreStatus.error;
-        });
+        // Handle query failure
+        debugPrint('$connectivityLogPrefix LoadMore Error: ${parseResponse.error?.message}');
+        setState(() { _loadMoreStatus = LoadMoreStatus.error; });
       }
     } catch (e) {
+      // Handle general error during load more
       debugPrint('$connectivityLogPrefix Error loading more data: $e');
-      setState(() {
-        _loadMoreStatus = LoadMoreStatus.error;
-      });
+      setState(() { _loadMoreStatus = LoadMoreStatus.error; });
     }
   }
 
   void _onScroll() {
-    if (isOffline) return;
+    // Trigger load more only if online, not already loading, and has more data
+    if (isOffline || _loadMoreStatus == LoadMoreStatus.loading || !_hasMoreData) {
+      return;
+    }
 
-    if (_loadMoreStatus == LoadMoreStatus.loading || !_hasMoreData) {
-      return;
-    }
-    final scrollController = widget.scrollController ?? _scrollController;
-    if (!scrollController.hasClients) {
-      return;
-    }
-    final offset = scrollController.position.maxScrollExtent - scrollController.position.pixels;
-    if (offset < widget.loadMoreOffset) {
+    // Check if scroll controller is attached and near the end
+    if (!_scrollController.hasClients) return;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    if (maxScroll - currentScroll <= widget.loadMoreOffset) {
       _loadMoreData();
     }
   }
 
   Future<void> _refreshData() async {
     debugPrint('$connectivityLogPrefix Refreshing data...');
-    disposeLiveList();
+    disposeLiveList(); // Dispose existing live list before refresh
 
+    // Reload based on connectivity
     if (isOffline) {
       debugPrint('$connectivityLogPrefix Refreshing offline, loading from cache.');
       await loadDataFromCache();
     } else {
       debugPrint('$connectivityLogPrefix Refreshing online, loading from server.');
-      await loadDataFromServer();
+      await loadDataFromServer(); // This now calls the updated _loadData
     }
   }
 
@@ -448,71 +533,75 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
     return ValueListenableBuilder<bool>(
       valueListenable: _noDataNotifier,
       builder: (context, noData, child) {
-        final bool showLoadingIndicator =
-            (!isOffline && _liveList == null) || (isOffline && _items.isEmpty && !noData);
+        // Determine loading state: Only show if online AND _liveList is not yet initialized.
+        final bool showLoadingIndicator = !isOffline && _liveList == null;
 
         if (showLoadingIndicator) {
           return widget.listLoadingElement ?? const Center(child: CircularProgressIndicator());
-        }
-
-        if (noData && (_liveList != null || isOffline)) {
+        } else if (noData) {
+          // Show empty state if not loading AND there are no items.
           return widget.queryEmptyElement ?? const Center(child: Text('No data available'));
-        }
+        } else {
+          // Show the list if not loading and there are items.
+          return RefreshIndicator(
+            onRefresh: _refreshData,
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    physics: widget.scrollPhysics,
+                    controller: _scrollController, // Use the state's controller
+                    scrollDirection: widget.scrollDirection,
+                    padding: widget.padding,
+                    primary: widget.primary,
+                    reverse: widget.reverse,
+                    shrinkWrap: widget.shrinkWrap,
+                    itemCount: _items.length,
+                    itemBuilder: (context, index) {
+                      final item = _items[index];
+                      StreamGetter<T>? itemStream;
+                      DataGetter<T>? loadedData;
+                      DataGetter<T>? preLoadedData;
 
-        return RefreshIndicator(
-          onRefresh: _refreshData,
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  physics: widget.scrollPhysics,
-                  controller: widget.scrollController ?? _scrollController,
-                  scrollDirection: widget.scrollDirection,
-                  padding: widget.padding,
-                  primary: widget.primary,
-                  reverse: widget.reverse,
-                  shrinkWrap: widget.shrinkWrap,
-                  itemCount: _items.length,
-                  itemBuilder: (context, index) {
-                    final item = _items[index];
-                    StreamGetter<T>? itemStream;
-                    DataGetter<T>? loadedData;
-                    DataGetter<T>? preLoadedData;
+                      // Use _liveList ONLY if it's initialized (i.e., we are online and loaded)
+                      final liveList = _liveList;
+                      if (liveList != null && index < liveList.size) {
+                        itemStream = () => liveList.getAt(index);
+                        loadedData = () => liveList.getLoadedAt(index);
+                        preLoadedData = () => liveList.getPreLoadedAt(index);
+                      } else {
+                        // Offline or before _liveList is ready: Use data directly from _items
+                        loadedData = () => item;
+                        preLoadedData = () => item;
+                      }
 
-                    final liveList = _liveList;
-                    if (!isOffline && liveList != null && index < liveList.size) {
-                      itemStream = () => liveList.getAt(index);
-                      loadedData = () => liveList.getLoadedAt(index);
-                      preLoadedData = () => liveList.getPreLoadedAt(index);
-                    } else {
-                      loadedData = () => item;
-                      preLoadedData = () => item;
-                    }
-
-                    return ParseLiveListElementWidget<T>(
-                      key: ValueKey<String>(item.objectId ?? 'unknown-$index'),
-                      stream: itemStream,
-                      loadedData: loadedData,
-                      preLoadedData: preLoadedData,
-                      sizeFactor: const AlwaysStoppedAnimation<double>(1.0),
-                      duration: widget.duration,
-                      childBuilder: widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
-                      index: index,
-                    );
-                  },
+                      return ParseLiveListElementWidget<T>(
+                        key: ValueKey<String>(item.objectId ?? 'unknown-$index-${item.hashCode}'), // Ensure unique key
+                        stream: itemStream, // Will be null when offline
+                        loadedData: loadedData,
+                        preLoadedData: preLoadedData,
+                        sizeFactor: const AlwaysStoppedAnimation<double>(1.0), // Assuming no animations for now
+                        duration: widget.duration,
+                        childBuilder: widget.childBuilder ?? ParseLiveListWidget.defaultChildBuilder,
+                        index: index,
+                      );
+                    },
+                  ),
                 ),
-              ),
-              if (widget.pagination && _items.isNotEmpty)
-                widget.footerBuilder != null
-                    ? widget.footerBuilder!(context, _loadMoreStatus)
-                    : _buildDefaultFooter(),
-            ],
-          ),
-        );
+                // Show footer only if pagination is enabled and items exist
+                if (widget.pagination && _items.isNotEmpty)
+                  widget.footerBuilder != null
+                      ? widget.footerBuilder!(context, _loadMoreStatus)
+                      : _buildDefaultFooter(),
+              ],
+            ),
+          );
+        }
       },
     );
   }
 
+  // Builds the default footer based on the load more status
   Widget _buildDefaultFooter() {
     switch (_loadMoreStatus) {
       case LoadMoreStatus.loading:
@@ -530,7 +619,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         );
       case LoadMoreStatus.error:
         return InkWell(
-          onTap: _loadMoreData,
+          onTap: _loadMoreData, // Allow retry on tap
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             alignment: Alignment.center,
@@ -539,27 +628,32 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         );
       case LoadMoreStatus.idle:
       default:
-        return Container(height: 0);
+        // Return an empty container when idle or in default case
+        return const SizedBox.shrink();
     }
   }
 
   @override
   void dispose() {
-    disposeConnectivityHandler();
+    disposeConnectivityHandler(); // Dispose mixin resources
 
+    // Remove listener only if we added it
+    if (widget.pagination && widget.scrollController == null) {
+       _scrollController.removeListener(_onScroll);
+    }
+    // Dispose controller only if we created it
     if (widget.scrollController == null) {
       _scrollController.dispose();
-    } else {
-      if (widget.pagination) {
-        _scrollController.removeListener(_onScroll);
-      }
     }
-    _liveList?.dispose();
-    _noDataNotifier.dispose();
+
+    _liveList?.dispose(); // Dispose live list resources
+    _noDataNotifier.dispose(); // Dispose value notifier
     super.dispose();
   }
 }
 
+
+// --- ParseLiveListElementWidget remains unchanged ---
 class ParseLiveListElementWidget<T extends sdk.ParseObject> extends StatefulWidget {
   const ParseLiveListElementWidget({
     super.key,
@@ -580,7 +674,7 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject> extends StatefulWidg
   final Duration duration;
   final ChildBuilder<T> childBuilder;
   final int? index;
-  final ParseError? error;
+  final ParseError? error; // Note: error parameter is not currently used in state logic
 
   bool get hasData => loadedData != null;
 
@@ -594,32 +688,57 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
   late sdk.ParseLiveListElementSnapshot<T> _snapshot;
   StreamSubscription<T>? _streamSubscription;
 
-  bool get hasData => widget.loadedData != null;
-  bool get failed => widget.error != null;
+  // Removed redundant getters, use widget directly or _snapshot
+  // bool get hasData => widget.loadedData != null;
+  // bool get failed => widget.error != null;
 
   @override
   void initState() {
     super.initState();
+    // Initialize snapshot with potentially preloaded/loaded data
     _snapshot = sdk.ParseLiveListElementSnapshot<T>(
       loadedData: widget.loadedData?.call(),
       preLoadedData: widget.preLoadedData?.call(),
+      error: widget.error, // Initialize with potential error passed in
     );
 
+    // Subscribe to stream if provided
     if (widget.stream != null) {
       _streamSubscription = widget.stream!().listen(
         (data) {
-          setState(() {
-            _snapshot = sdk.ParseLiveListElementSnapshot<T>(
-              loadedData: data,
-              preLoadedData: data,
-            );
-          });
+          if (mounted) { // Check if widget is still in the tree
+            setState(() {
+              // Update snapshot with new data from stream
+              _snapshot = sdk.ParseLiveListElementSnapshot<T>(
+                loadedData: data,
+                preLoadedData: _snapshot.preLoadedData, // Keep original preLoadedData? Or update? Let's update.
+                // preLoadedData: data,
+              );
+            });
+          }
         },
         onError: (error) {
-          if (error is sdk.ParseError) {
-            setState(() {
-              _snapshot = sdk.ParseLiveListElementSnapshot<T>(error: error);
-            });
+          if (mounted) { // Check if widget is still in the tree
+             if (error is sdk.ParseError) {
+               setState(() {
+                 // Update snapshot with error information
+                 _snapshot = sdk.ParseLiveListElementSnapshot<T>(
+                   error: error,
+                   preLoadedData: _snapshot.preLoadedData, // Keep previous data on error?
+                   loadedData: _snapshot.loadedData,
+                 );
+               });
+             } else {
+                // Handle non-ParseError errors if necessary
+                debugPrint('ParseLiveListElementWidget Stream Error: $error');
+                setState(() {
+                   _snapshot = sdk.ParseLiveListElementSnapshot<T>(
+                     error: sdk.ParseError(message: error.toString()), // Generic error
+                     preLoadedData: _snapshot.preLoadedData,
+                     loadedData: _snapshot.loadedData,
+                   );
+                });
+             }
           }
         },
       );
@@ -628,12 +747,13 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
 
   @override
   void dispose() {
-    _streamSubscription?.cancel();
+    _streamSubscription?.cancel(); // Cancel stream subscription
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Use SizeTransition for potential animations (though factor is currently fixed)
     return SizeTransition(
       sizeFactor: widget.sizeFactor,
       child: widget.index != null
@@ -642,4 +762,3 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
     );
   }
 }
-

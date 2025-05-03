@@ -16,13 +16,13 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.reverse = false,
     this.childBuilder,
     this.shrinkWrap = false,
-    this.removedItemBuilder,
+    this.removedItemBuilder, // Note: Not currently used in state logic
     this.listenOnAllSubItems,
     this.listeningIncludes,
     this.lazyLoading = true,
     this.preloadedColumns,
     this.excludedColumns,
-    this.animationController,
+    this.animationController, // Note: Not currently used for item animations
     this.crossAxisCount = 3,
     this.crossAxisSpacing = 5.0,
     this.mainAxisSpacing = 5.0,
@@ -33,8 +33,8 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
     this.loadMoreOffset = 300.0,
     this.footerBuilder,
     this.cacheSize = 50,
-    this.lazyBatchSize = 0,
-    this.lazyTriggerOffset = 500.0,
+    this.lazyBatchSize = 0, // Note: Not currently used in state logic
+    this.lazyTriggerOffset = 500.0, // Note: Not currently used in state logic
     this.offlineMode = false,
     required this.fromJson,
   });
@@ -86,14 +86,15 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   State<ParseLiveGridWidget<T>> createState() => _ParseLiveGridWidgetState<T>();
 
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
-      BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot) {
+      BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot, [int? index]) {
     if (snapshot.failed) {
       return const Text('Something went wrong!');
     } else if (snapshot.hasData) {
       return ListTile(
         title: Text(
-          snapshot.loadedData!.get<String>(sdk.keyVarObjectId)!,
+          snapshot.loadedData?.get<String>(sdk.keyVarObjectId) ?? 'Missing Data!',
         ),
+        subtitle: index != null ? Text('Item #$index') : null,
       );
     } else {
       return const ListTile(
@@ -114,19 +115,14 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   int _currentPage = 0;
   bool _hasMoreData = true;
 
-  final Set<int> _loadingIndices = {};
-
-  bool _isOffline = false;
-  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
-  final Connectivity _connectivity = Connectivity();
-  ConnectivityResult? _connectionStatus;
+  final Set<int> _loadingIndices = {}; // Used for lazy loading specific items
 
   // --- Implement Mixin Requirements ---
   @override
-  Future<void> loadDataFromServer() => _loadData(); // Map to existing method
+  Future<void> loadDataFromServer() => _loadData();
 
   @override
-  Future<void> loadDataFromCache() => _loadFromCache(); // Map to existing method
+  Future<void> loadDataFromCache() => _loadFromCache();
 
   @override
   void disposeLiveList() {
@@ -139,6 +135,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
 
   @override
   bool get isOfflineModeEnabled => widget.offlineMode;
+  // --- End Mixin Requirements ---
 
   @override
   void initState() {
@@ -149,7 +146,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       _scrollController = widget.scrollController!;
     }
 
-    if (widget.pagination) {
+    if (widget.pagination || widget.lazyLoading) { // Listen if pagination OR lazy loading is on
       _scrollController.addListener(_onScroll);
     }
 
@@ -158,14 +155,14 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
 
   Future<void> _loadFromCache() async {
     if (!isOfflineModeEnabled) {
-      debugPrint('Offline mode disabled, skipping cache load.');
+      debugPrint('$connectivityLogPrefix Offline mode disabled, skipping cache load.');
       _items.clear();
       _noDataNotifier.value = true;
       if (mounted) setState(() {});
       return;
     }
 
-    debugPrint('Loading Grid data from cache...');
+    debugPrint('$connectivityLogPrefix Loading Grid data from cache...');
     _items.clear();
 
     try {
@@ -173,11 +170,15 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         widget.query.object.parseClassName,
       );
       for (final obj in cached) {
-        _items.add(widget.fromJson(obj.toJson(full: true)));
+         try {
+           _items.add(widget.fromJson(obj.toJson(full: true)));
+         } catch (e) {
+            debugPrint('$connectivityLogPrefix Error deserializing cached object: $e');
+         }
       }
-      debugPrint('Loaded ${_items.length} items from cache for ${widget.query.object.parseClassName}');
+      debugPrint('$connectivityLogPrefix Loaded ${_items.length} items from cache for ${widget.query.object.parseClassName}');
     } catch (e) {
-      debugPrint('Error loading grid data from cache: $e');
+      debugPrint('$connectivityLogPrefix Error loading grid data from cache: $e');
     }
 
     _noDataNotifier.value = _items.isEmpty;
@@ -187,23 +188,20 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   }
 
   void _onScroll() {
-    if (isOffline) return;
-
-    if (!widget.pagination || _loadMoreStatus == LoadMoreStatus.loading || !_hasMoreData) {
-      return;
+    // Handle Pagination
+    if (widget.pagination && !isOffline && _loadMoreStatus != LoadMoreStatus.loading && _hasMoreData) {
+      final maxScroll = _scrollController.position.maxScrollExtent;
+      final currentScroll = _scrollController.position.pixels;
+      if (maxScroll - currentScroll <= widget.loadMoreOffset) {
+        _loadMoreData();
+      }
     }
 
-    final scrollController = widget.scrollController ?? _scrollController;
-    final offset = scrollController.position.maxScrollExtent - scrollController.position.pixels;
-
-    if (offset < widget.loadMoreOffset) {
-      _loadMoreData();
-    }
-
-    if (widget.lazyLoading) {
-      final visibleMaxIndex = _calculateVisibleMaxIndex(scrollController.offset);
+    // Handle Lazy Loading Trigger
+    if (widget.lazyLoading && !isOffline && _liveGrid != null) {
+      final visibleMaxIndex = _calculateVisibleMaxIndex(_scrollController.offset);
+      // Trigger loading for items slightly beyond the visible range
       final preloadIndex = visibleMaxIndex + widget.crossAxisCount * 2;
-
       if (preloadIndex < _items.length) {
         _triggerBatchLoading(preloadIndex);
       }
@@ -211,42 +209,77 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   }
 
   int _calculateVisibleMaxIndex(double offset) {
-    if (!mounted || !context.findRenderObject()!.paintBounds.isFinite) {
+    if (!mounted || !context.mounted || !context.findRenderObject()!.paintBounds.isFinite) {
       return 0;
     }
-    final itemWidth = (MediaQuery.of(context).size.width - (widget.crossAxisCount - 1) * widget.crossAxisSpacing - (widget.padding?.horizontal ?? 0)) / widget.crossAxisCount;
-    final itemHeight = itemWidth / widget.childAspectRatio + widget.mainAxisSpacing;
-    final itemsPerRow = widget.crossAxisCount;
-    final rowsVisible = (offset + MediaQuery.of(context).size.height) / itemHeight;
-    return min((rowsVisible * itemsPerRow).ceil(), _items.length - 1);
+    try {
+      final itemWidth = (MediaQuery.of(context).size.width - (widget.crossAxisCount - 1) * widget.crossAxisSpacing - (widget.padding?.horizontal ?? 0)) / widget.crossAxisCount;
+      final itemHeight = itemWidth / widget.childAspectRatio + widget.mainAxisSpacing;
+      if (itemHeight <= 0) return 0; // Avoid division by zero
+      final itemsPerRow = widget.crossAxisCount;
+      final rowsVisible = (offset + MediaQuery.of(context).size.height) / itemHeight;
+      return min((rowsVisible * itemsPerRow).ceil(), _items.length - 1);
+    } catch (e) {
+      debugPrint('$connectivityLogPrefix Error calculating visible index: $e');
+      return _items.isNotEmpty ? _items.length - 1 : 0;
+    }
   }
+
+  // --- Helper to Proactively Cache the Next Page ---
+  Future<void> _proactivelyCacheNextPage(int pageNumberToCache) async {
+    // Only run if online, offline mode is on, and pagination is enabled
+    if (isOffline || !widget.offlineMode || !widget.pagination) return;
+
+    debugPrint('$connectivityLogPrefix Proactively caching page $pageNumberToCache...');
+    final skipCount = pageNumberToCache * widget.pageSize;
+    final query = QueryBuilder<T>.copy(widget.query)
+      ..setAmountToSkip(skipCount)
+      ..setLimit(widget.pageSize);
+
+    try {
+      final response = await query.query();
+      if (response.success && response.results != null) {
+        final List<T> results = (response.results as List).cast<T>();
+        if (results.isNotEmpty) {
+          // Use the existing batch save helper (it handles lazy fetching if needed)
+          // Await is fine here as this whole function runs in the background
+          await _saveBatchToCache(results);
+        } else {
+           debugPrint('$connectivityLogPrefix Proactive cache: Page $pageNumberToCache was empty.');
+        }
+      } else {
+         debugPrint('$connectivityLogPrefix Proactive cache failed for page $pageNumberToCache: ${response.error?.message}');
+      }
+    } catch (e) {
+       debugPrint('$connectivityLogPrefix Proactive cache exception for page $pageNumberToCache: $e');
+    }
+  }
+  // --- End Helper ---
 
   Future<void> _loadMoreData() async {
     if (isOffline) {
-      debugPrint('Cannot load more data while offline.');
+      debugPrint('$connectivityLogPrefix Cannot load more data while offline.');
       return;
     }
-
     if (_loadMoreStatus == LoadMoreStatus.loading || !_hasMoreData) {
       return;
     }
 
-    debugPrint('Grid loading more data...');
-    setState(() {
-      _loadMoreStatus = LoadMoreStatus.loading;
-    });
+    debugPrint('$connectivityLogPrefix Grid loading more data...');
+    setState(() { _loadMoreStatus = LoadMoreStatus.loading; });
+
+    List<T> itemsToCacheBatch = []; // Prepare list for batch caching
 
     try {
       _currentPage++;
       final skipCount = _currentPage * widget.pageSize;
-
       final nextPageQuery = QueryBuilder<T>.copy(widget.query)
         ..setAmountToSkip(skipCount)
         ..setLimit(widget.pageSize);
 
-      debugPrint('Grid Loading page $_currentPage, Skip: $skipCount, Limit: ${widget.pageSize}');
+      // Fetch next page from server
       final parseResponse = await nextPageQuery.query();
-      debugPrint('Grid LoadMore Response: Success=${parseResponse.success}, Count=${parseResponse.count}, Results=${parseResponse.results?.length}, Error: ${parseResponse.error?.message}');
+      debugPrint('$connectivityLogPrefix LoadMore Response: Success=${parseResponse.success}, Count=${parseResponse.count}, Results=${parseResponse.results?.length}, Error: ${parseResponse.error?.message}');
 
       if (parseResponse.success && parseResponse.results != null) {
         final List<dynamic> rawResults = parseResponse.results!;
@@ -257,41 +290,48 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
             _loadMoreStatus = LoadMoreStatus.noMoreData;
             _hasMoreData = false;
           });
-          return;
+          return; // No more items found
         }
 
+        // Collect fetched items for caching if offline mode is on
         if (widget.offlineMode) {
-          debugPrint('Saving ${results.length} more items to cache...');
-          for (final item in results) {
-            try {
-              if (widget.lazyLoading) {
-                await item.fetch();
-              }
-              await item.saveToLocalCache();
-            } catch (e) {
-              debugPrint('Error saving fetched object ${item.objectId} from loadMore to cache: $e');
-            }
-          }
+          itemsToCacheBatch.addAll(results);
         }
 
+        // --- Update UI FIRST ---
         setState(() {
           _items.addAll(results);
           _loadMoreStatus = LoadMoreStatus.idle;
         });
+        // --- End UI Update ---
+
+        // --- Trigger Background Batch Cache AFTER UI update ---
+        if (itemsToCacheBatch.isNotEmpty) {
+          // Don't await, let it run in background
+          _saveBatchToCache(itemsToCacheBatch);
+        }
+        // --- End Trigger ---
+
+        // --- Trigger Proactive Cache for Next Page ---
+        if (_hasMoreData) { // Check if the current load didn't signal the end
+           _proactivelyCacheNextPage(_currentPage + 1); // Start caching page N+1
+        }
+        // --- End Proactive Cache Trigger ---
+
       } else {
-        setState(() {
-          _loadMoreStatus = LoadMoreStatus.error;
-        });
+        // Handle query failure
+        debugPrint('$connectivityLogPrefix LoadMore Error: ${parseResponse.error?.message}');
+        setState(() { _loadMoreStatus = LoadMoreStatus.error; });
       }
     } catch (e) {
-      debugPrint('Error loading more grid data: $e');
-      setState(() {
-        _loadMoreStatus = LoadMoreStatus.error;
-      });
+      // Handle general error during load more
+      debugPrint('$connectivityLogPrefix Error loading more grid data: $e');
+      setState(() { _loadMoreStatus = LoadMoreStatus.error; });
     }
   }
 
   Future<void> _loadData() async {
+    // If offline, attempt to load from cache and exit
     if (isOffline) {
       debugPrint('$connectivityLogPrefix Offline: Skipping server load, relying on cache.');
       if (isOfflineModeEnabled) {
@@ -300,28 +340,31 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       return;
     }
 
+    // --- Online Loading Logic ---
     debugPrint('$connectivityLogPrefix Loading initial data from server...');
+    List<T> itemsToCacheBatch = []; // Prepare list for batch caching
+
     try {
+      // Reset state
       _currentPage = 0;
       _loadMoreStatus = LoadMoreStatus.idle;
       _hasMoreData = true;
       _items.clear();
       _loadingIndices.clear();
       _noDataNotifier.value = true;
-      if (mounted) setState(() {});
+      if (mounted) setState(() {}); // Show loading state
 
+      // Prepare query
       final initialQuery = QueryBuilder<T>.copy(widget.query);
-
       if (widget.pagination) {
-        initialQuery
-          ..setAmountToSkip(0)
-          ..setLimit(widget.pageSize);
+        initialQuery..setAmountToSkip(0)..setLimit(widget.pageSize);
       } else {
         if (!initialQuery.limiters.containsKey('limit')) {
           initialQuery.setLimit(widget.nonPaginatedLimit);
         }
       }
 
+      // Fetch from server using ParseLiveList
       final originalLiveGrid = await sdk.ParseLiveList.create(
         initialQuery,
         listenOnAllSubItems: widget.listenOnAllSubItems,
@@ -331,88 +374,110 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       );
 
       final liveGrid = CachedParseLiveList<T>(originalLiveGrid, widget.cacheSize, widget.lazyLoading);
-      _liveGrid?.dispose();
+      _liveGrid?.dispose(); // Dispose previous list if any
       _liveGrid = liveGrid;
 
-      final List<T> initialItems = [];
-      final List<T> itemsToFetchAndCache = [];
-
+      // Populate _items directly from server data and collect for caching
       if (liveGrid.size > 0) {
         for (int i = 0; i < liveGrid.size; i++) {
           final item = liveGrid.getPreLoadedAt(i);
           if (item != null) {
-            initialItems.add(item);
+            _items.add(item);
+            // Add the item fetched from server to the cache batch if offline mode is on
             if (widget.offlineMode) {
-              itemsToFetchAndCache.add(item);
+               itemsToCacheBatch.add(item);
             }
           }
         }
       }
 
-      _items.addAll(initialItems);
+      // --- Update UI FIRST ---
       _noDataNotifier.value = _items.isEmpty;
       if (mounted) {
-        setState(() {});
+        setState(() {}); // Display fetched items
       }
+      // --- End UI Update ---
 
-      if (itemsToFetchAndCache.isNotEmpty) {
-        _fetchAndCacheItemsInBackground(itemsToFetchAndCache);
+      // --- Trigger Background Batch Cache AFTER UI update ---
+      if (itemsToCacheBatch.isNotEmpty) {
+        // Don't await, let it run in background
+        _saveBatchToCache(itemsToCacheBatch);
       }
+      // --- End Trigger ---
 
+      // --- Trigger Proactive Cache for Next Page ---
+      if (widget.pagination && _hasMoreData) { // Only if pagination is on and initial load wasn't empty
+         _proactivelyCacheNextPage(1); // Start caching page 1 (index 1)
+      }
+      // --- End Proactive Cache Trigger ---
+
+      // --- Stream Listener ---
       liveGrid.stream.listen((event) {
+        if (!mounted) return;
+
         T? objectToCache;
 
-        if (event is sdk.ParseLiveListAddEvent<sdk.ParseObject>) {
-          final addedItem = event.object;
-          if (mounted) {
-            setState(() {
-              _items.insert(event.index, addedItem);
+        try { // Wrap event processing
+          if (event is sdk.ParseLiveListAddEvent<sdk.ParseObject>) {
+            final addedItem = event.object as T;
+            setState(() { _items.insert(event.index, addedItem); });
+            objectToCache = addedItem;
+          } else if (event is sdk.ParseLiveListDeleteEvent<sdk.ParseObject>) {
+            if (event.index >= 0 && event.index < _items.length) {
+              final removedItem = _items.removeAt(event.index);
+              setState(() {});
+              if (widget.offlineMode) {
+                removedItem.removeFromLocalCache().catchError((e) {
+                   debugPrint('$connectivityLogPrefix Error removing item ${removedItem.objectId} from cache: $e');
+                });
+              }
+            } else {
+              debugPrint('$connectivityLogPrefix LiveList Delete Event: Invalid index ${event.index}, list size ${_items.length}');
+            }
+          } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
+            final updatedItem = event.object as T;
+            if (event.index >= 0 && event.index < _items.length) {
+              setState(() { _items[event.index] = updatedItem; });
+              objectToCache = updatedItem;
+            } else {
+              debugPrint('$connectivityLogPrefix LiveList Update Event: Invalid index ${event.index}, list size ${_items.length}');
+            }
+          }
+
+          // Save single updates from stream immediately if offline mode is on
+          if (widget.offlineMode && objectToCache != null) {
+            objectToCache.saveToLocalCache().catchError((e) {
+               debugPrint('$connectivityLogPrefix Error saving stream update for ${objectToCache?.objectId} to cache: $e');
             });
           }
-          objectToCache = addedItem;
-        } else if (event is sdk.ParseLiveListDeleteEvent<sdk.ParseObject>) {
-          if (event.index >= 0 && event.index < _items.length) {
-            final removedItem = _items.removeAt(event.index);
-            if (mounted) {
-              setState(() {});
-            }
-            if (widget.offlineMode) {
-              removedItem.removeFromLocalCache();
-            }
-          } else {
-            debugPrint('$connectivityLogPrefix LiveList Delete Event: Invalid index ${event.index}, list size ${_items.length}');
-          }
-        } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
-          final updatedItem = event.object;
-          if (event.index >= 0 && event.index < _items.length) {
-            if (mounted) {
-              setState(() {
-                _items[event.index] = updatedItem;
-              });
-            }
-            objectToCache = updatedItem;
-          } else {
-            debugPrint('$connectivityLogPrefix LiveList Update Event: Invalid index ${event.index}, list size ${_items.length}');
-          }
+
+          _noDataNotifier.value = _items.isEmpty;
+
+        } catch (e) {
+           debugPrint('$connectivityLogPrefix Error processing stream event: $e');
         }
 
-        if (widget.offlineMode && objectToCache != null) {
-          objectToCache.saveToLocalCache();
-        }
-
-        _noDataNotifier.value = _items.isEmpty;
+      }, onError: (error) {
+         debugPrint('$connectivityLogPrefix LiveList Stream Error: $error');
+         if (mounted) {
+            setState(() { /* Potentially update state to show error */ });
+         }
       });
+      // --- End Stream Listener ---
 
+      // --- Initial Lazy Loading Trigger ---
       if (widget.lazyLoading) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
           final visibleMaxIndex = _calculateVisibleMaxIndex(0);
-          final preloadIndex = visibleMaxIndex + widget.crossAxisCount * 2;
+          final preloadIndex = visibleMaxIndex + widget.crossAxisCount * 2; // Preload a couple of rows ahead
           if (preloadIndex < _items.length) {
             _triggerBatchLoading(preloadIndex);
           }
         });
       }
+      // --- End Lazy Loading Trigger ---
+
     } catch (e) {
       debugPrint('$connectivityLogPrefix Error loading data: $e');
       _noDataNotifier.value = _items.isEmpty;
@@ -420,35 +485,72 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     }
   }
 
-  Future<void> _fetchAndCacheItemsInBackground(List<T> items) async {
-    debugPrint('$connectivityLogPrefix Starting background fetch/cache for ${items.length} items...');
-    for (final item in items) {
-      try {
-        if (!mounted) return;
+  // --- Helper to Save Batch to Cache (Handles Fetch if Lazy Loading) ---
+  Future<void> _saveBatchToCache(List<T> itemsToSave) async {
+    if (itemsToSave.isEmpty || !widget.offlineMode) return;
 
-        if (widget.lazyLoading) {
-          
-            await item.fetch();
-          
+    debugPrint('$connectivityLogPrefix Saving batch of ${itemsToSave.length} items to cache...');
+    Stopwatch stopwatch = Stopwatch()..start();
+
+    List<T> itemsToSaveFinal = [];
+    List<Future<void>> fetchFutures = [];
+
+    // First, handle potential fetches if lazy loading is enabled
+    if (widget.lazyLoading) {
+      for (final item in itemsToSave) {
+        // Check if core data like 'createdAt' is missing, indicating it might need fetching
+        if (item.get<DateTime>(sdk.keyVarCreatedAt) == null && item.objectId != null) {
+          // Collect fetch futures to run concurrently
+          fetchFutures.add(item.fetch().then((_) {
+             // Add successfully fetched items to the final list
+             itemsToSaveFinal.add(item);
+          }).catchError((fetchError) {
+             debugPrint('$connectivityLogPrefix Error fetching object ${item.objectId} during batch save pre-fetch: $fetchError');
+             // Optionally add partially loaded item anyway? itemsToSaveFinal.add(item);
+          }));
+        } else {
+          // Item data is already available, add directly
+          itemsToSaveFinal.add(item);
         }
-        await item.saveToLocalCache();
+      }
+      // Wait for all necessary fetches to complete
+      if (fetchFutures.isNotEmpty) {
+         await Future.wait(fetchFutures);
+      }
+    } else {
+      // Not lazy loading, just use the original list
+      itemsToSaveFinal = itemsToSave;
+    }
+
+
+    // Now, save the final list (with fetched data if applicable) using the efficient batch method
+    if (itemsToSaveFinal.isNotEmpty) {
+      try {
+        // Ensure we have the className, assuming all items are the same type
+        final className = itemsToSaveFinal.first.parseClassName;
+        await sdk.ParseObjectOffline.saveAllToLocalCache(className, itemsToSaveFinal);
       } catch (e) {
-        debugPrint('$connectivityLogPrefix Error background saving object ${item.objectId} to cache: $e');
+         debugPrint('$connectivityLogPrefix Error during batch save operation: $e');
       }
     }
-    debugPrint('$connectivityLogPrefix Finished background fetch/cache.');
+
+    stopwatch.stop();
+    // Adjust log message as the static method now prints details
+    debugPrint('$connectivityLogPrefix Finished batch save processing in ${stopwatch.elapsedMilliseconds}ms.');
   }
+  // --- End Helper ---
 
   Future<void> _refreshData() async {
-    debugPrint('Refreshing Grid data...');
-    disposeLiveList();
+    debugPrint('$connectivityLogPrefix Refreshing Grid data...');
+    disposeLiveList(); // Dispose existing live list before refresh
 
+    // Reload based on connectivity
     if (isOffline) {
-      debugPrint('Refreshing offline, loading from cache.');
-      await _loadFromCache();
+      debugPrint('$connectivityLogPrefix Refreshing offline, loading from cache.');
+      await loadDataFromCache();
     } else {
-      debugPrint('Refreshing online, loading from server.');
-      await _loadData();
+      debugPrint('$connectivityLogPrefix Refreshing online, loading from server.');
+      await loadDataFromServer(); // Calls the updated _loadData
     }
   }
 
@@ -457,79 +559,78 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     return ValueListenableBuilder<bool>(
       valueListenable: _noDataNotifier,
       builder: (context, noData, child) {
-        final bool showLoadingIndicator =
-            (!_isOffline && _liveGrid == null) || (_isOffline && _items.isEmpty && !noData);
+        // Determine loading state: Online AND _liveGrid not yet initialized.
+        final bool showLoadingIndicator = !isOffline && _liveGrid == null;
 
         if (showLoadingIndicator) {
-          return widget.gridLoadingElement ??
-              const Center(child: CircularProgressIndicator());
+          return widget.gridLoadingElement ?? const Center(child: CircularProgressIndicator());
+        } else if (noData) {
+          // Show empty state if not loading AND there are no items.
+          return widget.queryEmptyElement ?? const Center(child: Text('No data available'));
+        } else {
+          // Show the grid if not loading and there are items.
+          return RefreshIndicator(
+            onRefresh: _refreshData,
+            child: Column(
+              children: [
+                Expanded(
+                  child: buildAnimatedGrid(), // Use helper for GridView
+                ),
+                // Show footer only if pagination is enabled and items exist
+                if (widget.pagination && _items.isNotEmpty)
+                  widget.footerBuilder != null
+                      ? widget.footerBuilder!(context, _loadMoreStatus)
+                      : _buildDefaultFooter(),
+              ],
+            ),
+          );
         }
-
-        if (noData && (_liveGrid != null || isOffline)) {
-          return widget.queryEmptyElement ??
-              const Center(child: Text('No data available'));
-        }
-
-        return RefreshIndicator(
-          onRefresh: _refreshData,
-          child: Column(
-            children: [
-              Expanded(
-                child: buildAnimatedGrid(),
-              ),
-              if (widget.pagination && _items.isNotEmpty)
-                widget.footerBuilder != null
-                    ? widget.footerBuilder!(context, _loadMoreStatus)
-                    : _buildDefaultFooter(),
-            ],
-          ),
-        );
       },
     );
   }
 
+  // Builds the default footer based on the load more status
   Widget _buildDefaultFooter() {
     switch (_loadMoreStatus) {
-      case LoadMoreStatus.idle:
-        return const SizedBox.shrink();
       case LoadMoreStatus.loading:
-        return const Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.0),
-          child: Center(child: CircularProgressIndicator()),
+        return Container(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(),
+            );
+      case LoadMoreStatus.noMoreData:
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          alignment: Alignment.center,
+          child: const Text("No more items to load"),
         );
       case LoadMoreStatus.error:
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Center(
-            child: TextButton(
-              onPressed: _loadMoreData,
-              child: const Text('Error loading data. Tap to retry.'),
-            ),
+        return InkWell(
+          onTap: _loadMoreData, // Allow retry on tap
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            alignment: Alignment.center,
+            child: const Text("Error loading more items. Tap to retry."),
           ),
         );
-      case LoadMoreStatus.noMoreData:
-        return const Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.0),
-          child: Center(child: Text('No more data available')),
-        );
+      case LoadMoreStatus.idle:
+      default:
+        return const SizedBox.shrink();
     }
   }
 
+  // Helper to build the GridView
   Widget buildAnimatedGrid() {
-    final Animation<double> boxAnimation = widget.animationController != null
-        ? Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-              parent: widget.animationController!,
-              curve: const Interval(0, 0.5, curve: Curves.decelerate),
-            ),
-          )
-        : const AlwaysStoppedAnimation<double>(1.0);
+    // Note: AnimationController is not currently used for item animations here
+    // final Animation<double> boxAnimation = widget.animationController != null
+    //     ? Tween<double>(begin: 0.0, end: 1.0).animate(...)
+    //     : const AlwaysStoppedAnimation<double>(1.0);
 
     return GridView.builder(
       reverse: widget.reverse,
       padding: widget.padding,
       physics: widget.scrollPhysics,
-      controller: widget.scrollController ?? _scrollController,
+      controller: _scrollController, // Use state's controller
       scrollDirection: widget.scrollDirection,
       shrinkWrap: widget.shrinkWrap,
       itemCount: _items.length,
@@ -542,9 +643,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       itemBuilder: (BuildContext context, int index) {
         final item = _items[index];
 
-        if (!isOffline) {
-          _triggerBatchLoading(index);
-        }
+        // Note: _triggerBatchLoading is called in _onScroll now
 
         StreamGetter<T>? itemStream;
         DataGetter<T>? loadedData;
@@ -556,50 +655,48 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
           loadedData = () => liveGrid.getLoadedAt(index);
           preLoadedData = () => liveGrid.getPreLoadedAt(index);
         } else {
+          // Offline or before _liveGrid ready
           loadedData = () => item;
           preLoadedData = () => item;
         }
 
         return ParseLiveListElementWidget<T>(
-          key: ValueKey<String>(item.objectId ?? 'unknown-$index'),
+          key: ValueKey<String>(item.objectId ?? 'unknown-$index-${item.hashCode}'), // Ensure unique key
           stream: itemStream,
           loadedData: loadedData,
           preLoadedData: preLoadedData,
-          sizeFactor: boxAnimation,
+          sizeFactor: const AlwaysStoppedAnimation<double>(1.0), // No animation for now
           duration: widget.duration,
-          childBuilder: widget.childBuilder ??
-              ParseLiveListWidget.defaultChildBuilder,
+          childBuilder: widget.childBuilder ?? ParseLiveGridWidget.defaultChildBuilder,
           index: index,
         );
       },
     );
   }
 
-  void _triggerBatchLoading(int currentIndex) {
+  // Triggers loading for a range of items (used for lazy loading)
+  void _triggerBatchLoading(int targetIndex) {
     if (isOffline || !widget.lazyLoading || _liveGrid == null) return;
 
-    final batchSize = widget.lazyBatchSize > 0
-        ? widget.lazyBatchSize
-        : widget.crossAxisCount * 2;
-
-    final startIdx = max(0, currentIndex - widget.crossAxisCount);
-    final endIdx = min(_items.length - 1, currentIndex + batchSize);
+    // Determine the range of items to potentially load around the target index
+    final batchSize = widget.lazyBatchSize > 0 ? widget.lazyBatchSize : widget.crossAxisCount * 2;
+    final startIdx = max(0, targetIndex - batchSize); // Load items before target
+    final endIdx = min(_items.length - 1, targetIndex + batchSize); // Load items after target
 
     for (int i = startIdx; i <= endIdx; i++) {
+      // Check bounds, if not already loading, and if data isn't already loaded
       if (i >= 0 && i < _liveGrid!.size && !_loadingIndices.contains(i) && _liveGrid!.getLoadedAt(i) == null) {
-        _loadingIndices.add(i);
-        _liveGrid!.getAt(i).first.then((item) {
-          _loadingIndices.remove(i);
-          if (item != null && mounted) {
-            setState(() {
-              if (i < _items.length) {
-                _items[i] = item;
-              }
-            });
+        _loadingIndices.add(i); // Mark as loading
+        _liveGrid!.getAt(i).first.then((loadedItem) {
+          _loadingIndices.remove(i); // Unmark
+          if (loadedItem != null && mounted && i < _items.length) {
+            // Update the item in the list if it was successfully loaded
+            // Note: This might cause a jump if the preloaded data was significantly different
+            setState(() { _items[i] = loadedItem; });
           }
         }).catchError((e) {
-          _loadingIndices.remove(i);
-          debugPrint('Error lazy loading grid item at index $i: $e');
+          _loadingIndices.remove(i); // Unmark on error
+          debugPrint('$connectivityLogPrefix Error lazy loading grid item at index $i: $e');
         });
       }
     }
@@ -607,17 +704,24 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
 
   @override
   void dispose() {
-    disposeConnectivityHandler();
+    disposeConnectivityHandler(); // Dispose mixin resources
 
-    _liveGrid?.dispose();
-    _noDataNotifier.dispose();
+    // Remove listener only if we added it
+    if ((widget.pagination || widget.lazyLoading) && widget.scrollController == null) {
+       _scrollController.removeListener(_onScroll);
+    }
+    // Dispose controller only if we created it
     if (widget.scrollController == null) {
       _scrollController.dispose();
-    } else {
-      if (widget.pagination) {
-        _scrollController.removeListener(_onScroll);
-      }
     }
+
+    _liveGrid?.dispose(); // Dispose live list resources
+    _noDataNotifier.dispose(); // Dispose value notifier
     super.dispose();
   }
 }
+
+// --- ParseLiveListElementWidget remains unchanged ---
+// (Should be identical to the one in parse_live_list.dart)
+// class ParseLiveListElementWidget<T extends sdk.ParseObject> extends StatefulWidget { ... }
+// class _ParseLiveListElementWidgetState<T extends sdk.ParseObject> extends State<ParseLiveListElementWidget<T>> { ... }
