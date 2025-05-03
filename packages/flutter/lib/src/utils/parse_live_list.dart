@@ -1,5 +1,7 @@
 part of 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
+
+
 /// The type of function that builds a child widget for a ParseLiveList element.
 typedef ChildBuilder<T extends sdk.ParseObject> = Widget Function(
     BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot, [int? index]);
@@ -111,7 +113,7 @@ class ParseLiveListWidget<T extends sdk.ParseObject> extends StatefulWidget {
 }
 
 class _ParseLiveListWidgetState<T extends sdk.ParseObject>
-    extends State<ParseLiveListWidget<T>> {
+    extends State<ParseLiveListWidget<T>> with ConnectivityHandlerMixin<ParseLiveListWidget<T>> {
   CachedParseLiveList<T>? _liveList;
   final ValueNotifier<bool> _noDataNotifier = ValueNotifier<bool>(true);
   final List<T> _items = <T>[];
@@ -120,7 +122,24 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   LoadMoreStatus _loadMoreStatus = LoadMoreStatus.idle;
   int _currentPage = 0;
   bool _hasMoreData = true;
-  bool _isOffline = false;
+
+  @override
+  String get connectivityLogPrefix => 'ParseLiveListWidget';
+
+  @override
+  bool get isOfflineModeEnabled => widget.offlineMode;
+
+  @override
+  void disposeLiveList() {
+    _liveList?.dispose();
+    _liveList = null;
+  }
+
+  @override
+  Future<void> loadDataFromServer() => _loadData();
+
+  @override
+  Future<void> loadDataFromCache() => _loadFromCache();
 
   @override
   void initState() {
@@ -128,42 +147,61 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
 
     if (widget.scrollController == null) {
       _scrollController = ScrollController();
+    } else {
+      if (widget.pagination) {
+        _scrollController = widget.scrollController!;
+      } else {
+        _scrollController = widget.scrollController ?? ScrollController();
+      }
     }
 
     if (widget.pagination) {
-      final scrollController = widget.scrollController ?? _scrollController;
-      scrollController.addListener(_onScroll);
+      _scrollController.addListener(_onScroll);
     }
 
-    _checkConnectivityAndLoad();
-  }
-
-  Future<void> _checkConnectivityAndLoad() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    _isOffline = connectivityResult == ConnectivityResult.none;
-
-    // Always try to load from cache first
-    await _loadFromCache();
-
-    // If cache is empty and we're online, load from server
-    if (_items.isEmpty && !_isOffline) {
-      await _loadData();
-    }
+    initConnectivityHandler();
   }
 
   Future<void> _loadFromCache() async {
-    _items.clear();
-    final cached = await sdk.ParseObjectOffline.loadAllFromLocalCache(
-      widget.query.object.parseClassName,
-    );
-    for (final obj in cached) {
-      _items.add(widget.fromJson(obj.toJson(full: true)));
+    if (!isOfflineModeEnabled) {
+      debugPrint('$connectivityLogPrefix Offline mode disabled, skipping cache load.');
+      _items.clear();
+      _noDataNotifier.value = true;
+      if (mounted) setState(() {});
+      return;
     }
+
+    debugPrint('$connectivityLogPrefix Loading data from cache...');
+    _items.clear();
+
+    try {
+      final cached = await sdk.ParseObjectOffline.loadAllFromLocalCache(
+        widget.query.object.parseClassName,
+      );
+      for (final obj in cached) {
+        _items.add(widget.fromJson(obj.toJson(full: true)));
+      }
+      debugPrint('$connectivityLogPrefix Loaded ${_items.length} items from cache for ${widget.query.object.parseClassName}');
+    } catch (e) {
+      debugPrint('$connectivityLogPrefix Error loading data from cache: $e');
+    }
+
     _noDataNotifier.value = _items.isEmpty;
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _loadData() async {
+    if (isOffline) {
+      debugPrint('$connectivityLogPrefix Offline: Skipping server load, relying on cache.');
+      if (isOfflineModeEnabled) {
+        await loadDataFromCache();
+      }
+      return;
+    }
+
+    debugPrint('$connectivityLogPrefix Loading initial data from server...');
     try {
       if (widget.pagination) {
         _currentPage = 0;
@@ -172,6 +210,8 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       }
 
       _items.clear();
+      _noDataNotifier.value = true;
+      if (mounted) setState(() {});
 
       final initialQuery = QueryBuilder<T>.copy(widget.query);
 
@@ -194,57 +234,97 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       );
 
       final liveList = CachedParseLiveList<T>(originalLiveList, widget.cacheSize, widget.lazyLoading);
+      _liveList?.dispose();
       _liveList = liveList;
 
       if (liveList.size > 0) {
         for (int i = 0; i < liveList.size; i++) {
           final item = liveList.getPreLoadedAt(i);
           if (item != null) {
-            _items.add(item);
-            // Only save to offline cache if offlineMode is enabled
             if (widget.offlineMode) {
-              item.saveToLocalCache();
+              try {
+                if (widget.lazyLoading) {
+                  await item.fetch();
+                }
+                await item.saveToLocalCache();
+              } catch (e) {
+                debugPrint('$connectivityLogPrefix Error saving initial object ${item.objectId} to cache: $e');
+              }
             }
+            _items.add(item);
           }
         }
       }
 
       _noDataNotifier.value = _items.isEmpty;
 
+      if (mounted) {
+        setState(() {});
+      }
+
       liveList.stream.listen((event) {
+        T? objectToCache;
+
         if (event is sdk.ParseLiveListAddEvent<sdk.ParseObject>) {
-          setState(() {
-            _items.insert(event.index, event.object as T);
-            if (widget.offlineMode) {
-              (event.object as T).saveToLocalCache();
-            }
-          });
+          final addedItem = event.object as T;
+          if (mounted) {
+            setState(() {
+              _items.insert(event.index, addedItem);
+            });
+          }
+          objectToCache = addedItem;
         } else if (event is sdk.ParseLiveListDeleteEvent<sdk.ParseObject>) {
-          setState(() {
-            _items.removeAt(event.index);
-            if (widget.offlineMode) {
-              (event.object as T).removeFromLocalCache();
+          if (event.index >= 0 && event.index < _items.length) {
+            final removedItem = _items.removeAt(event.index);
+            if (mounted) {
+              setState(() {});
             }
-          });
+            if (widget.offlineMode) {
+              removedItem.removeFromLocalCache();
+            }
+          } else {
+            debugPrint('$connectivityLogPrefix LiveList Delete Event: Invalid index ${event.index}, list size ${_items.length}');
+          }
         } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
-          setState(() {
-            _items[event.index] = event.object as T;
-            if (widget.offlineMode) {
-              (event.object as T).saveToLocalCache();
+          final updatedItem = event.object as T;
+          if (event.index >= 0 && event.index < _items.length) {
+            if (mounted) {
+              setState(() {
+                _items[event.index] = updatedItem;
+              });
             }
-          });
+            objectToCache = updatedItem;
+          } else {
+            debugPrint('$connectivityLogPrefix LiveList Update Event: Invalid index ${event.index}, list size ${_items.length}');
+          }
         }
+
+        if (widget.offlineMode && objectToCache != null) {
+          objectToCache.saveToLocalCache();
+        }
+
         _noDataNotifier.value = _items.isEmpty;
       });
     } catch (e) {
-      debugPrint('Error loading data: $e');
+      debugPrint('$connectivityLogPrefix Error loading data: $e');
+      _noDataNotifier.value = _items.isEmpty;
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
   Future<void> _loadMoreData() async {
+    if (isOffline) {
+      debugPrint('$connectivityLogPrefix Cannot load more data while offline.');
+      return;
+    }
+
     if (_loadMoreStatus == LoadMoreStatus.loading || !_hasMoreData) {
       return;
     }
+
+    debugPrint('$connectivityLogPrefix Loading more data...');
     setState(() {
       _loadMoreStatus = LoadMoreStatus.loading;
     });
@@ -257,7 +337,9 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         ..setAmountToSkip(skipCount)
         ..setLimit(widget.pageSize);
 
+      debugPrint('$connectivityLogPrefix Loading page $_currentPage, Skip: $skipCount, Limit: ${widget.pageSize}');
       final parseResponse = await nextPageQuery.query();
+      debugPrint('$connectivityLogPrefix LoadMore Response: Success=${parseResponse.success}, Count=${parseResponse.count}, Results=${parseResponse.results?.length}, Error: ${parseResponse.error?.message}');
 
       if (parseResponse.success && parseResponse.results != null) {
         final List<dynamic> rawResults = parseResponse.results!;
@@ -271,11 +353,22 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
           return;
         }
 
+        if (widget.offlineMode) {
+          debugPrint('$connectivityLogPrefix Saving ${results.length} more items to cache...');
+          for (final item in results) {
+            try {
+              if (widget.lazyLoading) {
+                await item.fetch();
+              }
+              await item.saveToLocalCache();
+            } catch (e) {
+              debugPrint('$connectivityLogPrefix Error saving fetched object ${item.objectId} from loadMore to cache: $e');
+            }
+          }
+        }
+
         setState(() {
           _items.addAll(results);
-          for (final item in results) {
-            item.saveToLocalCache();
-          }
           _loadMoreStatus = LoadMoreStatus.idle;
         });
       } else {
@@ -284,7 +377,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         });
       }
     } catch (e) {
-      debugPrint('Error loading more data: $e');
+      debugPrint('$connectivityLogPrefix Error loading more data: $e');
       setState(() {
         _loadMoreStatus = LoadMoreStatus.error;
       });
@@ -292,10 +385,15 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   }
 
   void _onScroll() {
+    if (isOffline) return;
+
     if (_loadMoreStatus == LoadMoreStatus.loading || !_hasMoreData) {
       return;
     }
     final scrollController = widget.scrollController ?? _scrollController;
+    if (!scrollController.hasClients || scrollController.position.maxScrollExtent == null) {
+      return;
+    }
     final offset = scrollController.position.maxScrollExtent - scrollController.position.pixels;
     if (offset < widget.loadMoreOffset) {
       _loadMoreData();
@@ -303,11 +401,15 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
   }
 
   Future<void> _refreshData() async {
-    _liveList?.dispose();
-    if (_isOffline) {
-      await _loadFromCache();
+    debugPrint('$connectivityLogPrefix Refreshing data...');
+    disposeLiveList();
+
+    if (isOffline) {
+      debugPrint('$connectivityLogPrefix Refreshing offline, loading from cache.');
+      await loadDataFromCache();
     } else {
-      await _loadData();
+      debugPrint('$connectivityLogPrefix Refreshing online, loading from server.');
+      await loadDataFromServer();
     }
   }
 
@@ -316,12 +418,17 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
     return ValueListenableBuilder<bool>(
       valueListenable: _noDataNotifier,
       builder: (context, noData, child) {
-        if (_liveList == null && !_isOffline) {
+        final bool showLoadingIndicator =
+            (!isOffline && _liveList == null) || (isOffline && _items.isEmpty && !noData);
+
+        if (showLoadingIndicator) {
           return widget.listLoadingElement ?? const Center(child: CircularProgressIndicator());
         }
-        if (noData) {
+
+        if (noData && (_liveList != null || isOffline)) {
           return widget.queryEmptyElement ?? const Center(child: Text('No data available'));
         }
+
         return RefreshIndicator(
           onRefresh: _refreshData,
           child: Column(
@@ -343,7 +450,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                     DataGetter<T>? preLoadedData;
 
                     final liveList = _liveList;
-                    if (liveList != null && index < liveList.size) {
+                    if (!isOffline && liveList != null && index < liveList.size) {
                       itemStream = () => liveList.getAt(index);
                       loadedData = () => liveList.getLoadedAt(index);
                       preLoadedData = () => liveList.getPreLoadedAt(index);
@@ -408,10 +515,14 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
 
   @override
   void dispose() {
+    disposeConnectivityHandler();
+
     if (widget.scrollController == null) {
       _scrollController.dispose();
-    } else if (widget.pagination) {
-      widget.scrollController!.removeListener(_onScroll);
+    } else {
+      if (widget.pagination) {
+        _scrollController.removeListener(_onScroll);
+      }
     }
     _liveList?.dispose();
     _noDataNotifier.dispose();
@@ -429,6 +540,7 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject> extends StatefulWidg
     required this.duration,
     required this.childBuilder,
     this.index,
+    this.error,
   });
 
   final StreamGetter<T>? stream;
@@ -438,6 +550,9 @@ class ParseLiveListElementWidget<T extends sdk.ParseObject> extends StatefulWidg
   final Duration duration;
   final ChildBuilder<T> childBuilder;
   final int? index;
+  final ParseError? error;
+
+  bool get hasData => loadedData != null;
 
   @override
   State<ParseLiveListElementWidget<T>> createState() =>
@@ -449,9 +564,13 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
   late sdk.ParseLiveListElementSnapshot<T> _snapshot;
   StreamSubscription<T>? _streamSubscription;
 
+  bool get hasData => widget.loadedData != null;
+  bool get failed => widget.error != null;
+
   @override
   void initState() {
     super.initState();
+    debugPrint('ElementWidget ${widget.index}: initState');
     _snapshot = sdk.ParseLiveListElementSnapshot<T>(
       loadedData: widget.loadedData?.call(),
       preLoadedData: widget.preLoadedData?.call(),
@@ -486,6 +605,7 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('ElementWidget ${widget.index}: build');
     return SizeTransition(
       sizeFactor: widget.sizeFactor,
       child: widget.index != null
@@ -494,3 +614,4 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
     );
   }
 }
+

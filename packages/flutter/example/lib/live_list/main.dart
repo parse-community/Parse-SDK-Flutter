@@ -84,9 +84,10 @@ class _MyAppState extends State<MyApp> {
         Expanded(
           child: ParseLiveListWidget<ParseObject>(
               query: _queryBuilder,
+              fromJson: (Map<String, dynamic> json) =>
+                  ParseObject('Test')..fromJson(json),
               duration: const Duration(seconds: 1),
-              childBuilder: (BuildContext context,
-                  ParseLiveListElementSnapshot<ParseObject> snapshot) {
+              childBuilder: (BuildContext context, ParseLiveListElementSnapshot<ParseObject> snapshot [int? index]) {
                 if (snapshot.failed) {
                   return const Text('something went wrong!');
                 } else if (snapshot.hasData) {
