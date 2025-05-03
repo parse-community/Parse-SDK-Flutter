@@ -1,7 +1,5 @@
 part of 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
-
-
 /// The type of function that builds a child widget for a ParseLiveList element.
 typedef ChildBuilder<T extends sdk.ParseObject> = Widget Function(
     BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot, [int? index]);
@@ -210,7 +208,8 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       }
 
       _items.clear();
-      _noDataNotifier.value = true;
+      _noDataNotifier.value = true; // Assume no data initially
+      // Set loading state visually *before* async work
       if (mounted) setState(() {});
 
       final initialQuery = QueryBuilder<T>.copy(widget.query);
@@ -237,40 +236,46 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       _liveList?.dispose();
       _liveList = liveList;
 
+      // --- Refactored Initial Item Handling ---
+      final List<T> initialItems = [];
+      final List<T> itemsToFetchAndCache = []; // Items needing background processing
+
       if (liveList.size > 0) {
         for (int i = 0; i < liveList.size; i++) {
           final item = liveList.getPreLoadedAt(i);
           if (item != null) {
+            initialItems.add(item); // Add preloaded item for immediate display
+            // If offline mode is on, mark for background fetch/cache
             if (widget.offlineMode) {
-              try {
-                if (widget.lazyLoading) {
-                  await item.fetch();
-                }
-                await item.saveToLocalCache();
-              } catch (e) {
-                debugPrint('$connectivityLogPrefix Error saving initial object ${item.objectId} to cache: $e');
-              }
+              itemsToFetchAndCache.add(item);
             }
-            _items.add(item);
           }
         }
       }
 
+      // Update the UI immediately with preloaded items
+      _items.addAll(initialItems);
       _noDataNotifier.value = _items.isEmpty;
-
       if (mounted) {
         setState(() {});
       }
+      // --- End Refactored Initial Item Handling ---
 
+      // --- Start Background Fetching and Caching (if needed) ---
+      if (itemsToFetchAndCache.isNotEmpty) {
+        // Don't await this block, let it run in the background
+        _fetchAndCacheItemsInBackground(itemsToFetchAndCache);
+      }
+      // --- End Background Fetching and Caching ---
+
+      // --- Stream Listener (remains the same) ---
       liveList.stream.listen((event) {
         T? objectToCache;
 
         if (event is sdk.ParseLiveListAddEvent<sdk.ParseObject>) {
-          final addedItem = event.object as T;
+          final addedItem = event.object as T; // Cast needed
           if (mounted) {
-            setState(() {
-              _items.insert(event.index, addedItem);
-            });
+            setState(() { _items.insert(event.index, addedItem); });
           }
           objectToCache = addedItem;
         } else if (event is sdk.ParseLiveListDeleteEvent<sdk.ParseObject>) {
@@ -286,12 +291,10 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
             debugPrint('$connectivityLogPrefix LiveList Delete Event: Invalid index ${event.index}, list size ${_items.length}');
           }
         } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
-          final updatedItem = event.object as T;
+          final updatedItem = event.object as T; // Cast needed
           if (event.index >= 0 && event.index < _items.length) {
             if (mounted) {
-              setState(() {
-                _items[event.index] = updatedItem;
-              });
+              setState(() { _items[event.index] = updatedItem; });
             }
             objectToCache = updatedItem;
           } else {
@@ -299,12 +302,16 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
           }
         }
 
+        // Save updates from stream immediately (usually less performance critical than initial load)
         if (widget.offlineMode && objectToCache != null) {
+          // Consider if fetch is needed for stream events too, though often they are complete
           objectToCache.saveToLocalCache();
         }
 
         _noDataNotifier.value = _items.isEmpty;
       });
+      // --- End Stream Listener ---
+
     } catch (e) {
       debugPrint('$connectivityLogPrefix Error loading data: $e');
       _noDataNotifier.value = _items.isEmpty;
@@ -313,6 +320,30 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       }
     }
   }
+
+  // --- Helper for Background Caching ---
+  Future<void> _fetchAndCacheItemsInBackground(List<T> items) async {
+     debugPrint('$connectivityLogPrefix Starting background fetch/cache for ${items.length} items...');
+     for (final item in items) {
+       try {
+         // Check if still mounted within the loop if operations are long
+         if (!mounted) return;
+
+         // Fetch *only* if lazy loading is enabled to ensure cached data is complete
+         if (widget.lazyLoading) {
+           // Fetch the full object data before saving to cache when lazy loading.
+           // We assume that if lazy loading is on, the initial object might be incomplete.
+           await item.fetch();
+         }
+         await item.saveToLocalCache();
+       } catch (e) {
+         // Log error but continue with the next item
+         debugPrint('$connectivityLogPrefix Error background saving object ${item.objectId} to cache: $e');
+       }
+     }
+     debugPrint('$connectivityLogPrefix Finished background fetch/cache.');
+  }
+  // --- End Helper ---
 
   Future<void> _loadMoreData() async {
     if (isOffline) {
@@ -354,7 +385,6 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
         }
 
         if (widget.offlineMode) {
-          debugPrint('$connectivityLogPrefix Saving ${results.length} more items to cache...');
           for (final item in results) {
             try {
               if (widget.lazyLoading) {
@@ -391,7 +421,7 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
       return;
     }
     final scrollController = widget.scrollController ?? _scrollController;
-    if (!scrollController.hasClients || scrollController.position.maxScrollExtent == null) {
+    if (!scrollController.hasClients) {
       return;
     }
     final offset = scrollController.position.maxScrollExtent - scrollController.position.pixels;
@@ -570,7 +600,6 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
   @override
   void initState() {
     super.initState();
-    debugPrint('ElementWidget ${widget.index}: initState');
     _snapshot = sdk.ParseLiveListElementSnapshot<T>(
       loadedData: widget.loadedData?.call(),
       preLoadedData: widget.preLoadedData?.call(),
@@ -605,7 +634,6 @@ class _ParseLiveListElementWidgetState<T extends sdk.ParseObject>
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('ElementWidget ${widget.index}: build');
     return SizeTransition(
       sizeFactor: widget.sizeFactor,
       child: widget.index != null
