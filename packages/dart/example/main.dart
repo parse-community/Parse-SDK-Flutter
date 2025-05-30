@@ -27,5 +27,5 @@ Future<void> main() async {
     r'$match': {'Name': 'Ketogenic'}
   }).execute();
 
-  print(res);
+  print(res.result);
 }
