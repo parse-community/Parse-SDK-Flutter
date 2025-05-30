@@ -31,6 +31,7 @@ part 'src/utils/parse_live_grid.dart';
 part 'src/utils/parse_live_list.dart';
 
 part 'src/utils/parse_live_sliver_list.dart';
+part 'src/utils/parse_live_sliver_grid.dart';
 
 part 'src/utils/parse_live_page_view.dart';
 
