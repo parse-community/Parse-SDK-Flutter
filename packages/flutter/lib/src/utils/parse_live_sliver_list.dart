@@ -440,11 +440,27 @@ class _ParseLiveSliverListWidgetState<T extends sdk.ParseObject>
         final bool showLoadingIndicator = !isOffline && _liveList == null;
 
         if (showLoadingIndicator) {
-          return widget.listLoadingElement ?? 
-              const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));
+          return widget.listLoadingElement != null
+              ? SliverToBoxAdapter(child: widget.listLoadingElement!)
+              : const SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                );
         } else if (noData) {
-          return widget.queryEmptyElement ?? 
-              const SliverToBoxAdapter(child: Center(child: Text('No data available')));
+          return widget.queryEmptyElement != null
+              ? SliverToBoxAdapter(child: widget.queryEmptyElement!)
+              : const SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text('No data available'),
+                    ),
+                  ),
+                );
         } else {
           return SliverList(
             delegate: SliverChildBuilderDelegate(
