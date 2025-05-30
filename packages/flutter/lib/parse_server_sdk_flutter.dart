@@ -30,11 +30,13 @@ part 'src/utils/parse_live_grid.dart';
 
 part 'src/utils/parse_live_list.dart';
 
+part 'src/utils/parse_live_sliver_list.dart';
+
 part 'src/utils/parse_live_page_view.dart';
 
 part 'src/notification/parse_notification.dart';
 
-part 'src/push//parse_push.dart';
+part 'src/push/parse_push.dart';
 
 class Parse extends sdk.Parse
     with WidgetsBindingObserver
