@@ -2,7 +2,7 @@ part of '../../parse_server_sdk.dart';
 
 class ParseAggregate {
   final String className;
-  dynamic pipeline;
+  Map<String, dynamic> pipeline;
   final bool? debug;
   final ParseClient? client;
   final bool? autoSendSessionId;
@@ -12,14 +12,11 @@ class ParseAggregate {
 
   Future<ParseResponse> execute() async {
     Map<String,String> _pipeline={};
-    if(!((pipeline is Map)  || (pipeline is List<Map>))){
-      throw ArgumentError('pipeline Object should be a Map or a List of Maps.  Example1: {"\$group": {"_id": "\$userId", "totalScore": {"\$sum": "\$score"}}}   ');
-    }
     if(pipeline.isEmpty){
       throw ArgumentError('pipeline must not be empty. Please add pipeline operations to aggregate data.  Example: {"\$group": {"_id": "\$userId", "totalScore": {"\$sum": "\$score"}}}  ');
     }
     else{
-      _pipeline.addAll({'pipeline':jsonEncode(pipeline is List? pipeline : [pipeline])});
+      _pipeline.addAll({'pipeline':jsonEncode(pipeline.entries.map((e) => {e.key: e.value}).toList())});
     }
     final debugBool = isDebugEnabled(objectLevelDebug: debug);
     final result = await ParseObject(className)._client.get(
