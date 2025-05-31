@@ -24,7 +24,11 @@ Future<void> main() async {
   }
 
   final res = await ParseAggregate('DietPlan', pipeline: {
-    r'$match': {'Name': 'Ketogenic'}
+    r'$match': {'Name': 'Ketogenic'},
+    r'$group': {
+      '_id': r'isHungry',
+      'count': {r'$sum': 1}
+    },
   }).execute();
 
   print(res.result);
