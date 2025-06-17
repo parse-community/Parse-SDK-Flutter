@@ -59,7 +59,7 @@ class ParseAggregate {
   ///
   /// Returns a [ParseResponse] containing the results of the aggregation.
   /// Throws [ArgumentError] if the pipeline is empty.
-  Future<ParseResponse> execute() async {
+  Future<ParseNetworkResponse> execute() async {
     Map<String, String> _pipeline = {};
 
     if (pipeline.isEmpty) {
@@ -73,7 +73,7 @@ class ParseAggregate {
       });
     }
 
-    final debugBool = isDebugEnabled(objectLevelDebug: debug);
+    // final debugBool = isDebugEnabled(objectLevelDebug: debug);
     final result = await ParseObject(className)._client.get(
           Uri.parse('${ParseCoreData().serverUrl}$keyEndPointAggregate$className').replace(
             queryParameters: {'pipeline': jsonEncode(pipeline.entries.map((e) => {e.key: e.value}).toList())}
@@ -81,12 +81,6 @@ class ParseAggregate {
         );
 
 
-    return handleResponse<ParseObject>(
-      ParseObject(className),
-      result,
-      ParseApiRQ.get,
-      debugBool,
-      parseClassName ?? 'ParseBase',
-    );
+    return result;
   }
 }

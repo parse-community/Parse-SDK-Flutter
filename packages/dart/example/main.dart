@@ -31,5 +31,5 @@ Future<void> main() async {
     },
   }).execute();
 
-  print(res.result);
+  print('${res.statusCode}, ${res.data}');
 }
