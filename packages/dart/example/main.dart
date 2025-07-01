@@ -23,13 +23,14 @@ Future<void> main() async {
     print("Response received successfully");
   }
 
-  final res = await ParseAggregate('DietPlan', pipeline: {
+  final res = await ParseAggregate('DietPlan').execute({
     r'$match': {'Name': 'Ketogenic'},
     r'$group': {
       '_id': r'isHungry',
       'count': {r'$sum': 1}
     },
-  }).execute();
+  });
 
-  print('${res.statusCode}, ${res.data}');
+  print('${res.statusCode}, ${res.results}');
+
 }
