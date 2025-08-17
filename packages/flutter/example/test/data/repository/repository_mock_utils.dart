@@ -4,14 +4,14 @@ import 'package:flutter_plugin_example/data/model/diet_plan.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/provider_api_diet_plan.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/provider_db_diet_plan.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
-import 'package:mockito/mockito.dart';
+// import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:path/path.dart';
 import 'package:sembast/sembast_io.dart';
 
-class MockDietPlanProviderApi extends Mock implements DietPlanProviderApi {}
+// class MockDietPlanProviderApi extends Mock implements DietPlanProviderApi {}
 
-class MockDietPlanProviderDB extends Mock implements DietPlanProviderDB {}
+// class MockDietPlanProviderDB extends Mock implements DietPlanProviderDB {}
 
 Future<dynamic> getDB() async {
   final String dbDirectory = Directory.current.path;
