@@ -240,7 +240,7 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
 
         try { // Wrap event processing
           if (event is sdk.ParseLiveListAddEvent<sdk.ParseObject>) {
-            final addedItem = event.object as T;
+            final addedItem = event.object;
             setState(() { _items.insert(event.index, addedItem); });
             objectToCache = addedItem;
           } else if (event is sdk.ParseLiveListDeleteEvent<sdk.ParseObject>) {
@@ -256,7 +256,7 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
               debugPrint('$connectivityLogPrefix LiveList Delete Event: Invalid index ${event.index}, list size ${_items.length}');
             }
           } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
-            final updatedItem = event.object as T;
+            final updatedItem = event.object;
             if (event.index >= 0 && event.index < _items.length) {
               setState(() { _items[event.index] = updatedItem; });
               objectToCache = updatedItem;

@@ -23,13 +23,13 @@ environment:
 
 dependencies:
   # Networking
-  dio: ^5.7.0
-  http: ^1.2.0
+  dio: ^5.9.0
+  http: ^1.5.0
   web_socket_channel: ^3.0.2
 
   #Database
   sembast: ^3.6.0
-  sembast_web: ^2.2.0
+  sembast_web: ^2.4.2
 
   # Utils
   uuid: ^4.5.1

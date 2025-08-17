@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart' as sdk;
-import 'package:flutter/foundation.dart';
 
 /// A wrapper around ParseLiveList that provides memory-efficient caching
 class CachedParseLiveList<T extends sdk.ParseObject> {

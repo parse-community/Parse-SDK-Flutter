@@ -38,16 +38,16 @@ dependencies:
   #   path: ../dart
 
   # Networking
-  connectivity_plus: ^6.1.2
+  connectivity_plus: ^6.1.5
 
   #Database
   shared_preferences: ^2.5.1
   sembast: ^3.6.0
-  sembast_web: ^2.4.0+4
+  sembast_web: ^2.4.2
 
   # Utils
   path_provider: ^2.1.4
-  package_info_plus: ^8.1.4
+  package_info_plus: ^8.3.1
   path: ^1.9.0
 
 dev_dependencies:

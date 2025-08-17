@@ -419,7 +419,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
 
         try { // Wrap event processing
           if (event is sdk.ParseLiveListAddEvent<sdk.ParseObject>) {
-            final addedItem = event.object as T;
+            final addedItem = event.object;
             setState(() { _items.insert(event.index, addedItem); });
             objectToCache = addedItem;
           } else if (event is sdk.ParseLiveListDeleteEvent<sdk.ParseObject>) {
@@ -435,7 +435,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
               debugPrint('$connectivityLogPrefix LiveList Delete Event: Invalid index ${event.index}, list size ${_items.length}');
             }
           } else if (event is sdk.ParseLiveListUpdateEvent<sdk.ParseObject>) {
-            final updatedItem = event.object as T;
+            final updatedItem = event.object;
             if (event.index >= 0 && event.index < _items.length) {
               setState(() { _items[event.index] = updatedItem; });
               objectToCache = updatedItem;
@@ -614,7 +614,6 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
           ),
         );
       case LoadMoreStatus.idle:
-      default:
         return const SizedBox.shrink();
     }
   }
@@ -689,7 +688,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
         _loadingIndices.add(i); // Mark as loading
         _liveGrid!.getAt(i).first.then((loadedItem) {
           _loadingIndices.remove(i); // Unmark
-          if (loadedItem != null && mounted && i < _items.length) {
+          if (mounted && i < _items.length) {
             // Update the item in the list if it was successfully loaded
             // Note: This might cause a jump if the preloaded data was significantly different
             setState(() { _items[i] = loadedItem; });
