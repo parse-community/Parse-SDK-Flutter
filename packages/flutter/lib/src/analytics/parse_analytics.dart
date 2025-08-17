@@ -8,427 +8,381 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 /// This class provides methods to collect user, installation, and event data
 /// that can be fed to Parse Dashboard analytics endpoints.
 class ParseAnalytics {
-  static ParseAnalytics? _instance;
-  static ParseAnalytics get instance => _instance ??= ParseAnalytics._();
+  static StreamController<Map<String, dynamic>>? _eventController;
+  static const String _eventsKey = 'parse_analytics_events';
   
-  ParseAnalytics._();
-  
-  final Map<String, dynamic> _cachedMetrics = {};
-  final StreamController<AnalyticsEvent> _eventController = 
-      StreamController<AnalyticsEvent>.broadcast();
-  
-  /// Stream of analytics events
-  Stream<AnalyticsEvent> get eventStream => _eventController.stream;
-  
-  /// Track a custom analytics event
-  Future<void> trackEvent(String eventName, {
-    Map<String, dynamic>? properties,
-    String? userId,
-    String? installationId,
-  }) async {
+  /// Initialize the analytics system
+  static Future<void> initialize() async {
+    _eventController ??= StreamController<Map<String, dynamic>>.broadcast();
+  }
+
+  /// Get comprehensive user analytics for Parse Dashboard
+  static Future<Map<String, dynamic>> getUserAnalytics() async {
     try {
-      final event = AnalyticsEvent(
-        eventName: eventName,
-        properties: properties ?? {},
-        userId: userId,
-        installationId: installationId,
-        timestamp: DateTime.now(),
-      );
+      final now = DateTime.now();
+      final yesterday = now.subtract(const Duration(days: 1));
+      final weekAgo = now.subtract(const Duration(days: 7));
+      final monthAgo = now.subtract(const Duration(days: 30));
       
-      // Store event locally for dashboard consumption
-      await _storeEvent(event);
+      // Get user count queries using QueryBuilder
+      final totalUsersQuery = QueryBuilder<ParseUser>(ParseUser.forQuery());
+      final totalUsersResult = await totalUsersQuery.count();
+      final totalUsers = totalUsersResult.count;
       
-      // Emit to stream for real-time tracking
-      _eventController.add(event);
+      final activeUsersQuery = QueryBuilder<ParseUser>(ParseUser.forQuery())
+        ..whereGreaterThan('updatedAt', weekAgo);
+      final activeUsersResult = await activeUsersQuery.count();
+      final activeUsers = activeUsersResult.count;
       
-    } catch (error) {
+      final dailyUsersQuery = QueryBuilder<ParseUser>(ParseUser.forQuery())
+        ..whereGreaterThan('updatedAt', yesterday);
+      final dailyUsersResult = await dailyUsersQuery.count();
+      final dailyUsers = dailyUsersResult.count; 
+        
+      final weeklyUsersQuery = QueryBuilder<ParseUser>(ParseUser.forQuery())
+        ..whereGreaterThan('updatedAt', weekAgo);
+      final weeklyUsersResult = await weeklyUsersQuery.count();
+      final weeklyUsers = weeklyUsersResult.count;
+        
+      final monthlyUsersQuery = QueryBuilder<ParseUser>(ParseUser.forQuery())
+        ..whereGreaterThan('updatedAt', monthAgo);
+      final monthlyUsersResult = await monthlyUsersQuery.count();
+      final monthlyUsers = monthlyUsersResult.count;
+
+      return {
+        'timestamp': now.millisecondsSinceEpoch,
+        'total_users': totalUsers,
+        'active_users': activeUsers,
+        'daily_users': dailyUsers,
+        'weekly_users': weeklyUsers,
+        'monthly_users': monthlyUsers,
+      };
+    } catch (e) {
       if (kDebugMode) {
-        print('ParseAnalytics trackEvent error: $error');
+        print('Error getting user analytics: $e');
       }
+      return {
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+        'total_users': 0,
+        'active_users': 0,
+        'daily_users': 0,
+        'weekly_users': 0,
+        'monthly_users': 0,
+      };
     }
   }
-  
-  /// Get user analytics overview
-  Future<Map<String, int>> getUserAnalytics({
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
+
+  /// Get installation analytics for Parse Dashboard
+  static Future<Map<String, dynamic>> getInstallationAnalytics() async {
     try {
-      final start = startDate ?? DateTime.now().subtract(const Duration(days: 30));
-      final end = endDate ?? DateTime.now();
+      final now = DateTime.now();
+      final yesterday = now.subtract(const Duration(days: 1));
+      final weekAgo = now.subtract(const Duration(days: 7));
+      final monthAgo = now.subtract(const Duration(days: 30));
       
-      // Get total users  
-      final totalUsersQuery = QueryBuilder.name('_User');
-      final totalUsers = await totalUsersQuery.count();
+      // Get installation count queries
+      final totalInstallationsQuery = QueryBuilder<ParseInstallation>(ParseInstallation.forQuery());
+      final totalInstallationsResult = await totalInstallationsQuery.count();
+      final totalInstallations = totalInstallationsResult.count;
       
-      // Get active users (updated in date range)
-      final activeUsersQuery = QueryBuilder.name('_User')
-        ..whereGreaterThanOrEqualTo('updatedAt', start)
-        ..whereLessThanOrEqualTo('updatedAt', end);
-      final activeUsers = await activeUsersQuery.count();
+      final activeInstallationsQuery = QueryBuilder<ParseInstallation>(ParseInstallation.forQuery())
+        ..whereGreaterThan('updatedAt', weekAgo);
+      final activeInstallationsResult = await activeInstallationsQuery.count();
+      final activeInstallations = activeInstallationsResult.count;
       
-      // Get daily active users (last 24 hours)
-      final dailyStart = DateTime.now().subtract(const Duration(hours: 24));
-      final dailyUsersQuery = QueryBuilder.name('_User')
-        ..whereGreaterThanOrEqualTo('updatedAt', dailyStart);
-      final dailyUsers = await dailyUsersQuery.count();
+      final dailyInstallationsQuery = QueryBuilder<ParseInstallation>(ParseInstallation.forQuery())
+        ..whereGreaterThan('updatedAt', yesterday);
+      final dailyInstallationsResult = await dailyInstallationsQuery.count();
+      final dailyInstallations = dailyInstallationsResult.count;
+        
+      final weeklyInstallationsQuery = QueryBuilder<ParseInstallation>(ParseInstallation.forQuery())
+        ..whereGreaterThan('updatedAt', weekAgo);
+      final weeklyInstallationsResult = await weeklyInstallationsQuery.count();
+      final weeklyInstallations = weeklyInstallationsResult.count;
+        
+      final monthlyInstallationsQuery = QueryBuilder<ParseInstallation>(ParseInstallation.forQuery())
+        ..whereGreaterThan('updatedAt', monthAgo);
+      final monthlyInstallationsResult = await monthlyInstallationsQuery.count();
+      final monthlyInstallations = monthlyInstallationsResult.count;
+
+      return {
+        'timestamp': now.millisecondsSinceEpoch,
+        'total_installations': totalInstallations,
+        'active_installations': activeInstallations,
+        'daily_installations': dailyInstallations,
+        'weekly_installations': weeklyInstallations,
+        'monthly_installations': monthlyInstallations,
+      };
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error getting installation analytics: $e');
+      }
+      return {
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+        'total_installations': 0,
+        'active_installations': 0,
+        'daily_installations': 0,
+        'weekly_installations': 0,
+        'monthly_installations': 0,
+      };
+    }
+  }
+
+  /// Track custom events for analytics
+  static Future<void> trackEvent(String eventName, [Map<String, dynamic>? parameters]) async {
+    try {
+      await initialize();
       
-      // Get weekly active users (last 7 days)
-      final weeklyStart = DateTime.now().subtract(const Duration(days: 7));
-      final weeklyUsersQuery = QueryBuilder.name('_User')
-        ..whereGreaterThanOrEqualTo('updatedAt', weeklyStart);
-      final weeklyUsers = await weeklyUsersQuery.count();
+      final currentUser = await ParseUser.currentUser();
+      final currentInstallation = await ParseInstallation.currentInstallation();
       
-      // Get monthly active users (last 30 days)
-      final monthlyStart = DateTime.now().subtract(const Duration(days: 30));
-      final monthlyUsersQuery = QueryBuilder.name('_User')
-        ..whereGreaterThanOrEqualTo('updatedAt', monthlyStart);
-      final monthlyUsers = await monthlyUsersQuery.count();
-      
-      final analytics = {
-        'total_users': totalUsers.count ?? 0,
-        'active_users': activeUsers.count ?? 0,
-        'daily_users': dailyUsers.count ?? 0,
-        'weekly_users': weeklyUsers.count ?? 0,
-        'monthly_users': monthlyUsers.count ?? 0,
+      final event = {
+        'event_name': eventName,
+        'parameters': parameters ?? {},
+        'timestamp': DateTime.now().millisecondsSinceEpoch,
+        'user_id': currentUser?.objectId,
+        'installation_id': currentInstallation.objectId,
       };
       
-      // Cache for dashboard
-      _cachedMetrics['user_analytics'] = analytics;
-      _cachedMetrics['user_analytics_timestamp'] = DateTime.now().millisecondsSinceEpoch;
+      // Add to stream for real-time tracking
+      _eventController?.add(event);
       
-      return analytics;
+      // Store locally for later upload
+      await _storeEventLocally(event);
       
-    } catch (error) {
       if (kDebugMode) {
-        print('ParseAnalytics getUserAnalytics error: $error');
+        print('Analytics event tracked: $eventName');
       }
-      return {};
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error tracking event: $e');
+      }
     }
   }
-  
-  /// Get installation analytics overview
-  Future<Map<String, int>> getInstallationAnalytics({
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
-    try {
-      final start = startDate ?? DateTime.now().subtract(const Duration(days: 30));
-      final end = endDate ?? DateTime.now();
-      
-      // Get total installations
-      final totalQuery = QueryBuilder.name('_Installation')
-        ..setLimit(0);
-      final totalInstallations = await totalQuery.count();
-      
-      // Get active installations (updated in date range)
-      final activeQuery = QueryBuilder.name('_Installation')
-        ..whereGreaterThanOrEqualTo('updatedAt', start)
-        ..whereLessThanOrEqualTo('updatedAt', end)
-        ..setLimit(0);
-      final activeInstallations = await activeQuery.count();
-      
-      // Get daily installations
-      final dailyStart = DateTime.now().subtract(const Duration(hours: 24));
-      final dailyQuery = QueryBuilder.name('_Installation')
-        ..whereGreaterThanOrEqualTo('updatedAt', dailyStart)
-        ..setLimit(0);
-      final dailyInstallations = await dailyQuery.count();
-      
-      // Get weekly installations
-      final weeklyStart = DateTime.now().subtract(const Duration(days: 7));
-      final weeklyQuery = QueryBuilder.name('_Installation')
-        ..whereGreaterThanOrEqualTo('updatedAt', weeklyStart)
-        ..setLimit(0);
-      final weeklyInstallations = await weeklyQuery.count();
-      
-      // Get monthly installations
-      final monthlyStart = DateTime.now().subtract(const Duration(days: 30));
-      final monthlyQuery = QueryBuilder.name('_Installation')
-        ..whereGreaterThanOrEqualTo('updatedAt', monthlyStart)
-        ..setLimit(0);
-      final monthlyInstallations = await monthlyQuery.count();
-      
-      final analytics = {
-        'total_installations': totalInstallations.count ?? 0,
-        'active_installations': activeInstallations.count ?? 0,
-        'daily_installations': dailyInstallations.count ?? 0,
-        'weekly_installations': weeklyInstallations.count ?? 0,
-        'monthly_installations': monthlyInstallations.count ?? 0,
-      };
-      
-      // Cache for dashboard
-      _cachedMetrics['installation_analytics'] = analytics;
-      _cachedMetrics['installation_analytics_timestamp'] = DateTime.now().millisecondsSinceEpoch;
-      
-      return analytics;
-      
-    } catch (error) {
-      if (kDebugMode) {
-        print('ParseAnalytics getInstallationAnalytics error: $error');
-      }
-      return {};
-    }
-  }
-  
-  /// Get time series data for dashboard charts
-  Future<List<List<dynamic>>> getTimeSeriesData({
-    required String metricType,
+
+  /// Get time series data for Parse Dashboard charts
+  static Future<List<List<num>>> getTimeSeriesData({
+    required String metric,
     required DateTime startDate,
     required DateTime endDate,
-    String stride = 'day',
+    String interval = 'day',
   }) async {
     try {
-      final data = <List<dynamic>>[];
-      final interval = stride == 'day' 
-          ? const Duration(days: 1)
-          : const Duration(hours: 1);
+      final data = <List<num>>[];
+      final intervalDuration = interval == 'hour' 
+          ? const Duration(hours: 1) 
+          : const Duration(days: 1);
       
       DateTime current = startDate;
       while (current.isBefore(endDate)) {
-        final nextPeriod = current.add(interval);
-        
+        final next = current.add(intervalDuration);
         int value = 0;
-        switch (metricType) {
-          case 'active_users':
-            final query = QueryBuilder.name('_User')
-              ..whereGreaterThanOrEqualTo('updatedAt', current)
-              ..whereLessThanOrEqualTo('updatedAt', nextPeriod);
+        
+        switch (metric) {
+          case 'users':
+            final query = QueryBuilder<ParseUser>(ParseUser.forQuery())
+              ..whereGreaterThan('updatedAt', current)
+              ..whereLessThan('updatedAt', next);
             final result = await query.count();
-            value = result.count ?? 0;
+            value = result.count;
             break;
             
           case 'installations':
-            final query = QueryBuilder.name('_Installation')
-              ..whereGreaterThanOrEqualTo('updatedAt', current)
-              ..whereLessThanOrEqualTo('updatedAt', nextPeriod)
-              ..setLimit(0);
+            final query = QueryBuilder<ParseInstallation>(ParseInstallation.forQuery())
+              ..whereGreaterThan('updatedAt', current)
+              ..whereLessThan('updatedAt', next);
             final result = await query.count();
-            value = result.count ?? 0;
-            break;
-            
-          case 'custom_events':
-            // Count custom events from stored analytics events
-            value = await _getCustomEventCount(current, nextPeriod);
+            value = result.count;
             break;
         }
         
         data.add([current.millisecondsSinceEpoch, value]);
-        current = nextPeriod;
+        current = next;
       }
       
       return data;
-      
-    } catch (error) {
+    } catch (e) {
       if (kDebugMode) {
-        print('ParseAnalytics getTimeSeriesData error: $error');
+        print('Error getting time series data: $e');
       }
       return [];
     }
   }
-  
-  /// Get user retention metrics
-  Future<Map<String, double>> getUserRetention({DateTime? cohortDate}) async {
+
+  /// Calculate user retention metrics
+  static Future<Map<String, double>> getUserRetention({DateTime? cohortDate}) async {
     try {
       final cohort = cohortDate ?? DateTime.now().subtract(const Duration(days: 30));
+      final cohortEnd = cohort.add(const Duration(days: 1));
       
-      // Get users from the cohort period
-      final cohortQuery = QueryBuilder.name('_User')
-        ..whereGreaterThanOrEqualTo('createdAt', cohort)
-        ..whereLessThanOrEqualTo('createdAt', cohort.add(const Duration(days: 1)));
-      final cohortUsersResponse = await cohortQuery.query();
+      // Get users who signed up in the cohort period
+      final cohortQuery = QueryBuilder<ParseUser>(ParseUser.forQuery())
+        ..whereGreaterThan('createdAt', cohort)
+        ..whereLessThan('createdAt', cohortEnd);
       
-      if (!cohortUsersResponse.success || cohortUsersResponse.results == null || cohortUsersResponse.results!.isEmpty) {
+      final cohortUsers = await cohortQuery.find();
+      if (cohortUsers.isEmpty) {
         return {'day1': 0.0, 'day7': 0.0, 'day30': 0.0};
       }
       
-      final cohortUsers = cohortUsersResponse.results!;
       final cohortUserIds = cohortUsers.map((user) => user.objectId!).toList();
       
-      // Calculate retention for day 1, 7, and 30
+      // Calculate retention
       final day1Retention = await _calculateRetention(cohortUserIds, cohort, 1);
       final day7Retention = await _calculateRetention(cohortUserIds, cohort, 7);
       final day30Retention = await _calculateRetention(cohortUserIds, cohort, 30);
-      
+
       return {
         'day1': day1Retention,
         'day7': day7Retention,
         'day30': day30Retention,
       };
-      
-    } catch (error) {
+    } catch (e) {
       if (kDebugMode) {
-        print('ParseAnalytics getUserRetention error: $error');
+        print('Error calculating user retention: $e');
       }
       return {'day1': 0.0, 'day7': 0.0, 'day30': 0.0};
     }
   }
-  
-  /// Get cached metrics for dashboard endpoints
-  Map<String, dynamic> getCachedMetrics(String key) {
-    return _cachedMetrics[key] ?? {};
-  }
-  
-  /// Check if cached data is still valid (within 5 minutes)
-  bool isCacheValid(String key) {
-    final timestamp = _cachedMetrics['${key}_timestamp'];
-    if (timestamp == null) return false;
-    
-    final cacheTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    final now = DateTime.now();
-    return now.difference(cacheTime).inMinutes < 5;
-  }
-  
-  /// Store analytics event to local storage
-  Future<void> _storeEvent(AnalyticsEvent event) async {
+
+  /// Get stream of real-time analytics events
+  static Stream<Map<String, dynamic>>? get eventsStream => _eventController?.stream;
+
+  /// Store event locally for offline support
+  static Future<void> _storeEventLocally(Map<String, dynamic> event) async {
     try {
-      final coreStore = await CoreStore.getInstance();
-      final eventsKey = 'analytics_events';
+      final coreStore = ParseCoreData().getStore();
+      final existingEvents = await coreStore.getStringList(_eventsKey) ?? [];
       
-      // Get existing events
-      final existingEvents = await coreStore.getStringList(eventsKey) ?? [];
+      existingEvents.add(jsonEncode(event));
       
-      // Add new event
-      existingEvents.add(jsonEncode(event.toJson()));
-      
-      // Keep only last 1000 events to prevent storage bloat
+      // Keep only last 1000 events
       if (existingEvents.length > 1000) {
         existingEvents.removeRange(0, existingEvents.length - 1000);
       }
       
-      // Store back
-      await coreStore.setStringList(eventsKey, existingEvents);
-      
-    } catch (error) {
+      await coreStore.setStringList(_eventsKey, existingEvents);
+    } catch (e) {
       if (kDebugMode) {
-        print('ParseAnalytics _storeEvent error: $error');
+        print('Error storing event locally: $e');
       }
     }
   }
-  
-  /// Get count of custom events in time range
-  Future<int> _getCustomEventCount(DateTime start, DateTime end) async {
+
+  /// Get locally stored events
+  static Future<List<Map<String, dynamic>>> getStoredEvents() async {
     try {
-      final coreStore = await CoreStore.getInstance();
-      final eventsKey = 'analytics_events';
-      final eventStrings = await coreStore.getStringList(eventsKey) ?? [];
+      final coreStore = ParseCoreData().getStore();
+      final eventStrings = await coreStore.getStringList(_eventsKey) ?? [];
       
-      int count = 0;
-      for (final eventString in eventStrings) {
+      return eventStrings.map((eventString) {
         try {
-          final eventJson = jsonDecode(eventString);
-          final eventTime = DateTime.parse(eventJson['timestamp']);
-          
-          if (eventTime.isAfter(start) && eventTime.isBefore(end)) {
-            count++;
-          }
+          return jsonDecode(eventString) as Map<String, dynamic>;
         } catch (e) {
-          // Skip invalid event data
-          continue;
+          if (kDebugMode) {
+            print('Error parsing stored event: $e');
+          }
+          return <String, dynamic>{};
         }
+      }).where((event) => event.isNotEmpty).toList();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error getting stored events: $e');
       }
-      
-      return count;
-    } catch (error) {
-      return 0;
+      return [];
     }
   }
-  
-  /// Calculate retention rate for a cohort of users
-  Future<double> _calculateRetention(
-    List<String> cohortUserIds,
-    DateTime cohortDate,
-    int days,
-  ) async {
+
+  /// Clear locally stored events
+  static Future<void> clearStoredEvents() async {
     try {
-      final retentionDate = cohortDate.add(Duration(days: days));
-      final nextDay = retentionDate.add(const Duration(days: 1));
-      
-      // Find users who were active on the retention date
-      final activeQuery = QueryBuilder.name('_User')
-        ..whereContainedIn('objectId', cohortUserIds)
-        ..whereGreaterThanOrEqualTo('updatedAt', retentionDate)
-        ..whereLessThanOrEqualTo('updatedAt', nextDay);
-      
-      final activeResponse = await activeQuery.query();
-      
-      if (!activeResponse.success || activeResponse.results == null) {
-        return 0.0;
+      final coreStore = ParseCoreData().getStore();
+      await coreStore.remove(_eventsKey);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error clearing stored events: $e');
       }
+    }
+  }
+
+  /// Calculate retention for a specific period
+  static Future<double> _calculateRetention(List<String> cohortUserIds, DateTime cohortStart, int days) async {
+    try {
+      if (cohortUserIds.isEmpty) return 0.0;
       
-      return activeResponse.results!.length / cohortUserIds.length;
+      final retentionDate = cohortStart.add(Duration(days: days));
+      final retentionEnd = retentionDate.add(const Duration(days: 1));
       
-    } catch (error) {
+      final retentionQuery = QueryBuilder<ParseUser>(ParseUser.forQuery())
+        ..whereContainedIn('objectId', cohortUserIds)
+        ..whereGreaterThan('updatedAt', retentionDate)
+        ..whereLessThan('updatedAt', retentionEnd);
+      
+      final activeUsers = await retentionQuery.find();
+      
+      return activeUsers.length / cohortUserIds.length;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error calculating retention for day $days: $e');
+      }
       return 0.0;
     }
   }
-  
+
   /// Dispose resources
-  void dispose() {
-    _eventController.close();
+  static void dispose() {
+    _eventController?.close();
+    _eventController = null;
   }
 }
 
-/// Represents an analytics event
-class AnalyticsEvent {
+/// Event model for analytics
+class AnalyticsEventData {
   final String eventName;
-  final Map<String, dynamic> properties;
+  final Map<String, dynamic> parameters;
+  final DateTime timestamp;
   final String? userId;
   final String? installationId;
-  final DateTime timestamp;
-  
-  AnalyticsEvent({
+
+  AnalyticsEventData({
     required this.eventName,
-    required this.properties,
+    this.parameters = const {},
+    DateTime? timestamp,
     this.userId,
     this.installationId,
-    required this.timestamp,
-  });
-  
+  }) : timestamp = timestamp ?? DateTime.now();
+
   Map<String, dynamic> toJson() => {
-    'eventName': eventName,
-    'properties': properties,
-    'userId': userId,
-    'installationId': installationId,
-    'timestamp': timestamp.toIso8601String(),
+    'event_name': eventName,
+    'parameters': parameters,
+    'timestamp': timestamp.millisecondsSinceEpoch,
+    'user_id': userId,
+    'installation_id': installationId,
   };
-  
-  factory AnalyticsEvent.fromJson(Map<String, dynamic> json) => AnalyticsEvent(
-    eventName: json['eventName'],
-    properties: Map<String, dynamic>.from(json['properties']),
-    userId: json['userId'],
-    installationId: json['installationId'],
-    timestamp: DateTime.parse(json['timestamp']),
-  );
-}/// Represents an analytics event
-class AnalyticsEvent {
-  final String eventName;
-  final Map<String, dynamic> properties;
-  final String? userId;
-  final String? installationId;
-  final DateTime timestamp;
-  
-  AnalyticsEvent({
-    required this.eventName,
-    required this.properties,
-    this.userId,
-    this.installationId,
-    required this.timestamp,
-  });
-  
-  Map<String, dynamic> toJson() => {
-    'eventName': eventName,
-    'properties': properties,
-    'userId': userId,
-    'installationId': installationId,
-    'timestamp': timestamp.toIso8601String(),
-  };
-  
-  factory AnalyticsEvent.fromJson(Map<String, dynamic> json) => AnalyticsEvent(
-    eventName: json['eventName'],
-    properties: Map<String, dynamic>.from(json['properties']),
-    userId: json['userId'],
-    installationId: json['installationId'],
-    timestamp: DateTime.parse(json['timestamp']),
+
+  factory AnalyticsEventData.fromJson(Map<String, dynamic> json) => AnalyticsEventData(
+    eventName: json['event_name'] as String,
+    parameters: Map<String, dynamic>.from(json['parameters'] ?? {}),
+    timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp'] as int),
+    userId: json['user_id'] as String?,
+    installationId: json['installation_id'] as String?,
   );
 }
+
+
+
+/* // Initialize analytics
+await ParseAnalytics.initialize();
+
+// Track events
+await ParseAnalytics.trackEvent('app_opened');
+await ParseAnalytics.trackEvent('purchase', {'amount': 9.99});
+
+// Get analytics data
+final userStats = await ParseAnalytics.getUserAnalytics();
+final retention = await ParseAnalytics.getUserRetention();
+
+// Real-time event streaming
+ParseAnalytics.eventsStream?.listen((event) {
+  print('New event: ${event['event_name']}');
+});*/
