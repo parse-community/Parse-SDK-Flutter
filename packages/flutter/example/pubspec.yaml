@@ -12,8 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  parse_server_sdk_flutter:
-    path: ../
+  parse_offline_extension: ^1.0.0
+  parse_server_sdk: 9.0.0
 
   cupertino_icons: ^1.0.5
   path: ^1.8.2
