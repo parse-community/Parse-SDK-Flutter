@@ -1,4 +1,4 @@
-part of '../../parse_server_sdk.dart';
+part of '../../parse_server_sdk.dart'; 
 
 extension ParseObjectOffline on ParseObject {
   /// Load a single object by objectId from local storage.
