@@ -12,8 +12,13 @@ dependencies:
   flutter:
     sdk: flutter
 
-  parse_offline_extension: ^1.0.0
+  # parse_offline_extension: ^1.0.0
   parse_server_sdk: 9.0.0
+  # parse_server_sdk:
+  #   git:
+  #     url: https://github.com/pastordee/Parse-SDK-Flutter.git 
+  #     path: packages/dart
+  #     ref: pc_server 
 
   cupertino_icons: ^1.0.5
   path: ^1.8.2

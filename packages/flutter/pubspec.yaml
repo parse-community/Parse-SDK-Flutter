@@ -27,14 +27,14 @@ dependencies:
     sdk: flutter
   
 
-  parse_offline_extension: ^1.0.0
-  parse_server_sdk: 9.0.0
+  # parse_offline_extension: ^1.0.0
+  # parse_server_sdk: 9.0.0
 
-  # parse_server_sdk:
-  #   git:
-  #     url: https://github.com/pastordee/Parse-SDK-Flutter.git 
-  #     path: packages/dart
-  #     ref: pc_server 
+  parse_server_sdk:
+    git:
+      url: https://github.com/pastordee/Parse-SDK-Flutter.git 
+      path: packages/dart
+      ref: pc_server 
 
   # For local development, uncomment below and comment above
   # parse_server_sdk:
