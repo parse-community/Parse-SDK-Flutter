@@ -32,6 +32,10 @@ dependencies:
       path: packages/dart
       ref: pc_server 
 
+  # For local development, uncomment below and comment above
+  # parse_server_sdk:
+  #   path: ../dart
+
   # parse_server_sdk: ^8.0.0
   # Uncomment for local testing
   #parse_server_sdk:
