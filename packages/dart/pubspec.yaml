@@ -40,7 +40,7 @@ dependencies:
   universal_io: ^2.2.2
   xxtea: ^2.1.0
   collection: ^1.18.0
-  cross_file: ^0.3.3+8
+  cross_file: ^0.3.3+8 
 
 dev_dependencies:
   lints: ^5.1.1
