@@ -24,7 +24,7 @@ dependencies:
   # Networking
   dio: ^5.7.0
   http: ^1.2.0
-  web_socket_channel: ^2.4.3
+  web_socket_channel: ^3.0.3
 
   #Database
   sembast: ^3.6.0
@@ -34,15 +34,15 @@ dependencies:
   uuid: ^4.5.1
   meta: ^1.16.0
   path: ^1.9.0
-  mime: ^1.0.0
-  timezone: ^0.9.4
+  mime: ^2.0.0
+  timezone: ^0.10.1
   universal_io: ^2.2.2
   xxtea: ^2.1.0
   collection: ^1.18.0
   cross_file: ^0.3.3+8
 
 dev_dependencies:
-  lints: ^4.0.0
+  lints: ^5.1.1
 
   # Testing
   build_runner: ^2.4.9
