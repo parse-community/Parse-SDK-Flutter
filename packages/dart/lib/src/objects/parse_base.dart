@@ -317,7 +317,7 @@ abstract class ParseBase {
   Map<String, dynamic> toPointer() => encodeObject(parseClassName, objectId!);
 
   /// Set the [ParseACL] governing this object.
-  void setACL<ParseACL>(ParseACL acl) {
+  void setACL<T>(T acl) {
     set(keyVarAcl, acl);
   }
 
