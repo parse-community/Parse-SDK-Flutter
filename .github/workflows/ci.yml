@@ -114,14 +114,16 @@ jobs:
         with:
           channel: "beta"
           cache: true
-          pub-cache-key: flutter-pub-${{ runner.os }}-beta-${{ hashFiles('**/flutter/pubspec.lock') }}
+          cache-key: flutter-${{ runner.os }}-beta
+          pub-cache-key: flutter-pub-${{ runner.os }}-beta
       - name: Setup flutter
         if: ${{  matrix.sdk != 'beta' }}
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ matrix.sdk }}
           cache: true
-          pub-cache-key: flutter-pub-${{ runner.os }}-${{ matrix.sdk }}-${{ hashFiles('**/flutter/pubspec.lock') }}
+          cache-key: flutter-${{ runner.os }}-${{ matrix.sdk }}
+          pub-cache-key: flutter-pub-${{ runner.os }}-${{ matrix.sdk }}
       - name: Install dependencies on Ubuntu and MacOS
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         run: (cd packages/flutter && flutter pub get)
