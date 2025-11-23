@@ -1,6 +1,7 @@
 /// If you change this file, you should apply the same changes to the 'parse_websocket_io.dart' file
 library;
 
+// ignore: deprecated_member_use
 import 'dart:html' as html;
 
 import 'package:web_socket_channel/html.dart';
