@@ -80,6 +80,13 @@ class ParseFile extends ParseFileBase {
       HttpHeaders.contentLengthHeader: '${file!.lengthSync()}',
     };
 
+    // Try to detect content-type using lookupMimeType
+    // If it cannot be determined, let the server infer from the filename
+    final String? contentType = lookupMimeType(file!.path);
+    if (contentType != null) {
+      headers[HttpHeaders.contentTypeHeader] = contentType;
+    }
+
     try {
       final String uri = ParseCoreData().serverUrl + _path;
       final ParseNetworkResponse response = await _client.postBytes(

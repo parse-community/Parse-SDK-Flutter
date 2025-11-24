@@ -94,10 +94,22 @@ class ParseXFile extends ParseFileBase {
     _cancelToken = CancelToken();
     Map<String, String> headers = <String, String>{};
 
-    // Only set content-type if explicitly provided by the XFile
-    // Otherwise, let the server infer the MIME type from the filename
-    if (file?.mimeType != null) {
-      headers[HttpHeaders.contentTypeHeader] = file!.mimeType!;
+    // Set content-type from XFile.mimeType or detect using lookupMimeType
+    // If neither provides a type, let the server infer from the filename
+    String? contentType;
+    if (parseIsWeb) {
+      contentType =
+          file?.mimeType ??
+          lookupMimeType(
+            url ?? file?.name ?? name,
+            headerBytes: await file?.readAsBytes(),
+          );
+    } else {
+      contentType = file?.mimeType ?? lookupMimeType(file!.path);
+    }
+
+    if (contentType != null) {
+      headers[HttpHeaders.contentTypeHeader] = contentType;
     }
 
     if (!parseIsWeb) {
