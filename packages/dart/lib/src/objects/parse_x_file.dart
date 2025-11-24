@@ -98,8 +98,7 @@ class ParseXFile extends ParseFileBase {
     // If neither provides a type, let the server infer from the filename
     String? contentType;
     if (parseIsWeb) {
-      contentType =
-          file?.mimeType ??
+      contentType = file?.mimeType ??
           lookupMimeType(
             url ?? file?.name ?? name,
             headerBytes: await file?.readAsBytes(),

@@ -1,12 +1,14 @@
 part of '../../parse_server_sdk.dart';
 
 class ParseWebFile extends ParseFileBase {
-  ParseWebFile(this.file,
-      {required super.name,
-      super.url,
-      super.debug,
-      super.client,
-      super.autoSendSessionId});
+  ParseWebFile(
+    this.file, {
+    required super.name,
+    super.url,
+    super.debug,
+    super.client,
+    super.autoSendSessionId,
+  });
 
   Uint8List? file;
   CancelToken? _cancelToken;
@@ -38,14 +40,15 @@ class ParseWebFile extends ParseFileBase {
       //Creates a Fake Response to return the correct result
       final Map<String, String> response = <String, String>{
         'url': url!,
-        'name': name
+        'name': name,
       };
       return handleResponse<ParseWebFile>(
-          this,
-          ParseNetworkResponse(data: json.encode(response), statusCode: 201),
-          ParseApiRQ.upload,
-          _debug,
-          parseClassName);
+        this,
+        ParseNetworkResponse(data: json.encode(response), statusCode: 201),
+        ParseApiRQ.upload,
+        _debug,
+        parseClassName,
+      );
     }
 
     progressCallback ??= _progressCallback;
@@ -71,7 +74,12 @@ class ParseWebFile extends ParseFileBase {
         name = map['name'].toString();
       }
       return handleResponse<ParseWebFile>(
-          this, response, ParseApiRQ.upload, _debug, parseClassName);
+        this,
+        response,
+        ParseApiRQ.upload,
+        _debug,
+        parseClassName,
+      );
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.upload, _debug, parseClassName);
     }

@@ -2,10 +2,18 @@ part of '../../../parse_server_sdk.dart';
 
 /// Handles an API response and logs data if [bool] debug is enabled
 @protected
-ParseResponse handleResponse<T>(dynamic object, ParseNetworkResponse response,
-    ParseApiRQ type, bool debug, String className) {
-  final ParseResponse parseResponse =
-      _ParseResponseBuilder().handleResponse<T>(object, response, type);
+ParseResponse handleResponse<T>(
+  dynamic object,
+  ParseNetworkResponse response,
+  ParseApiRQ type,
+  bool debug,
+  String className,
+) {
+  final ParseResponse parseResponse = _ParseResponseBuilder().handleResponse<T>(
+    object,
+    response,
+    type,
+  );
 
   if (debug) {
     logAPIResponse(className, type.toString(), parseResponse);
@@ -17,9 +25,14 @@ ParseResponse handleResponse<T>(dynamic object, ParseNetworkResponse response,
 /// Handles an API response and logs data if [bool] debug is enabled
 @protected
 ParseResponse handleException(
-    Exception exception, ParseApiRQ type, bool debug, String className) {
-  final ParseResponse parseResponse =
-      buildParseResponseWithException(exception);
+  Exception exception,
+  ParseApiRQ type,
+  bool debug,
+  String className,
+) {
+  final ParseResponse parseResponse = buildParseResponseWithException(
+    exception,
+  );
 
   if (debug) {
     logAPIResponse(className, type.toString(), parseResponse);
