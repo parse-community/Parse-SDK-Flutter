@@ -11,8 +11,9 @@ ParseResponse buildParseResponseWithException(Exception exception) {
     final errorMessage =
         errorResponse['error']?.toString() ?? exception.response?.statusMessage;
 
+    final String? codeString = errorResponse['code']?.toString();
     final errorCode =
-        int.tryParse(errorResponse['code']) ?? exception.response?.statusCode;
+        int.tryParse(codeString ?? '') ?? exception.response?.statusCode;
 
     return ParseResponse(
         error: ParseError(
@@ -20,6 +21,12 @@ ParseResponse buildParseResponseWithException(Exception exception) {
       exception: exception,
       code: errorCode ?? ParseError.otherCause,
     ));
+  }
+
+  if (exception is ClientException) {
+    return ParseResponse(
+      error: ParseError(message: exception.message, exception: exception),
+    );
   }
 
   return ParseResponse(

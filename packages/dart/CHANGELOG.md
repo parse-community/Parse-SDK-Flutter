@@ -1,3 +1,9 @@
+## [8.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.0...dart-8.0.1) (2025-11-22)
+
+### Bug Fixes
+
+* Fix Http client exception not handled properly resulting in incorrectly formatted error ([#1021](https://github.com/parse-community/Parse-SDK-Flutter/pull/1021))
+
 ## [8.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-7.0.1...dart-8.0.0) (2024-12-20)
 
 ### BREAKING CHANGES
