@@ -1,7 +1,6 @@
 import 'package:cross_file/cross_file.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'package:test/test.dart';
-import 'package:path/path.dart' as path;
 
 import '../../test_utils.dart';
 
@@ -17,8 +16,7 @@ void main() {
       expect(parseFile.name, 'bb.jpg');
     });
 
-    test('should detect file extension correctly for files with extensions',
-        () {
+    test('should handle files with various extensions', () {
       // Test various file extensions
       final testCases = [
         'image.jpg',
@@ -31,28 +29,20 @@ void main() {
       for (final filename in testCases) {
         XFile file = XFile('/path/to/$filename');
         final parseFile = ParseXFile(file, name: filename);
-        // Verify that the extension is detected
-        expect(path.extension(parseFile.name).isNotEmpty, true,
-            reason: '$filename should have an extension');
+        // Verify that the name is set correctly
+        expect(parseFile.name, filename);
       }
     });
 
-    test(
-        'should detect missing extension correctly for files without extensions',
-        () {
+    test('should handle files without extensions', () {
       // Test files without extensions
-      final testCases = [
-        'image',
-        'file',
-        'document',
-      ];
+      final testCases = ['image', 'file', 'document'];
 
       for (final filename in testCases) {
         XFile file = XFile('/path/to/$filename');
         final parseFile = ParseXFile(file, name: filename);
-        // Verify that no extension is detected
-        expect(path.extension(parseFile.name).isEmpty, true,
-            reason: '$filename should not have an extension');
+        // Verify that the name is set correctly
+        expect(parseFile.name, filename);
       }
     });
   });
