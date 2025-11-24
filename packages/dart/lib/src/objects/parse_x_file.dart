@@ -92,21 +92,19 @@ class ParseXFile extends ParseFileBase {
     progressCallback ??= _progressCallback;
 
     _cancelToken = CancelToken();
-    Map<String, String> headers;
-    if (parseIsWeb) {
-      headers = <String, String>{
-        HttpHeaders.contentTypeHeader: file?.mimeType ??
-            lookupMimeType(url ?? file?.name ?? name,
-                headerBytes: await file?.readAsBytes()) ??
-            'application/octet-stream',
-      };
-    } else {
-      headers = <String, String>{
-        HttpHeaders.contentTypeHeader: file?.mimeType ??
-            lookupMimeType(file!.path) ??
-            'application/octet-stream',
-        HttpHeaders.contentLengthHeader: '${await file!.length()}',
-      };
+    Map<String, String> headers = <String, String>{};
+
+    // Only set content-type if the file has no extension
+    // If extension exists, let the server infer the MIME type from the filename
+    final bool hasExtension = path.extension(name).isNotEmpty;
+
+    if (!hasExtension) {
+      // No extension, set content-type to application/octet-stream as fallback
+      headers[HttpHeaders.contentTypeHeader] = 'application/octet-stream';
+    }
+
+    if (!parseIsWeb) {
+      headers[HttpHeaders.contentLengthHeader] = '${await file!.length()}';
     }
 
     try {

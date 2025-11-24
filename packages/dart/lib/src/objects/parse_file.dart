@@ -77,10 +77,17 @@ class ParseFile extends ParseFileBase {
     _cancelToken = CancelToken();
 
     final Map<String, String> headers = <String, String>{
-      HttpHeaders.contentTypeHeader:
-          lookupMimeType(file!.path) ?? 'application/octet-stream',
       HttpHeaders.contentLengthHeader: '${file!.lengthSync()}',
     };
+
+    // Only set content-type if the file has no extension
+    // If extension exists, let the server infer the MIME type from the filename
+    final bool hasExtension = path.extension(name).isNotEmpty;
+
+    if (!hasExtension) {
+      // No extension, set content-type to application/octet-stream as fallback
+      headers[HttpHeaders.contentTypeHeader] = 'application/octet-stream';
+    }
 
     try {
       final String uri = ParseCoreData().serverUrl + _path;
