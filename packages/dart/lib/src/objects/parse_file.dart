@@ -80,8 +80,6 @@ class ParseFile extends ParseFileBase {
       HttpHeaders.contentLengthHeader: '${file!.lengthSync()}',
     };
 
-    // Do not set content-type - let the server infer it from the filename
-
     try {
       final String uri = ParseCoreData().serverUrl + _path;
       final ParseNetworkResponse response = await _client.postBytes(
