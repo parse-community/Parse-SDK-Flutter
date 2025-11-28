@@ -52,7 +52,8 @@ class ParseCoreData {
     _instance.sessionId = sessionId;
     _instance.autoSendSessionId = autoSendSessionId;
     _instance.securityContext = securityContext;
-    _instance.liveListRetryIntervals = liveListRetryIntervals ??
+    _instance.liveListRetryIntervals =
+        liveListRetryIntervals ??
         (parseIsWeb
             ? <int>[0, 500, 1000, 2000, 5000]
             : <int>[0, 500, 1000, 2000, 5000, 10000]);
@@ -64,7 +65,8 @@ class ParseCoreData {
     _instance.connectivityProvider = connectivityProvider;
     _instance.fileDirectory = fileDirectory;
     _instance.appResumedStream = appResumedStream;
-    _instance.clientCreator = clientCreator ??
+    _instance.clientCreator =
+        clientCreator ??
         (({required bool sendSessionId, SecurityContext? securityContext}) =>
             ParseHTTPClient(
               sendSessionId: sendSessionId,

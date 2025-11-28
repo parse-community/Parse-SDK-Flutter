@@ -19,11 +19,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
     bool? debug,
     ParseClient? client,
   }) : super(
-          keyClassUser,
-          client: client,
-          autoSendSessionId: true,
-          debug: debug,
-        ) {
+         keyClassUser,
+         client: client,
+         autoSendSessionId: true,
+         debug: debug,
+       ) {
     if (username != null) this.username = username;
     if (emailAddress != null) this.emailAddress = emailAddress;
     if (password != null) this.password = password;
@@ -33,7 +33,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   ParseUser.forQuery() : super(keyClassUser);
 
   ParseUser.clone(Map<String, dynamic> map)
-      : this(map[keyVarUsername], null, map[keyVarEmail]);
+    : this(map[keyVarUsername], null, map[keyVarEmail]);
 
   @override
   dynamic clone(Map<String, dynamic> map) =>
@@ -56,9 +56,9 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   Map<String, dynamic> get acl => super.get<Map<String, dynamic>>(
-        keyVarAcl,
-        defaultValue: <String, dynamic>{},
-      )!;
+    keyVarAcl,
+    defaultValue: <String, dynamic>{},
+  )!;
 
   set acl(Map<String, dynamic> acl) =>
       set<Map<String, dynamic>>(keyVarAcl, acl);
@@ -126,7 +126,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
     ParseClient? client,
   }) async {
     final bool debugLocal = isDebugEnabled(objectLevelDebug: debug);
-    final ParseClient clientLocal = client ??
+    final ParseClient clientLocal =
+        client ??
         ParseCoreData().clientCreator(
           sendSessionId: true,
           securityContext: ParseCoreData().securityContext,
@@ -545,7 +546,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
     final ParseUser emptyUser = _getEmptyUser();
 
     final bool debugLocal = isDebugEnabled(objectLevelDebug: debug);
-    final ParseClient clientLocal = client ??
+    final ParseClient clientLocal =
+        client ??
         ParseCoreData().clientCreator(
           sendSessionId: true,
           securityContext: ParseCoreData().securityContext,

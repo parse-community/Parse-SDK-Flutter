@@ -28,7 +28,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
     _aggregatepath = '$keyEndPointAggregate$className';
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
+    _client =
+        client ??
         ParseCoreData().clientCreator(
           sendSessionId: autoSendSessionId ?? ParseCoreData().autoSendSessionId,
           securityContext: ParseCoreData().securityContext,
@@ -847,7 +848,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
     bool? autoSendSessionId,
   }) async {
     // get client
-    ParseClient localClient = client ??
+    ParseClient localClient =
+        client ??
         ParseCoreData().clientCreator(
           sendSessionId: autoSendSessionId ?? ParseCoreData().autoSendSessionId,
           securityContext: ParseCoreData().securityContext,

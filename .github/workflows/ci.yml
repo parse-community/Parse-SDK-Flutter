@@ -14,27 +14,21 @@ jobs:
     strategy:
       matrix:
         include:
+          # Version Support Policy: 6 months after next significant version release
+          # See VERSIONING_POLICY.md for full details
+          #
           # Dart framework may contain breaking changes in minor version releases, not following semver.
           # The latest Dart framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
-          - name: Dart 3.5, Ubuntu
+          - name: Dart 3.10, Ubuntu
             os: ubuntu-latest
-            sdk: 3.5.3
-          - name: Dart 3.5, macOS
+            sdk: 3.10.0
+          - name: Dart 3.10, macOS
             os: macos-latest
-            sdk: 3.5.3
-          - name: Dart 3.5, Windows
+            sdk: 3.10.0
+          - name: Dart 3.10, Windows
             os: windows-latest
-            sdk: 3.5.3
-          # Older Dart framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
-          - name: Dart 3.4
-            os: ubuntu-latest
-            sdk: 3.4.4
-          - name: Dart 3.3
-            os: ubuntu-latest
-            sdk: 3.3.4
-          - name: Dart 3.2
-            os: ubuntu-latest
-            sdk: 3.2.6
+            sdk: 3.10.0
+          # Beta channel helps identify breaking changes early
           - name: Dart beta
             os: ubuntu-latest
             sdk: beta
@@ -43,6 +37,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Configure git for line endings (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          git config core.autocrlf false
+          git rm --cached -r .
+          git reset --hard
       - name: Setup dart
         uses: dart-lang/setup-dart@v1.5.0
         with:
@@ -79,27 +79,21 @@ jobs:
     strategy:
       matrix:
         include:
+          # Version Support Policy: 6 months after next significant version release
+          # See VERSIONING_POLICY.md for full details
+          #
           # Flutter framework may contain breaking changes in minor version releases, not following semver.
           # The latest Flutter framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
-          - name: Flutter 3.24, Ubuntu
+          - name: Flutter 3.38, Ubuntu
             os: ubuntu-latest
-            sdk: 3.24.3
-          - name: Flutter 3.24, macOS
+            sdk: 3.38.1
+          - name: Flutter 3.38, macOS
             os: macos-latest
-            sdk: 3.24.3
-          - name: Flutter 3.24, Windows
+            sdk: 3.38.1
+          - name: Flutter 3.38, Windows
             os: windows-latest
-            sdk: 3.24.3
-          # Older Flutter framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
-          - name: Flutter 3.22
-            os: ubuntu-latest
-            sdk: 3.22.3
-          - name: Flutter 3.19
-            os: ubuntu-latest
-            sdk: 3.19.6
-          - name: Flutter 3.16
-            os: ubuntu-latest
-            sdk: 3.16.9
+            sdk: 3.38.1
+          # Beta channel helps identify breaking changes early
           - name: Flutter beta
             os: ubuntu-latest
             sdk: beta

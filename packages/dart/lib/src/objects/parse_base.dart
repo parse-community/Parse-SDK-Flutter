@@ -270,8 +270,9 @@ abstract class ParseBase {
 
       if (result is _ParseRelation) {
         return (result
-          ..parent = (this as ParseObject)
-          ..key = key) as T?;
+              ..parent = (this as ParseObject)
+              ..key = key)
+            as T?;
       }
 
       return result as T?;

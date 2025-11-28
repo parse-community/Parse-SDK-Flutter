@@ -80,33 +80,37 @@ class Parse extends sdk.Parse
     }
 
     return await super.initialize(
-      appId,
-      serverUrl,
-      debug: debug,
-      appName: appName,
-      appVersion: appVersion,
-      appPackageName: appPackageName,
-      locale: locale ??
-          (sdk.parseIsWeb
-              ? PlatformDispatcher.instance.locale.toString()
-              : Platform.localeName),
-      liveQueryUrl: liveQueryUrl,
-      clientKey: clientKey,
-      masterKey: masterKey,
-      sessionId: sessionId,
-      autoSendSessionId: autoSendSessionId,
-      securityContext: securityContext,
-      coreStore: coreStore ?? await CoreStoreSharedPreferences.getInstance(),
-      registeredSubClassMap: registeredSubClassMap,
-      parseUserConstructor: parseUserConstructor,
-      parseFileConstructor: parseFileConstructor,
-      liveListRetryIntervals: liveListRetryIntervals,
-      connectivityProvider: connectivityProvider ?? this,
-      fileDirectory:
-          fileDirectory ?? (await CoreStoreDirectory().getTempDirectory()),
-      appResumedStream: appResumedStream ?? _appResumedStreamController.stream,
-      clientCreator: clientCreator,
-    ) as Parse;
+          appId,
+          serverUrl,
+          debug: debug,
+          appName: appName,
+          appVersion: appVersion,
+          appPackageName: appPackageName,
+          locale:
+              locale ??
+              (sdk.parseIsWeb
+                  ? PlatformDispatcher.instance.locale.toString()
+                  : Platform.localeName),
+          liveQueryUrl: liveQueryUrl,
+          clientKey: clientKey,
+          masterKey: masterKey,
+          sessionId: sessionId,
+          autoSendSessionId: autoSendSessionId,
+          securityContext: securityContext,
+          coreStore:
+              coreStore ?? await CoreStoreSharedPreferences.getInstance(),
+          registeredSubClassMap: registeredSubClassMap,
+          parseUserConstructor: parseUserConstructor,
+          parseFileConstructor: parseFileConstructor,
+          liveListRetryIntervals: liveListRetryIntervals,
+          connectivityProvider: connectivityProvider ?? this,
+          fileDirectory:
+              fileDirectory ?? (await CoreStoreDirectory().getTempDirectory()),
+          appResumedStream:
+              appResumedStream ?? _appResumedStreamController.stream,
+          clientCreator: clientCreator,
+        )
+        as Parse;
   }
 
   final StreamController<void> _appResumedStreamController =
@@ -127,17 +131,17 @@ class Parse extends sdk.Parse
 
   @override
   Stream<sdk.ParseConnectivityResult> get connectivityStream {
-    return Connectivity().onConnectivityChanged.map(
-      (List<ConnectivityResult> event) {
-        if (event.contains(ConnectivityResult.wifi)) {
-          return sdk.ParseConnectivityResult.wifi;
-        } else if (event.contains(ConnectivityResult.mobile)) {
-          return sdk.ParseConnectivityResult.mobile;
-        } else {
-          return sdk.ParseConnectivityResult.none;
-        }
-      },
-    );
+    return Connectivity().onConnectivityChanged.map((
+      List<ConnectivityResult> event,
+    ) {
+      if (event.contains(ConnectivityResult.wifi)) {
+        return sdk.ParseConnectivityResult.wifi;
+      } else if (event.contains(ConnectivityResult.mobile)) {
+        return sdk.ParseConnectivityResult.mobile;
+      } else {
+        return sdk.ParseConnectivityResult.none;
+      }
+    });
   }
 
   @override

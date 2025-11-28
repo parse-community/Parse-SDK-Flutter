@@ -11,11 +11,11 @@ abstract class ParseFileBase extends ParseObject {
     ParseClient? client,
     bool? autoSendSessionId,
   }) : super(
-          keyFileClassname,
-          debug: debug,
-          autoSendSessionId: autoSendSessionId,
-          client: client,
-        ) {
+         keyFileClassname,
+         debug: debug,
+         autoSendSessionId: autoSendSessionId,
+         client: client,
+       ) {
     _path = '/files/$name';
     this.name = name;
     if (url != null) this.url = url;
@@ -34,8 +34,7 @@ abstract class ParseFileBase extends ParseObject {
     bool full = false,
     bool forApiRQ = false,
     bool allowCustomObjectId = false,
-  }) =>
-      <String, String?>{'__type': keyFile, 'name': name, 'url': url};
+  }) => <String, String?>{'__type': keyFile, 'name': name, 'url': url};
 
   @override
   String toString() => json.encode(toJson(full: true));

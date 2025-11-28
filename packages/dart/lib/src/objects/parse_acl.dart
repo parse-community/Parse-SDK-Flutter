@@ -127,7 +127,7 @@ class _ACLPermissions {
   bool get writePermission => _writePermission;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        _keyReadPermission: _readPermission,
-        _keyWritePermission: _writePermission,
-      };
+    _keyReadPermission: _readPermission,
+    _keyWritePermission: _writePermission,
+  };
 }

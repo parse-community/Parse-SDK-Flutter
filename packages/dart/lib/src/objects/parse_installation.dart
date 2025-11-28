@@ -3,12 +3,12 @@ part of '../../parse_server_sdk.dart';
 class ParseInstallation extends ParseObject {
   /// Creates an instance of ParseInstallation
   ParseInstallation({bool? debug, ParseClient? client, bool? autoSendSessionId})
-      : super(
-          keyClassInstallation,
-          client: client,
-          autoSendSessionId: autoSendSessionId,
-          debug: debug,
-        );
+    : super(
+        keyClassInstallation,
+        client: client,
+        autoSendSessionId: autoSendSessionId,
+        debug: debug,
+      );
 
   ParseInstallation.forQuery() : super(keyClassUser);
 
@@ -25,9 +25,9 @@ class ParseInstallation extends ParseObject {
 
   //Getters/setters
   Map<String, dynamic> get acl => super.get<Map<String, dynamic>>(
-        keyVarAcl,
-        defaultValue: <String, dynamic>{},
-      )!;
+    keyVarAcl,
+    defaultValue: <String, dynamic>{},
+  )!;
 
   set acl(Map<String, dynamic> acl) =>
       set<Map<String, dynamic>>(keyVarAcl, acl);
@@ -178,9 +178,9 @@ class ParseInstallation extends ParseObject {
     installation._installationId = _currentInstallationId;
     await installation._updateInstallation();
     await ParseCoreData().getStore().setString(
-          keyParseStoreInstallation,
-          json.encode(installation.toJson(full: true)),
-        );
+      keyParseStoreInstallation,
+      json.encode(installation.toJson(full: true)),
+    );
     return installation;
   }
 

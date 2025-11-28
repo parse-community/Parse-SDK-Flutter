@@ -1,16 +1,17 @@
 part of '../../parse_server_sdk.dart';
 
 typedef ParseObjectConstructor = ParseObject Function();
-typedef ParseUserConstructor = ParseUser Function(
-  String? username,
-  String? password,
-  String? emailAddress, {
-  String? sessionToken,
-  bool? debug,
-  ParseClient? client,
-});
-typedef ParseFileConstructor = ParseFileBase Function(
-    {String? name, String? url});
+typedef ParseUserConstructor =
+    ParseUser Function(
+      String? username,
+      String? password,
+      String? emailAddress, {
+      String? sessionToken,
+      bool? debug,
+      ParseClient? client,
+    });
+typedef ParseFileConstructor =
+    ParseFileBase Function({String? name, String? url});
 
 class ParseSubClassHandler {
   ParseSubClassHandler({
