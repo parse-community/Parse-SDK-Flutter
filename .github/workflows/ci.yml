@@ -37,6 +37,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Configure git for line endings (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          git config core.autocrlf false
+          git rm --cached -r .
+          git reset --hard
       - name: Setup dart
         uses: dart-lang/setup-dart@v1.5.0
         with:
@@ -45,15 +51,6 @@ jobs:
         run: dart pub get --directory packages/dart
       - name: Run build_runner
         run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
-      - name: Normalize line endings in generated mock files (Windows)
-        if: matrix.os == 'windows-latest'
-        shell: pwsh
-        run: |
-          Get-ChildItem -Path packages/dart/test -Filter *.mocks.dart -Recurse | ForEach-Object {
-            $content = Get-Content $_.FullName -Raw
-            $content = $content -replace "`r`n", "`n"
-            [System.IO.File]::WriteAllText($_.FullName, $content)
-          }
       - name: Analyze code
         run: dart analyze packages/dart --fatal-infos
       - name: Lint
