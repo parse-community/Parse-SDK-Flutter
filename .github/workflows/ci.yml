@@ -86,13 +86,13 @@ jobs:
           # The latest Flutter framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
           - name: Flutter 3.38, Ubuntu
             os: ubuntu-latest
-            sdk: 3.38.0
+            sdk: 3.38.1
           - name: Flutter 3.38, macOS
             os: macos-latest
-            sdk: 3.38.0
+            sdk: 3.38.1
           - name: Flutter 3.38, Windows
             os: windows-latest
-            sdk: 3.38.0
+            sdk: 3.38.1
           # Beta channel helps identify breaking changes early
           - name: Flutter beta
             os: ubuntu-latest
