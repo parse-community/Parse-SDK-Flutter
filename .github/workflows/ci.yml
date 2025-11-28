@@ -19,15 +19,15 @@ jobs:
           #
           # Dart framework may contain breaking changes in minor version releases, not following semver.
           # The latest Dart framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
-          - name: Dart 3.6, Ubuntu
+          - name: Dart 3.10, Ubuntu
             os: ubuntu-latest
-            sdk: 3.6.0
-          - name: Dart 3.6, macOS
+            sdk: 3.10.0
+          - name: Dart 3.10, macOS
             os: macos-latest
-            sdk: 3.6.0
-          - name: Dart 3.6, Windows
+            sdk: 3.10.0
+          - name: Dart 3.10, Windows
             os: windows-latest
-            sdk: 3.6.0
+            sdk: 3.10.0
           # Beta channel helps identify breaking changes early
           - name: Dart beta
             os: ubuntu-latest
@@ -78,15 +78,15 @@ jobs:
           #
           # Flutter framework may contain breaking changes in minor version releases, not following semver.
           # The latest Flutter framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
-          - name: Flutter 3.27, Ubuntu
+          - name: Flutter 3.38, Ubuntu
             os: ubuntu-latest
-            sdk: 3.27.0
-          - name: Flutter 3.27, macOS
+            sdk: 3.38.0
+          - name: Flutter 3.38, macOS
             os: macos-latest
-            sdk: 3.27.0
-          - name: Flutter 3.27, Windows
+            sdk: 3.38.0
+          - name: Flutter 3.38, Windows
             os: windows-latest
-            sdk: 3.27.0
+            sdk: 3.38.0
           # Beta channel helps identify breaking changes early
           - name: Flutter beta
             os: ubuntu-latest
