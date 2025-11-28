@@ -6,34 +6,47 @@ class CoreStoreSembastImp implements CoreStore {
 
   static CoreStoreSembastImp? _instance;
 
-  static Future<CoreStoreSembastImp> getInstance(String dbPath,
-      {DatabaseFactory? factory, String? password}) async {
+  static Future<CoreStoreSembastImp> getInstance(
+    String dbPath, {
+    DatabaseFactory? factory,
+    String? password,
+  }) async {
     password ??= 'flutter_sdk';
     if (_instance == null) {
       factory ??= !parseIsWeb ? databaseFactoryIo : databaseFactoryWeb;
       assert(() {
         if (parseIsWeb) {
           print(
-              '***********************************************************************************************************');
+            '***********************************************************************************************************',
+          );
           print(
-              'Warning: CoreStoreSembastImp of the Parse_Server_SDK does not encrypt the database on WEB.');
+            'Warning: CoreStoreSembastImp of the Parse_Server_SDK does not encrypt the database on WEB.',
+          );
           print(
-              '***********************************************************************************************************');
+            '***********************************************************************************************************',
+          );
         }
         if (password == 'flutter_sdk') {
           print(
-              '***********************************************************************************************************');
+            '***********************************************************************************************************',
+          );
           print(
-              'Warning: CoreStoreSembastImp uses the default password. Specify a custom password for increased security.');
+            'Warning: CoreStoreSembastImp uses the default password. Specify a custom password for increased security.',
+          );
           print(
-              '***********************************************************************************************************');
+            '***********************************************************************************************************',
+          );
         }
         return true;
       }());
-      final Database db = await factory.openDatabase(dbPath,
-          codec: !parseIsWeb ? getXXTeaSembastCodec(password: password) : null);
-      _instance =
-          CoreStoreSembastImp._internal(db, StoreRef<String, String>.main());
+      final Database db = await factory.openDatabase(
+        dbPath,
+        codec: !parseIsWeb ? getXXTeaSembastCodec(password: password) : null,
+      );
+      _instance = CoreStoreSembastImp._internal(
+        db,
+        StoreRef<String, String>.main(),
+      );
     }
 
     return _instance!;

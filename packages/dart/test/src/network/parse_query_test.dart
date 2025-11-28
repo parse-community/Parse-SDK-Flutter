@@ -23,8 +23,9 @@ void main() {
 
     test('whereRelatedTo', () async {
       // arrange
-      final QueryBuilder<ParseObject> queryBuilder =
-          QueryBuilder<ParseObject>(ParseObject('_User', client: client));
+      final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<ParseObject>(
+        ParseObject('_User', client: client),
+      );
       queryBuilder.whereRelatedTo('likes', 'Post', '8TOXdXf3tz');
 
       var desiredOutput = {
@@ -36,29 +37,39 @@ void main() {
             "updatedAt": "2021-04-23T13:46:23.586Z",
             "ACL": {
               "*": {"read": true},
-              "eT9muOxBTJ": {"read": true, "write": true}
+              "eT9muOxBTJ": {"read": true, "write": true},
             },
-          }
-        ]
+          },
+        ],
       };
 
-      when(client.get(
-        any,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(
-          statusCode: 200, data: jsonEncode(desiredOutput)));
+      when(
+        client.get(
+          any,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(desiredOutput),
+        ),
+      );
 
       // act
       ParseResponse response = await queryBuilder.query();
 
       ParseObject parseObject = response.results?.first;
 
-      final Uri result = Uri.parse(verify(client.get(
-        captureAny,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).captured.single);
+      final Uri result = Uri.parse(
+        verify(
+          client.get(
+            captureAny,
+            options: anyNamed("options"),
+            onReceiveProgress: anyNamed("onReceiveProgress"),
+          ),
+        ).captured.single,
+      );
 
       var queryDesiredOutput = {
         "\$relatedTo": {
@@ -67,11 +78,12 @@ void main() {
             "className": "Post",
             "objectId": "8TOXdXf3tz",
           },
-          "key": "likes"
+          "key": "likes",
         },
       };
-      final Uri expectedQuery =
-          Uri(query: 'where=${jsonEncode(queryDesiredOutput)}');
+      final Uri expectedQuery = Uri(
+        query: 'where=${jsonEncode(queryDesiredOutput)}',
+      );
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -95,10 +107,10 @@ void main() {
       var lastName = QueryBuilder<ParseObject>(user)
         ..regEx('lastName', "Johnson");
 
-      QueryBuilder<ParseObject> mainQuery = QueryBuilder.or(
-        user,
-        [firstName, lastName],
-      );
+      QueryBuilder<ParseObject> mainQuery = QueryBuilder.or(user, [
+        firstName,
+        lastName,
+      ]);
 
       var desiredOutput = {
         "results": [
@@ -117,40 +129,51 @@ void main() {
             "updatedAt": "2022-01-25T05:52:01.701Z",
             "firstName": "Liam2",
             "lastName": "Johnson2",
-          }
-        ]
+          },
+        ],
       };
 
-      when(client.get(
-        any,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(
-          statusCode: 200, data: jsonEncode(desiredOutput)));
+      when(
+        client.get(
+          any,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(desiredOutput),
+        ),
+      );
 
       // act
       var response = await mainQuery.query();
 
       ParseObject parseObject = response.results?.first;
 
-      final Uri result = Uri.parse(verify(client.get(
-        captureAny,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).captured.single);
+      final Uri result = Uri.parse(
+        verify(
+          client.get(
+            captureAny,
+            options: anyNamed("options"),
+            onReceiveProgress: anyNamed("onReceiveProgress"),
+          ),
+        ).captured.single,
+      );
 
       var queryDesiredOutput = {
         "\$or": [
           {
-            "firstName": {"\$regex": "Liam"}
+            "firstName": {"\$regex": "Liam"},
           },
           {
             "lastName": {"\$regex": "Johnson"},
-          }
+          },
         ],
       };
-      final Uri expectedQuery =
-          Uri(query: 'where=${jsonEncode(queryDesiredOutput)}');
+      final Uri expectedQuery = Uri(
+        query: 'where=${jsonEncode(queryDesiredOutput)}',
+      );
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -173,10 +196,10 @@ void main() {
 
       var lastName = QueryBuilder<ParseObject>(user)..regEx('lastName', "jaki");
 
-      QueryBuilder<ParseObject> mainQuery = QueryBuilder.and(
-        user,
-        [firstName, lastName],
-      );
+      QueryBuilder<ParseObject> mainQuery = QueryBuilder.and(user, [
+        firstName,
+        lastName,
+      ]);
 
       var desiredOutput = {
         "results": [
@@ -196,39 +219,50 @@ void main() {
             "firstName": "jak2",
             "lastName": "jaki2",
           },
-        ]
+        ],
       };
 
-      when(client.get(
-        any,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(
-          statusCode: 200, data: jsonEncode(desiredOutput)));
+      when(
+        client.get(
+          any,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(desiredOutput),
+        ),
+      );
 
       // act
       var response = await mainQuery.query();
 
       ParseObject parseObject = response.results?.first;
 
-      final Uri result = Uri.parse(verify(client.get(
-        captureAny,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).captured.single);
+      final Uri result = Uri.parse(
+        verify(
+          client.get(
+            captureAny,
+            options: anyNamed("options"),
+            onReceiveProgress: anyNamed("onReceiveProgress"),
+          ),
+        ).captured.single,
+      );
 
       var queryDesiredOutput = {
         "\$and": [
           {
-            "firstName": {"\$regex": "jak"}
+            "firstName": {"\$regex": "jak"},
           },
           {
             "lastName": {"\$regex": "jaki"},
-          }
+          },
         ],
       };
-      final Uri expectedQuery =
-          Uri(query: 'where=${jsonEncode(queryDesiredOutput)}');
+      final Uri expectedQuery = Uri(
+        query: 'where=${jsonEncode(queryDesiredOutput)}',
+      );
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -252,10 +286,10 @@ void main() {
       var lastName = QueryBuilder<ParseObject>(user)
         ..regEx('lastName', "Smith");
 
-      QueryBuilder<ParseObject> mainQuery = QueryBuilder.nor(
-        user,
-        [firstName, lastName],
-      );
+      QueryBuilder<ParseObject> mainQuery = QueryBuilder.nor(user, [
+        firstName,
+        lastName,
+      ]);
 
       var desiredOutput = {
         "results": [
@@ -275,39 +309,50 @@ void main() {
             "firstName": "Oliver2",
             "lastName": "Smith2",
           },
-        ]
+        ],
       };
 
-      when(client.get(
-        any,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(
-          statusCode: 200, data: jsonEncode(desiredOutput)));
+      when(
+        client.get(
+          any,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(desiredOutput),
+        ),
+      );
 
       // act
       var response = await mainQuery.query();
 
       ParseObject parseObject = response.results?.first;
 
-      final Uri result = Uri.parse(verify(client.get(
-        captureAny,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).captured.single);
+      final Uri result = Uri.parse(
+        verify(
+          client.get(
+            captureAny,
+            options: anyNamed("options"),
+            onReceiveProgress: anyNamed("onReceiveProgress"),
+          ),
+        ).captured.single,
+      );
 
       var queryDesiredOutput = {
         "\$nor": [
           {
-            "firstName": {"\$regex": "Oliver"}
+            "firstName": {"\$regex": "Oliver"},
           },
           {
             "lastName": {"\$regex": "Smith"},
-          }
+          },
         ],
       };
-      final Uri expectedQuery =
-          Uri(query: 'where=${jsonEncode(queryDesiredOutput)}');
+      final Uri expectedQuery = Uri(
+        query: 'where=${jsonEncode(queryDesiredOutput)}',
+      );
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -324,12 +369,15 @@ void main() {
 
     test('wherePolygonContains', () async {
       // arrange
-      final QueryBuilder<ParseObject> queryBuilder =
-          QueryBuilder<ParseObject>(ParseObject('TEST_SCHEMA', client: client));
+      final QueryBuilder<ParseObject> queryBuilder = QueryBuilder<ParseObject>(
+        ParseObject('TEST_SCHEMA', client: client),
+      );
       double latitude = 84.17724609375;
       double longitude = -53.69670647530323;
-      ParseGeoPoint point =
-          ParseGeoPoint(latitude: latitude, longitude: longitude);
+      ParseGeoPoint point = ParseGeoPoint(
+        latitude: latitude,
+        longitude: longitude,
+      );
       queryBuilder.wherePolygonContains("geometry", point);
 
       var desiredOutput = {
@@ -346,30 +394,40 @@ void main() {
                   [83.1884765625, -54.61025498157913],
                   [84.814453125, -55.14120964449505],
                   [85.67138671875, -54.40614309031968],
-                  [84.17724609375, -53.69670647530323]
-                ]
-              ]
-            }
-          }
-        ]
+                  [84.17724609375, -53.69670647530323],
+                ],
+              ],
+            },
+          },
+        ],
       };
 
-      when(client.get(
-        any,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(
-          statusCode: 200, data: jsonEncode(desiredOutput)));
+      when(
+        client.get(
+          any,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(desiredOutput),
+        ),
+      );
 
       // act
       ParseResponse response = await queryBuilder.query();
       ParseObject parseObject = response.results?.first;
 
-      final Uri result = Uri.parse(verify(client.get(
-        captureAny,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).captured.single);
+      final Uri result = Uri.parse(
+        verify(
+          client.get(
+            captureAny,
+            options: anyNamed("options"),
+            onReceiveProgress: anyNamed("onReceiveProgress"),
+          ),
+        ).captured.single,
+      );
 
       var queryDesiredOutput = {
         "geometry": {
@@ -377,13 +435,14 @@ void main() {
             "\$point": {
               "__type": "GeoPoint",
               "latitude": latitude,
-              "longitude": longitude
-            }
-          }
-        }
+              "longitude": longitude,
+            },
+          },
+        },
       };
-      final Uri expectedQuery =
-          Uri(query: 'where=${jsonEncode(queryDesiredOutput)}');
+      final Uri expectedQuery = Uri(
+        query: 'where=${jsonEncode(queryDesiredOutput)}',
+      );
 
       // assert
       expect(response.results?.first, isA<ParseObject>());
@@ -394,19 +453,20 @@ void main() {
     });
 
     test(
-        'The resulting query should include "redirectClassNameForKey" as a query parameter',
-        () {
-      // arrange
-      final queryBuilder = QueryBuilder.name('Diet_Plans');
+      'The resulting query should include "redirectClassNameForKey" as a query parameter',
+      () {
+        // arrange
+        final queryBuilder = QueryBuilder.name('Diet_Plans');
 
-      // act
-      queryBuilder.setRedirectClassNameForKey('Plan');
+        // act
+        queryBuilder.setRedirectClassNameForKey('Plan');
 
-      // assert
-      final query = queryBuilder.buildQuery();
+        // assert
+        final query = queryBuilder.buildQuery();
 
-      expect(query, equals('where={}&redirectClassNameForKey=Plan'));
-    });
+        expect(query, equals('where={}&redirectClassNameForKey=Plan'));
+      },
+    );
 
     test('whereMatchesQuery', () async {
       // arrange
@@ -444,31 +504,40 @@ void main() {
             "firstName": "Oliver2",
             "lastName": "Smith2",
           },
-        ]
+        ],
       };
 
-      when(client.get(
-        any,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(
-          statusCode: 200, data: jsonEncode(desiredOutput)));
+      when(
+        client.get(
+          any,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(desiredOutput),
+        ),
+      );
 
       // act
       await mainQuery.query();
 
-      final Uri result = Uri.parse(verify(client.get(
-        captureAny,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).captured.single);
+      final Uri result = Uri.parse(
+        verify(
+          client.get(
+            captureAny,
+            options: anyNamed("options"),
+            onReceiveProgress: anyNamed("onReceiveProgress"),
+          ),
+        ).captured.single,
+      );
 
       // assert
       expect(result.query.contains("%22object2%22,%22%22include%22"), true);
     });
 
-    test('the result query should contains encoded special characters values',
-        () {
+    test('the result query should contains encoded special characters values', () {
       // arrange
       final queryBuilder = QueryBuilder.name('Diet_Plans');
 

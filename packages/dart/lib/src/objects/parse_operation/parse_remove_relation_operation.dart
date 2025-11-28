@@ -28,8 +28,9 @@ class _ParseRemoveRelationOperation extends _ParseRelationOperation {
 
     valueForApiRequest.addAll(value);
 
-    final parseObjectToRemoveByIds =
-        value.where((e) => e.objectId != null).map((e) => e.objectId!);
+    final parseObjectToRemoveByIds = value
+        .where((e) => e.objectId != null)
+        .map((e) => e.objectId!);
 
     value = previousValue
       ..removeWhere(

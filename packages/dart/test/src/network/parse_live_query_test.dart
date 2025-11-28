@@ -31,16 +31,18 @@ void main() {
 
   test('should exist installationId in connect LiveQuery', () async {
     // arrange
-    QueryBuilder<ParseObject> query =
-        QueryBuilder<ParseObject>(ParseObject('Test'));
+    QueryBuilder<ParseObject> query = QueryBuilder<ParseObject>(
+      ParseObject('Test'),
+    );
 
     // Set installationId
     ParseInstallation parseInstallation = ParseInstallation();
     parseInstallation.set(keyInstallationId, "1234");
     final String objectJson = json.encode(parseInstallation.toJson(full: true));
-    await ParseCoreData()
-        .getStore()
-        .setString(keyParseStoreInstallation, objectJson);
+    await ParseCoreData().getStore().setString(
+      keyParseStoreInstallation,
+      objectJson,
+    );
 
     // Initialize LiveQuery
     final LiveQuery liveQuery = LiveQuery();

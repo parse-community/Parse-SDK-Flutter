@@ -769,8 +769,7 @@ class QueryBuilder<T extends ParseObject> {
   Future<T?> first() async {
     ParseResponse parseResponse = await (QueryBuilder.copy(
       this,
-    )..setLimit(1))
-        .query();
+    )..setLimit(1)).query();
     if (parseResponse.success) {
       return parseResponse.results?.first;
     }

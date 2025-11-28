@@ -138,8 +138,8 @@ class LiveQueryClient {
     bool? autoSendSessionId,
   }) {
     _clientEventStreamController = StreamController<LiveQueryClientEvent>();
-    _clientEventStream =
-        _clientEventStreamController.stream.asBroadcastStream();
+    _clientEventStream = _clientEventStreamController.stream
+        .asBroadcastStream();
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _sendSessionId = autoSendSessionId ?? ParseCoreData().autoSendSessionId;
@@ -169,7 +169,8 @@ class LiveQueryClient {
         liveQueryURL = liveQueryURL.replaceAll('http', 'ws');
       }
     }
-    LiveQueryClient instance = _instance ??
+    LiveQueryClient instance =
+        _instance ??
         LiveQueryClient._internal(
           liveQueryURL,
           debug: debug,

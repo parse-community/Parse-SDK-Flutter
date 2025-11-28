@@ -1,9 +1,10 @@
 part of '../../parse_server_sdk.dart';
 
-typedef ParseClientCreator = ParseClient Function({
-  required bool sendSessionId,
-  SecurityContext? securityContext,
-});
+typedef ParseClientCreator =
+    ParseClient Function({
+      required bool sendSessionId,
+      SecurityContext? securityContext,
+    });
 
 abstract class ParseClient {
   Future<ParseNetworkResponse> get(

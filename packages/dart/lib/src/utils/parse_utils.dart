@@ -39,33 +39,43 @@ dynamic convertValueToCorrectType(dynamic value) {
 }
 
 /// Sanitises a url
-Uri getSanitisedUri(ParseClient client, String pathToAppend,
-    {Map<String, dynamic>? queryParams, String? query}) {
+Uri getSanitisedUri(
+  ParseClient client,
+  String pathToAppend, {
+  Map<String, dynamic>? queryParams,
+  String? query,
+}) {
   final Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
 
   final Uri url = Uri(
-      scheme: tempUri.scheme,
-      host: tempUri.host,
-      port: tempUri.port,
-      path: '${tempUri.path}$pathToAppend',
-      queryParameters: queryParams,
-      query: query);
+    scheme: tempUri.scheme,
+    host: tempUri.host,
+    port: tempUri.port,
+    path: '${tempUri.path}$pathToAppend',
+    queryParameters: queryParams,
+    query: query,
+  );
 
   return url;
 }
 
 /// Sanitises a url
-Uri getCustomUri(ParseClient client, String path,
-    {Map<String, dynamic>? queryParams, String? query}) {
+Uri getCustomUri(
+  ParseClient client,
+  String path, {
+  Map<String, dynamic>? queryParams,
+  String? query,
+}) {
   final Uri tempUri = Uri.parse(ParseCoreData().serverUrl);
 
   final Uri url = Uri(
-      scheme: tempUri.scheme,
-      host: tempUri.host,
-      port: tempUri.port,
-      path: path,
-      queryParameters: queryParams,
-      query: query);
+    scheme: tempUri.scheme,
+    host: tempUri.host,
+    port: tempUri.port,
+    path: path,
+    queryParameters: queryParams,
+    query: query,
+  );
 
   return url;
 }
@@ -81,21 +91,33 @@ String removeTrailingSlash(String serverUrl) {
 }
 
 Future<ParseResponse> batchRequest(
-    List<dynamic> requests, List<ParseObject> objects,
-    {ParseClient? client, bool? debug}) async {
+  List<dynamic> requests,
+  List<ParseObject> objects, {
+  ParseClient? client,
+  bool? debug,
+}) async {
   debug = isDebugEnabled(objectLevelDebug: debug);
-  client = client ??
+  client =
+      client ??
       ParseCoreData().clientCreator(
-          sendSessionId: ParseCoreData().autoSendSessionId,
-          securityContext: ParseCoreData().securityContext);
+        sendSessionId: ParseCoreData().autoSendSessionId,
+        securityContext: ParseCoreData().securityContext,
+      );
   try {
     final Uri url = getSanitisedUri(client, '/batch');
     final String body = json.encode(<String, dynamic>{'requests': requests});
-    final ParseNetworkResponse result =
-        await client.post(url.toString(), data: body);
+    final ParseNetworkResponse result = await client.post(
+      url.toString(),
+      data: body,
+    );
 
     return handleResponse<ParseObject>(
-        objects, result, ParseApiRQ.batch, debug, 'parse_utils');
+      objects,
+      result,
+      ParseApiRQ.batch,
+      debug,
+      'parse_utils',
+    );
   } on Exception catch (e) {
     return handleException(e, ParseApiRQ.batch, debug, 'parse_utils');
   }
@@ -111,17 +133,12 @@ List removeDuplicateParseObjectByObjectId(Iterable iterable) {
   final foldedGroupedByObjectId = list
       .whereType<ParseObject>()
       .where((e) => e.objectId != null)
-      .groupFoldBy(
-        (e) => e.objectId!,
-        (previous, element) => element,
-      );
+      .groupFoldBy((e) => e.objectId!, (previous, element) => element);
 
-  list.removeWhere(
-    (e) {
-      return e is ParseObject &&
-          foldedGroupedByObjectId.keys.contains(e.objectId);
-    },
-  );
+  list.removeWhere((e) {
+    return e is ParseObject &&
+        foldedGroupedByObjectId.keys.contains(e.objectId);
+  });
 
   list.addAll(foldedGroupedByObjectId.values);
 
@@ -141,8 +158,9 @@ Future<bool> checkObjectsExistForEventually() async {
     }
   }
 
-  List<String>? listDeletes =
-      await coreStore.getStringList(keyParseStoreDeletes);
+  List<String>? listDeletes = await coreStore.getStringList(
+    keyParseStoreDeletes,
+  );
 
   if (listDeletes != null) {
     if (listDeletes.isNotEmpty) {

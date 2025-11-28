@@ -172,7 +172,8 @@ class Parse {
   }) async {
     final bool debugLocal = isDebugEnabled(objectLevelDebug: debug);
 
-    final ParseClient clientLocal = client ??
+    final ParseClient clientLocal =
+        client ??
         ParseCoreData().clientCreator(
           sendSessionId:
               sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
