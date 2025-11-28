@@ -1,3 +1,15 @@
+# [9.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.2...dart-9.0.0) (2025-11-28)
+
+
+### Features
+
+* Remove support for expired Dart and Flutter versions ([#1052](https://github.com/parse-community/Parse-SDK-Flutter/issues/1052)) ([dbeb5cb](https://github.com/parse-community/Parse-SDK-Flutter/commit/dbeb5cbdb7e14c6fac5cf51a90addb0872ca88f2))
+
+
+### BREAKING CHANGES
+
+* This release removes support for Dart 3.2 - 3.9 and Flutter 3.16 - 3.37. These versions exceeded their 6-month support window after the next significant version release. The minimum required versions are now Dart 3.10 and Flutter 3.38. ([dbeb5cb](dbeb5cb))
+
 ## [8.0.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.1...dart-8.0.2) (2025-11-28)
 
 ### Bug Fixes
