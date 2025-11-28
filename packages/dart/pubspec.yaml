@@ -35,7 +35,7 @@ dependencies:
   meta: ^1.16.0
   path: ^1.9.0
   mime: ^1.0.0
-  timezone: ^0.9.4
+  timezone: ">=0.9.4 <0.11.0"
   universal_io: ^2.2.2
   xxtea: ^2.1.0
   collection: ^1.18.0
