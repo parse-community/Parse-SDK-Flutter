@@ -7,13 +7,50 @@
 name: release-automated
 on:
   push:
+    branches:
+      - master
+      - next-major
     tags:
       - "dart-[0-9]+.[0-9]+.[0-9]+*"
       - "flutter-[0-9]+.[0-9]+.[0-9]+*"
 env:
-  package: ${{ startsWith(github.ref_name, 'dart') && 'dart' || 'flutter' }}
+  package: ${{ startsWith(github.ref_name, 'dart-') && 'dart' || startsWith(github.ref_name, 'flutter-') && 'flutter' || '' }}
 jobs:
+  # Semantic Release job - runs on branch pushes to create tags and update changelogs
+  semantic-release:
+    if: github.event_name == 'push' && github.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # Required for creating tags and commits
+      issues: write # Required for commenting on issues
+      pull-requests: write # Required for commenting on PRs
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Required for semantic-release
+          persist-credentials: true
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run semantic-release for dart package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PKG_NAME: dart
+        run: npx semantic-release
+      - name: Run semantic-release for flutter package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PKG_NAME: flutter
+        run: npx semantic-release
+
+  # Publishing job - runs when a tag is pushed (created by semantic-release)
   release:
+    if: github.event_name == 'push' && github.ref_type == 'tag'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
