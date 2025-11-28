@@ -27,18 +27,27 @@ class ParseCloudFunction extends ParseObject {
   /// Executes a cloud function
   ///
   /// To add the parameters, create an object and call [set](value to set)
-  Future<ParseResponse> execute(
-      {Map<String, dynamic>? parameters, Map<String, String>? headers}) async {
+  Future<ParseResponse> execute({
+    Map<String, dynamic>? parameters,
+    Map<String, String>? headers,
+  }) async {
     final String uri = '${ParseCoreData().serverUrl}$_path';
     if (parameters != null) {
       _setObjectData(parameters);
     }
     try {
-      final ParseNetworkResponse result = await _client.post(uri,
-          options: ParseNetworkOptions(headers: headers),
-          data: json.encode(_getObjectData()));
+      final ParseNetworkResponse result = await _client.post(
+        uri,
+        options: ParseNetworkOptions(headers: headers),
+        data: json.encode(_getObjectData()),
+      );
       return handleResponse<ParseCloudFunction>(
-          this, result, ParseApiRQ.execute, _debug, parseClassName);
+        this,
+        result,
+        ParseApiRQ.execute,
+        _debug,
+        parseClassName,
+      );
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.execute, _debug, parseClassName);
     }
@@ -47,21 +56,34 @@ class ParseCloudFunction extends ParseObject {
   /// Executes a cloud function that returns a ParseObject type
   ///
   /// To add the parameters, create an object and call [set](value to set)
-  Future<ParseResponse> executeObjectFunction<T extends ParseObject>(
-      {Map<String, dynamic>? parameters, Map<String, String>? headers}) async {
+  Future<ParseResponse> executeObjectFunction<T extends ParseObject>({
+    Map<String, dynamic>? parameters,
+    Map<String, String>? headers,
+  }) async {
     final String uri = '${ParseCoreData().serverUrl}$_path';
     if (parameters != null) {
       _setObjectData(parameters);
     }
     try {
-      final ParseNetworkResponse result = await _client.post(uri,
-          options: ParseNetworkOptions(headers: headers),
-          data: json.encode(_getObjectData()));
-      return handleResponse<T>(this, result,
-          ParseApiRQ.executeObjectionFunction, _debug, parseClassName);
+      final ParseNetworkResponse result = await _client.post(
+        uri,
+        options: ParseNetworkOptions(headers: headers),
+        data: json.encode(_getObjectData()),
+      );
+      return handleResponse<T>(
+        this,
+        result,
+        ParseApiRQ.executeObjectionFunction,
+        _debug,
+        parseClassName,
+      );
     } on Exception catch (e) {
       return handleException(
-          e, ParseApiRQ.executeObjectionFunction, _debug, parseClassName);
+        e,
+        ParseApiRQ.executeObjectionFunction,
+        _debug,
+        parseClassName,
+      );
     }
   }
 }

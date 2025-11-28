@@ -9,7 +9,7 @@ enum ParseConnectivityResult {
   mobile,
 
   /// None: Device not connected to any network
-  none
+  none,
 }
 
 abstract class ParseConnectivityProvider {

@@ -2,11 +2,12 @@ part of '../../parse_server_sdk.dart';
 
 /// ParseException is used in [ParseResult] to inform the user of the exception
 class ParseError {
-  ParseError(
-      {this.code = otherCause,
-      this.message = 'OtherCause',
-      this.exception,
-      bool debug = false}) {
+  ParseError({
+    this.code = otherCause,
+    this.message = 'OtherCause',
+    this.exception,
+    bool debug = false,
+  }) {
     type = _exceptions[code];
     if (debug) {
       print(toString());

@@ -112,7 +112,8 @@ abstract class _ParseOperation<T> implements _Valuable<T> {
     }
 
     throw ParseOperationException(
-        'operation ${newValue.runtimeType} not implemented');
+      'operation ${newValue.runtimeType} not implemented',
+    );
   }
 
   static _ParseNumber _handelNumOperation(
@@ -128,8 +129,9 @@ abstract class _ParseOperation<T> implements _Valuable<T> {
     }
 
     throw ParseOperationException(
-        'wrong key, unable to preform numeric operation on'
-        ' the previous value: ${previousValue.runtimeType}');
+      'wrong key, unable to preform numeric operation on'
+      ' the previous value: ${previousValue.runtimeType}',
+    );
   }
 
   static _ParseArray _handelArrayOperation(
@@ -145,8 +147,9 @@ abstract class _ParseOperation<T> implements _Valuable<T> {
     }
 
     throw ParseOperationException(
-        'wrong key, unable to preform Array operation on'
-        ' the previous value: ${previousValue.runtimeType}');
+      'wrong key, unable to preform Array operation on'
+      ' the previous value: ${previousValue.runtimeType}',
+    );
   }
 
   static _ParseRelation _handelRelationOperation(
@@ -160,13 +163,16 @@ abstract class _ParseOperation<T> implements _Valuable<T> {
     }
 
     if (previousValue == null) {
-      return _ParseRelation(parent: parent, key: key)
-          .preformRelationOperation(relationOperation);
+      return _ParseRelation(
+        parent: parent,
+        key: key,
+      ).preformRelationOperation(relationOperation);
     }
 
     throw ParseOperationException(
-        'wrong key, unable to preform Relation operation on'
-        ' the previous value: ${previousValue.runtimeType}');
+      'wrong key, unable to preform Relation operation on'
+      ' the previous value: ${previousValue.runtimeType}',
+    );
   }
 
   /// Returns the estimated value of this operation.
@@ -234,8 +240,9 @@ abstract class _ParseRelationOperation
   }
 
   static _ParseRelationOperation? fromFullJson(Map<String, dynamic> json) {
-    final Set<ParseObject> objects =
-        Set.from(parseDecode(json['objects']) ?? {});
+    final Set<ParseObject> objects = Set.from(
+      parseDecode(json['objects']) ?? {},
+    );
 
     final Set<ParseObject>? objectsForAPIRequest =
         json['valueForAPIRequest'] == null
@@ -271,7 +278,7 @@ abstract class _ParseRelationOperation
     }
     return {
       '__op': operationName,
-      'objects': parseEncode(valueForApiRequest, full: full)
+      'objects': parseEncode(valueForApiRequest, full: full),
     };
   }
 }
@@ -287,7 +294,7 @@ abstract class _ParseNumberOperation extends _ParseOperation<num> {
       return {
         '__op': operationName,
         'amount': valueForApiRequest,
-        'estimatedValue': value
+        'estimatedValue': value,
       };
     }
 

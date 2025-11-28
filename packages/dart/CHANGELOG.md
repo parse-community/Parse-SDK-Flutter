@@ -1,3 +1,9 @@
+## [8.0.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.1...dart-8.0.2) (2025-11-28)
+
+### Bug Fixes
+
+* `ParseXFile` uploads file with content-type `application/octet-stream` if not explicitly set ([#1048](https://github.com/parse-community/Parse-SDK-Flutter/pull/1048))
+
 ## [8.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.0...dart-8.0.1) (2025-11-22)
 
 ### Bug Fixes
