@@ -1,0 +1,17 @@
+{
+  "name": "parse-sdk-flutter",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/parse-community/Parse-SDK-Flutter.git"
+  },
+  "devDependencies": {
+    "semantic-release": "19.0.3",
+    "@semantic-release/changelog": "6.0.0",
+    "@semantic-release/commit-analyzer": "9.0.2",
+    "@semantic-release/exec": "6.0.3",
+    "@semantic-release/git": "10.0.1",
+    "@semantic-release/release-notes-generator": "10.0.3",
+    "semantic-release-monorepo": "7.0.5"
+  }
+}
