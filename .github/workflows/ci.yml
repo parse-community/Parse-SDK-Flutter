@@ -147,10 +147,10 @@ jobs:
           files: packages/flutter/coverage/lcov-full.info
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
-  semantic-release-dry-run:
+  auto-release-dry-run:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    name: Semantic Release Dry Run
+    name: Auto-Release Dry Run
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
