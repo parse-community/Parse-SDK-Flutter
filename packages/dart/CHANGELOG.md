@@ -1,3 +1,10 @@
+# [9.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.0.0...dart-9.1.0) (2025-11-28)
+
+
+### Features
+
+* Bump timezone from 0.9.4 to 0.10.1 in /packages/dart ([#1063](https://github.com/parse-community/Parse-SDK-Flutter/issues/1063)) ([d3f2333](https://github.com/parse-community/Parse-SDK-Flutter/commit/d3f23338d5c8ca1e0239656814ac84818741f39d))
+
 # [9.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.2...dart-9.0.0) (2025-11-28)
 
 
