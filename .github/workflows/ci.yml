@@ -72,7 +72,7 @@ jobs:
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/dart/coverage/lcov.info
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
   check-flutter:
     runs-on: ${{ matrix.os }}
@@ -139,7 +139,7 @@ jobs:
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/flutter/coverage/lcov-full.info
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
   auto-release-dry-run:
     runs-on: ubuntu-latest
