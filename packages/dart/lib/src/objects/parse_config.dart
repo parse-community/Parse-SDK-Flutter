@@ -3,12 +3,12 @@ part of '../../parse_server_sdk.dart';
 class ParseConfig extends ParseObject {
   /// Creates an instance of ParseConfig so that you can grab all configs from the server
   ParseConfig({bool? debug, ParseClient? client, bool? autoSendSessionId})
-      : super(
-          'config',
-          debug: debug,
-          client: client,
-          autoSendSessionId: autoSendSessionId,
-        );
+    : super(
+        'config',
+        debug: debug,
+        client: client,
+        autoSendSessionId: autoSendSessionId,
+      );
 
   /// Gets all configs from the server
   Future<ParseResponse> getConfigs() async {

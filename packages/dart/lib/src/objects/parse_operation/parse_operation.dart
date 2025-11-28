@@ -246,8 +246,8 @@ abstract class _ParseRelationOperation
 
     final Set<ParseObject>? objectsForAPIRequest =
         json['valueForAPIRequest'] == null
-            ? null
-            : Set.from(parseDecode(json['valueForAPIRequest']));
+        ? null
+        : Set.from(parseDecode(json['valueForAPIRequest']));
 
     final _ParseRelationOperation relationOperation;
     switch (json['__op']) {

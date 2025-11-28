@@ -138,10 +138,10 @@ class _ParseHTTPClient extends http.BaseClient {
   _ParseHTTPClient({
     bool sendSessionId = false,
     SecurityContext? securityContext,
-  })  : _sendSessionId = sendSessionId,
-        _client = securityContext != null
-            ? getClient(securityContext)
-            : http.Client();
+  }) : _sendSessionId = sendSessionId,
+       _client = securityContext != null
+           ? getClient(securityContext)
+           : http.Client();
 
   final http.Client _client;
   final bool _sendSessionId;

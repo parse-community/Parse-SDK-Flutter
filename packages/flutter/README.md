@@ -20,6 +20,8 @@ This library gives you access to the powerful Parse Server backend from your Flu
 ---
 
 - [Compatibility](#compatibility)
+  - [Currently Supported Versions](#currently-supported-versions)
+  - [Handling Version Conflicts](#handling-version-conflicts)
 - [Getting Started](#getting-started)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
@@ -28,7 +30,15 @@ This library gives you access to the powerful Parse Server backend from your Flu
 
 ## Compatibility
 
-The Parse Flutter SDK is continuously tested with the most recent release of the Flutter framework to ensure compatibility. To give developers time to upgrade their app to a newer Flutter framework, previous Flutter framework releases are supported for at least 1 year after the [release date](https://docs.flutter.dev/release/archive?tab=linux) of the next higher significant version. The Parse Flutter SDK depends on the Parse Dart SDK which may require a higher Dart framework version than the Flutter framework version, in which case the specific Flutter framework version cannot be supported.
+The Parse Flutter SDK is continuously tested with the most recent release of the Flutter framework to ensure compatibility. Previous Flutter framework releases are supported for **6 months** after the [release date](https://docs.flutter.dev/release/archive?tab=linux) of the next higher significant version (major or minor).
+
+> [!Important]
+> The Parse Flutter SDK depends on the Parse Dart SDK which may require a higher Dart framework version than the Flutter framework version, in which case the specific Flutter framework version cannot be supported. Check both SDK compatibility tables.
+
+> [!Note]
+> Support windows are calculated from official Flutter release dates. When a version's support period expires, it will be dropped in the next Parse SDK major release without advance notice. For full details, see [VERSIONING_POLICY.md](../../VERSIONING_POLICY.md).
+
+### Currently Supported Versions
 
 | Version      | Latest Version | End of Support | Compatible |
 |--------------|----------------|----------------|------------|
@@ -36,6 +46,18 @@ The Parse Flutter SDK is continuously tested with the most recent release of the
 | Flutter 3.19 | 3.19.6         | Apr 2025       | ✅ Yes      |
 | Flutter 3.22 | 3.22.3         | Jul 2025       | ✅ Yes      |
 | Flutter 3.24 | 3.24.3         | Sep 2025       | ✅ Yes      |
+
+### Handling Version Conflicts
+
+If you encounter version conflicts with the Parse SDK:
+
+1. Check if a newer Parse Flutter SDK version resolves your conflict.
+2. Review your dependencies by running `flutter pub outdated` to see available updates.
+3. Check [Parse Dart SDK compatibility](../dart/README.md#compatibility).
+4. Check [Migration Guides](../../MIGRATION_GUIDES.md) for common scenarios.
+5. [Create an issue](https://github.com/parse-community/Parse-SDK-Flutter/issues) with your full dependency tree.
+
+For detailed troubleshooting, see our [Version Conflict Guide](../../MIGRATION_GUIDES.md#handling-version-conflicts).
 
 ## Getting Started
 

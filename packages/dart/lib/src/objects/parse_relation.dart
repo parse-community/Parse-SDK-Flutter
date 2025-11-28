@@ -243,8 +243,8 @@ class _ParseRelation<T extends ParseObject>
   @override
   void onSaving() {
     _lastPreformedOperationBeforeSaving = lastPreformedOperation;
-    _valueForApiRequestBeforeSaving =
-        lastPreformedOperation?.valueForApiRequest.toList();
+    _valueForApiRequestBeforeSaving = lastPreformedOperation?.valueForApiRequest
+        .toList();
   }
 
   @override

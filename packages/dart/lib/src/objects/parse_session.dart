@@ -2,7 +2,7 @@ part of '../../parse_server_sdk.dart';
 
 class ParseSession extends ParseObject implements ParseCloneable {
   ParseSession({bool? debug, ParseClient? client})
-      : super(keyClassSession, client: client, debug: debug);
+    : super(keyClassSession, client: client, debug: debug);
 
   @override
   ParseSession clone(Map<String, dynamic> map) {

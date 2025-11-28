@@ -10,11 +10,11 @@ class ParseCloudFunction extends ParseObject {
     ParseClient? client,
     bool? autoSendSessionId,
   }) : super(
-          functionName,
-          client: client,
-          autoSendSessionId: autoSendSessionId,
-          debug: debug,
-        ) {
+         functionName,
+         client: client,
+         autoSendSessionId: autoSendSessionId,
+         debug: debug,
+       ) {
     _path = '/functions/$functionName';
   }
 
