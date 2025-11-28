@@ -41,11 +41,7 @@ class CoreStoreDirectory {
     final appDocDirPath =
         (await path_provider.getApplicationDocumentsDirectory()).path;
 
-    final databaseFilePath = path.join(
-      appDocDirPath,
-      'parse',
-      'parse.db',
-    );
+    final databaseFilePath = path.join(appDocDirPath, 'parse', 'parse.db');
 
     final dbFile = File(databaseFilePath);
 
