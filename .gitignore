@@ -123,3 +123,6 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 
 /node_modules
+
+# AI agents
+/.claude
