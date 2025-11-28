@@ -147,6 +147,31 @@ jobs:
           files: packages/flutter/coverage/lcov-full.info
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
+  semantic-release-dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    name: Semantic Release Dry Run
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for semantic-release to analyze commit history
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm ci
+      - name: Dry run semantic-release for dart package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PKG_NAME: dart
+        run: npx semantic-release --dry-run
+      - name: Dry run semantic-release for flutter package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PKG_NAME: flutter
+        run: npx semantic-release --dry-run
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
