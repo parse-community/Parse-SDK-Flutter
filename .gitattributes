@@ -1,0 +1,15 @@
+# Auto normalize line endings for all text files
+* text=auto
+
+# Dart files
+*.dart text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+
+# Scripts
+*.sh text eol=lf
+
+# Generated mock files should also use LF
+*.mocks.dart text eol=lf
