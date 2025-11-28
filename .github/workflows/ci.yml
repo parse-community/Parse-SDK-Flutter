@@ -47,10 +47,13 @@ jobs:
         run: (cd packages/dart && dart run build_runner build --delete-conflicting-outputs)
       - name: Normalize line endings in generated mock files (Windows)
         if: matrix.os == 'windows-latest'
-        shell: bash
+        shell: pwsh
         run: |
-          find packages/dart/test -name "*.mocks.dart" -type f -exec dos2unix {} \; 2>/dev/null || \
-          find packages/dart/test -name "*.mocks.dart" -type f -exec sed -i 's/\r$//' {} \;
+          Get-ChildItem -Path packages/dart/test -Filter *.mocks.dart -Recurse | ForEach-Object {
+            $content = Get-Content $_.FullName -Raw
+            $content = $content -replace "`r`n", "`n"
+            [System.IO.File]::WriteAllText($_.FullName, $content)
+          }
       - name: Analyze code
         run: dart analyze packages/dart --fatal-infos
       - name: Lint
