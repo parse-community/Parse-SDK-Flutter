@@ -67,8 +67,9 @@ class ParseCoreData {
     _instance.clientCreator = clientCreator ??
         (({required bool sendSessionId, SecurityContext? securityContext}) =>
             ParseHTTPClient(
-                sendSessionId: sendSessionId,
-                securityContext: securityContext));
+              sendSessionId: sendSessionId,
+              securityContext: securityContext,
+            ));
   }
 
   String applicationId;
@@ -93,7 +94,9 @@ class ParseCoreData {
   late ParseClientCreator clientCreator;
 
   void registerSubClass(
-      String className, ParseObjectConstructor objectConstructor) {
+    String className,
+    ParseObjectConstructor objectConstructor,
+  ) {
     _subClassHandler.registerSubClass(className, objectConstructor);
   }
 
@@ -110,10 +113,21 @@ class ParseCoreData {
   }
 
   ParseUser createParseUser(
-      String? username, String? password, String? emailAddress,
-      {String? sessionToken, bool? debug, ParseClient? client}) {
-    return _subClassHandler.createParseUser(username, password, emailAddress,
-        sessionToken: sessionToken, debug: debug, client: client);
+    String? username,
+    String? password,
+    String? emailAddress, {
+    String? sessionToken,
+    bool? debug,
+    ParseClient? client,
+  }) {
+    return _subClassHandler.createParseUser(
+      username,
+      password,
+      emailAddress,
+      sessionToken: sessionToken,
+      debug: debug,
+      client: client,
+    );
   }
 
   ParseFileBase createFile({String? url, String? name}) =>

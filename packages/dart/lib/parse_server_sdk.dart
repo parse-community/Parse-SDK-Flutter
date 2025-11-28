@@ -165,22 +165,27 @@ class Parse {
 
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
-  Future<ParseResponse> healthCheck(
-      {bool? debug, ParseClient? client, bool? sendSessionIdByDefault}) async {
+  Future<ParseResponse> healthCheck({
+    bool? debug,
+    ParseClient? client,
+    bool? sendSessionIdByDefault,
+  }) async {
     final bool debugLocal = isDebugEnabled(objectLevelDebug: debug);
 
     final ParseClient clientLocal = client ??
         ParseCoreData().clientCreator(
-            sendSessionId:
-                sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+          sendSessionId:
+              sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
+          securityContext: ParseCoreData().securityContext,
+        );
 
     const String className = 'parseBase';
     const ParseApiRQ type = ParseApiRQ.healthCheck;
 
     try {
-      final ParseNetworkResponse response = await clientLocal
-          .get('${ParseCoreData().serverUrl}$keyEndPointHealth');
+      final ParseNetworkResponse response = await clientLocal.get(
+        '${ParseCoreData().serverUrl}$keyEndPointHealth',
+      );
       return handleResponse<Parse>(null, response, type, debugLocal, className);
     } on Exception catch (e) {
       return handleException(e, type, debugLocal, className);
