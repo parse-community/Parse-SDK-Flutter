@@ -1,9 +1,7 @@
 part of '../../parse_server_sdk.dart';
 
 class ParseResponse {
-  ParseResponse({
-    this.error,
-  });
+  ParseResponse({this.error});
 
   bool success = false;
   int statusCode = -1;

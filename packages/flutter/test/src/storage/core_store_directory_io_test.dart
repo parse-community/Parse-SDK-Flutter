@@ -59,8 +59,7 @@ void main() {
         deleteLibraryDir();
       });
 
-      test(
-          'on ios, should copy the db file if exists from the old dir path '
+      test('on ios, should copy the db file if exists from the old dir path '
           '(applicationDocumentDirectory) to the new dir path (LibraryDirectory)'
           ' and the old db file should be deleted from the old dir path '
           'then return the new dir path (LibraryDirectory)', () async {
@@ -81,11 +80,7 @@ void main() {
               'dbDirectory should be the new db dir path for iOS (LibraryDir)',
         );
 
-        final newDBFilePath = path.join(
-          dbDirectory,
-          'parse',
-          'parse.db',
-        );
+        final newDBFilePath = path.join(dbDirectory, 'parse', 'parse.db');
         final newDBFile = File(newDBFilePath);
         expect(newDBFile.existsSync(), isTrue);
         expect(
@@ -96,76 +91,80 @@ void main() {
       });
 
       test(
-          'on ios, if there is no db file in the old dir (applicationDocumentDirectory)'
-          ' and there is db file in the new dir (LibraryDirectory) '
-          'the (copy) migration should not work and so the getDatabaseDirectory()'
-          'should return the new db dir path (LibraryDirectory)', () async {
-        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        'on ios, if there is no db file in the old dir (applicationDocumentDirectory)'
+        ' and there is db file in the new dir (LibraryDirectory) '
+        'the (copy) migration should not work and so the getDatabaseDirectory()'
+        'should return the new db dir path (LibraryDirectory)',
+        () async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-        final dbFileInNewPath = create1MBParseDBFileInLibraryPath();
-        final dbFileSizeBefore = dbFileInNewPath.lengthSync();
-        final dbFileLastModifiedBefore = dbFileInNewPath.lastModifiedSync();
-        final dbDirectory = await coreStoreDirectory.getDatabaseDirectory();
-        expect(dbFileInNewPath.existsSync(), isTrue);
-
-        final dbFileSizeAfter = dbFileInNewPath.lengthSync();
-        final dbFileLastModifiedAfter = dbFileInNewPath.lastModifiedSync();
-        expect(
-          dbFileSizeBefore,
-          equals(dbFileSizeAfter),
-          reason: 'the db file should be the same',
-        );
-        expect(
-          dbFileLastModifiedBefore.compareTo(dbFileLastModifiedAfter),
-          equals(0), // 0 if this DateTime [isAtSameMomentAs] [other]
-          reason: 'last modified date should not change',
-        );
-        expect(
-          dbDirectory,
-          equals(libraryPath),
-          reason:
-              'dbDirectory should be the new db dir path for iOS (LibraryDir)',
-        );
-      });
-
-      test(
-          'on any platform other than iOS, the copy migration algorithm should '
-          'not run and the db file should and will remain in '
-          '(applicationDocumentDirectory) and getDatabaseDirectory() should '
-          'return (applicationDocumentDirectory) as db directory', () async {
-        final targetPlatforms = TargetPlatform.values.toSet();
-        targetPlatforms.remove(TargetPlatform.iOS);
-
-        final dbFile = create1MBParseDBFileInAppDocDir();
-        final dbFileSizeBefore = dbFile.lengthSync();
-        final dbFileLastModifiedBefore = dbFile.lastModifiedSync();
-
-        for (final platform in targetPlatforms) {
-          debugDefaultTargetPlatformOverride = platform;
-
+          final dbFileInNewPath = create1MBParseDBFileInLibraryPath();
+          final dbFileSizeBefore = dbFileInNewPath.lengthSync();
+          final dbFileLastModifiedBefore = dbFileInNewPath.lastModifiedSync();
           final dbDirectory = await coreStoreDirectory.getDatabaseDirectory();
-          expect(dbFile.existsSync(), isTrue);
+          expect(dbFileInNewPath.existsSync(), isTrue);
 
-          final dbFileSizeAfter = dbFile.lengthSync();
-          final dbFileLastModifiedSyncAfter = dbFile.lastModifiedSync();
+          final dbFileSizeAfter = dbFileInNewPath.lengthSync();
+          final dbFileLastModifiedAfter = dbFileInNewPath.lastModifiedSync();
           expect(
             dbFileSizeBefore,
             equals(dbFileSizeAfter),
             reason: 'the db file should be the same',
           );
           expect(
-            dbFileLastModifiedBefore.compareTo(dbFileLastModifiedSyncAfter),
+            dbFileLastModifiedBefore.compareTo(dbFileLastModifiedAfter),
             equals(0), // 0 if this DateTime [isAtSameMomentAs] [other]
             reason: 'last modified date should not change',
           );
           expect(
             dbDirectory,
-            equals(applicationDocumentsPath),
+            equals(libraryPath),
             reason:
-                'dbDirectory should point to application Documents Directory',
+                'dbDirectory should be the new db dir path for iOS (LibraryDir)',
           );
-        }
-      });
+        },
+      );
+
+      test(
+        'on any platform other than iOS, the copy migration algorithm should '
+        'not run and the db file should and will remain in '
+        '(applicationDocumentDirectory) and getDatabaseDirectory() should '
+        'return (applicationDocumentDirectory) as db directory',
+        () async {
+          final targetPlatforms = TargetPlatform.values.toSet();
+          targetPlatforms.remove(TargetPlatform.iOS);
+
+          final dbFile = create1MBParseDBFileInAppDocDir();
+          final dbFileSizeBefore = dbFile.lengthSync();
+          final dbFileLastModifiedBefore = dbFile.lastModifiedSync();
+
+          for (final platform in targetPlatforms) {
+            debugDefaultTargetPlatformOverride = platform;
+
+            final dbDirectory = await coreStoreDirectory.getDatabaseDirectory();
+            expect(dbFile.existsSync(), isTrue);
+
+            final dbFileSizeAfter = dbFile.lengthSync();
+            final dbFileLastModifiedSyncAfter = dbFile.lastModifiedSync();
+            expect(
+              dbFileSizeBefore,
+              equals(dbFileSizeAfter),
+              reason: 'the db file should be the same',
+            );
+            expect(
+              dbFileLastModifiedBefore.compareTo(dbFileLastModifiedSyncAfter),
+              equals(0), // 0 if this DateTime [isAtSameMomentAs] [other]
+              reason: 'last modified date should not change',
+            );
+            expect(
+              dbDirectory,
+              equals(applicationDocumentsPath),
+              reason:
+                  'dbDirectory should point to application Documents Directory',
+            );
+          }
+        },
+      );
     });
   });
 }
@@ -181,11 +180,7 @@ File create1MBParseDBFileInAppDocDir() {
 }
 
 File create1MBParseDBFileInLibraryPath() {
-  final databaseFilePath = path.join(
-    libraryPath,
-    'parse',
-    'parse.db',
-  );
+  final databaseFilePath = path.join(libraryPath, 'parse', 'parse.db');
 
   return generate1MBFile(databaseFilePath);
 }
@@ -219,8 +214,10 @@ void deleteDirectory(String path) {
 
 const String kTemporaryPath = "temporaryPath";
 final String libraryPath = path.join(path.current, 'library');
-final String applicationDocumentsPath =
-    path.join(path.current, 'applicationDocument');
+final String applicationDocumentsPath = path.join(
+  path.current,
+  'applicationDocument',
+);
 
 class FakePathProviderPlatform extends Fake
     with MockPlatformInterfaceMixin

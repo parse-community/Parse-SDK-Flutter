@@ -32,8 +32,9 @@ class _ParseAddRelationOperation extends _ParseRelationOperation {
 
     value = Set.from(removeDuplicateParseObjectByObjectId(value));
 
-    valueForApiRequest =
-        Set.from(removeDuplicateParseObjectByObjectId(valueForApiRequest));
+    valueForApiRequest = Set.from(
+      removeDuplicateParseObjectByObjectId(valueForApiRequest),
+    );
 
     return this;
   }

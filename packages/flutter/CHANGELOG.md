@@ -1,3 +1,36 @@
+# [10.2.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.1.0...flutter-10.2.0) (2025-11-29)
+
+
+### Features
+
+* Bump web_socket_channel from 2.4.5 to 3.0.3 in /packages/dart ([#1064](https://github.com/parse-community/Parse-SDK-Flutter/issues/1064)) ([5b6aacf](https://github.com/parse-community/Parse-SDK-Flutter/commit/5b6aacf64457ccbf1c121a36204fcb51be6a6682))
+
+# [10.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.0.0...flutter-10.1.0) (2025-11-28)
+
+
+### Features
+
+* Bump timezone from 0.9.4 to 0.10.1 in /packages/dart ([#1063](https://github.com/parse-community/Parse-SDK-Flutter/issues/1063)) ([d3f2333](https://github.com/parse-community/Parse-SDK-Flutter/commit/d3f23338d5c8ca1e0239656814ac84818741f39d))
+
+# [10.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-9.0.0...flutter-10.0.0) (2025-11-28)
+
+
+### Bug Fixes
+
+* `ParseXFile` uploads file with content-type `application/octet-stream` if not explicitly set ([#1048](https://github.com/parse-community/Parse-SDK-Flutter/issues/1048)) ([a47f2a0](https://github.com/parse-community/Parse-SDK-Flutter/commit/a47f2a051fae92c44b974e1fd2f92b593a0139c6))
+* Add support for Dart 3.4, 3.5; remove support for Dart 3.0, 3.1 ([#1016](https://github.com/parse-community/Parse-SDK-Flutter/issues/1016)) ([a3449f4](https://github.com/parse-community/Parse-SDK-Flutter/commit/a3449f4a1c4060f6afea71f50b204cb5e5a37bd2))
+* HTTP client exception not handled properly resulting in incorrectly formatted error ([#1021](https://github.com/parse-community/Parse-SDK-Flutter/issues/1021)) ([4f20640](https://github.com/parse-community/Parse-SDK-Flutter/commit/4f2064096eb623a0af45a5aee60d8bfc0d882604))
+
+### Features
+
+* Add client access via `ParseDioClient.client` and `ParseHTTPClient.client` ([#1025](https://github.com/parse-community/Parse-SDK-Flutter/issues/1025)) ([af14388](https://github.com/parse-community/Parse-SDK-Flutter/commit/af1438820999af9740c1fe4b0a2e8a506e6222cf))
+* Remove support for expired Dart and Flutter versions ([#1052](https://github.com/parse-community/Parse-SDK-Flutter/issues/1052)) ([dbeb5cb](https://github.com/parse-community/Parse-SDK-Flutter/commit/dbeb5cbdb7e14c6fac5cf51a90addb0872ca88f2))
+
+
+### BREAKING CHANGES
+
+* This release removes support for Dart 3.2 - 3.9 and Flutter 3.16 - 3.37. These versions exceeded their 6-month support window after the next significant version release. The minimum required versions are now Dart 3.10 and Flutter 3.38. ([dbeb5cb](dbeb5cb))
+
 ## [9.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-8.0.0...flutter-9.0.0) (2024-10-16)
 
 ### BREAKING CHANGES

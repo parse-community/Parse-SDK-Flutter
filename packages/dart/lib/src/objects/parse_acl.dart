@@ -20,15 +20,18 @@ class ParseACL {
       <String, _ACLPermissions>{};
 
   /// Helper for setting stuff
-  void _setPermissionsIfNonEmpty(
-      {required String userId,
-      required bool readPermission,
-      required bool writePermission}) {
+  void _setPermissionsIfNonEmpty({
+    required String userId,
+    required bool readPermission,
+    required bool writePermission,
+  }) {
     if (!(readPermission || writePermission)) {
       _permissionsById.remove(userId);
     } else {
-      _permissionsById[userId] =
-          _ACLPermissions(readPermission, writePermission);
+      _permissionsById[userId] = _ACLPermissions(
+        readPermission,
+        writePermission,
+      );
     }
   }
 
@@ -56,9 +59,10 @@ class ParseACL {
   void setReadAccess({required String userId, bool allowed = true}) {
     final bool writePermission = getWriteAccess(userId: userId);
     _setPermissionsIfNonEmpty(
-        userId: userId,
-        readPermission: allowed,
-        writePermission: writePermission);
+      userId: userId,
+      readPermission: allowed,
+      writePermission: writePermission,
+    );
   }
 
   /// Get whether the given user id is *explicitly* allowed to read this object. Even if this returns
@@ -72,9 +76,10 @@ class ParseACL {
   void setWriteAccess({required String userId, bool allowed = true}) {
     final bool readPermission = getReadAccess(userId: userId);
     _setPermissionsIfNonEmpty(
-        userId: userId,
-        readPermission: readPermission,
-        writePermission: allowed);
+      userId: userId,
+      readPermission: readPermission,
+      writePermission: allowed,
+    );
   }
 
   ///Get whether the given user id is *explicitly* allowed to write this object. Even if this
@@ -122,7 +127,7 @@ class _ACLPermissions {
   bool get writePermission => _writePermission;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        _keyReadPermission: _readPermission,
-        _keyWritePermission: _writePermission
-      };
+    _keyReadPermission: _readPermission,
+    _keyWritePermission: _writePermission,
+  };
 }
