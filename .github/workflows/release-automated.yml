@@ -16,7 +16,7 @@ on:
 env:
   package: ${{ startsWith(github.ref_name, 'dart-') && 'dart' || startsWith(github.ref_name, 'flutter-') && 'flutter' || '' }}
 jobs:
-  semantic-release:
+  release:
     if: github.event_name == 'push' && github.ref_type == 'branch'
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -49,7 +49,7 @@ jobs:
           GH_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PKG_NAME: flutter
-  release:
+  pub-publish:
     if: github.event_name == 'push' && github.ref_type == 'tag'
     runs-on: ubuntu-latest
     timeout-minutes: 10
