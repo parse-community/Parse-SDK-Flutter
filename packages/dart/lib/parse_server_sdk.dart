@@ -1,5 +1,4 @@
 // ignore_for_file: unnecessary_import
-library flutter_parse_sdk;
 
 import 'dart:async';
 import 'dart:convert';
