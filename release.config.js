@@ -83,6 +83,11 @@ async function config() {
           noteKeywords: [ 'BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING' ],
         },
       }],
+      ['@semantic-release/exec', {
+        verifyConditionsCmd: packageName !== 'root'
+          ? `bash -c 'LAST_TAG=$(git describe --tags --abbrev=0 --match="${packageName}-*" 2>/dev/null || echo ""); if [ -n "$LAST_TAG" ]; then git diff --name-only $LAST_TAG HEAD | grep -q "^packages/${packageName}/"; else git log --all --name-only --pretty=format: | grep -q "^packages/${packageName}/"; fi || (echo "No changes in packages/${packageName}, skipping release" && exit 1)'`
+          : 'echo "Root package always runs"',
+      }],
       ['@semantic-release/release-notes-generator', {
         preset: 'angular',
         parserOpts: {
