@@ -34,7 +34,7 @@ dependencies:
     git:
       url: https://github.com/pastordee/Parse-SDK-Flutter.git 
       path: packages/dart
-      ref: pc_server 
+      ref: pc_server_ready 
 
   
 
@@ -49,7 +49,7 @@ dependencies:
   # Utils
   path_provider: ^2.1.4
   package_info_plus: ^8.3.1
-  path: ^1.9.1
+  path: ^1.9.1 
 
 dev_dependencies:
   flutter_test:
