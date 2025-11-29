@@ -28,17 +28,21 @@ class _ParseRemoveRelationOperation extends _ParseRelationOperation {
 
     valueForApiRequest.addAll(value);
 
-    final parseObjectToRemoveByIds =
-        value.where((e) => e.objectId != null).map((e) => e.objectId!);
+    final parseObjectToRemoveByIds = value
+        .where((e) => e.objectId != null)
+        .map((e) => e.objectId!);
 
     value = previousValue
-      ..removeWhere((e) =>
-          value.contains(e) || parseObjectToRemoveByIds.contains(e.objectId));
+      ..removeWhere(
+        (e) =>
+            value.contains(e) || parseObjectToRemoveByIds.contains(e.objectId),
+      );
 
     value = Set.from(removeDuplicateParseObjectByObjectId(value));
 
-    valueForApiRequest =
-        Set.from(removeDuplicateParseObjectByObjectId(valueForApiRequest));
+    valueForApiRequest = Set.from(
+      removeDuplicateParseObjectByObjectId(valueForApiRequest),
+    );
 
     return this;
   }

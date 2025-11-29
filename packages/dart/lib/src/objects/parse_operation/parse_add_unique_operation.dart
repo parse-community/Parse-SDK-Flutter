@@ -44,8 +44,9 @@ class _ParseAddUniqueOperation extends _ParseArrayOperation {
 
     value = removeDuplicateParseObjectByObjectId(value);
 
-    valueForApiRequest =
-        removeDuplicateParseObjectByObjectId(valueForApiRequest);
+    valueForApiRequest = removeDuplicateParseObjectByObjectId(
+      valueForApiRequest,
+    );
 
     return this;
   }

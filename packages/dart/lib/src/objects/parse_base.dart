@@ -270,8 +270,9 @@ abstract class ParseBase {
 
       if (result is _ParseRelation) {
         return (result
-          ..parent = (this as ParseObject)
-          ..key = key) as T?;
+              ..parent = (this as ParseObject)
+              ..key = key)
+            as T?;
       }
 
       return result as T?;
@@ -317,7 +318,7 @@ abstract class ParseBase {
   Map<String, dynamic> toPointer() => encodeObject(parseClassName, objectId!);
 
   /// Set the [ParseACL] governing this object.
-  void setACL<ParseACL>(ParseACL acl) {
+  void setACL<T>(T acl) {
     set(keyVarAcl, acl);
   }
 

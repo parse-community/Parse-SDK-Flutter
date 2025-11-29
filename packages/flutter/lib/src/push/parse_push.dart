@@ -24,10 +24,9 @@ class ParsePush {
     _parseNotification = parseNotification;
 
     // Get Google Cloud Messaging (GCM) token
-    firebaseMessaging
-        .getToken(vapidKey: vapidKey)
-        .asStream()
-        .listen((event) async {
+    firebaseMessaging.getToken(vapidKey: vapidKey).asStream().listen((
+      event,
+    ) async {
       // Set token in installation
       sdk.ParseInstallation parseInstallation =
           await sdk.ParseInstallation.currentInstallation();
@@ -55,8 +54,12 @@ class ParsePush {
   }
 
   /// Processes the incoming push notification message.
-  void _handlePush(String pushId, String timestamp, String channel,
-      Map<String, dynamic>? data) {
+  void _handlePush(
+    String pushId,
+    String timestamp,
+    String channel,
+    Map<String, dynamic>? data,
+  ) {
     if (pushId.isEmpty || timestamp.isEmpty) {
       return;
     }

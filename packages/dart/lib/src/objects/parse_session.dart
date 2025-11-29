@@ -1,14 +1,8 @@
 part of '../../parse_server_sdk.dart';
 
 class ParseSession extends ParseObject implements ParseCloneable {
-  ParseSession({
-    bool? debug,
-    ParseClient? client,
-  }) : super(
-          keyClassSession,
-          client: client,
-          debug: debug,
-        );
+  ParseSession({bool? debug, ParseClient? client})
+    : super(keyClassSession, client: client, debug: debug);
 
   @override
   ParseSession clone(Map<String, dynamic> map) {
@@ -39,7 +33,12 @@ class ParseSession extends ParseObject implements ParseCloneable {
       final ParseNetworkResponse response = await _client.get(url.toString());
 
       return handleResponse<ParseSession>(
-          this, response, ParseApiRQ.logout, _debug, parseClassName);
+        this,
+        response,
+        ParseApiRQ.logout,
+        _debug,
+        parseClassName,
+      );
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.logout, _debug, parseClassName);
     }

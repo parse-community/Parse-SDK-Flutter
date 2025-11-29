@@ -7,16 +7,19 @@ void main() {
 
   test('testBuilder', () async {
     // arrange
-    await Parse().initialize('appId', 'serverUrl',
-        clientKey: 'clientKey',
-        liveQueryUrl: 'liveQueryUrl',
-        appName: 'appName',
-        appPackageName: 'somePackageName',
-        appVersion: 'someAppVersion',
-        masterKey: 'masterKey',
-        sessionId: 'sessionId',
-        fileDirectory: 'someDirectory',
-        debug: true);
+    await Parse().initialize(
+      'appId',
+      'serverUrl',
+      clientKey: 'clientKey',
+      liveQueryUrl: 'liveQueryUrl',
+      appName: 'appName',
+      appPackageName: 'somePackageName',
+      appVersion: 'someAppVersion',
+      masterKey: 'masterKey',
+      sessionId: 'sessionId',
+      fileDirectory: 'someDirectory',
+      debug: true,
+    );
 
     // assert
     expect(ParseCoreData().applicationId, 'appId');

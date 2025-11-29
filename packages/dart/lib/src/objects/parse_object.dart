@@ -28,11 +28,12 @@ class ParseObject extends ParseBase implements ParseCloneable {
     _aggregatepath = '$keyEndPointAggregate$className';
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
-    _client = client ??
+    _client =
+        client ??
         ParseCoreData().clientCreator(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+          sendSessionId: autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+          securityContext: ParseCoreData().securityContext,
+        );
   }
 
   ParseObject.clone(String className) : this(className);
@@ -60,12 +61,20 @@ class ParseObject extends ParseBase implements ParseCloneable {
         query = 'include=${concatenateArray(include)}';
       }
 
-      final Uri url =
-          getSanitisedUri(_client, '$_path/$objectId', query: query);
+      final Uri url = getSanitisedUri(
+        _client,
+        '$_path/$objectId',
+        query: query,
+      );
 
       final ParseNetworkResponse result = await _client.get(url.toString());
       return handleResponse<ParseObject>(
-          this, result, ParseApiRQ.get, _debug, parseClassName);
+        this,
+        result,
+        ParseApiRQ.get,
+        _debug,
+        parseClassName,
+      );
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.get, _debug, parseClassName);
     }
@@ -77,7 +86,12 @@ class ParseObject extends ParseBase implements ParseCloneable {
       final Uri url = getSanitisedUri(_client, _path);
       final ParseNetworkResponse result = await _client.get(url.toString());
       return handleResponse<ParseObject>(
-          this, result, ParseApiRQ.getAll, _debug, parseClassName);
+        this,
+        result,
+        ParseApiRQ.getAll,
+        _debug,
+        parseClassName,
+      );
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.getAll, _debug, parseClassName);
     }
@@ -86,14 +100,15 @@ class ParseObject extends ParseBase implements ParseCloneable {
   /// Creates a new object and saves it online
   ///
   /// Prefer using [save] over [create]
-  Future<ParseResponse> create(
-      {bool allowCustomObjectId = false, dynamic context}) async {
+  Future<ParseResponse> create({
+    bool allowCustomObjectId = false,
+    dynamic context,
+  }) async {
     try {
       final Uri url = getSanitisedUri(_client, _path);
-      final String body = json.encode(toJson(
-        forApiRQ: true,
-        allowCustomObjectId: allowCustomObjectId,
-      ));
+      final String body = json.encode(
+        toJson(forApiRQ: true, allowCustomObjectId: allowCustomObjectId),
+      );
 
       _saveChanges();
 
@@ -102,15 +117,24 @@ class ParseObject extends ParseBase implements ParseCloneable {
       };
 
       if (context != null) {
-        headers
-            .addAll({keyHeaderCloudContext: json.encode(parseEncode(context))});
+        headers.addAll({
+          keyHeaderCloudContext: json.encode(parseEncode(context)),
+        });
       }
 
-      final ParseNetworkResponse result = await _client.post(url.toString(),
-          data: body, options: ParseNetworkOptions(headers: headers));
+      final ParseNetworkResponse result = await _client.post(
+        url.toString(),
+        data: body,
+        options: ParseNetworkOptions(headers: headers),
+      );
 
       final response = handleResponse<ParseObject>(
-          this, result, ParseApiRQ.create, _debug, parseClassName);
+        this,
+        result,
+        ParseApiRQ.create,
+        _debug,
+        parseClassName,
+      );
 
       if (!response.success) {
         _notifyChildrenAboutErrorSaving();
@@ -147,15 +171,24 @@ class ParseObject extends ParseBase implements ParseCloneable {
       };
 
       if (context != null) {
-        headers
-            .addAll({keyHeaderCloudContext: json.encode(parseEncode(context))});
+        headers.addAll({
+          keyHeaderCloudContext: json.encode(parseEncode(context)),
+        });
       }
 
-      final ParseNetworkResponse result = await _client.put(url.toString(),
-          data: body, options: ParseNetworkOptions(headers: headers));
+      final ParseNetworkResponse result = await _client.put(
+        url.toString(),
+        data: body,
+        options: ParseNetworkOptions(headers: headers),
+      );
 
       final response = handleResponse<ParseObject>(
-          this, result, ParseApiRQ.save, _debug, parseClassName);
+        this,
+        result,
+        ParseApiRQ.save,
+        _debug,
+        parseClassName,
+      );
 
       if (!response.success) {
         _notifyChildrenAboutErrorSaving();
@@ -245,7 +278,12 @@ class ParseObject extends ParseBase implements ParseCloneable {
     final Set<ParseObject> uniqueObjects = <ParseObject>{};
     final Set<ParseFileBase> uniqueFiles = <ParseFileBase>{};
     if (!_collectionDirtyChildren(
-        object, uniqueObjects, uniqueFiles, <ParseObject>{}, <ParseObject>{})) {
+      object,
+      uniqueObjects,
+      uniqueFiles,
+      <ParseObject>{},
+      <ParseObject>{},
+    )) {
       final ParseResponse response = ParseResponse();
       return response;
     }
@@ -362,7 +400,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
     final dynamic request = <String, dynamic>{
       'method': method,
       'path': '$parsePath$_path${objectId != null ? '/$objectId' : ''}',
-      'body': toJson(forApiRQ: true)
+      'body': toJson(forApiRQ: true),
     };
     return request;
   }
@@ -406,33 +444,54 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   static bool _collectionDirtyChildren(
-      dynamic object,
-      Set<ParseObject> uniqueObjects,
-      Set<ParseFileBase> uniqueFiles,
-      Set<ParseObject> seen,
-      Set<ParseObject> seenNew) {
+    dynamic object,
+    Set<ParseObject> uniqueObjects,
+    Set<ParseFileBase> uniqueFiles,
+    Set<ParseObject> seen,
+    Set<ParseObject> seenNew,
+  ) {
     if (object is Iterable) {
       for (dynamic child in object) {
         if (!_collectionDirtyChildren(
-            child, uniqueObjects, uniqueFiles, seen, seenNew)) {
+          child,
+          uniqueObjects,
+          uniqueFiles,
+          seen,
+          seenNew,
+        )) {
           return false;
         }
       }
     } else if (object is Map) {
       for (dynamic child in object.values) {
         if (!_collectionDirtyChildren(
-            child, uniqueObjects, uniqueFiles, seen, seenNew)) {
+          child,
+          uniqueObjects,
+          uniqueFiles,
+          seen,
+          seenNew,
+        )) {
           return false;
         }
       }
     } else if (object is _Valuable) {
       if (!_collectionDirtyChildren(
-          object.getValue(), uniqueObjects, uniqueFiles, seen, seenNew)) {
+        object.getValue(),
+        uniqueObjects,
+        uniqueFiles,
+        seen,
+        seenNew,
+      )) {
         return false;
       }
     } else if (object is _ParseRelation) {
-      if (!_collectionDirtyChildren(object.valueForApiRequest(), uniqueObjects,
-          uniqueFiles, seen, seenNew)) {
+      if (!_collectionDirtyChildren(
+        object.valueForApiRequest(),
+        uniqueObjects,
+        uniqueFiles,
+        seen,
+        seenNew,
+      )) {
         return false;
       }
     } else if (object is ParseACL) {
@@ -463,7 +522,12 @@ class ParseObject extends ParseBase implements ParseCloneable {
       seen.add(object);
 
       if (!_collectionDirtyChildren(
-          object._getObjectData(), uniqueObjects, uniqueFiles, seen, seenNew)) {
+        object._getObjectData(),
+        uniqueObjects,
+        uniqueFiles,
+        seen,
+        seenNew,
+      )) {
         return false;
       }
 
@@ -525,8 +589,9 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
 
     throw ParseRelationException(
-        'The key $key is associated with a value ($potentialRelation) '
-        'can not be a relation');
+      'The key $key is associated with a value ($potentialRelation) '
+      'can not be a relation',
+    );
   }
 
   /// Remove every instance of an [element] from an array
@@ -608,11 +673,18 @@ class ParseObject extends ParseBase implements ParseCloneable {
 
       final String body = '{"$key":{"__op":"Delete"}}';
 
-      final ParseNetworkResponse result =
-          await _client.put(url.toString(), data: body);
+      final ParseNetworkResponse result = await _client.put(
+        url.toString(),
+        data: body,
+      );
 
       final ParseResponse response = handleResponse<ParseObject>(
-          this, result, ParseApiRQ.unset, _debug, parseClassName);
+        this,
+        result,
+        ParseApiRQ.unset,
+        _debug,
+        parseClassName,
+      );
 
       if (response.success) {
         return ParseResponse()..success = true;
@@ -633,8 +705,10 @@ class ParseObject extends ParseBase implements ParseCloneable {
   }
 
   /// Can be used to create custom queries
-  Future<ParseResponse> query<T extends ParseObject>(String query,
-      {ProgressCallback? progressCallback}) async {
+  Future<ParseResponse> query<T extends ParseObject>(
+    String query, {
+    ProgressCallback? progressCallback,
+  }) async {
     try {
       final Uri url = getSanitisedUri(_client, _path, query: query);
       final ParseNetworkResponse result = await _client.get(
@@ -642,7 +716,12 @@ class ParseObject extends ParseBase implements ParseCloneable {
         onReceiveProgress: progressCallback,
       );
       return handleResponse<T>(
-          this, result, ParseApiRQ.query, _debug, parseClassName);
+        this,
+        result,
+        ParseApiRQ.query,
+        _debug,
+        parseClassName,
+      );
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.query, _debug, parseClassName);
     }
@@ -653,7 +732,12 @@ class ParseObject extends ParseBase implements ParseCloneable {
       final Uri url = getSanitisedUri(_client, _aggregatepath, query: query);
       final ParseNetworkResponse result = await _client.get(url.toString());
       return handleResponse<T>(
-          this, result, ParseApiRQ.query, _debug, parseClassName);
+        this,
+        result,
+        ParseApiRQ.query,
+        _debug,
+        parseClassName,
+      );
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.query, _debug, parseClassName);
     }
@@ -711,7 +795,12 @@ class ParseObject extends ParseBase implements ParseCloneable {
       final Uri url = getSanitisedUri(_client, '$_path/$id');
       final ParseNetworkResponse result = await _client.delete(url.toString());
       return handleResponse<T>(
-          this, result, ParseApiRQ.delete, _debug, parseClassName);
+        this,
+        result,
+        ParseApiRQ.delete,
+        _debug,
+        parseClassName,
+      );
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.delete, _debug, parseClassName);
     }
@@ -738,45 +827,58 @@ class ParseObject extends ParseBase implements ParseCloneable {
     }
   }
 
-  static Future<void> submitEventually(
-      {ParseClient? client, bool? autoSendSessionId}) async {
+  static Future<void> submitEventually({
+    ParseClient? client,
+    bool? autoSendSessionId,
+  }) async {
     await submitSaveEventually(
-        client: client, autoSendSessionId: autoSendSessionId);
+      client: client,
+      autoSendSessionId: autoSendSessionId,
+    );
     await submitDeleteEventually(
-        client: client, autoSendSessionId: autoSendSessionId);
+      client: client,
+      autoSendSessionId: autoSendSessionId,
+    );
 
     Parse.objectsExistForEventually = await checkObjectsExistForEventually();
   }
 
-  static Future<ParseResponse?> submitSaveEventually(
-      {ParseClient? client, bool? autoSendSessionId}) async {
+  static Future<ParseResponse?> submitSaveEventually({
+    ParseClient? client,
+    bool? autoSendSessionId,
+  }) async {
     // get client
-    ParseClient localClient = client ??
+    ParseClient localClient =
+        client ??
         ParseCoreData().clientCreator(
-            sendSessionId:
-                autoSendSessionId ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+          sendSessionId: autoSendSessionId ?? ParseCoreData().autoSendSessionId,
+          securityContext: ParseCoreData().securityContext,
+        );
 
     // preparation ParseCoreData
     final CoreStore coreStore = ParseCoreData().getStore();
 
     // save
     // get json parse saved objects
-    List<String>? listSaves =
-        await coreStore.getStringList(keyParseStoreObjects);
+    List<String>? listSaves = await coreStore.getStringList(
+      keyParseStoreObjects,
+    );
 
     if (listSaves != null) {
       List<ParseObject> parseObjectList = [];
       for (var element in listSaves) {
         // decode json
         dynamic object = json.decode(element);
-        parseObjectList
-            .add(ParseObject(object[keyVarClassName]).fromJson(object));
+        parseObjectList.add(
+          ParseObject(object[keyVarClassName]).fromJson(object),
+        );
       }
 
       // send parseObjects to server
-      ParseResponse response =
-          await ParseObject._saveChildren(parseObjectList, localClient);
+      ParseResponse response = await ParseObject._saveChildren(
+        parseObjectList,
+        localClient,
+      );
 
       // if success clear all objects
       if (response.success) {
@@ -789,15 +891,18 @@ class ParseObject extends ParseBase implements ParseCloneable {
     return null;
   }
 
-  static Future<ParseResponse?> submitDeleteEventually(
-      {ParseClient? client, bool? autoSendSessionId}) async {
+  static Future<ParseResponse?> submitDeleteEventually({
+    ParseClient? client,
+    bool? autoSendSessionId,
+  }) async {
     // preparation ParseCoreData
     final CoreStore coreStore = ParseCoreData().getStore();
 
     // delete
     // get json parse saved objects
-    List<String>? listDeletes =
-        await coreStore.getStringList(keyParseStoreDeletes);
+    List<String>? listDeletes = await coreStore.getStringList(
+      keyParseStoreDeletes,
+    );
 
     if (listDeletes != null) {
       int firstLength = listDeletes.length;
@@ -807,9 +912,11 @@ class ParseObject extends ParseBase implements ParseCloneable {
         dynamic object = json.decode(element);
 
         // crate parse object
-        ParseObject parseObject = ParseObject(object[keyVarClassName],
-                client: client, autoSendSessionId: autoSendSessionId)
-            .fromJson(object);
+        ParseObject parseObject = ParseObject(
+          object[keyVarClassName],
+          client: client,
+          autoSendSessionId: autoSendSessionId,
+        ).fromJson(object);
 
         // delete parse object
         ParseResponse deleteResponse = await parseObject.delete();

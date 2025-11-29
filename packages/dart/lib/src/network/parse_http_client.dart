@@ -8,8 +8,10 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'http_client_io.dart' if (dart.library.js) 'http_client_js.dart';
 
 class ParseHTTPClient extends ParseClient {
-  ParseHTTPClient(
-      {bool sendSessionId = false, SecurityContext? securityContext}) {
+  ParseHTTPClient({
+    bool sendSessionId = false,
+    SecurityContext? securityContext,
+  }) {
     _client = _ParseHTTPClient(
       sendSessionId: sendSessionId,
       securityContext: securityContext,
@@ -36,7 +38,9 @@ class ParseHTTPClient extends ParseClient {
       headers: options?.headers,
     );
     return ParseNetworkResponse(
-        data: response.body, statusCode: response.statusCode);
+      data: response.body,
+      statusCode: response.statusCode,
+    );
   }
 
   @override
@@ -51,7 +55,9 @@ class ParseHTTPClient extends ParseClient {
       headers: options?.headers,
     );
     return ParseNetworkByteResponse(
-        bytes: response.bodyBytes, statusCode: response.statusCode);
+      bytes: response.bodyBytes,
+      statusCode: response.statusCode,
+    );
   }
 
   @override
@@ -66,7 +72,9 @@ class ParseHTTPClient extends ParseClient {
       headers: options?.headers,
     );
     return ParseNetworkResponse(
-        data: response.body, statusCode: response.statusCode);
+      data: response.body,
+      statusCode: response.statusCode,
+    );
   }
 
   @override
@@ -81,7 +89,9 @@ class ParseHTTPClient extends ParseClient {
       headers: options?.headers,
     );
     return ParseNetworkResponse(
-        data: response.body, statusCode: response.statusCode);
+      data: response.body,
+      statusCode: response.statusCode,
+    );
   }
 
   @override
@@ -95,34 +105,43 @@ class ParseHTTPClient extends ParseClient {
     final http.Response response = await _client.post(
       Uri.parse(path),
       //Convert the stream to a list
-      body: await data?.fold<List<int>>(<int>[],
-          (List<int> previous, List<int> element) => previous..addAll(element)),
+      body: await data?.fold<List<int>>(
+        <int>[],
+        (List<int> previous, List<int> element) => previous..addAll(element),
+      ),
       headers: options?.headers,
     );
     return ParseNetworkResponse(
-        data: response.body, statusCode: response.statusCode);
+      data: response.body,
+      statusCode: response.statusCode,
+    );
   }
 
   @override
-  Future<ParseNetworkResponse> delete(String path,
-      {ParseNetworkOptions? options}) async {
+  Future<ParseNetworkResponse> delete(
+    String path, {
+    ParseNetworkOptions? options,
+  }) async {
     final http.Response response = await _client.delete(
       Uri.parse(path),
       headers: options?.headers,
     );
     return ParseNetworkResponse(
-        data: response.body, statusCode: response.statusCode);
+      data: response.body,
+      statusCode: response.statusCode,
+    );
   }
 }
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset
 class _ParseHTTPClient extends http.BaseClient {
-  _ParseHTTPClient(
-      {bool sendSessionId = false, SecurityContext? securityContext})
-      : _sendSessionId = sendSessionId,
-        _client = securityContext != null
-            ? getClient(securityContext)
-            : http.Client();
+  _ParseHTTPClient({
+    bool sendSessionId = false,
+    SecurityContext? securityContext,
+  }) : _sendSessionId = sendSessionId,
+       _client = securityContext != null
+           ? getClient(securityContext)
+           : http.Client();
 
   final http.Client _client;
   final bool _sendSessionId;
@@ -152,8 +171,9 @@ class _ParseHTTPClient extends http.BaseClient {
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
     if (additionalHeaders != null && additionalHeaders!.isNotEmpty) {
-      additionalHeaders!
-          .forEach((String key, String value) => request.headers[key] = value);
+      additionalHeaders!.forEach(
+        (String key, String value) => request.headers[key] = value,
+      );
     }
 
     if (parseCoreData.debug) {
