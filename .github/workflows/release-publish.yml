@@ -1,10 +1,5 @@
 name: release-publish
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        default: ''
-        description: 'Version tag (dart-#.#.# or flutter-#.#.#):'
   workflow_call:
     inputs:
       dart_tag:
@@ -15,13 +10,9 @@ on:
         required: false
         type: string
         description: 'Flutter package version tag (flutter-#.#.#)'
-env:
-  # Resolve tags for both workflow_dispatch and workflow_call
-  dart_tag_resolved: ${{ inputs.dart_tag || (startsWith(inputs.tag, 'dart-') && inputs.tag || '') }}
-  flutter_tag_resolved: ${{ inputs.flutter_tag || (startsWith(inputs.tag, 'flutter-') && inputs.tag || '') }}
 jobs:
   pub-publish-dart:
-    if: inputs.dart_tag != '' || startsWith(inputs.tag, 'dart-')
+    if: inputs.dart_tag != ''
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -30,7 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.dart_tag_resolved }}
+          ref: ${{ inputs.dart_tag }}
       - name: Setup dart
         uses: dart-lang/setup-dart@v1
         with:
@@ -49,7 +40,7 @@ jobs:
         run: dart pub publish --force
 
   pub-publish-flutter:
-    if: inputs.flutter_tag != '' || startsWith(inputs.tag, 'flutter-')
+    if: inputs.flutter_tag != ''
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -58,7 +49,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.flutter_tag_resolved }}
+          ref: ${{ inputs.flutter_tag }}
       - name: Setup dart
         uses: dart-lang/setup-dart@v1
         with:
@@ -85,7 +76,7 @@ jobs:
         run: dart pub publish --force
 
   docs-publish-dart:
-    if: inputs.dart_tag != '' || startsWith(inputs.tag, 'dart-')
+    if: inputs.dart_tag != ''
     needs: pub-publish-dart
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -93,7 +84,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.dart_tag_resolved }}
+          ref: ${{ inputs.dart_tag }}
       - name: Setup dart
         uses: dart-lang/setup-dart@v1
       - name: Install dart dependencies
@@ -108,7 +99,7 @@ jobs:
           destination_dir: dart
 
   docs-publish-flutter:
-    if: inputs.flutter_tag != '' || startsWith(inputs.tag, 'flutter-')
+    if: inputs.flutter_tag != ''
     needs: pub-publish-flutter
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -116,7 +107,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.flutter_tag_resolved }}
+          ref: ${{ inputs.flutter_tag }}
       - name: Setup dart
         uses: dart-lang/setup-dart@v1
       - name: Setup flutter
