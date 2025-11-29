@@ -276,7 +276,7 @@ class ParseInstallation extends ParseObject {
     await save();
   }
 
-  ///Returns an <List<String>> containing all the channel names this device is subscribed to.
+  ///Returns a `List<String>` containing all the channel names this device is subscribed to.
   Future<List<dynamic>> getSubscribedChannels() async {
     print('getSubscribedChannels');
     final ParseResponse apiResponse = await ParseObject(

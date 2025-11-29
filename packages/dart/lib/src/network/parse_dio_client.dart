@@ -68,8 +68,10 @@ class ParseDioClient extends ParseClient {
           statusCode: error.response?.statusCode ?? ParseError.otherCause,
         );
       } else {
-        return _getOtherCaseErrorForParseNetworkResponse(
-          error.error.toString(),
+        return ParseNetworkByteResponse(
+          data:
+              "{\"code\":${ParseError.otherCause},\"error\":\"${error.error.toString()}\"}",
+          statusCode: ParseError.otherCause,
         );
       }
     }
@@ -160,7 +162,7 @@ class ParseDioClient extends ParseClient {
     }
   }
 
-  _getOtherCaseErrorForParseNetworkResponse(String error) {
+  ParseNetworkResponse _getOtherCaseErrorForParseNetworkResponse(String error) {
     return ParseNetworkResponse(
       data: "{\"code\":${ParseError.otherCause},\"error\":\"$error\"}",
       statusCode: ParseError.otherCause,
