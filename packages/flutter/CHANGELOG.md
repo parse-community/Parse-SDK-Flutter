@@ -1,3 +1,10 @@
+# [10.2.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.1.0...flutter-10.2.0) (2025-11-29)
+
+
+### Features
+
+* Bump web_socket_channel from 2.4.5 to 3.0.3 in /packages/dart ([#1064](https://github.com/parse-community/Parse-SDK-Flutter/issues/1064)) ([5b6aacf](https://github.com/parse-community/Parse-SDK-Flutter/commit/5b6aacf64457ccbf1c121a36204fcb51be6a6682))
+
 # [10.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.0.0...flutter-10.1.0) (2025-11-28)
 
 

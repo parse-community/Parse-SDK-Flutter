@@ -1,6 +1,6 @@
 {
   "name": "parse-sdk-flutter",
-  "version": "9.2.0",
+  "version": "10.2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/parse-community/Parse-SDK-Flutter.git"
