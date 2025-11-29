@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import '../../parse_query_test.mocks.dart';
 import '../../test_utils.dart';
 
-main() {
+void main() {
   setUpAll(() async {
     await initializeParse();
   });

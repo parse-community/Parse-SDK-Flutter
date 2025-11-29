@@ -160,7 +160,7 @@ class ParseDioClient extends ParseClient {
     }
   }
 
-  _getOtherCaseErrorForParseNetworkResponse(String error) {
+  ParseNetworkResponse _getOtherCaseErrorForParseNetworkResponse(String error) {
     return ParseNetworkResponse(
       data: "{\"code\":${ParseError.otherCause},\"error\":\"$error\"}",
       statusCode: ParseError.otherCause,
