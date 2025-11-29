@@ -11,7 +11,7 @@ import 'package:flutter_plugin_example/data/repositories/user/repository_user.da
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 import 'package:flutter_plugin_example/domain/utils/db_utils.dart';
 import 'package:flutter_plugin_example/pages/decision_page.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 void main() {
   _setTargetPlatformForDesktop();

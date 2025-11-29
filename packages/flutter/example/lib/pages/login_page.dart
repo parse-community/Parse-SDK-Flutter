@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/model/user.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 enum FormMode { login, signUp }
 
