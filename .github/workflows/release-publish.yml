@@ -1,0 +1,138 @@
+name: release-publish
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        default: ''
+        description: 'Version tag (dart-#.#.# or flutter-#.#.#):'
+  workflow_call:
+    inputs:
+      dart_tag:
+        required: false
+        type: string
+        description: 'Dart package version tag (dart-#.#.#)'
+      flutter_tag:
+        required: false
+        type: string
+        description: 'Flutter package version tag (flutter-#.#.#)'
+env:
+  # Resolve tags for both workflow_dispatch and workflow_call
+  dart_tag_resolved: ${{ inputs.dart_tag || (startsWith(inputs.tag, 'dart-') && inputs.tag || '') }}
+  flutter_tag_resolved: ${{ inputs.flutter_tag || (startsWith(inputs.tag, 'flutter-') && inputs.tag || '') }}
+jobs:
+  pub-publish-dart:
+    if: inputs.dart_tag != '' || startsWith(inputs.tag, 'dart-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.dart_tag_resolved }}
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.10.0'
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Analyze dart
+        run: dart analyze --fatal-infos 'packages/dart'
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed 'packages/dart'
+      - name: Publish package (dry-run)
+        working-directory: 'packages/dart'
+        run: dart pub publish --dry-run
+      - name: Publish package
+        working-directory: 'packages/dart'
+        run: dart pub publish --force
+
+  pub-publish-flutter:
+    if: inputs.flutter_tag != '' || startsWith(inputs.tag, 'flutter-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.flutter_tag_resolved }}
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.10.0'
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          cache: true
+          channel: stable
+          flutter-version: 3.38.1
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Install flutter dependencies
+        run: dart pub get --directory 'packages/flutter'
+      - name: Analyze flutter
+        run: flutter analyze --fatal-infos 'packages/flutter'
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed 'packages/flutter'
+      - name: Publish package (dry-run)
+        working-directory: 'packages/flutter'
+        run: dart pub publish --dry-run
+      - name: Publish package
+        working-directory: 'packages/flutter'
+        run: dart pub publish --force
+
+  docs-publish-dart:
+    if: inputs.dart_tag != '' || startsWith(inputs.tag, 'dart-')
+    needs: pub-publish-dart
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.dart_tag_resolved }}
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Generate Docs
+        run: dart doc ./packages/dart/ -o ./.api_docs/dart/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3.7.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./.api_docs/dart/
+          destination_dir: dart
+
+  docs-publish-flutter:
+    if: inputs.flutter_tag != '' || startsWith(inputs.tag, 'flutter-')
+    needs: pub-publish-flutter
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.flutter_tag_resolved }}
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Install flutter dependencies
+        run: dart pub get --directory 'packages/flutter'
+      - name: Generate Docs
+        run: dart doc ./packages/flutter/ -o ./.api_docs/flutter/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3.7.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./.api_docs/flutter/
+          destination_dir: flutter
