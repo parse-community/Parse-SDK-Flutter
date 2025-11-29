@@ -83,6 +83,11 @@ async function config() {
           noteKeywords: [ 'BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING' ],
         },
       }],
+      ['@semantic-release/exec', {
+        verifyConditionsCmd: packageName !== 'root'
+          ? `bash -c 'if [ -n "\${lastRelease.gitHead}" ]; then git diff --name-only \${lastRelease.gitHead} HEAD | grep -q "^packages/${packageName}/"; else git log -1 --name-only --pretty=format: | grep -q "^packages/${packageName}/"; fi || (echo "No changes in packages/${packageName}, skipping release" && exit 1)'`
+          : 'echo "Root package always runs"',
+      }],
       ['@semantic-release/release-notes-generator', {
         preset: 'angular',
         parserOpts: {
