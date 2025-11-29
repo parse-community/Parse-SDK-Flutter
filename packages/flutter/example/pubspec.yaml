@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   # parse_offline_extension: ^1.0.0
-  parse_server_sdk: 9.0.0
+  parse_server_sdk: 9.2.0
   # parse_server_sdk:
   #   git:
   #     url: https://github.com/pastordee/Parse-SDK-Flutter.git 
@@ -26,10 +26,7 @@ dependencies:
   sembast: ^3.4.6+1
   shared_preferences: ^2.2.0
 
-# Uncomment for local testing
-# dependency_overrides:
-#   parse_server_sdk:
-#     path: ../../dart
+
 
 dev_dependencies:
   flutter_test:
