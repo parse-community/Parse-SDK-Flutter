@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/base/api_response.dart';
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/contract_provider_diet_plan.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
-
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 class HomePage extends StatefulWidget {
   const HomePage(this._dietPlanProvider, {Key? key}) : super(key: key);
 

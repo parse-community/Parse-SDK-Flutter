@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_plugin_example/data/repositories/diet_plan/provider_api_diet_plan.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 import 'home_page.dart';
 import 'login_page.dart';
