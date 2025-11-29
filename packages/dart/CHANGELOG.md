@@ -1,3 +1,10 @@
+# [9.3.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.2.0...dart-9.3.0) (2025-11-29)
+
+
+### Features
+
+* Bump mime from 1.0.6 to 2.0.0 in /packages/dart ([#1066](https://github.com/parse-community/Parse-SDK-Flutter/issues/1066)) ([2e143bf](https://github.com/parse-community/Parse-SDK-Flutter/commit/2e143bf08c71b768f922fbf33d1c6308e6667397))
+
 # [9.2.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.1.0...dart-9.2.0) (2025-11-29)
 
 
