@@ -85,7 +85,7 @@ async function config() {
       }],
       ['@semantic-release/exec', {
         verifyConditionsCmd: packageName !== 'root'
-          ? `bash -c 'if [ -n "\${lastRelease.gitHead}" ]; then git diff --name-only \${lastRelease.gitHead} HEAD | grep -q "^packages/${packageName}/"; else git log -1 --name-only --pretty=format: | grep -q "^packages/${packageName}/"; fi || (echo "No changes in packages/${packageName}, skipping release" && exit 1)'`
+          ? `bash -c 'LAST_TAG=$(git describe --tags --abbrev=0 --match="${packageName}-*" 2>/dev/null || echo ""); if [ -n "$LAST_TAG" ]; then git diff --name-only $LAST_TAG HEAD | grep -q "^packages/${packageName}/"; else git log --all --name-only --pretty=format: | grep -q "^packages/${packageName}/"; fi || (echo "No changes in packages/${packageName}, skipping release" && exit 1)'`
           : 'echo "Root package always runs"',
       }],
       ['@semantic-release/release-notes-generator', {
@@ -120,7 +120,9 @@ async function config() {
       ['@semantic-release/github', {
         successComment: getReleaseComment(),
         labels: ['type:ci'],
-        releasedLabels: ['state:released<%= nextRelease.channel ? `-\${nextRelease.channel}` : "" %>']
+        releasedLabels: ['state:released<%= nextRelease.channel ? `-\${nextRelease.channel}` : "" %>'],
+        failComment: false,
+        failTitle: false
       }],
     ],
   };
