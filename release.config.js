@@ -35,7 +35,7 @@ async function config() {
   // Set changelog file based on package
   const changelogFile = packageName === 'root'
     ? `./CHANGELOG.md`
-    : `./packages/${packageName}/CHANGELOG.md`;
+    : `./CHANGELOG.md`;
   console.log(`Changelog file output to: ${changelogFile}`);
 
   // Load template file contents
@@ -51,9 +51,9 @@ async function config() {
     ? [changelogFile, 'package.json', 'package-lock.json']
     : [
         changelogFile,
-        `packages/${packageName}/pubspec.yaml`,
-        'package.json',
-        'package-lock.json'
+        'pubspec.yaml',
+        '../../package.json',
+        '../../package-lock.json'
       ];
 
   const config = {
