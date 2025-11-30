@@ -12,11 +12,11 @@ class ParseGeoPoint {
         'Latitude must be within the range (-90.0, 90.0).',
       ),
       assert(
-        latitude < 180,
+        longitude < 180,
         'Longitude must be within the range (-180.0, 180.0).',
       ),
       assert(
-        latitude > -180,
+        longitude > -180,
         'Longitude must be within the range (-180.0, 180.0).',
       );
 
