@@ -2,8 +2,8 @@ name: release-publish
 on:
   push:
     tags:
-      - "dart-[0-9]+.[0-9]+.[0-9]+*"
-      - "flutter-[0-9]+.[0-9]+.[0-9]+*"
+      - "dart-*"
+      - "flutter-*"
 env:
   package: ${{ startsWith(github.ref_name, 'dart-') && 'dart' || startsWith(github.ref_name, 'flutter-') && 'flutter' || '' }}
 jobs:
