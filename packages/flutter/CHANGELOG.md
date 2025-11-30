@@ -1,3 +1,10 @@
+# [flutter-v10.6.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.5.0...flutter-10.6.0) (2025-11-30)
+
+
+### Features
+
+* Bump connectivity_plus from 6.0.3 to 7.0.0 in /packages/flutter ([#1087](https://github.com/parse-community/Parse-SDK-Flutter/issues/1087)) ([ec4eaa1](https://github.com/parse-community/Parse-SDK-Flutter/commit/ec4eaa16be47b80c9ef6a38230c090dff148d880))
+
 # [flutter-v10.5.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.4.0...flutter-10.5.0) (2025-11-30)
 
 
