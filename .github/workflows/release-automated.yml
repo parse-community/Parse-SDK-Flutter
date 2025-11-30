@@ -38,6 +38,8 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global credential.helper store
+          echo "https://x-access-token:${{ secrets.RELEASE_GITHUB_TOKEN }}@github.com" > ~/.git-credentials
       - name: Run semantic-release for dart package
         run: npx semantic-release
         working-directory: packages/dart
