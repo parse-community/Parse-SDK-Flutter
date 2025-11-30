@@ -39,7 +39,7 @@ dependencies:
       ref: pc_server 
 
   # Networking
-  connectivity_plus: ^6.1.5 
+  connectivity_plus: ^7.0.0
 
   #Database
   shared_preferences: ^2.5.1
