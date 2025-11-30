@@ -38,11 +38,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run semantic-release for dart package
+        working-directory: packages/dart
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
           PKG_NAME: dart
       - name: Run semantic-release for flutter package
+        working-directory: packages/flutter
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
