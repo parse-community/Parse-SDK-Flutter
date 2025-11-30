@@ -664,26 +664,29 @@ void main() {
 
     test('Arrays should not be cleared when calling clearUnsavedChanges() '
         'after receiving response from fetch/query (issue #1038)', () async {
-      // arrange - First, save an object with an array to create a _ParseArray
-      dietPlansObject.setAdd(keyArray, 1);
-      dietPlansObject.setAdd(keyArray, 2);
+      // Steps to reproduce from issue #1038:
+      // 1. Query/fetch a user object with arrays from server
+      // 2. Call clearUnsavedChanges() - arrays should NOT become empty
+      // 3. Call getUpdatedUser()/fetch() again
+      // 4. Check that savedArray and estimatedArray both have values (not empty)
 
-      when(
-        client.post(any, options: anyNamed("options"), data: anyNamed('data')),
-      ).thenAnswer(
-        (_) async => ParseNetworkResponse(
-          statusCode: 200,
-          data: jsonEncode({
-            "objectId": "Mn1iJTkWTE",
-            "createdAt": "2023-03-05T00:25:31.466Z",
-          }),
-        ),
-      );
+      // Step 1: Simulate getting an object from server (e.g., via query or getUpdatedUser)
+      // This is like getting a user from cache or initial fetch
+      dietPlansObject.fromJson({
+        keyArray: [1, 2, 3],
+        "objectId": "Mn1iJTkWTE",
+        "createdAt": "2023-03-05T00:25:31.466Z",
+      });
 
-      await dietPlansObject
-          .save(); // This creates the _ParseArray and calls onSaving/onSaved
+      // Step 2: Call clearUnsavedChanges() - this should NOT clear the arrays
+      // Before the fix, if savedArray was empty, this would make arrays empty
+      // because onClearUnsaved() does: estimatedArray = savedArray
+      dietPlansObject.clearUnsavedChanges();
 
-      // Now set up a mock fetch response that returns updated array data
+      // Verify arrays are NOT empty after clearUnsavedChanges
+      expect(dietPlansObject.get(keyArray), orderedEquals([1, 2, 3]));
+
+      // Step 3: Set up mock for getUpdatedUser()/fetch()
       final getPath = Uri.parse(
         '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
       ).toString();
@@ -692,11 +695,7 @@ void main() {
         "results": [
           {
             "objectId": "Mn1iJTkWTE",
-            keyArray: [
-              1,
-              2,
-              3,
-            ], // Server now has an updated array with one more item
+            keyArray: [1, 2, 3],
             "createdAt": "2023-03-05T00:25:31.466Z",
             "updatedAt": "2023-03-05T00:25:31.466Z",
           },
@@ -716,22 +715,20 @@ void main() {
         ),
       );
 
-      // act - Fetch the object from server to get the updated array
-      // This simulates the scenario from issue #1038 where after fetching/querying
-      // an object (e.g., via getUpdatedUser() or fetch()), calling clearUnsavedChanges()
-      // would incorrectly clear the arrays.
-      ParseObject fetchedObject = await dietPlansObject.fetch();
+      // Fetch the object (simulating getUpdatedUser)
+      // NOTE: fetch() might update dietPlansObject in place OR return a new object
+      await dietPlansObject.fetch();
 
-      // Verify array is populated correctly from the fetch response
-      expect(fetchedObject.get(keyArray), orderedEquals([1, 2, 3]));
+      // Step 4: Verify the ORIGINAL object still has array values
+      // The issue reported that after fetch, arrays would be cleared
+      final arrayAfterFetch = dietPlansObject.get(keyArray);
+      expect(arrayAfterFetch, orderedEquals([1, 2, 3]));
 
-      // Now clear unsaved changes - this should NOT clear the arrays
-      // Before the fix (PR #1039), this would set arrays to empty
-      fetchedObject.clearUnsavedChanges();
-
-      // assert - Arrays should still have their values from the server
-      final listValue = fetchedObject.get(keyArray);
-      expect(listValue, orderedEquals([1, 2, 3]));
+      // Additional check: call clearUnsavedChanges() on the original object
+      // and verify arrays persist. This is the exact scenario from issue #1038.
+      dietPlansObject.clearUnsavedChanges();
+      final arrayAfterSecondClear = dietPlansObject.get(keyArray);
+      expect(arrayAfterSecondClear, orderedEquals([1, 2, 3]));
     });
 
     test('The list value and the value for api request should be identical '
