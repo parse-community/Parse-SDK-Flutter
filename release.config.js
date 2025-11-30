@@ -35,7 +35,7 @@ async function config() {
   // Set changelog file based on package
   const changelogFile = packageName === 'root'
     ? `./CHANGELOG.md`
-    : `./packages/${packageName}/CHANGELOG.md`;
+    : `./CHANGELOG.md`;
   console.log(`Changelog file output to: ${changelogFile}`);
 
   // Load template file contents
@@ -51,12 +51,13 @@ async function config() {
     ? [changelogFile, 'package.json', 'package-lock.json']
     : [
         changelogFile,
-        `packages/${packageName}/pubspec.yaml`,
-        'package.json',
-        'package-lock.json'
+        'pubspec.yaml',
+        '../../package.json',
+        '../../package-lock.json'
       ];
 
   const config = {
+    extends: 'semantic-release-monorepo',
     branches: [
       'master',
       // { name: 'alpha', prerelease: true },
@@ -83,11 +84,6 @@ async function config() {
           noteKeywords: [ 'BREAKING CHANGE', 'BREAKING CHANGES', 'BREAKING' ],
         },
       }],
-      ['@semantic-release/exec', {
-        verifyConditionsCmd: packageName !== 'root'
-          ? `bash -c 'LAST_TAG=$(git describe --tags --abbrev=0 --match="${packageName}-*" 2>/dev/null || echo ""); if [ -n "$LAST_TAG" ]; then git diff --name-only $LAST_TAG HEAD | grep -q "^packages/${packageName}/"; else git log --all --name-only --pretty=format: | grep -q "^packages/${packageName}/"; fi || (echo "No changes in packages/${packageName}, skipping release" && exit 69)'`
-          : 'echo "Root package always runs"',
-      }],
       ['@semantic-release/release-notes-generator', {
         preset: 'angular',
         parserOpts: {
@@ -106,7 +102,7 @@ async function config() {
       }],
       ['@semantic-release/exec', {
         prepareCmd: packageName !== 'root'
-          ? `node scripts/update-version.js packages/${packageName}/pubspec.yaml \${nextRelease.version}`
+          ? `node ../../scripts/update-version.js pubspec.yaml \${nextRelease.version}`
           : 'echo "No version update needed for root"',
       }],
       ['@semantic-release/npm', {
