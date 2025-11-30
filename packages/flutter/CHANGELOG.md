@@ -1,3 +1,10 @@
+# [flutter-v10.5.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.4.0...flutter-10.5.0) (2025-11-30)
+
+
+### Features
+
+* Bump flutter_lints from 4.0.0 to 6.0.0 in /packages/flutter ([#1061](https://github.com/parse-community/Parse-SDK-Flutter/issues/1061)) ([e9e2088](https://github.com/parse-community/Parse-SDK-Flutter/commit/e9e20888344d65f538a41e6ade6a3c4b2f03928a))
+
 # [flutter-v10.4.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.3.0...flutter-10.4.0) (2025-11-30)
 
 
