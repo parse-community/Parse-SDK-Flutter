@@ -151,7 +151,7 @@ jobs:
         with:
           fetch-depth: 0 # Required for semantic-release to analyze commit history
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
       - name: Install dependencies
