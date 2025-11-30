@@ -34,8 +34,7 @@ void main() {
       getPath = getURI.replace(query: stringDistinctQuery).toString();
     });
 
-    test(
-        'distinct() should return the expected result from server with '
+    test('distinct() should return the expected result from server with '
         'distinct aggregate on a column', () async {
       // arrange
       const resultFromServer = {
@@ -52,12 +51,12 @@ void main() {
             "user": {
               "__type": "Pointer",
               "className": "_User",
-              "objectId": "cmWCmCAyQQ"
+              "objectId": "cmWCmCAyQQ",
             },
             "createdAt": "2023-02-24T15:39:44.800Z",
             "updatedAt": "2023-02-24T22:28:17.867Z",
             "location": {"__type": "GeoPoint", "latitude": 50, "longitude": 0},
-            "anArray": ["3", "4"]
+            "anArray": ["3", "4"],
           },
           {
             "objectId": "15NCdmBFBw",
@@ -71,7 +70,7 @@ void main() {
             "user": {
               "__type": "Pointer",
               "className": "_User",
-              "objectId": "cmWCmCAyQQ"
+              "objectId": "cmWCmCAyQQ",
             },
             "createdAt": "2023-02-24T15:44:17.781Z",
             "updatedAt": "2023-02-24T22:28:45.446Z",
@@ -80,19 +79,17 @@ void main() {
             "afile": {
               "__type": "File",
               "name": "33b6acb416c0mmer-wallpapers.png",
-              "url": "https://parsefiles.back4app.com/gyBkQBRSapgwfxB/cers.png"
-            }
-          }
-        ]
+              "url": "https://parsefiles.back4app.com/gyBkQBRSapgwfxB/cers.png",
+            },
+          },
+        ],
       };
 
       final resultList = resultFromServer["results"]!;
       final firstObject = ParseObject('Diet_Plans').fromJson(resultList[0]);
       final secondObject = ParseObject('Diet_Plans').fromJson(resultList[1]);
 
-      when(client.get(
-        getPath,
-      )).thenAnswer(
+      when(client.get(getPath)).thenAnswer(
         (_) async => ParseNetworkResponse(
           statusCode: 200,
           data: jsonEncode(resultFromServer),
@@ -124,9 +121,7 @@ void main() {
         equals(jsonEncode(secondObject.toJson())),
       );
 
-      verify(client.get(
-        getPath,
-      )).called(1);
+      verify(client.get(getPath)).called(1);
 
       verifyNoMoreInteractions(client);
     });
@@ -135,9 +130,7 @@ void main() {
       // arrange
       final error = Exception('error');
 
-      when(client.get(
-        getPath,
-      )).thenThrow(error);
+      when(client.get(getPath)).thenThrow(error);
 
       // act
       final response = await dietPlansObject.distinct(stringDistinctQuery);
@@ -157,9 +150,7 @@ void main() {
 
       expect(response.error!.code, equals(ParseError.otherCause));
 
-      verify(client.get(
-        getPath,
-      )).called(1);
+      verify(client.get(getPath)).called(1);
 
       verifyNoMoreInteractions(client);
     });

@@ -1,0 +1,125 @@
+name: release-publish
+on:
+  push:
+    tags:
+      - "dart-*"
+      - "flutter-*"
+env:
+  package: ${{ startsWith(github.ref_name, 'dart-') && 'dart' || startsWith(github.ref_name, 'flutter-') && 'flutter' || '' }}
+jobs:
+  pub-publish-dart:
+    if: startsWith(github.ref_name, 'dart-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.10.0'
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Analyze dart
+        run: dart analyze --fatal-infos 'packages/dart'
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed 'packages/dart'
+      - name: Publish package (dry-run)
+        working-directory: 'packages/dart'
+        run: dart pub publish --dry-run
+      - name: Publish package
+        working-directory: 'packages/dart'
+        run: dart pub publish --force
+
+  pub-publish-flutter:
+    if: startsWith(github.ref_name, 'flutter-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.10.0'
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          cache: true
+          channel: stable
+          flutter-version: 3.38.1
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Install flutter dependencies
+        run: dart pub get --directory 'packages/flutter'
+      - name: Analyze flutter
+        run: flutter analyze --fatal-infos 'packages/flutter'
+      - name: Lint
+        run: dart format --output=none --set-exit-if-changed 'packages/flutter'
+      - name: Publish package (dry-run)
+        working-directory: 'packages/flutter'
+        run: dart pub publish --dry-run
+      - name: Publish package
+        working-directory: 'packages/flutter'
+        run: dart pub publish --force
+
+  docs-publish-dart:
+    if: startsWith(github.ref_name, 'dart-')
+    needs: pub-publish-dart
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Generate Docs
+        run: dart doc ./packages/dart/ -o ./.api_docs/dart/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./.api_docs/dart/
+          destination_dir: dart
+
+  docs-publish-flutter:
+    if: startsWith(github.ref_name, 'flutter-')
+    needs: pub-publish-flutter
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Setup dart
+        uses: dart-lang/setup-dart@v1
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Install dart dependencies
+        run: dart pub get --directory 'packages/dart'
+      - name: Install flutter dependencies
+        run: dart pub get --directory 'packages/flutter'
+      - name: Generate Docs
+        run: dart doc ./packages/flutter/ -o ./.api_docs/flutter/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./.api_docs/flutter/
+          destination_dir: flutter

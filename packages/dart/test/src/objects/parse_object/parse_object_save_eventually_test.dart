@@ -27,25 +27,27 @@ void main() {
       'should exist parse object in ParseCoreData next saveEventually',
       () async {
         // arrange
-        when(client.post(
-          any,
-          options: anyNamed("options"),
-          data: anyNamed("data"),
-        )).thenThrow(Exception('NetworkError'));
+        when(
+          client.post(
+            any,
+            options: anyNamed("options"),
+            data: anyNamed("data"),
+          ),
+        ).thenThrow(Exception('NetworkError'));
 
-        when(client.post(
-          "$serverUrl/batch",
-          options: anyNamed("options"),
-          data: anyNamed("data"),
-        )).thenAnswer(
+        when(
+          client.post(
+            "$serverUrl/batch",
+            options: anyNamed("options"),
+            data: anyNamed("data"),
+          ),
+        ).thenAnswer(
           (_) async => ParseNetworkResponse(
             statusCode: 200,
             data: jsonEncode([
               {
-                "success": {
-                  "add": "ok",
-                }
-              }
+                "success": {"add": "ok"},
+              },
             ]),
           ),
         );

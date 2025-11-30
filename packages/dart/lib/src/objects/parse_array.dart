@@ -17,9 +17,7 @@ class _ParseArray implements _Valuable<List>, _ParseSaveStateAwareChild {
 
   _ParseArrayOperation? lastPreformedOperation;
 
-  _ParseArray preformArrayOperation(
-    _ParseArrayOperation arrayOperation,
-  ) {
+  _ParseArray preformArrayOperation(_ParseArrayOperation arrayOperation) {
     arrayOperation.mergeWithPrevious(lastPreformedOperation ?? this);
 
     lastPreformedOperation = arrayOperation;
@@ -39,7 +37,7 @@ class _ParseArray implements _Valuable<List>, _ParseSaveStateAwareChild {
         'className': 'ParseArray',
         'estimatedArray': parseEncode(estimatedArray, full: full),
         'savedArray': parseEncode(_savedArray, full: full),
-        'lastPreformedOperation': lastPreformedOperation?.toJson(full: full)
+        'lastPreformedOperation': lastPreformedOperation?.toJson(full: full),
       };
     }
 
@@ -80,11 +78,13 @@ class _ParseArray implements _Valuable<List>, _ParseSaveStateAwareChild {
     } else {
       // remove the saved objects and keep the new added objects while saving
       if (lastPreformedOperation is _ParseRemoveOperation) {
-        lastPreformedOperation?.valueForApiRequest
-            .retainWhere((e) => _savedArray.contains(e));
+        lastPreformedOperation?.valueForApiRequest.retainWhere(
+          (e) => _savedArray.contains(e),
+        );
       } else {
-        lastPreformedOperation?.valueForApiRequest
-            .removeWhere((e) => _savedArray.contains(e));
+        lastPreformedOperation?.valueForApiRequest.removeWhere(
+          (e) => _savedArray.contains(e),
+        );
       }
     }
 

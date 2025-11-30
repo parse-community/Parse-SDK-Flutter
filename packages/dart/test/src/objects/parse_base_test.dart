@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import '../../parse_query_test.mocks.dart';
 import '../../test_utils.dart';
 
-main() {
+void main() {
   setUpAll(() async {
     await initializeParse();
   });
@@ -66,7 +66,7 @@ main() {
           "somePointer": {
             "__type": "Object",
             "className": "Plan",
-            "name": "plan1"
+            "name": "plan1",
           },
         });
 
@@ -83,30 +83,32 @@ main() {
     });
 
     test(
-        'should return true for containsValue() if the object contains the value',
-        () {
-      // arrange
-      dietPlansObject.set('someKey', 1);
+      'should return true for containsValue() if the object contains the value',
+      () {
+        // arrange
+        dietPlansObject.set('someKey', 1);
 
-      // act
-      final containsValue = dietPlansObject.containsValue(1);
+        // act
+        final containsValue = dietPlansObject.containsValue(1);
 
-      // assert
-      expect(containsValue, isTrue);
-    });
+        // assert
+        expect(containsValue, isTrue);
+      },
+    );
 
     test(
-        'should return true for containsKey() if the object contains the passed key',
-        () {
-      // arrange
-      dietPlansObject.set('someKey', 1);
+      'should return true for containsKey() if the object contains the passed key',
+      () {
+        // arrange
+        dietPlansObject.set('someKey', 1);
 
-      // act
-      final containsKey = dietPlansObject.containsKey('someKey');
+        // act
+        final containsKey = dietPlansObject.containsKey('someKey');
 
-      // assert
-      expect(containsKey, isTrue);
-    });
+        // assert
+        expect(containsKey, isTrue);
+      },
+    );
 
     test('test the [] operator', () {
       // arrange
@@ -130,41 +132,43 @@ main() {
       expect(dietPlansObject.getACL(), equals(acl));
     });
 
-    test('fromJsonForManualObject() should put all the values in unsaved state',
-        () {
-      // arrange
-      final createdAt = DateTime.now();
-      final updatedAt = DateTime.now();
-      final manualJsonObject = <String, dynamic>{
-        keyVarCreatedAt: createdAt,
-        keyVarUpdatedAt: updatedAt,
-        "array": [1, 2, 3],
-        'number': 2,
-      };
+    test(
+      'fromJsonForManualObject() should put all the values in unsaved state',
+      () {
+        // arrange
+        final createdAt = DateTime.now();
+        final updatedAt = DateTime.now();
+        final manualJsonObject = <String, dynamic>{
+          keyVarCreatedAt: createdAt,
+          keyVarUpdatedAt: updatedAt,
+          "array": [1, 2, 3],
+          'number': 2,
+        };
 
-      // act
-      dietPlansObject.fromJsonForManualObject(manualJsonObject);
+        // act
+        dietPlansObject.fromJsonForManualObject(manualJsonObject);
 
-      // assert
-      expect(dietPlansObject.isDirty(key: 'array'), isTrue);
-      expect(dietPlansObject.isDirty(key: 'number'), isTrue);
+        // assert
+        expect(dietPlansObject.isDirty(key: 'array'), isTrue);
+        expect(dietPlansObject.isDirty(key: 'number'), isTrue);
 
-      expect(dietPlansObject.createdAt, equals(createdAt));
-      expect(dietPlansObject.updatedAt, equals(updatedAt));
+        expect(dietPlansObject.createdAt, equals(createdAt));
+        expect(dietPlansObject.updatedAt, equals(updatedAt));
 
-      final valueForAPiRequest = dietPlansObject.toJson(forApiRQ: true);
-      final expectedValueForAPiRequest = {
-        "array": [1, 2, 3],
-        "number": 2
-      };
+        final valueForAPiRequest = dietPlansObject.toJson(forApiRQ: true);
+        final expectedValueForAPiRequest = {
+          "array": [1, 2, 3],
+          "number": 2,
+        };
 
-      expect(
-        DeepCollectionEquality().equals(
-          valueForAPiRequest,
-          expectedValueForAPiRequest,
-        ),
-        isTrue,
-      );
-    });
+        expect(
+          DeepCollectionEquality().equals(
+            valueForAPiRequest,
+            expectedValueForAPiRequest,
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 }

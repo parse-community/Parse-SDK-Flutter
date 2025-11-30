@@ -14,27 +14,21 @@ jobs:
     strategy:
       matrix:
         include:
+          # Version Support Policy: 6 months after next significant version release
+          # See VERSIONING_POLICY.md for full details
+          #
           # Dart framework may contain breaking changes in minor version releases, not following semver.
           # The latest Dart framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
-          - name: Dart 3.5, Ubuntu
+          - name: Dart 3.10, Ubuntu
             os: ubuntu-latest
-            sdk: 3.5.3
-          - name: Dart 3.5, macOS
+            sdk: 3.10.0
+          - name: Dart 3.10, macOS
             os: macos-latest
-            sdk: 3.5.3
-          - name: Dart 3.5, Windows
+            sdk: 3.10.0
+          - name: Dart 3.10, Windows
             os: windows-latest
-            sdk: 3.5.3
-          # Older Dart framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
-          - name: Dart 3.4
-            os: ubuntu-latest
-            sdk: 3.4.4
-          - name: Dart 3.3
-            os: ubuntu-latest
-            sdk: 3.3.4
-          - name: Dart 3.2
-            os: ubuntu-latest
-            sdk: 3.2.6
+            sdk: 3.10.0
+          # Beta channel helps identify breaking changes early
           - name: Dart beta
             os: ubuntu-latest
             sdk: beta
@@ -42,7 +36,13 @@ jobs:
     name: Test ${{ matrix.name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+      - name: Configure git for line endings (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          git config core.autocrlf false
+          git rm --cached -r .
+          git reset --hard
       - name: Setup dart
         uses: dart-lang/setup-dart@v1.5.0
         with:
@@ -67,39 +67,33 @@ jobs:
           dart pub global activate coverage
           dart pub global run coverage:format_coverage -i coverage/test -o coverage/lcov.info --lcov --packages=.dart_tool/package_config.json --report-on=lib
       - name: Upload code coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/dart/coverage/lcov.info
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
   check-flutter:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
+          # Version Support Policy: 6 months after next significant version release
+          # See VERSIONING_POLICY.md for full details
+          #
           # Flutter framework may contain breaking changes in minor version releases, not following semver.
           # The latest Flutter framework (below) is tested on all architectures (Ubuntu, macOS, Windows).
-          - name: Flutter 3.24, Ubuntu
+          - name: Flutter 3.38, Ubuntu
             os: ubuntu-latest
-            sdk: 3.24.3
-          - name: Flutter 3.24, macOS
+            sdk: 3.38.1
+          - name: Flutter 3.38, macOS
             os: macos-latest
-            sdk: 3.24.3
-          - name: Flutter 3.24, Windows
+            sdk: 3.38.1
+          - name: Flutter 3.38, Windows
             os: windows-latest
-            sdk: 3.24.3
-          # Older Flutter framework versions (below) are only tested with Ubuntu to reduce CI resource usage.
-          - name: Flutter 3.22
-            os: ubuntu-latest
-            sdk: 3.22.3
-          - name: Flutter 3.19
-            os: ubuntu-latest
-            sdk: 3.19.6
-          - name: Flutter 3.16
-            os: ubuntu-latest
-            sdk: 3.16.9
+            sdk: 3.38.1
+          # Beta channel helps identify breaking changes early
           - name: Flutter beta
             os: ubuntu-latest
             sdk: beta
@@ -107,19 +101,17 @@ jobs:
     name: Test ${{ matrix.name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup flutter (beta)
         if: ${{ matrix.sdk == 'beta' }}
         uses: subosito/flutter-action@v2
         with:
           channel: "beta"
-          cache: true
       - name: Setup flutter
         if: ${{  matrix.sdk != 'beta' }}
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ matrix.sdk }}
-          cache: true
       - name: Install dependencies on Ubuntu and MacOS
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         run: (cd packages/flutter && flutter pub get)
@@ -142,13 +134,38 @@ jobs:
           escapedPath="$(echo `pwd` | sed 's/\//\\\//g')"
           sed "s/^SF:lib/SF:$escapedPath\/lib/g" coverage/lcov.info > coverage/lcov-full.info
       - name: Upload code coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/flutter/coverage/lcov-full.info
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
+  auto-release-dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    name: Auto-Release Dry Run
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # Required for semantic-release to analyze commit history
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm ci
+      - name: Dry run semantic-release for dart package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PKG_NAME: dart
+        run: npx semantic-release --dry-run
+      - name: Dry run semantic-release for flutter package
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PKG_NAME: flutter
+        run: npx semantic-release --dry-run
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

@@ -1,3 +1,55 @@
+# [9.4.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.3.0...dart-9.4.0) (2025-11-29)
+
+
+### Features
+
+* Bump lints from 4.0.0 to 6.0.0 in /packages/dart ([#1065](https://github.com/parse-community/Parse-SDK-Flutter/issues/1065)) ([3c58597](https://github.com/parse-community/Parse-SDK-Flutter/commit/3c58597d92fad8a25a1632c0bbd25ff48a2750f3))
+
+# [9.3.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.2.0...dart-9.3.0) (2025-11-29)
+
+
+### Features
+
+* Bump mime from 1.0.6 to 2.0.0 in /packages/dart ([#1066](https://github.com/parse-community/Parse-SDK-Flutter/issues/1066)) ([2e143bf](https://github.com/parse-community/Parse-SDK-Flutter/commit/2e143bf08c71b768f922fbf33d1c6308e6667397))
+
+# [9.2.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.1.0...dart-9.2.0) (2025-11-29)
+
+
+### Features
+
+* Bump web_socket_channel from 2.4.5 to 3.0.3 in /packages/dart ([#1064](https://github.com/parse-community/Parse-SDK-Flutter/issues/1064)) ([5b6aacf](https://github.com/parse-community/Parse-SDK-Flutter/commit/5b6aacf64457ccbf1c121a36204fcb51be6a6682))
+
+# [9.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.0.0...dart-9.1.0) (2025-11-28)
+
+
+### Features
+
+* Bump timezone from 0.9.4 to 0.10.1 in /packages/dart ([#1063](https://github.com/parse-community/Parse-SDK-Flutter/issues/1063)) ([d3f2333](https://github.com/parse-community/Parse-SDK-Flutter/commit/d3f23338d5c8ca1e0239656814ac84818741f39d))
+
+# [9.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.2...dart-9.0.0) (2025-11-28)
+
+
+### Features
+
+* Remove support for expired Dart and Flutter versions ([#1052](https://github.com/parse-community/Parse-SDK-Flutter/issues/1052)) ([dbeb5cb](https://github.com/parse-community/Parse-SDK-Flutter/commit/dbeb5cbdb7e14c6fac5cf51a90addb0872ca88f2))
+
+
+### BREAKING CHANGES
+
+* This release removes support for Dart 3.2 - 3.9 and Flutter 3.16 - 3.37. These versions exceeded their 6-month support window after the next significant version release. The minimum required versions are now Dart 3.10 and Flutter 3.38. ([dbeb5cb](dbeb5cb))
+
+## [8.0.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.1...dart-8.0.2) (2025-11-28)
+
+### Bug Fixes
+
+* `ParseXFile` uploads file with content-type `application/octet-stream` if not explicitly set ([#1048](https://github.com/parse-community/Parse-SDK-Flutter/pull/1048))
+
+## [8.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.0...dart-8.0.1) (2025-11-22)
+
+### Bug Fixes
+
+* Fix Http client exception not handled properly resulting in incorrectly formatted error ([#1021](https://github.com/parse-community/Parse-SDK-Flutter/pull/1021))
+
 ## [8.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-7.0.1...dart-8.0.0) (2024-12-20)
 
 ### BREAKING CHANGES

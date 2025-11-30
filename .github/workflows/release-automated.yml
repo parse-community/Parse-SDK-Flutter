@@ -7,54 +7,48 @@
 name: release-automated
 on:
   push:
-    tags:
-      - "dart-[0-9]+.[0-9]+.[0-9]+*"
-      - "flutter-[0-9]+.[0-9]+.[0-9]+*"
+    branches:
+      - master
+      - next-major
 env:
-  package: ${{ startsWith(github.ref_name, 'dart') && 'dart' || 'flutter' }}
+  package: ${{ startsWith(github.ref_name, 'dart-') && 'dart' || startsWith(github.ref_name, 'flutter-') && 'flutter' || '' }}
 jobs:
   release:
+    if: github.event_name == 'push' && github.ref_type == 'branch'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      id-token: write # This is required for requesting the JWT
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
-          ref: ${{ github.ref_name }}
-      - name: Setup dart
-        uses: dart-lang/setup-dart@v1
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
-          sdk: '3.2.6'
-      - name: Setup flutter
-        if: env.package == 'flutter'
-        uses: subosito/flutter-action@v2
-        with:
-          cache: true
-          channel: stable
-          flutter-version: 3.16.9
-      - name: Install dart dependencies
-        run: dart pub get --directory 'packages/dart'
-      - name: Install flutter dependencies
-        if: env.package == 'flutter'
-        run: dart pub get --directory 'packages/flutter'
-      - name: Analyze dart
-        if: env.package == 'dart'
-        run: dart analyze --fatal-infos 'packages/${{ env.package }}'
-      - name: Analyze flutter
-        if: env.package == 'flutter'
-        run: flutter analyze --fatal-infos 'packages/${{ env.package }}'
-      - name: Lint
-        run: dart format --output=none --set-exit-if-changed 'packages/${{ env.package }}'
-      - name: Publish package (dry-run)
-        working-directory: 'packages/${{ env.package }}'
-        run: dart pub publish --dry-run
-      - name: Publish package
-        working-directory: 'packages/${{ env.package }}'
-        run: dart pub publish --force
-  docs-publish:
-    needs: release
-    uses: parse-community/Parse-SDK-Flutter/.github/workflows/release-manual-docs.yml@master
-    with:
-      tag: ${{ github.ref_name }}
+          node-version: 24
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Configure git credentials
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global credential.helper store
+          echo "https://x-access-token:${{ secrets.RELEASE_GITHUB_TOKEN }}@github.com" > ~/.git-credentials
+      - name: Run semantic-release for dart package
+        run: npx semantic-release
+        working-directory: packages/dart
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
+          PKG_NAME: dart
+      - name: Run semantic-release for flutter package
+        run: npx semantic-release
+        working-directory: packages/flutter
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
+          PKG_NAME: flutter

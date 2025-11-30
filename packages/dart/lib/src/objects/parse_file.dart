@@ -4,15 +4,14 @@ class ParseFile extends ParseFileBase {
   /// Creates a new file
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
-  ParseFile(this.file,
-      {String? name,
-      super.url,
-      super.debug,
-      super.client,
-      super.autoSendSessionId})
-      : super(
-          name: name ?? path.basename(file?.path ?? ''),
-        );
+  ParseFile(
+    this.file, {
+    String? name,
+    super.url,
+    super.debug,
+    super.client,
+    super.autoSendSessionId,
+  }) : super(name: name ?? path.basename(file?.path ?? ''));
 
   File? file;
   CancelToken? _cancelToken;
@@ -62,14 +61,15 @@ class ParseFile extends ParseFileBase {
       //Creates a Fake Response to return the correct result
       final Map<String, String> response = <String, String>{
         'url': url!,
-        'name': name
+        'name': name,
       };
       return handleResponse<ParseFile>(
-          this,
-          ParseNetworkResponse(data: json.encode(response), statusCode: 201),
-          ParseApiRQ.upload,
-          _debug,
-          parseClassName);
+        this,
+        ParseNetworkResponse(data: json.encode(response), statusCode: 201),
+        ParseApiRQ.upload,
+        _debug,
+        parseClassName,
+      );
     }
 
     progressCallback ??= _progressCallback;
@@ -77,10 +77,15 @@ class ParseFile extends ParseFileBase {
     _cancelToken = CancelToken();
 
     final Map<String, String> headers = <String, String>{
-      HttpHeaders.contentTypeHeader:
-          lookupMimeType(file!.path) ?? 'application/octet-stream',
       HttpHeaders.contentLengthHeader: '${file!.lengthSync()}',
     };
+
+    // Try to detect content-type using lookupMimeType
+    // If it cannot be determined, let the server infer from the filename
+    final String? contentType = lookupMimeType(file!.path);
+    if (contentType != null) {
+      headers[HttpHeaders.contentTypeHeader] = contentType;
+    }
 
     try {
       final String uri = ParseCoreData().serverUrl + _path;
@@ -98,7 +103,12 @@ class ParseFile extends ParseFileBase {
       }
 
       return handleResponse<ParseFile>(
-          this, response, ParseApiRQ.upload, _debug, parseClassName);
+        this,
+        response,
+        ParseApiRQ.upload,
+        _debug,
+        parseClassName,
+      );
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.upload, _debug, parseClassName);
     }

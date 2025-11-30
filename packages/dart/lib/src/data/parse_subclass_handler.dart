@@ -1,17 +1,24 @@
 part of '../../parse_server_sdk.dart';
 
 typedef ParseObjectConstructor = ParseObject Function();
-typedef ParseUserConstructor = ParseUser Function(
-    String? username, String? password, String? emailAddress,
-    {String? sessionToken, bool? debug, ParseClient? client});
-typedef ParseFileConstructor = ParseFileBase Function(
-    {String? name, String? url});
+typedef ParseUserConstructor =
+    ParseUser Function(
+      String? username,
+      String? password,
+      String? emailAddress, {
+      String? sessionToken,
+      bool? debug,
+      ParseClient? client,
+    });
+typedef ParseFileConstructor =
+    ParseFileBase Function({String? name, String? url});
 
 class ParseSubClassHandler {
-  ParseSubClassHandler(
-      {Map<String, ParseObjectConstructor>? registeredSubClassMap,
-      ParseUserConstructor? parseUserConstructor,
-      ParseFileConstructor? parseFileConstructor}) {
+  ParseSubClassHandler({
+    Map<String, ParseObjectConstructor>? registeredSubClassMap,
+    ParseUserConstructor? parseUserConstructor,
+    ParseFileConstructor? parseFileConstructor,
+  }) {
     _subClassMap = registeredSubClassMap ?? <String, ParseObjectConstructor>{};
     _parseUserConstructor = parseUserConstructor;
     if (parseFileConstructor != null) {
@@ -23,8 +30,10 @@ class ParseSubClassHandler {
   ParseUserConstructor? _parseUserConstructor;
   ParseFileConstructor _parseFileConstructor = defaultParseFileConstructor;
 
-  static ParseFileBase defaultParseFileConstructor(
-      {String? name, String? url}) {
+  static ParseFileBase defaultParseFileConstructor({
+    String? name,
+    String? url,
+  }) {
     if (parseIsWeb) {
       return ParseWebFile(null, name: name!, url: url);
     } else {
@@ -33,7 +42,9 @@ class ParseSubClassHandler {
   }
 
   void registerSubClass(
-      String className, ParseObjectConstructor objectConstructor) {
+    String className,
+    ParseObjectConstructor objectConstructor,
+  ) {
     if (className != keyClassUser &&
         className != keyClassInstallation &&
         className != keyClassSession &&
@@ -61,13 +72,30 @@ class ParseSubClassHandler {
   }
 
   ParseUser createParseUser(
-      String? username, String? password, String? emailAddress,
-      {String? sessionToken, bool? debug, ParseClient? client}) {
+    String? username,
+    String? password,
+    String? emailAddress, {
+    String? sessionToken,
+    bool? debug,
+    ParseClient? client,
+  }) {
     return _parseUserConstructor != null
-        ? _parseUserConstructor!(username, password, emailAddress,
-            sessionToken: sessionToken, debug: debug, client: client)
-        : ParseUser(username, password, emailAddress,
-            sessionToken: sessionToken, debug: debug, client: client);
+        ? _parseUserConstructor!(
+            username,
+            password,
+            emailAddress,
+            sessionToken: sessionToken,
+            debug: debug,
+            client: client,
+          )
+        : ParseUser(
+            username,
+            password,
+            emailAddress,
+            sessionToken: sessionToken,
+            debug: debug,
+            client: client,
+          );
   }
 
   ParseFileBase createFile({String? name, String? url}) =>

@@ -26,78 +26,114 @@ class MockParseClient extends i1.Mock implements i2.ParseClient {
   }
 
   @override
-  i2.ParseCoreData get data => (super.noSuchMethod(Invocation.getter(#data),
-      returnValue: _FakeParseCoreData()) as i2.ParseCoreData);
+  i2.ParseCoreData get data =>
+      (super.noSuchMethod(
+            Invocation.getter(#data),
+            returnValue: _FakeParseCoreData(),
+          )
+          as i2.ParseCoreData);
 
   @override
-  i3.Future<i2.ParseNetworkResponse> get(String? path,
-          {i2.ParseNetworkOptions? options,
-          i2.ProgressCallback? onReceiveProgress}) =>
+  i3.Future<i2.ParseNetworkResponse> get(
+    String? path, {
+    i2.ParseNetworkOptions? options,
+    i2.ProgressCallback? onReceiveProgress,
+  }) =>
       (super.noSuchMethod(
-              Invocation.method(#get, [path],
-                  {#options: options, #onReceiveProgress: onReceiveProgress}),
-              returnValue: Future<i2.ParseNetworkResponse>.value(
-                  _FakeParseNetworkResponse()))
+            Invocation.method(
+              #get,
+              [path],
+              {#options: options, #onReceiveProgress: onReceiveProgress},
+            ),
+            returnValue: Future<i2.ParseNetworkResponse>.value(
+              _FakeParseNetworkResponse(),
+            ),
+          )
           as i3.Future<i2.ParseNetworkResponse>);
   @override
-  i3.Future<i2.ParseNetworkResponse> put(String? path,
-          {String? data, i2.ParseNetworkOptions? options}) =>
+  i3.Future<i2.ParseNetworkResponse> put(
+    String? path, {
+    String? data,
+    i2.ParseNetworkOptions? options,
+  }) =>
       (super.noSuchMethod(
-              Invocation.method(#put, [path], {#data: data, #options: options}),
-              returnValue: Future<i2.ParseNetworkResponse>.value(
-                  _FakeParseNetworkResponse()))
+            Invocation.method(#put, [path], {#data: data, #options: options}),
+            returnValue: Future<i2.ParseNetworkResponse>.value(
+              _FakeParseNetworkResponse(),
+            ),
+          )
           as i3.Future<i2.ParseNetworkResponse>);
 
   @override
-  i3.Future<i2.ParseNetworkResponse> post(String? path,
-          {String? data, i2.ParseNetworkOptions? options}) =>
-      super.noSuchMethod(
-          Invocation.method(#post, [path], {#data: data, #options: options}),
-          returnValue: Future<i2.ParseNetworkResponse>.value(
-              _FakeParseNetworkResponse()));
+  i3.Future<i2.ParseNetworkResponse> post(
+    String? path, {
+    String? data,
+    i2.ParseNetworkOptions? options,
+  }) => super.noSuchMethod(
+    Invocation.method(#post, [path], {#data: data, #options: options}),
+    returnValue: Future<i2.ParseNetworkResponse>.value(
+      _FakeParseNetworkResponse(),
+    ),
+  );
 
   @override
-  i3.Future<i2.ParseNetworkResponse> postBytes(String? path,
-          {i3.Stream<List<int>>? data,
-          i2.ParseNetworkOptions? options,
-          i2.ProgressCallback? onSendProgress,
-          dynamic cancelToken}) =>
+  i3.Future<i2.ParseNetworkResponse> postBytes(
+    String? path, {
+    i3.Stream<List<int>>? data,
+    i2.ParseNetworkOptions? options,
+    i2.ProgressCallback? onSendProgress,
+    dynamic cancelToken,
+  }) =>
       (super.noSuchMethod(
-              Invocation.method(#postBytes, [
-                path
-              ], {
+            Invocation.method(
+              #postBytes,
+              [path],
+              {
                 #data: data,
                 #options: options,
                 #onSendProgress: onSendProgress,
-                #cancelToken: cancelToken
-              }),
-              returnValue: Future<i2.ParseNetworkResponse>.value(
-                  _FakeParseNetworkResponse()))
+                #cancelToken: cancelToken,
+              },
+            ),
+            returnValue: Future<i2.ParseNetworkResponse>.value(
+              _FakeParseNetworkResponse(),
+            ),
+          )
           as i3.Future<i2.ParseNetworkResponse>);
 
   @override
-  i3.Future<i2.ParseNetworkResponse> delete(String? path,
-          {i2.ParseNetworkOptions? options}) =>
+  i3.Future<i2.ParseNetworkResponse> delete(
+    String? path, {
+    i2.ParseNetworkOptions? options,
+  }) =>
       (super.noSuchMethod(
-              Invocation.method(#delete, [path], {#options: options}),
-              returnValue: Future<i2.ParseNetworkResponse>.value(
-                  _FakeParseNetworkResponse()))
+            Invocation.method(#delete, [path], {#options: options}),
+            returnValue: Future<i2.ParseNetworkResponse>.value(
+              _FakeParseNetworkResponse(),
+            ),
+          )
           as i3.Future<i2.ParseNetworkResponse>);
 
   @override
-  i3.Future<i2.ParseNetworkByteResponse> getBytes(String? path,
-          {i2.ParseNetworkOptions? options,
-          i2.ProgressCallback? onReceiveProgress,
-          dynamic cancelToken}) =>
+  i3.Future<i2.ParseNetworkByteResponse> getBytes(
+    String? path, {
+    i2.ParseNetworkOptions? options,
+    i2.ProgressCallback? onReceiveProgress,
+    dynamic cancelToken,
+  }) =>
       (super.noSuchMethod(
-              Invocation.method(#getBytes, [
-                path
-              ], {
+            Invocation.method(
+              #getBytes,
+              [path],
+              {
                 #options: options,
                 #onReceiveProgress: onReceiveProgress,
-                #cancelToken: cancelToken
-              }),
-              returnValue: Future<i2.ParseNetworkByteResponse>.value(
-                  _FakeParseNetworkByteResponse()))
+                #cancelToken: cancelToken,
+              },
+            ),
+            returnValue: Future<i2.ParseNetworkByteResponse>.value(
+              _FakeParseNetworkByteResponse(),
+            ),
+          )
           as i3.Future<i2.ParseNetworkByteResponse>);
 }

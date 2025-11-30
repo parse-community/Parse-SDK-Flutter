@@ -53,7 +53,9 @@ class ParseDioClient extends ParseClient {
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,
         options: _Options(
-            headers: options?.headers, responseType: dio.ResponseType.bytes),
+          headers: options?.headers,
+          responseType: dio.ResponseType.bytes,
+        ),
       );
       return ParseNetworkByteResponse(
         bytes: dioResponse.data,
@@ -66,15 +68,21 @@ class ParseDioClient extends ParseClient {
           statusCode: error.response?.statusCode ?? ParseError.otherCause,
         );
       } else {
-        return _getOtherCaseErrorForParseNetworkResponse(
-            error.error.toString());
+        return ParseNetworkByteResponse(
+          data:
+              "{\"code\":${ParseError.otherCause},\"error\":\"${error.error.toString()}\"}",
+          statusCode: ParseError.otherCause,
+        );
       }
     }
   }
 
   @override
-  Future<ParseNetworkResponse> put(String path,
-      {String? data, ParseNetworkOptions? options}) async {
+  Future<ParseNetworkResponse> put(
+    String path, {
+    String? data,
+    ParseNetworkOptions? options,
+  }) async {
     try {
       final dio.Response<String> dioResponse = await _client.put<String>(
         path,
@@ -95,8 +103,11 @@ class ParseDioClient extends ParseClient {
   }
 
   @override
-  Future<ParseNetworkResponse> post(String path,
-      {String? data, ParseNetworkOptions? options}) async {
+  Future<ParseNetworkResponse> post(
+    String path, {
+    String? data,
+    ParseNetworkOptions? options,
+  }) async {
     try {
       final dio.Response<String> dioResponse = await _client.post<String>(
         path,
@@ -117,11 +128,13 @@ class ParseDioClient extends ParseClient {
   }
 
   @override
-  Future<ParseNetworkResponse> postBytes(String path,
-      {Stream<List<int>>? data,
-      ParseNetworkOptions? options,
-      ProgressCallback? onSendProgress,
-      dynamic cancelToken}) async {
+  Future<ParseNetworkResponse> postBytes(
+    String path, {
+    Stream<List<int>>? data,
+    ParseNetworkOptions? options,
+    ProgressCallback? onSendProgress,
+    dynamic cancelToken,
+  }) async {
     try {
       final dio.Response<String> dioResponse = await _client.post<String>(
         path,
@@ -143,20 +156,24 @@ class ParseDioClient extends ParseClient {
         );
       } else {
         return _getOtherCaseErrorForParseNetworkResponse(
-            error.error.toString());
+          error.error.toString(),
+        );
       }
     }
   }
 
-  _getOtherCaseErrorForParseNetworkResponse(String error) {
+  ParseNetworkResponse _getOtherCaseErrorForParseNetworkResponse(String error) {
     return ParseNetworkResponse(
-        data: "{\"code\":${ParseError.otherCause},\"error\":\"$error\"}",
-        statusCode: ParseError.otherCause);
+      data: "{\"code\":${ParseError.otherCause},\"error\":\"$error\"}",
+      statusCode: ParseError.otherCause,
+    );
   }
 
   @override
-  Future<ParseNetworkResponse> delete(String path,
-      {ParseNetworkOptions? options}) async {
+  Future<ParseNetworkResponse> delete(
+    String path, {
+    ParseNetworkOptions? options,
+  }) async {
     try {
       final dio.Response<String> dioResponse = await _client.delete<String>(
         path,
@@ -181,7 +198,7 @@ class ParseDioClient extends ParseClient {
 /// Creates a custom version of HTTP Client that has Parse Data Preset
 class _ParseDioClient with dio.DioMixin implements dio.Dio {
   _ParseDioClient({bool sendSessionId = false, dynamic securityContext})
-      : _sendSessionId = sendSessionId {
+    : _sendSessionId = sendSessionId {
     options = dio.BaseOptions();
     httpClientAdapter = createHttpClientAdapter(securityContext);
   }
@@ -224,7 +241,8 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
     /// If developer wants to add custom headers, extend this class and add headers needed.
     if (additionalHeaders != null && additionalHeaders!.isNotEmpty) {
       additionalHeaders!.forEach(
-          (String key, String value) => options!.headers![key] = value);
+        (String key, String value) => options!.headers![key] = value,
+      );
     }
 
     if (parseCoreData.debug) {
@@ -273,12 +291,10 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
 }
 
 class _Options extends dio.Options {
-  _Options({
-    super.headers,
-    super.responseType,
-    String? contentType,
-  }) : super(
-          contentType: contentType ??
-              (headers ?? <String, dynamic>{})[dio.Headers.contentTypeHeader],
-        );
+  _Options({super.headers, super.responseType, String? contentType})
+    : super(
+        contentType:
+            contentType ??
+            (headers ?? <String, dynamic>{})[dio.Headers.contentTypeHeader],
+      );
 }
