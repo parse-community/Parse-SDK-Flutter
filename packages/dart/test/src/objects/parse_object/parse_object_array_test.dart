@@ -662,6 +662,27 @@ void main() {
       expect(listValue, orderedEquals([1, 2]));
     });
 
+    test('Arrays should not be cleared when calling clearUnsavedChanges() '
+        'after fetching/querying without save', () {
+      // arrange - Simulate a fetch/query response (no prior save operation)
+      dietPlansObject.fromJson({
+        keyArray: [1, 2, 3],
+        "objectId": "someId",
+      }); // assume this coming from the server via fetch/query
+
+      // Simulate what happens in _handleSingleResult for fetch/query
+      // (calls _notifyChildrenAboutSave without prior _notifyChildrenAboutSaving)
+      // This reproduces the bug where arrays were incorrectly cleared
+      dietPlansObject._notifyChildrenAboutSave();
+
+      // act - this should NOT clear the arrays
+      dietPlansObject.clearUnsavedChanges();
+
+      // assert - arrays should still have their values
+      final listValue = dietPlansObject.get(keyArray);
+      expect(listValue, orderedEquals([1, 2, 3]));
+    });
+
     test('The list value and the value for api request should be identical '
         'before and after the save() failed to save the object', () async {
       // arrange
