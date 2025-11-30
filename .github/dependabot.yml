@@ -6,8 +6,6 @@ updates:
     schedule:
       interval: "daily"
     open-pull-requests-limit: 10
-    labels:
-      - "dart"
     commit-message:
       prefix: "feat"
 
@@ -17,8 +15,6 @@ updates:
     schedule:
       interval: "daily"
     open-pull-requests-limit: 10
-    labels:
-      - "flutter"
     commit-message:
       prefix: "feat"
 
@@ -28,7 +24,5 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
-    labels:
-      - "ci"
     commit-message:
       prefix: "refactor"
