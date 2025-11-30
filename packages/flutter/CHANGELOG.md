@@ -1,3 +1,10 @@
+# [flutter-v10.4.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.3.0...flutter-10.4.0) (2025-11-30)
+
+
+### Features
+
+* Bump parse_server_sdk from 6.4.0 to 8.0.2 in /packages/flutter ([#1059](https://github.com/parse-community/Parse-SDK-Flutter/issues/1059)) ([d183e96](https://github.com/parse-community/Parse-SDK-Flutter/commit/d183e96008011e1b1384a96226228e08a726b78b))
+
 # [flutter-v10.3.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.2.0...flutter-10.3.0) (2025-11-30)
 
 
