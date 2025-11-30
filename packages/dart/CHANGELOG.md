@@ -1,3 +1,10 @@
+# [9.4.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.3.0...dart-9.4.0) (2025-11-29)
+
+
+### Features
+
+* Bump lints from 4.0.0 to 6.0.0 in /packages/dart ([#1065](https://github.com/parse-community/Parse-SDK-Flutter/issues/1065)) ([3c58597](https://github.com/parse-community/Parse-SDK-Flutter/commit/3c58597d92fad8a25a1632c0bbd25ff48a2750f3))
+
 # [9.3.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.2.0...dart-9.3.0) (2025-11-29)
 
 
