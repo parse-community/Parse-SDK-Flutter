@@ -663,23 +663,74 @@ void main() {
     });
 
     test('Arrays should not be cleared when calling clearUnsavedChanges() '
-        'after fetching/querying without save', () {
-      // arrange - Simulate a fetch/query response (no prior save operation)
-      dietPlansObject.fromJson({
-        keyArray: [1, 2, 3],
-        "objectId": "someId",
-      }); // assume this coming from the server via fetch/query
+        'after receiving response from fetch/query (issue #1038)', () async {
+      // arrange - First, save an object with an array to create a _ParseArray
+      dietPlansObject.setAdd(keyArray, 1);
+      dietPlansObject.setAdd(keyArray, 2);
 
-      // Simulate what happens in _handleSingleResult for fetch/query
-      // (calls _notifyChildrenAboutSave without prior _notifyChildrenAboutSaving)
-      // This reproduces the bug where arrays were incorrectly cleared
-      dietPlansObject._notifyChildrenAboutSave();
+      when(
+        client.post(any, options: anyNamed("options"), data: anyNamed('data')),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode({
+            "objectId": "Mn1iJTkWTE",
+            "createdAt": "2023-03-05T00:25:31.466Z",
+          }),
+        ),
+      );
 
-      // act - this should NOT clear the arrays
-      dietPlansObject.clearUnsavedChanges();
+      await dietPlansObject
+          .save(); // This creates the _ParseArray and calls onSaving/onSaved
 
-      // assert - arrays should still have their values
-      final listValue = dietPlansObject.get(keyArray);
+      // Now set up a mock fetch response that returns updated array data
+      final getPath = Uri.parse(
+        '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
+      ).toString();
+
+      const resultsFromServer = {
+        "results": [
+          {
+            "objectId": "Mn1iJTkWTE",
+            keyArray: [
+              1,
+              2,
+              3,
+            ], // Server now has an updated array with one more item
+            "createdAt": "2023-03-05T00:25:31.466Z",
+            "updatedAt": "2023-03-05T00:25:31.466Z",
+          },
+        ],
+      };
+
+      when(
+        client.get(
+          getPath,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(resultsFromServer),
+        ),
+      );
+
+      // act - Fetch the object from server to get the updated array
+      // This simulates the scenario from issue #1038 where after fetching/querying
+      // an object (e.g., via getUpdatedUser() or fetch()), calling clearUnsavedChanges()
+      // would incorrectly clear the arrays.
+      ParseObject fetchedObject = await dietPlansObject.fetch();
+
+      // Verify array is populated correctly from the fetch response
+      expect(fetchedObject.get(keyArray), orderedEquals([1, 2, 3]));
+
+      // Now clear unsaved changes - this should NOT clear the arrays
+      // Before the fix (PR #1039), this would set arrays to empty
+      fetchedObject.clearUnsavedChanges();
+
+      // assert - Arrays should still have their values from the server
+      final listValue = fetchedObject.get(keyArray);
       expect(listValue, orderedEquals([1, 2, 3]));
     });
 
