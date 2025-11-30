@@ -10,9 +10,6 @@ on:
     branches:
       - master
       - next-major
-    tags:
-      - "dart-[0-9]+.[0-9]+.[0-9]+*"
-      - "flutter-[0-9]+.[0-9]+.[0-9]+*"
 env:
   package: ${{ startsWith(github.ref_name, 'dart-') && 'dart' || startsWith(github.ref_name, 'flutter-') && 'flutter' || '' }}
 jobs:
@@ -31,7 +28,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: 'npm'
@@ -41,6 +38,8 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global credential.helper store
+          echo "https://x-access-token:${{ secrets.RELEASE_GITHUB_TOKEN }}@github.com" > ~/.git-credentials
       - name: Run semantic-release for dart package
         run: npx semantic-release
         working-directory: packages/dart
