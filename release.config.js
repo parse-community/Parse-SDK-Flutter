@@ -102,7 +102,7 @@ async function config() {
       }],
       ['@semantic-release/exec', {
         prepareCmd: packageName !== 'root'
-          ? `node scripts/update-version.js packages/${packageName}/pubspec.yaml \${nextRelease.version}`
+          ? `node ../../scripts/update-version.js pubspec.yaml \${nextRelease.version}`
           : 'echo "No version update needed for root"',
       }],
       ['@semantic-release/npm', {
