@@ -20,7 +20,6 @@ This library gives you access to the powerful Parse Server backend from your Flu
 ---
 
 - [Compatibility](#compatibility)
-  - [Currently Supported Versions](#currently-supported-versions)
   - [Handling Version Conflicts](#handling-version-conflicts)
 - [Getting Started](#getting-started)
 - [Documentation](#documentation)
@@ -37,15 +36,6 @@ The Parse Flutter SDK is continuously tested with the most recent release of the
 
 > [!Note]
 > Support windows are calculated from official Flutter release dates. When a version's support period expires, it will be dropped in the next Parse SDK major release without advance notice. For full details, see [VERSIONING_POLICY.md](../../VERSIONING_POLICY.md).
-
-### Currently Supported Versions
-
-| Version      | Latest Version | End of Support | Compatible |
-|--------------|----------------|----------------|------------|
-| Flutter 3.16 | 3.16.9         | Jan 2025       | ✅ Yes      |
-| Flutter 3.19 | 3.19.6         | Apr 2025       | ✅ Yes      |
-| Flutter 3.22 | 3.22.3         | Jul 2025       | ✅ Yes      |
-| Flutter 3.24 | 3.24.3         | Sep 2025       | ✅ Yes      |
 
 ### Handling Version Conflicts
 
