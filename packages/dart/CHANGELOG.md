@@ -1,3 +1,10 @@
+# [dart-v9.4.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.0...dart-9.4.1) (2025-11-30)
+
+
+### Bug Fixes
+
+* `ParseGeoPoint` longitude validation checks wrong variable ([#1089](https://github.com/parse-community/Parse-SDK-Flutter/issues/1089)) ([6b9ef6b](https://github.com/parse-community/Parse-SDK-Flutter/commit/6b9ef6b034741f6f829af3b7edf990f9915fb7fb))
+
 # [9.4.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.3.0...dart-9.4.0) (2025-11-29)
 
 

@@ -2,8 +2,8 @@ name: release-publish
 on:
   push:
     tags:
-      - "dart-[0-9]+.[0-9]+.[0-9]+*"
-      - "flutter-[0-9]+.[0-9]+.[0-9]+*"
+      - "dart-*"
+      - "flutter-*"
 env:
   package: ${{ startsWith(github.ref_name, 'dart-') && 'dart' || startsWith(github.ref_name, 'flutter-') && 'flutter' || '' }}
 jobs:
@@ -88,7 +88,7 @@ jobs:
       - name: Generate Docs
         run: dart doc ./packages/dart/ -o ./.api_docs/dart/
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3.7.3
+        uses: peaceiris/actions-gh-pages@v4.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./.api_docs/dart/
@@ -118,7 +118,7 @@ jobs:
       - name: Generate Docs
         run: dart doc ./packages/flutter/ -o ./.api_docs/flutter/
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3.7.3
+        uses: peaceiris/actions-gh-pages@v4.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./.api_docs/flutter/

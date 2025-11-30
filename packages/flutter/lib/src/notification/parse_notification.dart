@@ -7,7 +7,7 @@ class ParseNotification {
   final void Function(String value) onShowNotification;
 
   /// Show notification
-  void showNotification(title) {
+  void showNotification(String title) {
     onShowNotification.call(title);
   }
 }

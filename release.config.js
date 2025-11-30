@@ -114,6 +114,7 @@ async function config() {
           '\${nextRelease.version} [skip ci]\n\n\${nextRelease.notes}'
       }],
       ['@semantic-release/github', {
+        releaseName: packageName !== 'root' ? `${packageName}-\${nextRelease.version}` : '\${nextRelease.version}',
         successComment: getReleaseComment(),
         labels: ['type:ci'],
         releasedLabels: ['state:released<%= nextRelease.channel ? `-\${nextRelease.channel}` : "" %>']

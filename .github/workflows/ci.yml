@@ -67,7 +67,7 @@ jobs:
           dart pub global activate coverage
           dart pub global run coverage:format_coverage -i coverage/test -o coverage/lcov.info --lcov --packages=.dart_tool/package_config.json --report-on=lib
       - name: Upload code coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
@@ -134,7 +134,7 @@ jobs:
           escapedPath="$(echo `pwd` | sed 's/\//\\\//g')"
           sed "s/^SF:lib/SF:$escapedPath\/lib/g" coverage/lcov.info > coverage/lcov-full.info
       - name: Upload code coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
@@ -151,7 +151,7 @@ jobs:
         with:
           fetch-depth: 0 # Required for semantic-release to analyze commit history
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 24
       - name: Install dependencies
