@@ -82,7 +82,7 @@ jobs:
     if: failure()
     steps:
       - name: Create issue for security vulnerabilities
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const title = '[Security] Dependency vulnerabilities detected';
