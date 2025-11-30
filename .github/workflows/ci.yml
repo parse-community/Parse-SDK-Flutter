@@ -36,7 +36,7 @@ jobs:
     name: Test ${{ matrix.name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Configure git for line endings (Windows)
         if: matrix.os == 'windows-latest'
         run: |
@@ -101,7 +101,7 @@ jobs:
     name: Test ${{ matrix.name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup flutter (beta)
         if: ${{ matrix.sdk == 'beta' }}
         uses: subosito/flutter-action@v2
@@ -147,7 +147,7 @@ jobs:
     name: Auto-Release Dry Run
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Required for semantic-release to analyze commit history
       - name: Setup Node.js
