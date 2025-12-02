@@ -1,3 +1,10 @@
+# [dart-v9.4.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.1...dart-9.4.2) (2025-12-02)
+
+
+### Bug Fixes
+
+* Ethernet not recognized as connectivity state ([#1090](https://github.com/parse-community/Parse-SDK-Flutter/issues/1090)) ([f76fde4](https://github.com/parse-community/Parse-SDK-Flutter/commit/f76fde4f348af5d3992663795d279d57658f4e87))
+
 # [dart-v9.4.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.0...dart-9.4.1) (2025-11-30)
 
 
