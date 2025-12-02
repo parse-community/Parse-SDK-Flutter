@@ -120,72 +120,44 @@ void main() {
       expect(result, ParseConnectivityResult.wifi);
     });
 
-    test('should handle ethernet connectivity', () async {
-      // arrange
-      mockConnectivity.setConnectivity(ParseConnectivityResult.ethernet);
+    final connectivityCases = <Map<String, dynamic>>[
+      {
+        'desc': 'ethernet',
+        'state': ParseConnectivityResult.ethernet,
+      },
+      {
+        'desc': 'mobile',
+        'state': ParseConnectivityResult.mobile,
+      },
+      {
+        'desc': 'none',
+        'state': ParseConnectivityResult.none,
+      },
+    ];
 
-      await Parse().initialize(
-        'appId',
-        serverUrl,
-        debug: true,
-        fileDirectory: 'someDirectory',
-        appName: 'appName',
-        appPackageName: 'somePackageName',
-        appVersion: 'someAppVersion',
-        connectivityProvider: mockConnectivity,
-      );
+    for (final testCase in connectivityCases) {
+      test('should handle ${testCase['desc']} connectivity', () async {
+        // arrange
+        mockConnectivity.setConnectivity(testCase['state']);
 
-      // act
-      final result = await mockConnectivity.checkConnectivity();
+        await Parse().initialize(
+          'appId',
+          serverUrl,
+          debug: true,
+          fileDirectory: 'someDirectory',
+          appName: 'appName',
+          appPackageName: 'somePackageName',
+          appVersion: 'someAppVersion',
+          connectivityProvider: mockConnectivity,
+        );
 
-      // assert
-      expect(result, ParseConnectivityResult.ethernet);
-    });
+        // act
+        final result = await mockConnectivity.checkConnectivity();
 
-    test('should handle mobile connectivity', () async {
-      // arrange
-      mockConnectivity.setConnectivity(ParseConnectivityResult.mobile);
-
-      await Parse().initialize(
-        'appId',
-        serverUrl,
-        debug: true,
-        fileDirectory: 'someDirectory',
-        appName: 'appName',
-        appPackageName: 'somePackageName',
-        appVersion: 'someAppVersion',
-        connectivityProvider: mockConnectivity,
-      );
-
-      // act
-      final result = await mockConnectivity.checkConnectivity();
-
-      // assert
-      expect(result, ParseConnectivityResult.mobile);
-    });
-
-    test('should handle no connectivity', () async {
-      // arrange
-      mockConnectivity.setConnectivity(ParseConnectivityResult.none);
-
-      await Parse().initialize(
-        'appId',
-        serverUrl,
-        debug: true,
-        fileDirectory: 'someDirectory',
-        appName: 'appName',
-        appPackageName: 'somePackageName',
-        appVersion: 'someAppVersion',
-        connectivityProvider: mockConnectivity,
-      );
-
-      // act
-      final result = await mockConnectivity.checkConnectivity();
-
-      // assert
-      expect(result, ParseConnectivityResult.none);
-    });
-
+        // assert
+        expect(result, testCase['state']);
+      });
+    }
     test('should emit connectivity changes through stream', () async {
       // arrange
       mockConnectivity.setConnectivity(ParseConnectivityResult.wifi);
