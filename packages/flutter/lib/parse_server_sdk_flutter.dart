@@ -122,6 +122,8 @@ class Parse extends sdk.Parse
 
     if (list.contains(ConnectivityResult.wifi)) {
       return sdk.ParseConnectivityResult.wifi;
+    } else if (list.contains(ConnectivityResult.ethernet)) {
+      return sdk.ParseConnectivityResult.ethernet;
     } else if (list.contains(ConnectivityResult.mobile)) {
       return sdk.ParseConnectivityResult.mobile;
     } else {
@@ -136,6 +138,8 @@ class Parse extends sdk.Parse
     ) {
       if (event.contains(ConnectivityResult.wifi)) {
         return sdk.ParseConnectivityResult.wifi;
+      } else if (event.contains(ConnectivityResult.ethernet)) {
+        return sdk.ParseConnectivityResult.ethernet;
       } else if (event.contains(ConnectivityResult.mobile)) {
         return sdk.ParseConnectivityResult.mobile;
       } else {
