@@ -90,95 +90,76 @@ void main() {
   group('Connectivity handling', () {
     late MockConnectivityProvider mockConnectivity;
 
-    setUp(() {
+    // Initialize once with mock provider, then test state changes
+    setUpAll(() async {
       mockConnectivity = MockConnectivityProvider();
+      // Initialize Parse once with the mock provider
+      await Parse().initialize(
+        'appId',
+        serverUrl,
+        debug: false,
+        fileDirectory: 'someDirectory',
+        appName: 'appName',
+        appPackageName: 'somePackageName',
+        appVersion: 'someAppVersion',
+        connectivityProvider: mockConnectivity,
+      );
     });
 
-    tearDown(() {
+    tearDownAll(() {
       mockConnectivity.dispose();
     });
 
-    test('should handle wifi connectivity', () async {
-      // arrange
-      mockConnectivity.setConnectivity(ParseConnectivityResult.wifi);
-
-      await Parse().initialize(
-        'appId',
-        serverUrl,
-        debug: true,
-        fileDirectory: 'someDirectory',
-        appName: 'appName',
-        appPackageName: 'somePackageName',
-        appVersion: 'someAppVersion',
-        connectivityProvider: mockConnectivity,
-      );
-
-      // act
-      final result = await mockConnectivity.checkConnectivity();
-
-      // assert
-      expect(result, ParseConnectivityResult.wifi);
-    });
-
-    final connectivityCases = <Map<String, dynamic>>[
+    // Test data for parameterized connectivity state tests
+    final connectivityTestCases = <Map<String, dynamic>>[
       {
-        'desc': 'ethernet',
+        'state': ParseConnectivityResult.wifi,
+        'isOnline': true,
+        'description': 'wifi should be treated as online',
+      },
+      {
         'state': ParseConnectivityResult.ethernet,
+        'isOnline': true,
+        'description': 'ethernet should be treated as online',
       },
       {
-        'desc': 'mobile',
         'state': ParseConnectivityResult.mobile,
+        'isOnline': true,
+        'description': 'mobile should be treated as online',
       },
       {
-        'desc': 'none',
         'state': ParseConnectivityResult.none,
+        'isOnline': false,
+        'description': 'none should be treated as offline',
       },
     ];
 
-    for (final testCase in connectivityCases) {
-      test('should handle ${testCase['desc']} connectivity', () async {
+    for (final testCase in connectivityTestCases) {
+      test(testCase['description'], () async {
         // arrange
-        mockConnectivity.setConnectivity(testCase['state']);
-
-        await Parse().initialize(
-          'appId',
-          serverUrl,
-          debug: true,
-          fileDirectory: 'someDirectory',
-          appName: 'appName',
-          appPackageName: 'somePackageName',
-          appVersion: 'someAppVersion',
-          connectivityProvider: mockConnectivity,
-        );
+        final state = testCase['state'] as ParseConnectivityResult;
+        final isOnline = testCase['isOnline'] as bool;
 
         // act
+        mockConnectivity.setConnectivity(state);
         final result = await mockConnectivity.checkConnectivity();
 
-        // assert
-        expect(result, testCase['state']);
+        // assert - verify the state is correctly identified
+        expect(result, state);
+        expect(result != ParseConnectivityResult.none, isOnline);
       });
     }
-    test('should emit connectivity changes through stream', () async {
+
+    test('should emit connectivity state transitions through stream', () async {
       // arrange
-      mockConnectivity.setConnectivity(ParseConnectivityResult.wifi);
-
-      await Parse().initialize(
-        'appId',
-        serverUrl,
-        debug: true,
-        fileDirectory: 'someDirectory',
-        appName: 'appName',
-        appPackageName: 'somePackageName',
-        appVersion: 'someAppVersion',
-        connectivityProvider: mockConnectivity,
-      );
-
-      final List<ParseConnectivityResult> emittedStates = [];
+      final emittedStates = <ParseConnectivityResult>[];
       final subscription = mockConnectivity.connectivityStream.listen((state) {
         emittedStates.add(state);
       });
 
-      // act
+      // act - transition through different connectivity states
+      mockConnectivity.setConnectivity(ParseConnectivityResult.wifi);
+      await Future.delayed(Duration(milliseconds: 10));
       mockConnectivity.setConnectivity(ParseConnectivityResult.ethernet);
       await Future.delayed(Duration(milliseconds: 10));
       mockConnectivity.setConnectivity(ParseConnectivityResult.mobile);
@@ -186,11 +167,41 @@ void main() {
       mockConnectivity.setConnectivity(ParseConnectivityResult.none);
       await Future.delayed(Duration(milliseconds: 10));
 
+      // assert - all state changes should be emitted
+      expect(emittedStates.length, 4);
+      expect(emittedStates[0], ParseConnectivityResult.wifi);
+      expect(emittedStates[1], ParseConnectivityResult.ethernet);
+      expect(emittedStates[2], ParseConnectivityResult.mobile);
+      expect(emittedStates[3], ParseConnectivityResult.none);
+
+      // verify online states (wifi, ethernet, mobile) are not "none"
+      expect(emittedStates[0], isNot(ParseConnectivityResult.none));
+      expect(emittedStates[1], isNot(ParseConnectivityResult.none));
+      expect(emittedStates[2], isNot(ParseConnectivityResult.none));
+
+      await subscription.cancel();
+    });
+
+    test('should transition from offline to online correctly', () async {
+      // arrange
+      final stateChanges = <ParseConnectivityResult>[];
+      final subscription = mockConnectivity.connectivityStream.listen((state) {
+        stateChanges.add(state);
+      });
+
+      // act - start offline, then go online via ethernet
+      mockConnectivity.setConnectivity(ParseConnectivityResult.none);
+      await Future.delayed(Duration(milliseconds: 10));
+      mockConnectivity.setConnectivity(ParseConnectivityResult.ethernet);
+      await Future.delayed(Duration(milliseconds: 10));
+
       // assert
-      expect(emittedStates.length, 3);
-      expect(emittedStates[0], ParseConnectivityResult.ethernet);
-      expect(emittedStates[1], ParseConnectivityResult.mobile);
-      expect(emittedStates[2], ParseConnectivityResult.none);
+      expect(stateChanges.length, 2);
+      expect(stateChanges[0], ParseConnectivityResult.none);
+      expect(stateChanges[1], ParseConnectivityResult.ethernet);
+      // Verify the transition is from offline to online
+      expect(stateChanges[0] == ParseConnectivityResult.none, true);
+      expect(stateChanges[1] != ParseConnectivityResult.none, true);
 
       await subscription.cancel();
     });
