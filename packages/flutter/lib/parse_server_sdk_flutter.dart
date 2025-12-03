@@ -116,13 +116,18 @@ class Parse extends sdk.Parse
   final StreamController<void> _appResumedStreamController =
       StreamController<void>();
 
-  @override
-  Future<sdk.ParseConnectivityResult> checkConnectivity() async {
-    List<ConnectivityResult> list = await Connectivity().checkConnectivity();
-
-    if (list.contains(ConnectivityResult.wifi)) {
+  /// Maps connectivity_plus results to ParseConnectivityResult.
+  ///
+  /// Priority: wifi > ethernet > mobile > none
+  /// This ensures ethernet is treated as an online connection type.
+  sdk.ParseConnectivityResult _mapConnectivity(
+    List<ConnectivityResult> results,
+  ) {
+    if (results.contains(ConnectivityResult.wifi)) {
       return sdk.ParseConnectivityResult.wifi;
-    } else if (list.contains(ConnectivityResult.mobile)) {
+    } else if (results.contains(ConnectivityResult.ethernet)) {
+      return sdk.ParseConnectivityResult.ethernet;
+    } else if (results.contains(ConnectivityResult.mobile)) {
       return sdk.ParseConnectivityResult.mobile;
     } else {
       return sdk.ParseConnectivityResult.none;
@@ -130,18 +135,14 @@ class Parse extends sdk.Parse
   }
 
   @override
+  Future<sdk.ParseConnectivityResult> checkConnectivity() async {
+    List<ConnectivityResult> list = await Connectivity().checkConnectivity();
+    return _mapConnectivity(list);
+  }
+
+  @override
   Stream<sdk.ParseConnectivityResult> get connectivityStream {
-    return Connectivity().onConnectivityChanged.map((
-      List<ConnectivityResult> event,
-    ) {
-      if (event.contains(ConnectivityResult.wifi)) {
-        return sdk.ParseConnectivityResult.wifi;
-      } else if (event.contains(ConnectivityResult.mobile)) {
-        return sdk.ParseConnectivityResult.mobile;
-      } else {
-        return sdk.ParseConnectivityResult.none;
-      }
-    });
+    return Connectivity().onConnectivityChanged.map(_mapConnectivity);
   }
 
   @override
