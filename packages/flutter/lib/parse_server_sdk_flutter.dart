@@ -120,6 +120,7 @@ class Parse extends sdk.Parse
   Future<sdk.ParseConnectivityResult> checkConnectivity() async {
     List<ConnectivityResult> list = await Connectivity().checkConnectivity();
 
+    // Priority mapping: wifi > ethernet > mobile > none
     if (list.contains(ConnectivityResult.wifi)) {
       return sdk.ParseConnectivityResult.wifi;
     } else if (list.contains(ConnectivityResult.ethernet)) {
@@ -136,6 +137,7 @@ class Parse extends sdk.Parse
     return Connectivity().onConnectivityChanged.map((
       List<ConnectivityResult> event,
     ) {
+      // Priority mapping: wifi > ethernet > mobile > none
       if (event.contains(ConnectivityResult.wifi)) {
         return sdk.ParseConnectivityResult.wifi;
       } else if (event.contains(ConnectivityResult.ethernet)) {
