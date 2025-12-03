@@ -56,14 +56,16 @@ void main() {
       expect(result, ParseConnectivityResult.wifi);
     });
 
-    test('ethernet connection returns ParseConnectivityResult.ethernet',
-        () async {
-      mockPlatform.setConnectivity([ConnectivityResult.ethernet]);
+    test(
+      'ethernet connection returns ParseConnectivityResult.ethernet',
+      () async {
+        mockPlatform.setConnectivity([ConnectivityResult.ethernet]);
 
-      final result = await Parse().checkConnectivity();
+        final result = await Parse().checkConnectivity();
 
-      expect(result, ParseConnectivityResult.ethernet);
-    });
+        expect(result, ParseConnectivityResult.ethernet);
+      },
+    );
 
     test('mobile connection returns ParseConnectivityResult.mobile', () async {
       mockPlatform.setConnectivity([ConnectivityResult.mobile]);
@@ -82,8 +84,10 @@ void main() {
     });
 
     test('wifi takes priority over ethernet', () async {
-      mockPlatform
-          .setConnectivity([ConnectivityResult.wifi, ConnectivityResult.ethernet]);
+      mockPlatform.setConnectivity([
+        ConnectivityResult.wifi,
+        ConnectivityResult.ethernet,
+      ]);
 
       final result = await Parse().checkConnectivity();
 
@@ -91,8 +95,10 @@ void main() {
     });
 
     test('ethernet takes priority over mobile (issue #1042 fix)', () async {
-      mockPlatform.setConnectivity(
-          [ConnectivityResult.ethernet, ConnectivityResult.mobile]);
+      mockPlatform.setConnectivity([
+        ConnectivityResult.ethernet,
+        ConnectivityResult.mobile,
+      ]);
 
       final result = await Parse().checkConnectivity();
 
@@ -192,8 +198,10 @@ void main() {
         }
       });
 
-      mockPlatform.setConnectivity(
-          [ConnectivityResult.ethernet, ConnectivityResult.mobile]);
+      mockPlatform.setConnectivity([
+        ConnectivityResult.ethernet,
+        ConnectivityResult.mobile,
+      ]);
 
       final result = await completer.future;
       expect(result, ParseConnectivityResult.ethernet);

@@ -121,7 +121,8 @@ class Parse extends sdk.Parse
   /// Priority: wifi > ethernet > mobile > none
   /// This ensures ethernet is treated as an online connection type.
   sdk.ParseConnectivityResult _mapConnectivity(
-      List<ConnectivityResult> results) {
+    List<ConnectivityResult> results,
+  ) {
     if (results.contains(ConnectivityResult.wifi)) {
       return sdk.ParseConnectivityResult.wifi;
     } else if (results.contains(ConnectivityResult.ethernet)) {
