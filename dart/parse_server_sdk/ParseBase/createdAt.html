@@ -74,12 +74,13 @@
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">DateTime? get createdAt {
-  if (get&lt;dynamic&gt;(keyVarCreatedAt) is String) {
-    final String? dateAsString = get&lt;String&gt;(keyVarCreatedAt);
-    return dateAsString != null ? _parseDateFormat.parse(dateAsString) : null;
-  } else {
-    return get&lt;DateTime&gt;(keyVarCreatedAt);
+  final dynamic value = get&lt;dynamic&gt;(keyVarCreatedAt);
+  if (value is DateTime) return value;
+  if (value is String) return _parseDateFormat.parse(value);
+  if (value is Map&lt;String, dynamic&gt; &amp;&amp; value[&#39;iso&#39;] is String) {
+    return _parseDateFormat.parse(value[&#39;iso&#39;] as String);
   }
+  return null;
 }</code></pre>
 </section>
 
@@ -110,7 +111,7 @@
 <footer>
   <span class="no-break">
     parse_server_sdk
-      9.4.3
+      9.4.4
   </span>
   
 </footer>
