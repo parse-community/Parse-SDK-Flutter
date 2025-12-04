@@ -1,3 +1,10 @@
+# [dart-v9.4.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.3...dart-9.4.4) (2025-12-04)
+
+
+### Bug Fixes
+
+* `ParseBase.toJson()` failure when date fields are stored as Maps ([#1094](https://github.com/parse-community/Parse-SDK-Flutter/issues/1094)) ([04a8d5b](https://github.com/parse-community/Parse-SDK-Flutter/commit/04a8d5b6d3d811636ea1b54247e73871b25266d1))
+
 # [dart-v9.4.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.2...dart-9.4.3) (2025-12-04)
 
 
