@@ -54,9 +54,9 @@ abstract class ParseBase {
   DateTime? get createdAt {
     final dynamic value = get<dynamic>(keyVarCreatedAt);
     if (value is DateTime) return value;
-    if (value is String) return DateTime.tryParse(value);
+    if (value is String) return _parseDateFormat.parse(value);
     if (value is Map<String, dynamic> && value['iso'] is String) {
-      return DateTime.tryParse(value['iso'] as String);
+      return _parseDateFormat.parse(value['iso'] as String);
     }
     return null;
   }
@@ -65,9 +65,9 @@ abstract class ParseBase {
   DateTime? get updatedAt {
     final dynamic value = get<dynamic>(keyVarUpdatedAt);
     if (value is DateTime) return value;
-    if (value is String) return DateTime.tryParse(value);
+    if (value is String) return _parseDateFormat.parse(value);
     if (value is Map<String, dynamic> && value['iso'] is String) {
-      return DateTime.tryParse(value['iso'] as String);
+      return _parseDateFormat.parse(value['iso'] as String);
     }
     return null;
   }
