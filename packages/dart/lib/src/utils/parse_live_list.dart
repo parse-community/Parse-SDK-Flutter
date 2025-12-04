@@ -60,7 +60,8 @@ class ParseLiveList<T extends ParseObject> {
   late StreamController<ParseLiveListEvent<T>> _eventStreamController;
   int _nextID = 0;
   late bool _debug;
-  // Separate from _debug to allow one-time initialization logging without affecting error logging
+  // Separate from _debug to allow one-time initialization logging
+  // while still logging all errors/warnings when _debug is true
   late bool _debugLoggedInit;
 
   int get nextID => _nextID++;
@@ -532,7 +533,7 @@ class ParseLiveList<T extends ParseObject> {
   /// The returned stream is a broadcast stream from ParseLiveListElement,
   /// preventing the N+1 query bug that occurred with async* generators.
   Stream<T> getAt(final int index) {
-    if (index >= _list.length) {
+    if (index < 0 || index >= _list.length) {
       // Return an empty stream for out-of-bounds indices
       return const Stream.empty();
     }
@@ -563,12 +564,12 @@ class ParseLiveList<T extends ParseObject> {
 
     // Race condition protection: skip if element is already loaded or
     // currently being loaded by another concurrent call
-    if (element.loaded || element._isLoading) {
+    if (element.loaded || element.isLoading) {
       return;
     }
 
     // Set loading flag to prevent concurrent load operations
-    element._isLoading = true;
+    element.isLoading = true;
 
     try {
       final QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
@@ -612,14 +613,30 @@ class ParseLiveList<T extends ParseObject> {
         }
       } else {
         // Object not found (possibly deleted between initial query and load)
+        // Don't emit error - LiveQuery will send a deletion event to handle this
         if (_debug) {
           print('ParseLiveList: Element at index $index not found during load');
         }
       }
     } catch (e, stackTrace) {
+      // List may have changed while the query was in flight
+      if (_list.isEmpty || index >= _list.length) {
+        if (_debug) {
+          print('ParseLiveList: List was modified during element load (exception)');
+        }
+        return;
+      }
+
+      final currentElement = _list[index];
+      if (currentElement.object.objectId != element.object.objectId) {
+        if (_debug) {
+          print('ParseLiveList: Element at index $index changed during load (exception)');
+        }
+        return;
+      }
+
       // Emit exception to the element's stream
-      // Use _list[index] to ensure we emit to the current element at this index
-      _list[index].emitError(e, stackTrace);
+      currentElement.emitError(e, stackTrace);
       if (_debug) {
         print(
           'ParseLiveList: Exception loading element at index $index: $e\n$stackTrace',
@@ -627,7 +644,7 @@ class ParseLiveList<T extends ParseObject> {
       }
     } finally {
       // Clear loading flag to allow future retry attempts
-      element._isLoading = false;
+      element.isLoading = false;
     }
   }
 
@@ -906,6 +923,9 @@ class ParseLiveListElement<T extends ParseObject> {
   }
 
   bool get loaded => _loaded;
+
+  bool get isLoading => _isLoading;
+  set isLoading(bool value) => _isLoading = value;
 
   /// Emits an error to the stream for listeners to handle.
   /// Used when lazy loading fails to fetch the full object data.

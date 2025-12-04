@@ -48,6 +48,13 @@ import '../../test_utils.dart';
 //
 // Therefore, these tests verify supporting implementation details and behaviors,
 // but code review is required to ensure the core architecture is maintained.
+//
+// INTEGRATION TESTING RECOMMENDATIONS:
+// ------------------------------------
+// To fully verify the N+1 query fix, integration tests should:
+// 1. Monitor actual network requests to the Parse server
+// 2. Subscribe to the same element multiple times
+// 3. Verify only one query is executed regardless of subscription count
 
 void main() {
   setUpAll(() async {
