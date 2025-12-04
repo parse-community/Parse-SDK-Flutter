@@ -603,9 +603,18 @@ class ParseLiveList<T extends ParseObject> {
         // Setting the object will mark it as loaded and emit it to the stream
         _list[index].object = response.results!.first;
       } else if (response.error != null) {
-        // Emit error to the element's stream so listeners can handle it
-        // Use _list[index] to ensure we emit to the current element at this index
-        _list[index].emitError(response.error!, StackTrace.current);
+        // Emit error to the element's stream so listeners can handle it.
+        // Guard against list mutations so we don't emit on the wrong element.
+        final currentElement = _list[index];
+        if (currentElement.object.objectId != element.object.objectId) {
+          if (_debug) {
+            print(
+              'ParseLiveList: Element at index $index changed during load (error)',
+            );
+          }
+          return;
+        }
+        currentElement.emitError(response.error!, StackTrace.current);
         if (_debug) {
           print(
             'ParseLiveList: Error loading element at index $index: ${response.error}',
@@ -786,7 +795,7 @@ class ParseLiveListElement<T extends ParseObject> {
     bool loaded = false,
     Map<String, dynamic>? updatedSubItems,
   }) : _loaded = loaded,
-       _isLoading = false {
+       isLoading = false {
     _updatedSubItems = _toSubscriptionMap(
       updatedSubItems ?? <String, dynamic>{},
     );
@@ -799,7 +808,7 @@ class ParseLiveListElement<T extends ParseObject> {
   final StreamController<T> _streamController = StreamController<T>.broadcast();
   T _object;
   bool _loaded = false;
-  bool _isLoading = false;
+  bool isLoading = false;
   late Map<PathKey, dynamic> _updatedSubItems;
   LiveQuery? _liveQuery;
   final Future<void> _subscriptionQueue = Future<void>.value();
@@ -927,9 +936,6 @@ class ParseLiveListElement<T extends ParseObject> {
   }
 
   bool get loaded => _loaded;
-
-  bool get isLoading => _isLoading;
-  set isLoading(bool value) => _isLoading = value;
 
   /// Emits an error to the stream for listeners to handle.
   /// Used when lazy loading fails to fetch the full object data.
