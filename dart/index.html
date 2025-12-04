@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="generator" content="made with love by dartdoc 8.0.3">
   <meta name="description" content="parse_server_sdk API docs, for the Dart programming language.">
   <title>parse_server_sdk - Dart API docs</title>
 
@@ -12,20 +11,16 @@
   
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
   
   <link rel="stylesheet" href="static-assets/github.css?v1">
   <link rel="stylesheet" href="static-assets/styles.css?v1">
   <link rel="icon" href="static-assets/favicon.png?v1">
-
   
 </head>
 
-
 <body data-base-href="" data-using-base-href="false" class="light-theme">
-
 <div id="overlay-under-drawer"></div>
-
 <header id="title">
   <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
@@ -35,26 +30,22 @@
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
-  <div class="toggle" id="theme-button">
-    <label for="theme">
-      <input type="checkbox" id="theme" value="light-theme">
-      <span id="dark-theme-button" class="material-symbols-outlined">
-        brightness_4
-      </span>
-      <span id="light-theme-button" class="material-symbols-outlined">
-        brightness_5
-      </span>
-    </label>
-  </div>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
 </header>
 <main>
-
   <div id="dartdoc-main-content" class="main-content">
       
 <section class="desc markdown">
   <img src="https://user-images.githubusercontent.com/5673677/166120960-ea1f58e3-a62b-4770-b541-f64186859339.png" alt="parse-repository-header-sdk-dart" style="max-width: 100%;">
 <hr>
-<p><a href="https://github.com/parse-community/Parse-SDK-Flutter/actions?query=workflow:ci+branch:master"><img src="https://github.com/parse-community/Parse-SDK-Flutter/workflows/ci/badge.svg?branch=master" alt="Build Status"></a>
+<p><a href="https://github.com/parse-community/Parse-SDK-Flutter/actions?query=workflow%3Aci+branch%3Amaster"><img src="https://github.com/parse-community/Parse-SDK-Flutter/workflows/ci/badge.svg?branch=master" alt="Build Status"></a>
 <a href="https://app.codecov.io/gh/parse-community/Parse-SDK-Flutter/branch/master"><img src="https://img.shields.io/codecov/c/github/parse-community/Parse-SDK-Flutter/master" alt="Coverage"></a></p>
 <p><a href="https://pub.dev/packages/parse_server_sdk"><img src="https://img.shields.io/pub/v/parse_server_sdk.svg" alt="pub package"></a></p>
 <p><a href="https://community.parseplatform.org/c/parse-server"><img src="https://img.shields.io/discourse/https/community.parseplatform.org/topics.svg" alt="Forum"></a>
@@ -66,44 +57,32 @@
 <p>This library gives you access to the powerful Parse Server backend from your Dart app. For more information on Parse Platform and its features, visit <a href="https://parseplatform.org">parseplatform.org</a>.</p>
 <hr>
 <ul>
-<li><a href="#compatibility">Compatibility</a></li>
+<li><a href="#compatibility">Compatibility</a>
+<ul>
+<li><a href="#handling-version-conflicts">Handling Version Conflicts</a></li>
+</ul>
+</li>
 <li><a href="#getting-started">Getting Started</a></li>
 <li><a href="#documentation">Documentation</a></li>
 <li><a href="#contributing">Contributing</a></li>
 </ul>
 <hr>
 <h2 id="compatibility">Compatibility</h2>
-<p>The Parse Dart SDK is continuously tested with the most recent release of the Dart framework to ensure compatibility. To give developers time to upgrade their app to a newer Dart framework, previous Dart framework releases are supported for at least 1 year after the <a href="https://dart.dev/get-dart/archive">release date</a> of the next higher significant version.</p>
-<table>
-<thead>
-<tr>
-<th>Version</th>
-<th>Latest Version</th>
-<th>End of Support</th>
-<th>Compatible</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Dart 3.1</td>
-<td>3.1.2</td>
-<td>Sep 2024</td>
-<td>✅ Yes</td>
-</tr>
-<tr>
-<td>Dart 3.0</td>
-<td>3.0.7</td>
-<td>May 2024</td>
-<td>✅ Yes</td>
-</tr>
-<tr>
-<td>Dart 2.19</td>
-<td>2.19.6</td>
-<td>Mar 2024</td>
-<td>✅ Yes</td>
-</tr>
-</tbody>
-</table>
+<p>The Parse Dart SDK is continuously tested with the most recent release of the Dart framework to ensure compatibility. Previous Dart framework releases are supported for <strong>6 months</strong> after the <a href="https://dart.dev/get-dart/archive">release date</a> of the next higher significant version (major or minor).</p>
+<div class="markdown-alert markdown-alert-note">
+<p class="markdown-alert-title">Note</p>
+<p>Support windows are calculated from official Dart release dates. When a version's support period expires, it will be dropped in the next Parse SDK major release without advance notice. For full details, see <a href="../../VERSIONING_POLICY.md">VERSIONING_POLICY.md</a>.</p>
+</div>
+<h3 id="handling-version-conflicts">Handling Version Conflicts</h3>
+<p>If you encounter version conflicts with the Parse SDK:</p>
+<ol>
+<li>Check if a newer Parse Dart SDK version resolves your conflict.</li>
+<li>Review your dependencies by running <code>dart pub outdated</code> to see available updates.</li>
+<li>Check <a href="../dart/README.md#compatibility">Parse Dart SDK compatibility</a>.</li>
+<li>Check <a href="../../MIGRATION_GUIDES.md">Migration Guides</a> for common scenarios.</li>
+<li><a href="https://github.com/parse-community/Parse-SDK-Flutter/issues">Create an issue</a> with your full dependency tree.</li>
+</ol>
+<p>For detailed troubleshooting, see our <a href="../../MIGRATION_GUIDES.md#handling-version-conflicts">Version Conflict Guide</a>.</p>
 <h2 id="getting-started">Getting Started</h2>
 <p>To install, add the Parse Dart SDK as a <a href="https://pub.dev/packages/parse_server_sdk/install">dependency</a> in your <code>pubspec.yaml</code> file.</p>
 <h2 id="documentation">Documentation</h2>
@@ -116,8 +95,8 @@
       <section class="summary">
           <h2>Libraries</h2>
         <dl>
-          <dt id="flutter_parse_sdk">
-  <span class="name"><a href="flutter_parse_sdk/flutter_parse_sdk-library.html">parse_server_sdk</a></span> 
+          <dt id="parse_server_sdk">
+  <span class="name"><a href="parse_server_sdk/">parse_server_sdk</a></span> 
 
 </dt>
 <dd>
@@ -125,9 +104,7 @@
 
         </dl>
       </section>
-
   </div> <!-- /.main-content -->
-
   <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
     <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
 <header id="header-search-sidebar" class="hidden-l">
@@ -135,42 +112,32 @@
     <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
 </header>
-
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="https://parseplatform.org">parse_server_sdk package</a></li>
 </ol>
 
-
     <h5 class="hidden-xs"><span class="package-name">parse_server_sdk</span> <span class="package-kind">package</span></h5>
     <ol>
       <li class="section-title">Libraries</li>
-      <li><a href="flutter_parse_sdk/flutter_parse_sdk-library.html">parse_server_sdk</a></li>
+      <li><a href="parse_server_sdk/">parse_server_sdk</a></li>
 </ol>
 
   </div>
-
   <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
   </div>
-
 </main>
-
 <footer>
   <span class="no-break">
     parse_server_sdk
-      6.4.0
+      9.4.3
   </span>
-
   
 </footer>
-
 
 
 <script src="static-assets/highlight.pack.js?v1"></script>
 <script src="static-assets/docs.dart.js"></script>
 
-
-
 </body>
-
 </html>
 
