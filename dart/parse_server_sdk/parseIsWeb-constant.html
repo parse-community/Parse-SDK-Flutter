@@ -64,7 +64,7 @@
         
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">const bool parseIsWeb = identical(0, 0.0);</code></pre>
+  <pre class="language-dart"><code class="language-dart">const bool parseIsWeb = bool.fromEnvironment(&#39;dart.library.js_util&#39;);</code></pre>
 </section>
 
 
@@ -92,7 +92,7 @@
 <footer>
   <span class="no-break">
     parse_server_sdk
-      9.4.4
+      9.4.5
   </span>
   
 </footer>
