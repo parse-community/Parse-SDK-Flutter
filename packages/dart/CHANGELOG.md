@@ -1,3 +1,10 @@
+# [dart-v9.4.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.2...dart-9.4.3) (2025-12-04)
+
+
+### Bug Fixes
+
+* Flutter Web build failure with ambiguous import from `sembast` and `idb_shim` ([#1093](https://github.com/parse-community/Parse-SDK-Flutter/issues/1093)) ([71aa5f2](https://github.com/parse-community/Parse-SDK-Flutter/commit/71aa5f20ab160a6113ac8167d66c540de11ff88f))
+
 # [dart-v9.4.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.1...dart-9.4.2) (2025-12-02)
 
 
