@@ -1,3 +1,17 @@
+# [dart-v9.4.6](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.5...dart-9.4.6) (2025-12-04)
+
+
+### Bug Fixes
+
+* TypeError on `addRelation` function ([#1098](https://github.com/parse-community/Parse-SDK-Flutter/issues/1098)) ([f284944](https://github.com/parse-community/Parse-SDK-Flutter/commit/f2849442f71ebf311bf10d01e967a7612ba66fe4))
+
+# [dart-v9.4.5](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.4...dart-9.4.5) (2025-12-04)
+
+
+### Bug Fixes
+
+* Incompatible `parseIsWeb` detection prevents WASM support ([#1096](https://github.com/parse-community/Parse-SDK-Flutter/issues/1096)) ([5b157b8](https://github.com/parse-community/Parse-SDK-Flutter/commit/5b157b897339634ecc2d0f66e3b3de612a243ea3))
+
 # [dart-v9.4.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.3...dart-9.4.4) (2025-12-04)
 
 
