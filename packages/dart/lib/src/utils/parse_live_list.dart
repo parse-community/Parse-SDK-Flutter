@@ -258,6 +258,11 @@ class ParseLiveList<T extends ParseObject> {
                 final List<T> newList =
                     parseResponse.results as List<T>? ?? <T>[];
 
+                // Determine if fields were actually restricted in the query,
+                // same logic as in _init().
+                final bool fieldsRestricted =
+                    _lazyLoading && _preloadedColumns.isNotEmpty;
+
                 //update List
                 for (int i = 0; i < _list.length; i++) {
                   final ParseObject currentObject = _list[i].object;
@@ -300,7 +305,11 @@ class ParseLiveList<T extends ParseObject> {
                 }
 
                 for (int i = 0; i < newList.length; i++) {
-                  tasks.add(_objectAdded(newList[i], loaded: false));
+                  // Mark as loaded when all fields were fetched; only treat as
+                  // not loaded when fields are actually restricted.
+                  tasks.add(
+                    _objectAdded(newList[i], loaded: !fieldsRestricted),
+                  );
                 }
               }
               await Future.wait(tasks);
@@ -556,7 +565,7 @@ class ParseLiveList<T extends ParseObject> {
   /// Called when an element is accessed for the first time.
   /// Errors are emitted to the element's stream so listeners can handle them.
   Future<void> _loadElementAt(int index) async {
-    if (index >= _list.length) {
+    if (index < 0 || index >= _list.length) {
       return;
     }
 
