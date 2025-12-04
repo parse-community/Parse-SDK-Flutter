@@ -625,41 +625,46 @@ void main() {
       expect(() => getRelation(), throwsA(isA<ParseRelationException>()));
     });
 
-    test(
-      'addRelation() should work with custom ParseObject subclasses',
-      () {
-        // arrange
-        // Create custom ParseObject subclasses similar to the issue report
-        final contact1 = Contact()..objectId = 'contact1';
-        final contact2 = Contact()..objectId = 'contact2';
+    test('addRelation() should work with custom ParseObject subclasses', () {
+      // arrange
+      // Create custom ParseObject subclasses similar to the issue report
+      final contact1 = Contact()..objectId = 'contact1';
+      final contact2 = Contact()..objectId = 'contact2';
 
-        final order = Order();
+      final order = Order();
 
-        // act & assert
-        // This should not throw a TypeError
-        expect(
-          () => order.addRelation('receivers', [contact1, contact2]),
-          returnsNormally,
-        );
+      // act & assert
+      // This should not throw a TypeError
+      expect(
+        () => order.addRelation('receivers', [contact1, contact2]),
+        returnsNormally,
+      );
 
-        final toJsonAfterAddRelation = order.toJson(forApiRQ: true);
+      final toJsonAfterAddRelation = order.toJson(forApiRQ: true);
 
-        const expectedToJson = {
-          "receivers": {
-            "__op": "AddRelation",
-            "objects": [
-              {"__type": "Pointer", "className": "Contact", "objectId": "contact1"},
-              {"__type": "Pointer", "className": "Contact", "objectId": "contact2"},
-            ],
-          },
-        };
+      const expectedToJson = {
+        "receivers": {
+          "__op": "AddRelation",
+          "objects": [
+            {
+              "__type": "Pointer",
+              "className": "Contact",
+              "objectId": "contact1",
+            },
+            {
+              "__type": "Pointer",
+              "className": "Contact",
+              "objectId": "contact2",
+            },
+          ],
+        },
+      };
 
-        expect(
-          DeepCollectionEquality().equals(expectedToJson, toJsonAfterAddRelation),
-          isTrue,
-        );
-      },
-    );
+      expect(
+        DeepCollectionEquality().equals(expectedToJson, toJsonAfterAddRelation),
+        isTrue,
+      );
+    });
 
     test(
       'addRelation() should work when getRelation<T>() was called first with typed generic',
@@ -668,7 +673,7 @@ void main() {
         // The issue occurs when:
         // 1. getRelation<Contact>() is called first (creating _ParseRelation<Contact>)
         // 2. Then addRelation() is called with Contact objects
-        // 3. The merge operation creates a Set<ParseObject> 
+        // 3. The merge operation creates a Set<ParseObject>
         // 4. Trying to cast Set<ParseObject> to Set<Contact> throws TypeError
 
         // arrange
@@ -714,22 +719,19 @@ void main() {
       },
     );
 
-    test(
-      'removeRelation() should work with custom ParseObject subclasses',
-      () {
-        // arrange
-        final contact1 = Contact()..objectId = 'contact1';
-        final contact2 = Contact()..objectId = 'contact2';
+    test('removeRelation() should work with custom ParseObject subclasses', () {
+      // arrange
+      final contact1 = Contact()..objectId = 'contact1';
+      final contact2 = Contact()..objectId = 'contact2';
 
-        final order = Order();
+      final order = Order();
 
-        // act & assert
-        expect(
-          () => order.removeRelation('receivers', [contact1, contact2]),
-          returnsNormally,
-        );
-      },
-    );
+      // act & assert
+      expect(
+        () => order.removeRelation('receivers', [contact1, contact2]),
+        returnsNormally,
+      );
+    });
   });
 }
 
