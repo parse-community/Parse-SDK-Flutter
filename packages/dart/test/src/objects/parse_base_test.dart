@@ -245,9 +245,7 @@ void main() {
       test('createdAt and updatedAt should return null for null values', () {
         final parseObject = ParseObject('TestClass');
 
-        parseObject.fromJson({
-          'objectId': 'testObjectId',
-        });
+        parseObject.fromJson({'objectId': 'testObjectId'});
 
         expect(parseObject.createdAt, isNull);
         expect(parseObject.updatedAt, isNull);

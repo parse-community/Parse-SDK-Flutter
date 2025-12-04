@@ -143,8 +143,9 @@ abstract class ParseBase {
         if (value is String) {
           _getObjectData()[keyVarCreatedAt] = _parseDateFormat.parse(value);
         } else if (value is Map<String, dynamic> && value['iso'] is String) {
-          _getObjectData()[keyVarCreatedAt] =
-              _parseDateFormat.parse(value['iso'] as String);
+          _getObjectData()[keyVarCreatedAt] = _parseDateFormat.parse(
+            value['iso'] as String,
+          );
         } else {
           _getObjectData()[keyVarCreatedAt] = value;
         }
@@ -152,8 +153,9 @@ abstract class ParseBase {
         if (value is String) {
           _getObjectData()[keyVarUpdatedAt] = _parseDateFormat.parse(value);
         } else if (value is Map<String, dynamic> && value['iso'] is String) {
-          _getObjectData()[keyVarUpdatedAt] =
-              _parseDateFormat.parse(value['iso'] as String);
+          _getObjectData()[keyVarUpdatedAt] = _parseDateFormat.parse(
+            value['iso'] as String,
+          );
         } else {
           _getObjectData()[keyVarUpdatedAt] = value;
         }
