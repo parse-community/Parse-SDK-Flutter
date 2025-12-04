@@ -14,7 +14,7 @@ env:
   package: ${{ startsWith(github.ref_name, 'dart-') && 'dart' || startsWith(github.ref_name, 'flutter-') && 'flutter' || '' }}
 jobs:
   release:
-    if: github.event_name == 'push' && github.ref_type == 'branch'
+    if: github.event_name == 'push' && github.ref_type == 'branch' && !startsWith(github.event.head_commit.message, 'chore(release)')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
