@@ -27,7 +27,7 @@ dependencies:
     sdk: flutter
   
 
-  parse_server_sdk: ">=9.4.2 <10.0.0"
+  # parse_server_sdk: ">=9.4.2 <10.0.0"
   # Uncomment for local testing
   #parse_server_sdk:
   #   path: ../dart
