@@ -11,6 +11,20 @@ class ParseLiveList<T extends ParseObject> {
     _debug = isDebugEnabled();
   }
 
+  /// Creates a new [ParseLiveList] for the given [query].
+  ///
+  /// [lazyLoading] enables lazy loading of full object data. When `true` and
+  /// [preloadedColumns] is provided, the initial query fetches only those columns,
+  /// and full objects are loaded on-demand when accessed via [getAt].
+  /// When [preloadedColumns] is empty or null, all fields are fetched regardless
+  /// of [lazyLoading] value. Default is `true`.
+  ///
+  /// [preloadedColumns] specifies which fields to fetch in the initial query when
+  /// lazy loading is enabled. Order fields are automatically included to ensure
+  /// proper sorting. If null or empty, all fields are fetched.
+  ///
+  /// [listenOnAllSubItems] and [listeningIncludes] control which nested objects
+  /// receive live query updates.
   static Future<ParseLiveList<T>> create<T extends ParseObject>(
     QueryBuilder<T> query, {
     bool? listenOnAllSubItems,
@@ -26,7 +40,7 @@ class ParseLiveList<T extends ParseObject> {
             )
           : _toIncludeMap(listeningIncludes ?? <String>[]),
       lazyLoading,
-      preloadedColumns: preloadedColumns ?? const <String>[],
+      preloadedColumns: preloadedColumns,
     );
 
     return parseLiveList._init().then((_) {
@@ -137,9 +151,14 @@ class ParseLiveList<T extends ParseObject> {
     if (_debug) {
       print('ParseLiveList: lazyLoading is ${_lazyLoading ? 'on' : 'off'}');
     }
-    if (_lazyLoading) {
+
+    // Only restrict fields if lazy loading is enabled AND preloaded columns are specified
+    // This allows fetching minimal data upfront and loading full objects on-demand
+    if (_lazyLoading && _preloadedColumns.isNotEmpty) {
       final List<String> keys = _preloadedColumns.toList();
-      if (_lazyLoading && query.limiters.containsKey('order')) {
+      
+      // Automatically include order fields to ensure sorting works correctly
+      if (query.limiters.containsKey('order')) {
         keys.addAll(
           query.limiters['order'].toString().split(',').map((String string) {
             if (string.startsWith('-')) {
@@ -149,10 +168,10 @@ class ParseLiveList<T extends ParseObject> {
           }),
         );
       }
-      if (keys.isNotEmpty) {
-        query.keysToReturn(keys);
-      }
+      
+      query.keysToReturn(keys);
     }
+
     return await query.query<T>();
   }
 
@@ -161,13 +180,20 @@ class ParseLiveList<T extends ParseObject> {
 
     final ParseResponse parseResponse = await _runQuery();
     if (parseResponse.success) {
+      // Determine if fields were actually restricted in the query
+      // Only mark as not loaded if lazy loading AND we actually restricted fields
+      final bool fieldsRestricted =
+          _lazyLoading && _preloadedColumns.isNotEmpty;
+
       _list =
           parseResponse.results
               ?.map<ParseLiveListElement<T>>(
                 (dynamic element) => ParseLiveListElement<T>(
                   element,
                   updatedSubItems: _listeningIncludes,
-                  loaded: !_lazyLoading,
+                  // Mark as loaded if we fetched all fields (no restriction)
+                  // Mark as not loaded only if fields were actually restricted
+                  loaded: !fieldsRestricted,
                 ),
               )
               .toList() ??
@@ -486,34 +512,92 @@ class ParseLiveList<T extends ParseObject> {
     }
   }
 
-  Stream<T> getAt(final int index) async* {
-    if (index < _list.length) {
-      if (!_list[index].loaded) {
-        final QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
-          ..whereEqualTo(
-            keyVarObjectId,
-            _list[index].object.get<String>(keyVarObjectId),
-          )
-          ..setLimit(1);
-        final ParseResponse response = await queryBuilder.query<T>();
-        if (_list.isEmpty) {
-          yield* _createStreamError<T>(
-            ParseError(message: 'ParseLiveList: _list is empty'),
-          );
-          return;
+  /// Returns a stream for the element at the given [index].
+  ///
+  /// Returns the element's existing broadcast stream, which allows multiple
+  /// listeners without creating redundant network requests or stream instances.
+  ///
+  /// When lazy loading is enabled and an element is not yet loaded, the first
+  /// access will trigger loading. This is useful for pagination scenarios.
+  /// Subsequent calls return the same stream without additional loads.
+  ///
+  /// The returned stream is a broadcast stream from ParseLiveListElement,
+  /// preventing the N+1 query bug that occurred with async* generators.
+  Stream<T> getAt(final int index) {
+    if (index >= _list.length) {
+      // Return an empty stream for out-of-bounds indices
+      return const Stream.empty();
+    }
+
+    final element = _list[index];
+
+    // If not yet loaded (happens with lazy loading), trigger loading
+    // This will only happen once per element due to the loaded flag
+    if (!element.loaded) {
+      _loadElementAt(index);
+    }
+
+    // Return the element's broadcast stream
+    // Multiple subscriptions to this stream won't trigger multiple loads
+    return element.stream;
+  }
+
+  /// Asynchronously loads the full data for the element at [index].
+  ///
+  /// Called when an element is accessed for the first time.
+  /// Errors are emitted to the element's stream so listeners can handle them.
+  Future<void> _loadElementAt(int index) async {
+    if (index >= _list.length) {
+      return;
+    }
+
+    final element = _list[index];
+
+    // Double-check: another call might have started loading already
+    if (element.loaded) {
+      return;
+    }
+
+    try {
+      final QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
+        ..whereEqualTo(
+          keyVarObjectId,
+          element.object.get<String>(keyVarObjectId),
+        )
+        ..setLimit(1);
+
+      final ParseResponse response = await queryBuilder.query<T>();
+
+      // Check if list was modified during async operation
+      if (_list.isEmpty || index >= _list.length) {
+        if (_debug) {
+          print('ParseLiveList: List was modified during element load');
         }
-        if (response.success) {
-          _list[index].object = response.results?.first;
-        } else {
-          ParseError? error = response.error;
-          if (error != null) yield* _createStreamError<T>(error);
-          return;
+        return;
+      }
+
+      if (response.success &&
+          response.results != null &&
+          response.results!.isNotEmpty) {
+        // Setting the object will mark it as loaded and emit it to the stream
+        _list[index].object = response.results!.first;
+      } else if (response.error != null) {
+        // Emit error to the element's stream so listeners can handle it
+        element.emitError(response.error!, StackTrace.current);
+        if (_debug) {
+          print(
+            'ParseLiveList: Error loading element at index $index: ${response.error}',
+          );
         }
       }
-      //    just for testing
-      //    await Future<void>.delayed(const Duration(seconds: 2));
-      yield _list[index].object;
-      yield* _list[index].stream;
+    } catch (e, stackTrace) {
+      // Emit exception to the element's stream
+      element.emitError(e, stackTrace);
+      if (_debug) {
+        print(
+          'ParseLiveList: Exception loading element at index $index: $e\n$stackTrace',
+        );
+      }
     }
   }
 
@@ -790,6 +874,14 @@ class ParseLiveListElement<T extends ParseObject> {
   }
 
   bool get loaded => _loaded;
+
+  /// Emits an error to the stream for listeners to handle.
+  /// Used when lazy loading fails to fetch the full object data.
+  void emitError(Object error, StackTrace stackTrace) {
+    if (!_streamController.isClosed) {
+      _streamController.addError(error, stackTrace);
+    }
+  }
 
   void dispose() {
     _unsubscribe(_updatedSubItems);
