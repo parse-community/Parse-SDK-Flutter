@@ -622,7 +622,9 @@ class ParseLiveList<T extends ParseObject> {
       // List may have changed while the query was in flight
       if (_list.isEmpty || index >= _list.length) {
         if (_debug) {
-          print('ParseLiveList: List was modified during element load (exception)');
+          print(
+            'ParseLiveList: List was modified during element load (exception)',
+          );
         }
         return;
       }
@@ -630,7 +632,9 @@ class ParseLiveList<T extends ParseObject> {
       final currentElement = _list[index];
       if (currentElement.object.objectId != element.object.objectId) {
         if (_debug) {
-          print('ParseLiveList: Element at index $index changed during load (exception)');
+          print(
+            'ParseLiveList: Element at index $index changed during load (exception)',
+          );
         }
         return;
       }
