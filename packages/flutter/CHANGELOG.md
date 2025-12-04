@@ -1,3 +1,10 @@
+# [flutter-v10.6.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.6.1...flutter-10.6.2) (2025-12-04)
+
+
+### Bug Fixes
+
+* Flutter Web build failure with ambiguous import from `sembast` and `idb_shim` ([#1093](https://github.com/parse-community/Parse-SDK-Flutter/issues/1093)) ([71aa5f2](https://github.com/parse-community/Parse-SDK-Flutter/commit/71aa5f20ab160a6113ac8167d66c540de11ff88f))
+
 # [flutter-v10.6.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.6.0...flutter-10.6.1) (2025-12-03)
 
 
