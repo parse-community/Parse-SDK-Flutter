@@ -27,8 +27,8 @@ dependencies:
   web_socket_channel: ">=2.4.3 <4.0.0"
 
   #Database
-  sembast: ^3.7.4+2
-  sembast_web: ^2.4.0+4
+  sembast: ^3.7.4
+  sembast_web: ^2.4.0
 
   # Utils
   uuid: ^4.5.1
