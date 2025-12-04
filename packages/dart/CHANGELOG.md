@@ -1,3 +1,24 @@
+# [dart-v9.4.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.3...dart-9.4.4) (2025-12-04)
+
+
+### Bug Fixes
+
+* `ParseBase.toJson()` failure when date fields are stored as Maps ([#1094](https://github.com/parse-community/Parse-SDK-Flutter/issues/1094)) ([04a8d5b](https://github.com/parse-community/Parse-SDK-Flutter/commit/04a8d5b6d3d811636ea1b54247e73871b25266d1))
+
+# [dart-v9.4.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.2...dart-9.4.3) (2025-12-04)
+
+
+### Bug Fixes
+
+* Flutter Web build failure with ambiguous import from `sembast` and `idb_shim` ([#1093](https://github.com/parse-community/Parse-SDK-Flutter/issues/1093)) ([71aa5f2](https://github.com/parse-community/Parse-SDK-Flutter/commit/71aa5f20ab160a6113ac8167d66c540de11ff88f))
+
+# [dart-v9.4.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.1...dart-9.4.2) (2025-12-02)
+
+
+### Bug Fixes
+
+* Ethernet not recognized as connectivity state ([#1090](https://github.com/parse-community/Parse-SDK-Flutter/issues/1090)) ([f76fde4](https://github.com/parse-community/Parse-SDK-Flutter/commit/f76fde4f348af5d3992663795d279d57658f4e87))
+
 # [dart-v9.4.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.0...dart-9.4.1) (2025-11-30)
 
 

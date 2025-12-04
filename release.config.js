@@ -111,7 +111,7 @@ async function config() {
       ['@semantic-release/git', {
         assets: gitAssets,
         message: `chore(release): ${packageName === 'root' ? '' : packageName + ' '}` +
-          '\${nextRelease.version} [skip ci]\n\n\${nextRelease.notes}'
+          '\${nextRelease.version}\n\n\${nextRelease.notes}'
       }],
       ['@semantic-release/github', {
         releaseName: packageName !== 'root' ? `${packageName}-\${nextRelease.version}` : '\${nextRelease.version}',
