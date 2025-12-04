@@ -732,18 +732,14 @@ class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
     if (includeObject != null) {
       queryBuilder.includeObject(includeObject);
     }
-    _init(object, loaded: loaded, includeObject: includeObject);
+    _init(object, loaded: loaded);
   }
 
   Subscription<T>? _subscription;
   Map<String, dynamic>? _includes;
   late QueryBuilder<T> queryBuilder;
 
-  Future<void> _init(
-    T object, {
-    bool loaded = false,
-    List<String>? includeObject,
-  }) async {
+  Future<void> _init(T object, {bool loaded = false}) async {
     if (!loaded) {
       final ParseResponse parseResponse = await queryBuilder.query();
       if (parseResponse.success) {
