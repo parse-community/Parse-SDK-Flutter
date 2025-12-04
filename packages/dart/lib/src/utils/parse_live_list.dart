@@ -9,6 +9,7 @@ class ParseLiveList<T extends ParseObject> {
     List<String>? preloadedColumns,
   }) : _preloadedColumns = preloadedColumns ?? const <String>[] {
     _debug = isDebugEnabled();
+    _debugLoggedInit = isDebugEnabled();
   }
 
   /// Creates a new [ParseLiveList] for the given [query].
@@ -59,6 +60,8 @@ class ParseLiveList<T extends ParseObject> {
   late StreamController<ParseLiveListEvent<T>> _eventStreamController;
   int _nextID = 0;
   late bool _debug;
+  // Separate from _debug to allow one-time initialization logging without affecting error logging
+  late bool _debugLoggedInit;
 
   int get nextID => _nextID++;
 
@@ -148,8 +151,11 @@ class ParseLiveList<T extends ParseObject> {
 
   Future<ParseResponse> _runQuery() async {
     final QueryBuilder<T> query = QueryBuilder<T>.copy(_query);
-    if (_debug) {
-      print('ParseLiveList: lazyLoading is ${_lazyLoading ? 'on' : 'off'}');
+
+    // Log lazy loading mode only once during initialization to avoid log spam
+    if (_debugLoggedInit) {
+      print('ParseLiveList: Initialized with lazyLoading=${_lazyLoading ? 'on' : 'off'}, preloadedColumns=${_preloadedColumns.isEmpty ? 'none' : _preloadedColumns.join(", ")}');
+      _debugLoggedInit = false;
     }
 
     // Only restrict fields if lazy loading is enabled AND preloaded columns are specified
@@ -553,10 +559,14 @@ class ParseLiveList<T extends ParseObject> {
 
     final element = _list[index];
 
-    // Double-check: another call might have started loading already
-    if (element.loaded) {
+    // Race condition protection: skip if element is already loaded or
+    // currently being loaded by another concurrent call
+    if (element.loaded || element._isLoading) {
       return;
     }
+
+    // Set loading flag to prevent concurrent load operations
+    element._isLoading = true;
 
     try {
       final QueryBuilder<T> queryBuilder = QueryBuilder<T>.copy(_query)
@@ -579,6 +589,14 @@ class ParseLiveList<T extends ParseObject> {
       if (response.success &&
           response.results != null &&
           response.results!.isNotEmpty) {
+        // Verify we're still updating the same object (list may have been modified)
+        final currentElement = _list[index];
+        if (currentElement.object.objectId != element.object.objectId) {
+          if (_debug) {
+            print('ParseLiveList: Element at index $index changed during load');
+          }
+          return;
+        }
         // Setting the object will mark it as loaded and emit it to the stream
         _list[index].object = response.results!.first;
       } else if (response.error != null) {
@@ -587,6 +605,13 @@ class ParseLiveList<T extends ParseObject> {
         if (_debug) {
           print(
             'ParseLiveList: Error loading element at index $index: ${response.error}',
+          );
+        }
+      } else {
+        // Object not found (possibly deleted between initial query and load)
+        if (_debug) {
+          print(
+            'ParseLiveList: Element at index $index not found during load',
           );
         }
       }
@@ -598,6 +623,9 @@ class ParseLiveList<T extends ParseObject> {
           'ParseLiveList: Exception loading element at index $index: $e\n$stackTrace',
         );
       }
+    } finally {
+      // Clear loading flag to allow future retry attempts
+      element._isLoading = false;
     }
   }
 
@@ -734,7 +762,8 @@ class ParseLiveListElement<T extends ParseObject> {
     this._object, {
     bool loaded = false,
     Map<String, dynamic>? updatedSubItems,
-  }) : _loaded = loaded {
+  }) : _loaded = loaded,
+       _isLoading = false {
     _updatedSubItems = _toSubscriptionMap(
       updatedSubItems ?? <String, dynamic>{},
     );
@@ -747,6 +776,7 @@ class ParseLiveListElement<T extends ParseObject> {
   final StreamController<T> _streamController = StreamController<T>.broadcast();
   T _object;
   bool _loaded = false;
+  bool _isLoading = false;
   late Map<PathKey, dynamic> _updatedSubItems;
   LiveQuery? _liveQuery;
   final Future<void> _subscriptionQueue = Future<void>.value();

@@ -143,7 +143,9 @@ void main() {
     );
 
     test('lazyLoading=false should NOT restrict fields automatically', () {
-      // When lazy loading is disabled, fetch all fields
+      // Verifies baseline: a fresh QueryBuilder has no 'keys' restriction.
+      // The actual _runQuery() behavior with lazyLoading=false is tested
+      // indirectly through the loaded flag tests above.
       final query = QueryBuilder<ParseObject>(ParseObject('Room'))
         ..orderByAscending('order');
 
@@ -158,8 +160,9 @@ void main() {
     });
 
     test('lazyLoading=true with preloadedColumns should restrict fields', () {
-      // When lazy loading with preloaded columns, the initial query should
-      // only fetch those columns
+      // Verifies that keysToReturn() sets the 'keys' limiter as expected.
+      // Note: This simulates _runQuery() behavior; actual integration testing
+      // would require mocking the network layer.
       final query = QueryBuilder<ParseObject>(ParseObject('Room'))
         ..orderByAscending('order')
         ..keysToReturn(['name', 'order']); // Simulating what _runQuery does
