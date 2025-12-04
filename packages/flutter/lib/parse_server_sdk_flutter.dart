@@ -138,9 +138,7 @@ class Parse extends sdk.Parse
   ) {
     if (results.contains(ConnectivityResult.wifi)) {
       return sdk.ParseConnectivityResult.wifi;
-    } else if (results.contains(ConnectivityResult.ethernet)) {
-      return sdk.ParseConnectivityResult.ethernet;
-    } else if (results.contains(ConnectivityResult.mobile)) {
+    }  else if (results.contains(ConnectivityResult.mobile)) {
       return sdk.ParseConnectivityResult.mobile;
     } else {
       return sdk.ParseConnectivityResult.none;
