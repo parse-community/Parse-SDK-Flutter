@@ -154,7 +154,9 @@ class ParseLiveList<T extends ParseObject> {
 
     // Log lazy loading mode only once during initialization to avoid log spam
     if (_debugLoggedInit) {
-      print('ParseLiveList: Initialized with lazyLoading=${_lazyLoading ? 'on' : 'off'}, preloadedColumns=${_preloadedColumns.isEmpty ? 'none' : _preloadedColumns.join(", ")}');
+      print(
+        'ParseLiveList: Initialized with lazyLoading=${_lazyLoading ? 'on' : 'off'}, preloadedColumns=${_preloadedColumns.isEmpty ? 'none' : _preloadedColumns.join(", ")}',
+      );
       _debugLoggedInit = false;
     }
 
@@ -162,7 +164,7 @@ class ParseLiveList<T extends ParseObject> {
     // This allows fetching minimal data upfront and loading full objects on-demand
     if (_lazyLoading && _preloadedColumns.isNotEmpty) {
       final List<String> keys = _preloadedColumns.toList();
-      
+
       // Automatically include order fields to ensure sorting works correctly
       if (query.limiters.containsKey('order')) {
         keys.addAll(
@@ -174,7 +176,7 @@ class ParseLiveList<T extends ParseObject> {
           }),
         );
       }
-      
+
       query.keysToReturn(keys);
     }
 
@@ -538,7 +540,7 @@ class ParseLiveList<T extends ParseObject> {
     final element = _list[index];
 
     // If not yet loaded (happens with lazy loading), trigger loading
-    // This will only happen once per element due to the loaded flag
+    // This will only happen once per element due to the loaded and _isLoading flags
     if (!element.loaded) {
       _loadElementAt(index);
     }
@@ -601,7 +603,8 @@ class ParseLiveList<T extends ParseObject> {
         _list[index].object = response.results!.first;
       } else if (response.error != null) {
         // Emit error to the element's stream so listeners can handle it
-        element.emitError(response.error!, StackTrace.current);
+        // Use _list[index] to ensure we emit to the current element at this index
+        _list[index].emitError(response.error!, StackTrace.current);
         if (_debug) {
           print(
             'ParseLiveList: Error loading element at index $index: ${response.error}',
@@ -610,14 +613,13 @@ class ParseLiveList<T extends ParseObject> {
       } else {
         // Object not found (possibly deleted between initial query and load)
         if (_debug) {
-          print(
-            'ParseLiveList: Element at index $index not found during load',
-          );
+          print('ParseLiveList: Element at index $index not found during load');
         }
       }
     } catch (e, stackTrace) {
       // Emit exception to the element's stream
-      element.emitError(e, stackTrace);
+      // Use _list[index] to ensure we emit to the current element at this index
+      _list[index].emitError(e, stackTrace);
       if (_debug) {
         print(
           'ParseLiveList: Exception loading element at index $index: $e\n$stackTrace',

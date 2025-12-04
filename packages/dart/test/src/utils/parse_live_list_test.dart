@@ -180,11 +180,11 @@ void main() {
 
   group('ParseLiveList - Stream Creation Bug', () {
     test(
-      'getAt() creates a new stream each time it is called (demonstrates the bug)',
+      'async* generators create new streams on each call (educational context)',
       () async {
-        // This test demonstrates the architectural issue: getAt() is an async* generator
-        // that creates a NEW stream every time it's called, rather than returning a
-        // cached/reusable stream.
+        // This test demonstrates async* generator behavior that contributed to the bug.
+        // It's educational context, not a test of the actual ParseLiveList bug.
+        // The real bug required integration testing with network request monitoring.
 
         // We can't easily test the full ParseLiveList without a real server, but we can
         // demonstrate the stream behavior by examining the method signature and behavior.
