@@ -5,6 +5,9 @@ enum ParseConnectivityResult {
   /// WiFi: Device connected via Wi-Fi
   wifi,
 
+  /// Ethernet: Device connected via Ethernet
+  ethernet,
+
   /// Mobile: Device connected to cellular network
   mobile,
 

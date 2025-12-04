@@ -1,3 +1,17 @@
+# [flutter-v10.6.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.6.1...flutter-10.6.2) (2025-12-04)
+
+
+### Bug Fixes
+
+* Flutter Web build failure with ambiguous import from `sembast` and `idb_shim` ([#1093](https://github.com/parse-community/Parse-SDK-Flutter/issues/1093)) ([71aa5f2](https://github.com/parse-community/Parse-SDK-Flutter/commit/71aa5f20ab160a6113ac8167d66c540de11ff88f))
+
+# [flutter-v10.6.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.6.0...flutter-10.6.1) (2025-12-03)
+
+
+### Bug Fixes
+
+* LiveQuery not working due to ethernet not recognized as connectivity state ([#1091](https://github.com/parse-community/Parse-SDK-Flutter/issues/1091)) ([60520d6](https://github.com/parse-community/Parse-SDK-Flutter/commit/60520d678b470dd04f125e1d207e1558b339acf7))
+
 # [flutter-v10.6.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.5.0...flutter-10.6.0) (2025-11-30)
 
 
