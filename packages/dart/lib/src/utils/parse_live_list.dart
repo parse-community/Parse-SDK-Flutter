@@ -178,7 +178,8 @@ class ParseLiveList<T extends ParseObject> {
         );
       }
 
-      query.keysToReturn(keys);
+      // Deduplicate keys to minimize request size
+      query.keysToReturn(keys.toSet().toList());
     }
 
     return await query.query<T>();
@@ -630,8 +631,12 @@ class ParseLiveList<T extends ParseObject> {
           );
         }
       } else {
-        // Object not found (possibly deleted between initial query and load)
-        // Don't emit error - LiveQuery will send a deletion event to handle this
+        // Object not found (possibly deleted between initial query and load).
+        // Note: Element remains loaded=false, so subsequent getAt() calls will
+        // retry the query. This is acceptable because:
+        // 1. LiveQuery will send a delete event to remove the element if needed
+        // 2. Retries are rare (object would need to be deleted mid-load)
+        // 3. No error is emitted to avoid alarming users for transient issues
         if (_debug) {
           print('ParseLiveList: Element at index $index not found during load');
         }
@@ -732,6 +737,8 @@ class ParseLiveElement<T extends ParseObject> extends ParseLiveListElement<T> {
     if (includeObject != null) {
       queryBuilder.includeObject(includeObject);
     }
+    // Fire-and-forget initialization; errors surface through element stream
+    // ignore: unawaited_futures
     _init(object, loaded: loaded);
   }
 
