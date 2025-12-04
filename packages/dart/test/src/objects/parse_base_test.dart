@@ -170,5 +170,86 @@ void main() {
         );
       },
     );
+
+    group('date parsing', () {
+      test('createdAt and updatedAt should handle Map date format', () {
+        // Create a parse object and simulate server response with date as Map
+        final parseObject = ParseObject('TestClass');
+
+        // This is what the server sometimes returns - date as Map
+        parseObject.fromJson({
+          'objectId': 'testObjectId',
+          'createdAt': {'__type': 'Date', 'iso': '2023-01-01T00:00:00.000Z'},
+          'updatedAt': {'__type': 'Date', 'iso': '2023-01-02T00:00:00.000Z'},
+        });
+
+        // These should not throw and return DateTime objects
+        expect(parseObject.createdAt, isA<DateTime>());
+        expect(parseObject.updatedAt, isA<DateTime>());
+
+        expect(parseObject.createdAt?.year, equals(2023));
+        expect(parseObject.createdAt?.month, equals(1));
+        expect(parseObject.createdAt?.day, equals(1));
+
+        expect(parseObject.updatedAt?.year, equals(2023));
+        expect(parseObject.updatedAt?.month, equals(1));
+        expect(parseObject.updatedAt?.day, equals(2));
+      });
+
+      test('createdAt and updatedAt should handle String date format', () {
+        final parseObject = ParseObject('TestClass');
+
+        parseObject.fromJson({
+          'objectId': 'testObjectId',
+          'createdAt': '2023-01-01T00:00:00.000Z',
+          'updatedAt': '2023-01-02T00:00:00.000Z',
+        });
+
+        expect(parseObject.createdAt, isA<DateTime>());
+        expect(parseObject.updatedAt, isA<DateTime>());
+
+        expect(parseObject.createdAt?.year, equals(2023));
+        expect(parseObject.updatedAt?.year, equals(2023));
+      });
+
+      test('createdAt and updatedAt should handle DateTime objects', () {
+        final createdAt = DateTime(2023, 1, 1);
+        final updatedAt = DateTime(2023, 1, 2);
+
+        final parseObject = ParseObject('TestClass');
+        parseObject.fromJson({
+          'objectId': 'testObjectId',
+          'createdAt': createdAt,
+          'updatedAt': updatedAt,
+        });
+
+        expect(parseObject.createdAt, equals(createdAt));
+        expect(parseObject.updatedAt, equals(updatedAt));
+      });
+
+      test('toJson should work when date fields are stored as Maps', () {
+        final parseObject = ParseObject('TestClass');
+
+        // Simulate server response with date as Map
+        parseObject.fromJson({
+          'objectId': 'testObjectId',
+          'createdAt': {'__type': 'Date', 'iso': '2023-01-01T00:00:00.000Z'},
+          'updatedAt': {'__type': 'Date', 'iso': '2023-01-02T00:00:00.000Z'},
+        });
+
+        // toJson should work without throwing
+        expect(() => parseObject.toJson(full: true), returnsNormally);
+        expect(() => parseObject.toString(), returnsNormally);
+      });
+
+      test('createdAt and updatedAt should return null for null values', () {
+        final parseObject = ParseObject('TestClass');
+
+        parseObject.fromJson({'objectId': 'testObjectId'});
+
+        expect(parseObject.createdAt, isNull);
+        expect(parseObject.updatedAt, isNull);
+      });
+    });
   });
 }
