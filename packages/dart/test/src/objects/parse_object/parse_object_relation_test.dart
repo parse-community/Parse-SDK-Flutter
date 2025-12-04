@@ -624,5 +624,135 @@ void main() {
       // assert
       expect(() => getRelation(), throwsA(isA<ParseRelationException>()));
     });
+
+    test(
+      'addRelation() should work with custom ParseObject subclasses',
+      () {
+        // arrange
+        // Create custom ParseObject subclasses similar to the issue report
+        final contact1 = Contact()..objectId = 'contact1';
+        final contact2 = Contact()..objectId = 'contact2';
+
+        final order = Order();
+
+        // act & assert
+        // This should not throw a TypeError
+        expect(
+          () => order.addRelation('receivers', [contact1, contact2]),
+          returnsNormally,
+        );
+
+        final toJsonAfterAddRelation = order.toJson(forApiRQ: true);
+
+        const expectedToJson = {
+          "receivers": {
+            "__op": "AddRelation",
+            "objects": [
+              {"__type": "Pointer", "className": "Contact", "objectId": "contact1"},
+              {"__type": "Pointer", "className": "Contact", "objectId": "contact2"},
+            ],
+          },
+        };
+
+        expect(
+          DeepCollectionEquality().equals(expectedToJson, toJsonAfterAddRelation),
+          isTrue,
+        );
+      },
+    );
+
+    test(
+      'addRelation() should work when getRelation<T>() was called first with typed generic',
+      () {
+        // This test reproduces issue #999
+        // The issue occurs when:
+        // 1. getRelation<Contact>() is called first (creating _ParseRelation<Contact>)
+        // 2. Then addRelation() is called with Contact objects
+        // 3. The merge operation creates a Set<ParseObject> 
+        // 4. Trying to cast Set<ParseObject> to Set<Contact> throws TypeError
+
+        // arrange
+        final contact1 = Contact()..objectId = 'contact1';
+        final contact2 = Contact()..objectId = 'contact2';
+
+        final order = Order();
+
+        // First, get the relation with typed generic (this creates _ParseRelation<Contact>)
+        order.getRelation<Contact>('receivers');
+
+        // act & assert
+        // This should NOT throw: _TypeError (type '_Set<ParseObject>' is not a subtype of type 'Set<Contact>' in type cast)
+        expect(
+          () => order.addRelation('receivers', [contact1, contact2]),
+          returnsNormally,
+        );
+      },
+    );
+
+    test(
+      'calling addRelation() multiple times with custom subclasses should work',
+      () {
+        // arrange
+        final contact1 = Contact()..objectId = 'contact1';
+        final contact2 = Contact()..objectId = 'contact2';
+        final contact3 = Contact()..objectId = 'contact3';
+
+        final order = Order();
+
+        // act & assert
+        // First addRelation call
+        expect(
+          () => order.addRelation('receivers', [contact1]),
+          returnsNormally,
+        );
+
+        // Second addRelation call - this should also not throw
+        expect(
+          () => order.addRelation('receivers', [contact2, contact3]),
+          returnsNormally,
+        );
+      },
+    );
+
+    test(
+      'removeRelation() should work with custom ParseObject subclasses',
+      () {
+        // arrange
+        final contact1 = Contact()..objectId = 'contact1';
+        final contact2 = Contact()..objectId = 'contact2';
+
+        final order = Order();
+
+        // act & assert
+        expect(
+          () => order.removeRelation('receivers', [contact1, contact2]),
+          returnsNormally,
+        );
+      },
+    );
   });
+}
+
+/// Custom ParseObject subclass for testing (similar to the issue report)
+class Contact extends ParseObject implements ParseCloneable {
+  Contact() : super(_keyTableName);
+  Contact.clone() : this();
+
+  @override
+  clone(Map<String, dynamic> map) =>
+      Contact.clone()..fromJson(Map<String, dynamic>.from(map));
+
+  static const String _keyTableName = 'Contact';
+}
+
+/// Custom ParseObject subclass for testing (similar to the issue report)
+class Order extends ParseObject implements ParseCloneable {
+  Order() : super(_keyTableName);
+  Order.clone() : this();
+
+  @override
+  clone(Map<String, dynamic> map) =>
+      Order.clone()..fromJson(Map<String, dynamic>.from(map));
+
+  static const String _keyTableName = 'Order';
 }

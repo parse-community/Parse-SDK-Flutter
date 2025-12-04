@@ -61,7 +61,7 @@ class _ParseRelation<T extends ParseObject>
 
   // For offline caching, we keep track of every object
   // we've known to be in the relation.
-  Set<T> knownObjects = <T>{};
+  Set<ParseObject> knownObjects = <ParseObject>{};
 
   _ParseRelationOperation? lastPreformedOperation;
 
@@ -90,7 +90,7 @@ class _ParseRelation<T extends ParseObject>
 
     lastPreformedOperation = relationOperation;
 
-    knownObjects = lastPreformedOperation!.value.toSet() as Set<T>;
+    knownObjects = lastPreformedOperation!.value.toSet();
 
     return this;
   }
