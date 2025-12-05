@@ -534,7 +534,67 @@ void main() {
       );
 
       // assert
-      expect(result.query.contains("%22object2%22,%22%22include%22"), true);
+      expect(result.query.contains("%22object2%22,%22include%22"), true);
+    });
+
+    test('whereMatchesQuery generates valid JSON', () async {
+      // arrange - This test specifically checks for the bug where
+      // whereMatchesQuery generated invalid JSON with trailing commas
+      // See: https://github.com/parse-community/Parse-SDK-Flutter/issues/XXX
+      ParseObject deliveryArea = ParseObject("DeliveryArea");
+      final deliveryAreasQuery = QueryBuilder<ParseObject>(deliveryArea)
+        ..whereArrayContainsAll('postalCodes', [21075]);
+
+      ParseObject farmer = ParseObject("Farmer", client: client);
+      final query = QueryBuilder<ParseObject>(farmer)
+        ..whereMatchesQuery('deliveryAreas', deliveryAreasQuery)
+        ..whereEqualTo('isActive', true);
+
+      var desiredOutput = {"results": []};
+
+      when(
+        client.get(
+          any,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(desiredOutput),
+        ),
+      );
+
+      // act
+      await query.query();
+
+      final String capturedUrl = verify(
+        client.get(
+          captureAny,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).captured.single;
+
+      // Extract the 'where' parameter from the URL
+      final Uri uri = Uri.parse(capturedUrl);
+      final String? whereParam = uri.queryParameters['where'];
+
+      // assert - The JSON should be valid (no trailing commas)
+      expect(whereParam, isNotNull);
+
+      // This should not throw if JSON is valid
+      final decoded = jsonDecode(whereParam!);
+      expect(decoded, isA<Map>());
+
+      // Verify the structure is correct
+      expect(decoded['deliveryAreas'], isNotNull);
+      expect(decoded['deliveryAreas']['\$inQuery'], isNotNull);
+      expect(
+        decoded['deliveryAreas']['\$inQuery']['className'],
+        'DeliveryArea',
+      );
+      expect(decoded['deliveryAreas']['\$inQuery']['where'], isNotNull);
     });
 
     test('the result query should contains encoded special characters values', () {

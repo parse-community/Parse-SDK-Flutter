@@ -616,7 +616,7 @@ class QueryBuilder<T extends ParseObject> {
   String _buildQueryRelational(String className) {
     queries = _checkForMultipleColumnInstances(queries);
     String lim = getLimitersRelational(limiters);
-    return '{"where":{${buildQueries(queries)}},"className":"$className"${limiters.isNotEmpty ? ',"$lim"' : ''}}';
+    return '{"where":{${buildQueries(queries)}},"className":"$className"${lim.isNotEmpty ? ',$lim' : ''}}';
   }
 
   /// Builds the query relational with Key for Parse
