@@ -123,10 +123,6 @@ Future<ParseResponse> batchRequest(
   }
 }
 
-Stream<T> _createStreamError<T>(Object error) async* {
-  throw error;
-}
-
 List removeDuplicateParseObjectByObjectId(Iterable iterable) {
   final list = iterable.toList();
 
