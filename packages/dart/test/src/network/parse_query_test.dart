@@ -540,7 +540,7 @@ void main() {
     test('whereMatchesQuery generates valid JSON', () async {
       // arrange - This test specifically checks for the bug where
       // whereMatchesQuery generated invalid JSON with trailing commas
-      // See: https://github.com/parse-community/Parse-SDK-Flutter/issues/XXX
+      // See: https://github.com/parse-community/Parse-SDK-Flutter/issues/932
       ParseObject deliveryArea = ParseObject("DeliveryArea");
       final deliveryAreasQuery = QueryBuilder<ParseObject>(deliveryArea)
         ..whereArrayContainsAll('postalCodes', [21075]);
