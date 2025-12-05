@@ -551,7 +551,7 @@ class ParseLiveList<T extends ParseObject> {
     final element = _list[index];
 
     // If not yet loaded (happens with lazy loading), trigger loading
-    // This will only happen once per element due to the loaded and _isLoading flags
+    // This will only happen once per element due to the loaded and isLoading flags
     if (!element.loaded) {
       _loadElementAt(index);
     }
