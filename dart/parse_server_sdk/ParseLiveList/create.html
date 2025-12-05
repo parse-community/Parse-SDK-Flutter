@@ -66,6 +66,19 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Creates a new <a href="../../parse_server_sdk/ParseLiveList-class.html">ParseLiveList</a> for the given <code>query</code>.</p>
+<p><code>lazyLoading</code> enables lazy loading of full object data. When <code>true</code> and
+<code>preloadedColumns</code> is provided, the initial query fetches only those columns,
+and full objects are loaded on-demand when accessed via <a href="../../parse_server_sdk/ParseLiveList/getAt.html">getAt</a>.
+When <code>preloadedColumns</code> is empty or null, all fields are fetched regardless
+of <code>lazyLoading</code> value. Default is <code>true</code>.</p>
+<p><code>preloadedColumns</code> specifies which fields to fetch in the initial query when
+lazy loading is enabled. Order fields are automatically included to ensure
+proper sorting. If null or empty, all fields are fetched.</p>
+<p><code>listenOnAllSubItems</code> and <code>listeningIncludes</code> control which nested objects
+receive live query updates.</p>
+</section>
 
 
     
@@ -86,7 +99,7 @@
           )
         : _toIncludeMap(listeningIncludes ?? &lt;String&gt;[]),
     lazyLoading,
-    preloadedColumns: preloadedColumns ?? const &lt;String&gt;[],
+    preloadedColumns: preloadedColumns,
   );
 
   return parseLiveList._init().then((_) {
@@ -120,7 +133,7 @@
 <footer>
   <span class="no-break">
     parse_server_sdk
-      9.4.6
+      9.4.7
   </span>
   
 </footer>

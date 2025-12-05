@@ -62,40 +62,38 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Returns a stream for the element at the given <code>index</code>.</p>
+<p>Returns the element's existing broadcast stream, which allows multiple
+listeners without creating redundant network requests or stream instances.</p>
+<p>When lazy loading is enabled and an element is not yet loaded, the first
+access will trigger loading. This is useful for pagination scenarios.
+Subsequent calls return the same stream without additional loads.</p>
+<p>The returned stream is a broadcast stream from ParseLiveListElement,
+preventing the N+1 query bug that occurred with async* generators.</p>
+</section>
 
 
     
 <section class="summary source-code" id="source">
   <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">Stream&lt;T&gt; getAt(final int index) async* {
-  if (index &lt; _list.length) {
-    if (!_list[index].loaded) {
-      final QueryBuilder&lt;T&gt; queryBuilder = QueryBuilder&lt;T&gt;.copy(_query)
-        ..whereEqualTo(
-          keyVarObjectId,
-          _list[index].object.get&lt;String&gt;(keyVarObjectId),
-        )
-        ..setLimit(1);
-      final ParseResponse response = await queryBuilder.query&lt;T&gt;();
-      if (_list.isEmpty) {
-        yield* _createStreamError&lt;T&gt;(
-          ParseError(message: &#39;ParseLiveList: _list is empty&#39;),
-        );
-        return;
-      }
-      if (response.success) {
-        _list[index].object = response.results?.first;
-      } else {
-        ParseError? error = response.error;
-        if (error != null) yield* _createStreamError&lt;T&gt;(error);
-        return;
-      }
-    }
-    &#47;&#47;    just for testing
-    &#47;&#47;    await Future&lt;void&gt;.delayed(const Duration(seconds: 2));
-    yield _list[index].object;
-    yield* _list[index].stream;
+  <pre class="language-dart"><code class="language-dart">Stream&lt;T&gt; getAt(final int index) {
+  if (index &lt; 0 || index &gt;= _list.length) {
+    &#47;&#47; Return an empty stream for out-of-bounds indices
+    return const Stream.empty();
   }
+
+  final element = _list[index];
+
+  &#47;&#47; If not yet loaded (happens with lazy loading), trigger loading
+  &#47;&#47; This will only happen once per element due to the loaded and isLoading flags
+  if (!element.loaded) {
+    _loadElementAt(index);
+  }
+
+  &#47;&#47; Return the element&#39;s broadcast stream
+  &#47;&#47; Multiple subscriptions to this stream won&#39;t trigger multiple loads
+  return element.stream;
 }</code></pre>
 </section>
 
@@ -124,7 +122,7 @@
 <footer>
   <span class="no-break">
     parse_server_sdk
-      9.4.6
+      9.4.7
   </span>
   
 </footer>

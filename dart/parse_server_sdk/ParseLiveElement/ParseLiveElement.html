@@ -79,7 +79,9 @@
   if (includeObject != null) {
     queryBuilder.includeObject(includeObject);
   }
-  _init(object, loaded: loaded, includeObject: includeObject);
+  &#47;&#47; Fire-and-forget initialization; errors surface through element stream
+  &#47;&#47; ignore: unawaited_futures
+  _init(object, loaded: loaded);
 }</code></pre>
 </section>
 
@@ -108,7 +110,7 @@
 <footer>
   <span class="no-break">
     parse_server_sdk
-      9.4.6
+      9.4.7
   </span>
   
 </footer>
