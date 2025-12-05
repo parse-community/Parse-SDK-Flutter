@@ -276,7 +276,7 @@ void main() {
 
       int generatorCallCount = 0;
 
-      // Approach 1: async* generator (CURRENT - PROBLEMATIC)
+      // Approach 1: async* generator (OLD IMPLEMENTATION - PROBLEMATIC)
       Stream<int> generatorApproach() async* {
         generatorCallCount++;
         yield 1;
