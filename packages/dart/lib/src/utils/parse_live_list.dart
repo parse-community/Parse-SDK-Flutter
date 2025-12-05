@@ -820,6 +820,8 @@ class ParseLiveListElement<T extends ParseObject> {
   final StreamController<T> _streamController = StreamController<T>.broadcast();
   T _object;
   bool _loaded = false;
+  /// Indicates whether this element is currently being loaded.
+  /// Used to prevent concurrent load operations.
   bool isLoading = false;
   late Map<PathKey, dynamic> _updatedSubItems;
   LiveQuery? _liveQuery;
