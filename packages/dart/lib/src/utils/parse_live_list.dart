@@ -806,8 +806,7 @@ class ParseLiveListElement<T extends ParseObject> {
     this._object, {
     bool loaded = false,
     Map<String, dynamic>? updatedSubItems,
-  }) : _loaded = loaded,
-       isLoading = false {
+  }) : _loaded = loaded {
     _updatedSubItems = _toSubscriptionMap(
       updatedSubItems ?? <String, dynamic>{},
     );
