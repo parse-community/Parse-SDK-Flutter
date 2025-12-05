@@ -99,7 +99,7 @@ void main() {
         const preloadedColumns = <String>[]; // Empty!
 
         // Logic: fieldsRestricted = lazyLoading && preloadedColumns.isNotEmpty
-        //        fieldsRestricted = true && false = false
+        //        fieldsRestricted evaluates to (true && false) = false
         //        loaded = !fieldsRestricted = !false = true
         final fieldsRestricted = lazyLoading && preloadedColumns.isNotEmpty;
 
