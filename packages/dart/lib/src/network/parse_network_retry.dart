@@ -27,14 +27,21 @@ part of '../../parse_server_sdk.dart';
 /// This retry mechanism is applied to ALL HTTP methods including POST and PUT.
 /// While GET and DELETE are generally safe to retry, POST and PUT operations
 /// may cause duplicate operations if the original request succeeded but the
-/// response was lost or corrupted. Consider this when using retry intervals
-/// with operations that modify server state.
+/// response was lost or corrupted.
 ///
-/// In most Parse Server scenarios, this is acceptable because:
-/// - Parse uses optimistic locking with object versions
-/// - Many Parse operations are idempotent by design
-/// - Retries only occur on network-level failures (status -1), not on
-///   successful operations that return Parse error codes
+/// **Parse Server does not provide automatic optimistic locking or built-in
+/// idempotency guarantees for POST/PUT operations.** Retrying these methods
+/// can result in duplicate data creation or unintended state changes.
+///
+/// To mitigate retry risks for critical operations:
+/// - Implement application-level idempotency keys or version tracking
+/// - Disable retries for create/update operations by setting
+///   `ParseCoreData().restRetryIntervals = []` before critical calls
+/// - Use Parse's experimental `X-Parse-Request-Id` header (if available)
+///   with explicit duplicate detection in your application logic
+///
+/// Note: Retries only occur on network-level failures (status -1), not on
+/// successful operations that return Parse error codes
 ///
 /// Example:
 ///
