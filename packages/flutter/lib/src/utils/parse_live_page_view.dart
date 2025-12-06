@@ -108,8 +108,9 @@ class _ParseLiveListPageViewState<T extends sdk.ParseObject>
 
   void _checkForMoreData() {
     // Only check/load more if online
-    if (isOffline || !widget.pagination || _isLoadingMore || !_hasMoreData)
+    if (isOffline || !widget.pagination || _isLoadingMore || !_hasMoreData) {
       return;
+    }
 
     // If we're within the threshold of the end, load more data
     if (_pageController.page != null &&

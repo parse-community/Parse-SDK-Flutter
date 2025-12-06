@@ -372,8 +372,9 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
     } catch (e) {
       debugPrint('$connectivityLogPrefix Error loading data: $e');
       _noDataNotifier.value = _items.isEmpty;
-      if (mounted)
+      if (mounted) {
         setState(() {}); // Update UI to potentially show empty/error state
+      }
     }
   }
 
