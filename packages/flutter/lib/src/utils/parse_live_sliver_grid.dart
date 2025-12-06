@@ -1,6 +1,26 @@
 part of 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 /// A widget that displays a live sliver grid of Parse objects.
+///
+/// This widget is designed to be used inside a [CustomScrollView].
+/// To control refresh and pagination from a parent widget, use a [GlobalKey]:
+/// 
+/// ```dart
+/// final gridKey = GlobalKey<ParseLiveSliverGridWidgetState<MyObject>>();
+/// 
+/// // In your CustomScrollView
+/// ParseLiveSliverGridWidget<MyObject>(
+///   key: gridKey,
+///   query: query,
+///   fromJson: MyObject.fromJson,
+/// ),
+/// 
+/// // To refresh
+/// gridKey.currentState?.refreshData();
+/// 
+/// // To load more (if pagination is enabled)
+/// gridKey.currentState?.loadMoreData();
+/// ```
 class ParseLiveSliverGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   const ParseLiveSliverGridWidget({
     super.key,
@@ -63,7 +83,7 @@ class ParseLiveSliverGridWidget<T extends sdk.ParseObject> extends StatefulWidge
   final T Function(Map<String, dynamic> json) fromJson;
 
   @override
-  State<ParseLiveSliverGridWidget<T>> createState() => _ParseLiveSliverGridWidgetState<T>();
+  State<ParseLiveSliverGridWidget<T>> createState() => ParseLiveSliverGridWidgetState<T>();
 
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
       BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot, [int? index]) {
@@ -84,7 +104,11 @@ class ParseLiveSliverGridWidget<T extends sdk.ParseObject> extends StatefulWidge
   }
 }
 
-class _ParseLiveSliverGridWidgetState<T extends sdk.ParseObject>
+/// State class for [ParseLiveSliverGridWidget].
+/// 
+/// Exposes [refreshData] and [loadMoreData] methods that can be called
+/// via a [GlobalKey] to control the widget from a parent.
+class ParseLiveSliverGridWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveSliverGridWidget<T>> with ConnectivityHandlerMixin<ParseLiveSliverGridWidget<T>> {
   CachedParseLiveList<T>? _liveGrid;
   final ValueNotifier<bool> _noDataNotifier = ValueNotifier<bool>(true);
@@ -95,6 +119,12 @@ class _ParseLiveSliverGridWidgetState<T extends sdk.ParseObject>
   bool _hasMoreData = true;
 
   final Set<int> _loadingIndices = {}; // Used for lazy loading specific items
+
+  /// Whether more data can be loaded.
+  bool get hasMoreData => _hasMoreData;
+  
+  /// Current load more status.
+  LoadMoreStatus get loadMoreStatus => _loadMoreStatus;
 
   // --- Implement Mixin Requirements ---
   @override
@@ -183,7 +213,11 @@ class _ParseLiveSliverGridWidgetState<T extends sdk.ParseObject>
     }
   }
 
-  Future<void> _loadMoreData() async {
+  /// Loads more data when pagination is enabled.
+  /// 
+  /// Call this method when the user scrolls near the end of the grid.
+  /// Does nothing if offline, already loading, or no more data available.
+  Future<void> loadMoreData() async {
     if (isOffline) {
       debugPrint('$connectivityLogPrefix Cannot load more data while offline.');
       return;
@@ -408,7 +442,11 @@ class _ParseLiveSliverGridWidgetState<T extends sdk.ParseObject>
     debugPrint('$connectivityLogPrefix Finished batch save processing in ${stopwatch.elapsedMilliseconds}ms.');
   }
 
-  Future<void> _refreshData() async {
+  /// Refreshes the data by disposing the current live grid and reloading.
+  /// 
+  /// Use this method when implementing pull-to-refresh or manual refresh.
+  /// Loads from cache if offline, otherwise from server.
+  Future<void> refreshData() async {
     debugPrint('$connectivityLogPrefix Refreshing Grid data...');
     disposeLiveList();
 

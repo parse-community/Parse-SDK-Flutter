@@ -19,7 +19,7 @@ extension ParseObjectOffline on ParseObject {
   /// Save this object to local storage (CoreStore) for offline access.
   Future<void> saveToLocalCache() async {
     final CoreStore coreStore = ParseCoreData().getStore();
-    final String cacheKey = 'offline_cache_${parseClassName}';
+    final String cacheKey = 'offline_cache_$parseClassName';
     final List<String> cached = await _getStringListAsStrings(coreStore, cacheKey);
     // Remove any existing object with the same objectId
     cached.removeWhere((s) {
@@ -81,7 +81,7 @@ extension ParseObjectOffline on ParseObject {
   /// Remove this object from local storage (CoreStore).
   Future<void> removeFromLocalCache() async {
     final CoreStore coreStore = ParseCoreData().getStore();
-    final String cacheKey = 'offline_cache_${parseClassName}';
+    final String cacheKey = 'offline_cache_$parseClassName';
     final List<String> cached = await _getStringListAsStrings(coreStore, cacheKey);
     cached.removeWhere((s) {
       final jsonObj = json.decode(s);
@@ -105,7 +105,7 @@ extension ParseObjectOffline on ParseObject {
 
   Future<void> updateInLocalCache(Map<String, dynamic> updates) async {
     final CoreStore coreStore = ParseCoreData().getStore();
-    final String cacheKey = 'offline_cache_${parseClassName}';
+    final String cacheKey = 'offline_cache_$parseClassName';
     final List<String> cached = await _getStringListAsStrings(coreStore, cacheKey);
     for (int i = 0; i < cached.length; i++) {
       final jsonObj = json.decode(cached[i]);

@@ -156,6 +156,35 @@ CustomScrollView(
 )
 ```
 
+#### Controlling Sliver Widgets with GlobalKey
+
+For sliver widgets, you can use a `GlobalKey` to control refresh and pagination from a parent widget:
+
+```dart
+final gridKey = GlobalKey<ParseLiveSliverGridWidgetState<MyObject>>();
+
+// In your CustomScrollView
+ParseLiveSliverGridWidget<MyObject>(
+  key: gridKey,
+  query: query,
+  pagination: true,
+  offlineMode: true,
+  fromJson: (json) => MyObject().fromJson(json),
+)
+
+// To refresh
+gridKey.currentState?.refreshData();
+
+// To load more (if pagination is enabled)
+gridKey.currentState?.loadMoreData();
+
+// Access status
+final hasMore = gridKey.currentState?.hasMoreData ?? false;
+final status = gridKey.currentState?.loadMoreStatus;
+```
+
+The same pattern works for `ParseLiveSliverListWidget` using `ParseLiveSliverListWidgetState`.
+
 ### ParseLivePageView
 
 A PageView widget for swiping through Parse objects:

@@ -21,8 +21,12 @@ void main() async {
 
   // Test 2: Load single object from cache
   print('Test 2: Load single object from cache');
-  final loadedObject = await ParseObjectOffline.loadFromLocalCache('TestClass', 'test-id-1');
-  if (loadedObject != null && loadedObject.get<String>('name') == 'Test Object') {
+  final loadedObject = await ParseObjectOffline.loadFromLocalCache(
+    'TestClass',
+    'test-id-1',
+  );
+  if (loadedObject != null &&
+      loadedObject.get<String>('name') == 'Test Object') {
     print('✅ Single object loaded from cache successfully\n');
   } else {
     print('❌ Failed to load object from cache\n');
@@ -47,7 +51,10 @@ void main() async {
 
   // Test 5: Check if object exists in cache
   print('Test 5: Check if object exists in cache');
-  final exists = await ParseObjectOffline.existsInLocalCache('TestClass', 'test-id-1');
+  final exists = await ParseObjectOffline.existsInLocalCache(
+    'TestClass',
+    'test-id-1',
+  );
   if (exists) {
     print('✅ Object existence check passed\n');
   } else {
@@ -57,20 +64,28 @@ void main() async {
   // Test 6: Update object in cache
   print('Test 6: Update object in cache');
   await testObject.updateInLocalCache({'name': 'Updated Object'});
-  final updatedObject = await ParseObjectOffline.loadFromLocalCache('TestClass', 'test-id-1');
+  final updatedObject = await ParseObjectOffline.loadFromLocalCache(
+    'TestClass',
+    'test-id-1',
+  );
   if (updatedObject?.get<String>('name') == 'Updated Object') {
     print('✅ Object updated in cache successfully\n');
   }
 
   // Test 7: Get all object IDs
   print('Test 7: Get all object IDs from cache');
-  final objectIds = await ParseObjectOffline.getAllObjectIdsInLocalCache('TestClass');
+  final objectIds = await ParseObjectOffline.getAllObjectIdsInLocalCache(
+    'TestClass',
+  );
   print('✅ Retrieved ${objectIds.length} object IDs from cache\n');
 
   // Test 8: Remove object from cache
   print('Test 8: Remove object from cache');
   await testObject.removeFromLocalCache();
-  final removedCheck = await ParseObjectOffline.existsInLocalCache('TestClass', 'test-id-1');
+  final removedCheck = await ParseObjectOffline.existsInLocalCache(
+    'TestClass',
+    'test-id-1',
+  );
   if (!removedCheck) {
     print('✅ Object removed from cache successfully\n');
   }
@@ -78,7 +93,9 @@ void main() async {
   // Test 9: Clear all objects for a class
   print('Test 9: Clear all objects for a class');
   await ParseObjectOffline.clearLocalCacheForClass('TestClass');
-  final clearedObjects = await ParseObjectOffline.loadAllFromLocalCache('TestClass');
+  final clearedObjects = await ParseObjectOffline.loadAllFromLocalCache(
+    'TestClass',
+  );
   if (clearedObjects.isEmpty) {
     print('✅ Cache cleared successfully\n');
   }

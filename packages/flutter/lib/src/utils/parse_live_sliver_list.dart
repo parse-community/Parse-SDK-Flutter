@@ -1,6 +1,26 @@
 part of 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 /// A widget that displays a live sliver list of Parse objects.
+///
+/// This widget is designed to be used inside a [CustomScrollView].
+/// To control refresh and pagination from a parent widget, use a [GlobalKey]:
+/// 
+/// ```dart
+/// final listKey = GlobalKey<ParseLiveSliverListWidgetState<MyObject>>();
+/// 
+/// // In your CustomScrollView
+/// ParseLiveSliverListWidget<MyObject>(
+///   key: listKey,
+///   query: query,
+///   fromJson: MyObject.fromJson,
+/// ),
+/// 
+/// // To refresh
+/// listKey.currentState?.refreshData();
+/// 
+/// // To load more (if pagination is enabled)
+/// listKey.currentState?.loadMoreData();
+/// ```
 class ParseLiveSliverListWidget<T extends sdk.ParseObject> extends StatefulWidget {
   const ParseLiveSliverListWidget({
     super.key,
@@ -51,7 +71,7 @@ class ParseLiveSliverListWidget<T extends sdk.ParseObject> extends StatefulWidge
   final T Function(Map<String, dynamic> json) fromJson;
 
   @override
-  State<ParseLiveSliverListWidget<T>> createState() => _ParseLiveSliverListWidgetState<T>();
+  State<ParseLiveSliverListWidget<T>> createState() => ParseLiveSliverListWidgetState<T>();
 
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
       BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot, [int? index]) {
@@ -72,7 +92,11 @@ class ParseLiveSliverListWidget<T extends sdk.ParseObject> extends StatefulWidge
   }
 }
 
-class _ParseLiveSliverListWidgetState<T extends sdk.ParseObject>
+/// State class for [ParseLiveSliverListWidget].
+/// 
+/// Exposes [refreshData] and [loadMoreData] methods that can be called
+/// via a [GlobalKey] to control the widget from a parent.
+class ParseLiveSliverListWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveSliverListWidget<T>> with ConnectivityHandlerMixin<ParseLiveSliverListWidget<T>> {
   CachedParseLiveList<T>? _liveList;
   final ValueNotifier<bool> _noDataNotifier = ValueNotifier<bool>(true);
@@ -81,6 +105,12 @@ class _ParseLiveSliverListWidgetState<T extends sdk.ParseObject>
   LoadMoreStatus _loadMoreStatus = LoadMoreStatus.idle;
   int _currentPage = 0;
   bool _hasMoreData = true;
+
+  /// Whether more data can be loaded.
+  bool get hasMoreData => _hasMoreData;
+  
+  /// Current load more status.
+  LoadMoreStatus get loadMoreStatus => _loadMoreStatus;
 
   @override
   String get connectivityLogPrefix => 'ParseLiveSliverListWidget';
@@ -357,7 +387,11 @@ class _ParseLiveSliverListWidgetState<T extends sdk.ParseObject>
     }
   }
 
-  Future<void> _loadMoreData() async {
+  /// Loads more data when pagination is enabled.
+  /// 
+  /// Call this method when the user scrolls near the end of the list.
+  /// Does nothing if offline, already loading, or no more data available.
+  Future<void> loadMoreData() async {
     if (isOffline) {
       debugPrint('$connectivityLogPrefix Cannot load more data while offline.');
       return;
@@ -419,7 +453,11 @@ class _ParseLiveSliverListWidgetState<T extends sdk.ParseObject>
     }
   }
 
-  Future<void> _refreshData() async {
+  /// Refreshes the data by disposing the current live list and reloading.
+  /// 
+  /// Use this method when implementing pull-to-refresh or manual refresh.
+  /// Loads from cache if offline, otherwise from server.
+  Future<void> refreshData() async {
     debugPrint('$connectivityLogPrefix Refreshing data...');
     disposeLiveList();
 

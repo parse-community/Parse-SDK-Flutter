@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart'; // Needed for State
+import 'package:flutter/material.dart'; // Needed for State and debugPrint
 
 /// Mixin to handle connectivity checks and state updates for Parse Live Widgets.
 ///
