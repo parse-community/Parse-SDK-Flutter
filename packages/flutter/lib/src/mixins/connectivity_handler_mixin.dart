@@ -37,15 +37,16 @@ mixin ConnectivityHandlerMixin<T extends StatefulWidget> on State<T> {
     _internalInitConnectivity(); // Perform initial check
 
     // Listen for subsequent changes
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((
+      List<ConnectivityResult> results,
+    ) {
       final newResult = results.contains(ConnectivityResult.mobile)
           ? ConnectivityResult.mobile
           : results.contains(ConnectivityResult.wifi)
-              ? ConnectivityResult.wifi
-              : results.contains(ConnectivityResult.none)
-                  ? ConnectivityResult.none
-                  : ConnectivityResult.other;
+          ? ConnectivityResult.wifi
+          : results.contains(ConnectivityResult.none)
+          ? ConnectivityResult.none
+          : ConnectivityResult.other;
 
       _internalUpdateConnectionStatus(newResult);
     });
@@ -60,70 +61,101 @@ mixin ConnectivityHandlerMixin<T extends StatefulWidget> on State<T> {
   Future<void> _internalInitConnectivity() async {
     try {
       var connectivityResults = await _connectivity.checkConnectivity();
-      final initialResult = connectivityResults.contains(ConnectivityResult.mobile)
+      final initialResult =
+          connectivityResults.contains(ConnectivityResult.mobile)
           ? ConnectivityResult.mobile
           : connectivityResults.contains(ConnectivityResult.wifi)
-              ? ConnectivityResult.wifi
-              : connectivityResults.contains(ConnectivityResult.none)
-                  ? ConnectivityResult.none
-                  : ConnectivityResult.other;
+          ? ConnectivityResult.wifi
+          : connectivityResults.contains(ConnectivityResult.none)
+          ? ConnectivityResult.none
+          : ConnectivityResult.other;
 
-      await _internalUpdateConnectionStatus(initialResult, isInitialCheck: true);
+      await _internalUpdateConnectionStatus(
+        initialResult,
+        isInitialCheck: true,
+      );
     } catch (e) {
-      debugPrint('$connectivityLogPrefix Error during initial connectivity check: $e');
+      debugPrint(
+        '$connectivityLogPrefix Error during initial connectivity check: $e',
+      );
       // Default to offline on error
-      await _internalUpdateConnectionStatus(ConnectivityResult.none, isInitialCheck: true);
+      await _internalUpdateConnectionStatus(
+        ConnectivityResult.none,
+        isInitialCheck: true,
+      );
     }
   }
 
   /// Updates the connection status and triggers appropriate data loading.
-  Future<void> _internalUpdateConnectionStatus(ConnectivityResult result, {bool isInitialCheck = false}) async {
+  Future<void> _internalUpdateConnectionStatus(
+    ConnectivityResult result, {
+    bool isInitialCheck = false,
+  }) async {
     // Only react if the status is actually different
     if (result == _connectionStatus) {
-      debugPrint('$connectivityLogPrefix Connectivity status unchanged: $result');
+      debugPrint(
+        '$connectivityLogPrefix Connectivity status unchanged: $result',
+      );
       return;
     }
 
-    debugPrint('$connectivityLogPrefix Connectivity status changed: From $_connectionStatus to $result');
+    debugPrint(
+      '$connectivityLogPrefix Connectivity status changed: From $_connectionStatus to $result',
+    );
     final previousStatus = _connectionStatus;
     _connectionStatus = result; // Update current status
 
     // Determine current and previous online state
-    bool wasOnline = previousStatus != null && previousStatus != ConnectivityResult.none;
-    bool isOnline = result == ConnectivityResult.mobile || result == ConnectivityResult.wifi;
+    bool wasOnline =
+        previousStatus != null && previousStatus != ConnectivityResult.none;
+    bool isOnline =
+        result == ConnectivityResult.mobile ||
+        result == ConnectivityResult.wifi;
 
     // --- Handle State Transitions ---
     if (isOnline && !wasOnline) {
       // --- Transitioning TO Online ---
       _isOffline = false;
-      debugPrint('$connectivityLogPrefix Transitioning Online: $result. Loading data from server...');
+      debugPrint(
+        '$connectivityLogPrefix Transitioning Online: $result. Loading data from server...',
+      );
       await loadDataFromServer(); // Call the implementation from the consuming class
     } else if (!isOnline && wasOnline) {
       // --- Transitioning TO Offline ---
       _isOffline = true;
-      debugPrint('$connectivityLogPrefix Transitioning Offline: $result. Disposing liveList and loading from cache...');
+      debugPrint(
+        '$connectivityLogPrefix Transitioning Offline: $result. Disposing liveList and loading from cache...',
+      );
       disposeLiveList(); // Call the implementation
       await loadDataFromCache(); // Call the implementation
     } else if (isInitialCheck) {
       // --- Handle Initial State (only runs once) ---
       if (isOnline) {
         _isOffline = false;
-        debugPrint('$connectivityLogPrefix Initial State Online: $result. Loading data from server...');
+        debugPrint(
+          '$connectivityLogPrefix Initial State Online: $result. Loading data from server...',
+        );
         await loadDataFromServer();
       } else {
         _isOffline = true;
-        debugPrint('$connectivityLogPrefix Initial State Offline: $result. Loading from cache...');
+        debugPrint(
+          '$connectivityLogPrefix Initial State Offline: $result. Loading from cache...',
+        );
         // Only load from cache if offline mode is actually enabled
         if (isOfflineModeEnabled) {
-           await loadDataFromCache();
+          await loadDataFromCache();
         } else {
-           debugPrint('$connectivityLogPrefix Offline mode disabled, skipping initial cache load.');
-           // Optionally clear items or show empty state here if needed
+          debugPrint(
+            '$connectivityLogPrefix Offline mode disabled, skipping initial cache load.',
+          );
+          // Optionally clear items or show empty state here if needed
         }
       }
     } else {
       // --- No Online/Offline Transition ---
-      debugPrint('$connectivityLogPrefix Connectivity changed within same state (Online/Offline): $result');
+      debugPrint(
+        '$connectivityLogPrefix Connectivity changed within same state (Online/Offline): $result',
+      );
       // Optional: Reload data even if staying online (e.g., wifi -> mobile)
       // if (isOnline) {
       //   await loadDataFromServer();

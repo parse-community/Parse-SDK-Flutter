@@ -21,7 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 export 'package:parse_server_sdk/parse_server_sdk.dart'
     hide Parse, CoreStoreSembastImp;
-    
+
 // Analytics integration
 export 'src/analytics/parse_analytics.dart';
 export 'src/analytics/parse_analytics_endpoints.dart';
@@ -138,7 +138,7 @@ class Parse extends sdk.Parse
   ) {
     if (results.contains(ConnectivityResult.wifi)) {
       return sdk.ParseConnectivityResult.wifi;
-    }  else if (results.contains(ConnectivityResult.mobile)) {
+    } else if (results.contains(ConnectivityResult.mobile)) {
       return sdk.ParseConnectivityResult.mobile;
     } else {
       return sdk.ParseConnectivityResult.none;

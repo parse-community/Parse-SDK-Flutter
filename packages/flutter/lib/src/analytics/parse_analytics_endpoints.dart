@@ -3,62 +3,64 @@ import 'parse_analytics.dart';
 
 /// HTTP endpoint handlers for Parse Dashboard Analytics integration
 class ParseAnalyticsEndpoints {
-  
   /// Handle audience analytics requests for Parse Dashboard
-  static Future<Map<String, dynamic>> handleAudienceRequest(String audienceType) async {
+  static Future<Map<String, dynamic>> handleAudienceRequest(
+    String audienceType,
+  ) async {
     try {
       final userAnalytics = await ParseAnalytics.getUserAnalytics();
-      final installationAnalytics = await ParseAnalytics.getInstallationAnalytics();
-      
+      final installationAnalytics =
+          await ParseAnalytics.getInstallationAnalytics();
+
       switch (audienceType) {
         case 'total_users':
           return {
             'total': userAnalytics['total_users'],
-            'content': userAnalytics['total_users']
+            'content': userAnalytics['total_users'],
           };
-          
+
         case 'daily_users':
           return {
             'total': userAnalytics['daily_users'],
-            'content': userAnalytics['daily_users']
+            'content': userAnalytics['daily_users'],
           };
-          
+
         case 'weekly_users':
           return {
             'total': userAnalytics['weekly_users'],
-            'content': userAnalytics['weekly_users']
+            'content': userAnalytics['weekly_users'],
           };
-          
+
         case 'monthly_users':
           return {
             'total': userAnalytics['monthly_users'],
-            'content': userAnalytics['monthly_users']
+            'content': userAnalytics['monthly_users'],
           };
-          
+
         case 'total_installations':
           return {
             'total': installationAnalytics['total_installations'],
-            'content': installationAnalytics['total_installations']
+            'content': installationAnalytics['total_installations'],
           };
-          
+
         case 'daily_installations':
           return {
             'total': installationAnalytics['daily_installations'],
-            'content': installationAnalytics['daily_installations']
+            'content': installationAnalytics['daily_installations'],
           };
-          
+
         case 'weekly_installations':
           return {
             'total': installationAnalytics['weekly_installations'],
-            'content': installationAnalytics['weekly_installations']
+            'content': installationAnalytics['weekly_installations'],
           };
-          
+
         case 'monthly_installations':
           return {
             'total': installationAnalytics['monthly_installations'],
-            'content': installationAnalytics['monthly_installations']
+            'content': installationAnalytics['monthly_installations'],
           };
-          
+
         default:
           return {'total': 0, 'content': 0};
       }
@@ -89,14 +91,14 @@ class ParseAnalyticsEndpoints {
         default:
           metric = endpoint;
       }
-      
+
       final requestedData = await ParseAnalytics.getTimeSeriesData(
         metric: metric,
         startDate: startDate,
         endDate: endDate,
         interval: interval,
       );
-      
+
       return {'requested_data': requestedData};
     } catch (e) {
       if (kDebugMode) {
@@ -107,7 +109,9 @@ class ParseAnalyticsEndpoints {
   }
 
   /// Handle user retention requests for Parse Dashboard
-  static Future<Map<String, double>> handleRetentionRequest({DateTime? cohortDate}) async {
+  static Future<Map<String, double>> handleRetentionRequest({
+    DateTime? cohortDate,
+  }) async {
     try {
       return await ParseAnalytics.getUserRetention(cohortDate: cohortDate);
     } catch (e) {
@@ -124,17 +128,17 @@ class ParseAnalyticsEndpoints {
     return {
       'total': 0.5, // 500MB in GB
       'limit': 100,
-      'units': 'GB'
+      'units': 'GB',
     };
   }
 
-  /// Handle billing database requests for Parse Dashboard  
+  /// Handle billing database requests for Parse Dashboard
   static Map<String, dynamic> handleBillingDatabaseRequest() {
     // Mock implementation - replace with actual database size calculation
     return {
       'total': 0.1, // 100MB in GB
       'limit': 20,
-      'units': 'GB'
+      'units': 'GB',
     };
   }
 
@@ -144,7 +148,7 @@ class ParseAnalyticsEndpoints {
     return {
       'total': 0.001, // 1GB in TB
       'limit': 1,
-      'units': 'TB'
+      'units': 'TB',
     };
   }
 
@@ -163,14 +167,14 @@ class ParseAnalyticsEndpoints {
         'query': '{"username": {"regex": ".*"}}',
         'duration': 1200,
         'count': 5,
-        'timestamp': DateTime.now().toIso8601String()
-      }
+        'timestamp': DateTime.now().toIso8601String(),
+      },
     ];
   }
 }
 
 /// Express.js middleware generator for Parse Dashboard integration
-/// 
+///
 /// Usage:
 /// ```javascript
 /// const express = require('express');
@@ -216,12 +220,12 @@ module.exports = parseAnalyticsMiddleware;
 }
 
 /// Dart Shelf handler for Parse Dashboard integration
-/// 
+///
 /// Usage:
 /// ```dart
 /// import 'package:shelf/shelf.dart';
 /// import 'package:shelf/shelf_io.dart' as io;
-/// 
+///
 /// void main() async {
 ///   final handler = getDartShelfHandler();
 ///   final server = await io.serve(handler, 'localhost', 3000);

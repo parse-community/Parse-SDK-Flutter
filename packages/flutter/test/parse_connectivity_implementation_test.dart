@@ -55,8 +55,6 @@ void main() {
       expect(result, ParseConnectivityResult.wifi);
     });
 
-    
-
     test('mobile connection returns ParseConnectivityResult.mobile', () async {
       mockPlatform.setConnectivity([ConnectivityResult.mobile]);
 
@@ -83,8 +81,6 @@ void main() {
 
       expect(result, ParseConnectivityResult.wifi);
     });
-
-    
 
     test('unsupported connection types fall back to none', () async {
       mockPlatform.setConnectivity([ConnectivityResult.bluetooth]);
@@ -123,7 +119,6 @@ void main() {
       await subscription.cancel();
     });
 
-
     test('mobile event emits ParseConnectivityResult.mobile', () async {
       final completer = Completer<ParseConnectivityResult>();
       final subscription = Parse().connectivityStream.listen((result) {
@@ -155,7 +150,5 @@ void main() {
 
       await subscription.cancel();
     });
-
-    
   });
 }
