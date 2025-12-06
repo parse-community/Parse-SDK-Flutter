@@ -165,7 +165,7 @@ class ParseLiveSliverGridWidgetState<T extends sdk.ParseObject>
     _items.clear();
 
     try {
-      final cached = await sdk.ParseObjectOffline.loadAllFromLocalCache(
+      final cached = await ParseObjectOffline.loadAllFromLocalCache(
         widget.query.object.parseClassName,
       );
       for (final obj in cached) {
@@ -432,7 +432,7 @@ class ParseLiveSliverGridWidgetState<T extends sdk.ParseObject>
     if (itemsToSaveFinal.isNotEmpty) {
       try {
         final className = itemsToSaveFinal.first.parseClassName;
-        await sdk.ParseObjectOffline.saveAllToLocalCache(className, itemsToSaveFinal);
+        await ParseObjectOffline.saveAllToLocalCache(className, itemsToSaveFinal);
       } catch (e) {
          debugPrint('$connectivityLogPrefix Error during batch save operation: $e');
       }

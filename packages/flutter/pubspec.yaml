@@ -61,7 +61,8 @@ dev_dependencies:
   plugin_platform_interface: ^2.1.8
 
 dependency_overrides:
- 
+  parse_server_sdk:
+    path: ../dart
   
 
 screenshots:

@@ -166,7 +166,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     _items.clear();
 
     try {
-      final cached = await sdk.ParseObjectOffline.loadAllFromLocalCache(
+      final cached = await ParseObjectOffline.loadAllFromLocalCache(
         widget.query.object.parseClassName,
       );
       for (final obj in cached) {
@@ -528,7 +528,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       try {
         // Ensure we have the className, assuming all items are the same type
         final className = itemsToSaveFinal.first.parseClassName;
-        await sdk.ParseObjectOffline.saveAllToLocalCache(className, itemsToSaveFinal);
+        await ParseObjectOffline.saveAllToLocalCache(className, itemsToSaveFinal);
       } catch (e) {
          debugPrint('$connectivityLogPrefix Error during batch save operation: $e');
       }
