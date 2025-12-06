@@ -53,7 +53,7 @@ part of '../../parse_server_sdk.dart';
 /// - [operation]: The network operation to execute and potentially retry
 /// - [debug]: Whether to log retry attempts (defaults to [ParseCoreData.debug])
 ///
-/// Returns
+/// Returns:
 ///
 /// The final response (either [ParseNetworkResponse] or [ParseNetworkByteResponse])
 /// after all retry attempts are exhausted.
