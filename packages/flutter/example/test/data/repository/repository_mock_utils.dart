@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter_plugin_example/data/model/diet_plan.dart';
-import 'package:flutter_plugin_example/data/repositories/diet_plan/provider_api_diet_plan.dart';
-import 'package:flutter_plugin_example/data/repositories/diet_plan/provider_db_diet_plan.dart';
 import 'package:flutter_plugin_example/domain/constants/application_constants.dart';
 // import 'package:mockito/mockito.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
