@@ -32,6 +32,7 @@ class ParseCoreData {
     Map<String, ParseObjectConstructor>? registeredSubClassMap,
     ParseUserConstructor? parseUserConstructor,
     ParseFileConstructor? parseFileConstructor,
+    List<int>? restRetryIntervals,
     List<int>? liveListRetryIntervals,
     ParseConnectivityProvider? connectivityProvider,
     String? fileDirectory,
@@ -52,6 +53,8 @@ class ParseCoreData {
     _instance.sessionId = sessionId;
     _instance.autoSendSessionId = autoSendSessionId;
     _instance.securityContext = securityContext;
+    _instance.restRetryIntervals =
+        restRetryIntervals ?? <int>[0, 250, 500, 1000, 2000];
     _instance.liveListRetryIntervals =
         liveListRetryIntervals ??
         (parseIsWeb
@@ -89,6 +92,7 @@ class ParseCoreData {
   late bool debug;
   late CoreStore storage;
   late ParseSubClassHandler _subClassHandler;
+  late List<int> restRetryIntervals;
   late List<int> liveListRetryIntervals;
   ParseConnectivityProvider? connectivityProvider;
   String? fileDirectory;

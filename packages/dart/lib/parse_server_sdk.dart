@@ -36,6 +36,7 @@ part 'src/network/options.dart';
 part 'src/network/parse_client.dart';
 part 'src/network/parse_connectivity.dart';
 part 'src/network/parse_live_query.dart';
+part 'src/network/parse_network_retry.dart';
 part 'src/network/parse_query.dart';
 part 'src/objects/parse_acl.dart';
 part 'src/objects/parse_array.dart';
@@ -118,6 +119,7 @@ class Parse {
     Map<String, ParseObjectConstructor>? registeredSubClassMap,
     ParseUserConstructor? parseUserConstructor,
     ParseFileConstructor? parseFileConstructor,
+    List<int>? restRetryIntervals,
     List<int>? liveListRetryIntervals,
     ParseConnectivityProvider? connectivityProvider,
     String? fileDirectory,
@@ -144,6 +146,7 @@ class Parse {
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
+      restRetryIntervals: restRetryIntervals,
       liveListRetryIntervals: liveListRetryIntervals,
       connectivityProvider: connectivityProvider,
       fileDirectory: fileDirectory,
