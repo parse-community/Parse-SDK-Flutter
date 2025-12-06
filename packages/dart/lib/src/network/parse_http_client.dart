@@ -60,8 +60,7 @@ class ParseHTTPClient extends ParseClient {
           );
         } catch (e) {
           return ParseNetworkResponse(
-            data:
-                '{"code":${ParseError.otherCause},"error":"NetworkError","exception":"${e.toString()}"}',
+            data: _buildErrorJson(e.toString()),
             statusCode: ParseError.otherCause,
           );
         }
@@ -89,8 +88,7 @@ class ParseHTTPClient extends ParseClient {
           );
         } catch (e) {
           return ParseNetworkByteResponse(
-            data:
-                '{"code":${ParseError.otherCause},"error":"NetworkError","exception":"${e.toString()}"}',
+            data: _buildErrorJson(e.toString()),
             statusCode: ParseError.otherCause,
           );
         }
@@ -118,8 +116,7 @@ class ParseHTTPClient extends ParseClient {
           );
         } catch (e) {
           return ParseNetworkResponse(
-            data:
-                '{"code":${ParseError.otherCause},"error":"NetworkError","exception":"${e.toString()}"}',
+            data: _buildErrorJson(e.toString()),
             statusCode: ParseError.otherCause,
           );
         }
@@ -147,8 +144,7 @@ class ParseHTTPClient extends ParseClient {
           );
         } catch (e) {
           return ParseNetworkResponse(
-            data:
-                '{"code":${ParseError.otherCause},"error":"NetworkError","exception":"${e.toString()}"}',
+            data: _buildErrorJson(e.toString()),
             statusCode: ParseError.otherCause,
           );
         }
@@ -183,8 +179,7 @@ class ParseHTTPClient extends ParseClient {
           );
         } catch (e) {
           return ParseNetworkResponse(
-            data:
-                '{"code":${ParseError.otherCause},"error":"NetworkError","exception":"${e.toString()}"}',
+            data: _buildErrorJson(e.toString()),
             statusCode: ParseError.otherCause,
           );
         }
@@ -210,13 +205,25 @@ class ParseHTTPClient extends ParseClient {
           );
         } catch (e) {
           return ParseNetworkResponse(
-            data:
-                '{"code":${ParseError.otherCause},"error":"NetworkError","exception":"${e.toString()}"}',
+            data: _buildErrorJson(e.toString()),
             statusCode: ParseError.otherCause,
           );
         }
       },
     );
+  }
+
+  /// Builds a properly escaped JSON error payload.
+  ///
+  /// This helper ensures error messages are safely escaped to prevent
+  /// malformed JSON when the message contains quotes or special characters.
+  String _buildErrorJson(String exceptionMessage) {
+    final Map<String, dynamic> errorPayload = <String, dynamic>{
+      'code': ParseError.otherCause,
+      'error': 'NetworkError',
+      'exception': exceptionMessage,
+    };
+    return jsonEncode(errorPayload);
   }
 }
 

@@ -68,7 +68,8 @@ Future<T> executeWithRetry<T extends ParseNetworkResponse>({
   const int maxRetries = 100;
   if (retryIntervals.length > maxRetries) {
     throw ArgumentError(
-      'restRetryIntervals cannot exceed $maxRetries retries. '
+      'restRetryIntervals cannot exceed $maxRetries elements '
+      '(which allows up to ${maxRetries + 1} total attempts). '
       'Current length: ${retryIntervals.length}',
     );
   }
@@ -136,8 +137,11 @@ Future<T> executeWithRetry<T extends ParseNetworkResponse>({
     }
   }
 
-  // Should never reach here, but return last response as fallback
-  return lastResponse!;
+  // This should never be reached due to the loop logic above
+  throw StateError(
+    'Retry loop completed without returning or rethrowing. '
+    'This indicates a logic error.',
+  );
 }
 
 /// Determines if a network response should be retried.
@@ -148,32 +152,16 @@ Future<T> executeWithRetry<T extends ParseNetworkResponse>({
 /// Retry Triggers:
 ///
 /// - Status code `-1` (network/parsing errors)
-/// - Response body starts with HTML tags (proxy/load balancer errors)
+///   - HTML responses from proxies/load balancers (502, 503, 504 errors)
+///   - Socket exceptions, timeouts, DNS failures
+///   - JSON parse errors from malformed responses
 ///
 /// No Retry:
 ///
 /// - Status code 200 or 201 (success)
 /// - Valid Parse Server error codes (e.g., 100-series errors)
+///   - These are application-level errors that won't resolve with retries
 bool _shouldRetryResponse(ParseNetworkResponse response) {
-  // Retry on status code -1 (network/parse errors)
-  if (response.statusCode == ParseError.otherCause) {
-    // Additional check: is it HTML instead of JSON?
-    final String trimmedData = response.data.trimLeft().toLowerCase();
-
-    // Check for common HTML patterns that indicate proxy/load balancer errors
-    // More robust than just checking for '<' which could be in valid JSON strings
-    if (trimmedData.startsWith('<!doctype') ||
-        trimmedData.startsWith('<html') ||
-        trimmedData.startsWith('<head') ||
-        trimmedData.startsWith('<body')) {
-      // HTML response indicates proxy/load balancer error
-      return true;
-    }
-
-    // Other -1 errors (network issues, parse failures)
-    return true;
-  }
-
-  // Don't retry successful responses or valid Parse API errors
-  return false;
+  // Retry all -1 status codes (network/parse errors, including HTML from proxies)
+  return response.statusCode == ParseError.otherCause;
 }

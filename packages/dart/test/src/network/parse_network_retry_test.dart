@@ -149,8 +149,8 @@ void main() {
       final oldIntervals = ParseCoreData().restRetryIntervals;
       ParseCoreData().restRetryIntervals = [0, 10];
 
-      expect(
-        () async => await executeWithRetry(
+      await expectLater(
+        executeWithRetry(
           operation: () async {
             callCount++;
             throw Exception('Network timeout');
@@ -166,7 +166,6 @@ void main() {
       );
 
       // Should retry on exceptions: initial + 2 retries = 3 times
-      await Future.delayed(Duration(milliseconds: 50)); // Wait for retries
       expect(callCount, 3);
 
       ParseCoreData().restRetryIntervals = oldIntervals;
@@ -495,7 +494,7 @@ void main() {
           isA<ArgumentError>().having(
             (e) => e.message,
             'message',
-            contains('cannot exceed 100 retries'),
+            contains('cannot exceed 100 elements'),
           ),
         ),
       );
@@ -517,14 +516,6 @@ void main() {
 
       expect(result.data, contains('"code"'));
       expect(result.data, contains('"error"'));
-    });
-
-    test('should work with both HTTP client implementations', () async {
-      // This test documents that both ParseDioClient and ParseHTTPClient
-      // should use the same error format
-      final errorFormat = '{"code":-1,"error":"NetworkError"}';
-      expect(errorFormat, contains('"code":'));
-      expect(errorFormat, contains('"error":'));
     });
   });
 }

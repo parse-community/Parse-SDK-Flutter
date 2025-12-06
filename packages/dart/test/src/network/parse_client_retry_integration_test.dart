@@ -149,7 +149,7 @@ void main() {
         final fetchedObject = await object.fetch();
 
         expect(callCount, 1); // No retry via mock
-        expect(fetchedObject.objectId, 'abc123');
+        expect(fetchedObject.objectId, 'abc123'); // Original objectId preserved
       },
     );
 

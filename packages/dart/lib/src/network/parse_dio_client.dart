@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart' as dio;
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
@@ -90,8 +92,7 @@ class ParseDioClient extends ParseClient {
             );
           } else {
             return ParseNetworkByteResponse(
-              data:
-                  "{\"code\":${ParseError.otherCause},\"error\":\"${error.error.toString()}\"}",
+              data: _buildErrorJson(error.error.toString()),
               statusCode: ParseError.otherCause,
             );
           }
@@ -199,9 +200,21 @@ class ParseDioClient extends ParseClient {
 
   ParseNetworkResponse _getOtherCaseErrorForParseNetworkResponse(String error) {
     return ParseNetworkResponse(
-      data: "{\"code\":${ParseError.otherCause},\"error\":\"$error\"}",
+      data: _buildErrorJson(error),
       statusCode: ParseError.otherCause,
     );
+  }
+
+  /// Builds a properly escaped JSON error payload.
+  ///
+  /// This helper ensures error messages are safely escaped to prevent
+  /// malformed JSON when the message contains quotes or special characters.
+  String _buildErrorJson(String errorMessage) {
+    final Map<String, dynamic> errorPayload = <String, dynamic>{
+      'code': ParseError.otherCause,
+      'error': errorMessage,
+    };
+    return jsonEncode(errorPayload);
   }
 
   @override
@@ -231,8 +244,7 @@ class ParseDioClient extends ParseClient {
     );
   }
 
-  String get _fallbackErrorData =>
-      '{"code":${ParseError.otherCause},"error":"NetworkError"}';
+  String get _fallbackErrorData => _buildErrorJson('NetworkError');
 }
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset
