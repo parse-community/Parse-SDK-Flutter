@@ -158,10 +158,9 @@ Future<T> executeWithRetry<T extends ParseNetworkResponse>({
 ///
 /// Retry Triggers:
 ///
-/// - Status code `-1` (network/parsing errors)
-///   - HTML responses from proxies/load balancers (502, 503, 504 errors)
-///   - Socket exceptions, timeouts, DNS failures
-///   - JSON parse errors from malformed responses
+/// - Status code `-1` (network/parsing errors from the HTTP client layer)
+///   Note: HTML responses, socket exceptions, timeouts, and parse errors
+///   are converted to status -1 by the HTTP client before reaching here.
 ///
 /// No Retry:
 ///

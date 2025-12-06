@@ -150,6 +150,7 @@ void main() {
 
         expect(callCount, 1); // No retry via mock
         expect(fetchedObject.objectId, 'abc123'); // Original objectId preserved
+        // Note: fetch() returns ParseObject, not ParseResponse - success check not applicable
       },
     );
 
