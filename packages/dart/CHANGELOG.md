@@ -1,3 +1,17 @@
+# [dart-v9.4.8](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.7...dart-9.4.8) (2025-12-05)
+
+
+### Bug Fixes
+
+* Invalid JSON in `whereMatchesQuery` due to extra quotes around limiters ([#1100](https://github.com/parse-community/Parse-SDK-Flutter/issues/1100)) ([a8cf4f3](https://github.com/parse-community/Parse-SDK-Flutter/commit/a8cf4f3713f2123cc573a8001c757d6b008a6112))
+
+# [dart-v9.4.7](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.6...dart-9.4.7) (2025-12-05)
+
+
+### Bug Fixes
+
+* `ParseLiveList.getAt()` causes unnecessary requests to server ([#1099](https://github.com/parse-community/Parse-SDK-Flutter/issues/1099)) ([9114d4a](https://github.com/parse-community/Parse-SDK-Flutter/commit/9114d4ae98a5d34a301e04d0f62686cfaf99390c))
+
 # [dart-v9.4.6](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.5...dart-9.4.6) (2025-12-04)
 
 

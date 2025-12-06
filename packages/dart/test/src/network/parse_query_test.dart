@@ -534,7 +534,127 @@ void main() {
       );
 
       // assert
-      expect(result.query.contains("%22object2%22,%22%22include%22"), true);
+      expect(result.query.contains("%22object2%22,%22include%22"), true);
+    });
+
+    test('whereMatchesQuery generates valid JSON', () async {
+      // arrange - This test specifically checks for the bug where
+      // whereMatchesQuery generated invalid JSON with trailing commas
+      // See: https://github.com/parse-community/Parse-SDK-Flutter/issues/932
+      ParseObject deliveryArea = ParseObject("DeliveryArea");
+      final deliveryAreasQuery = QueryBuilder<ParseObject>(deliveryArea)
+        ..whereArrayContainsAll('postalCodes', [21075]);
+
+      ParseObject farmer = ParseObject("Farmer", client: client);
+      final query = QueryBuilder<ParseObject>(farmer)
+        ..whereMatchesQuery('deliveryAreas', deliveryAreasQuery)
+        ..whereEqualTo('isActive', true);
+
+      var desiredOutput = {"results": []};
+
+      when(
+        client.get(
+          any,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(desiredOutput),
+        ),
+      );
+
+      // act
+      await query.query();
+
+      final String capturedUrl = verify(
+        client.get(
+          captureAny,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).captured.single;
+
+      // Extract the 'where' parameter from the URL
+      final Uri uri = Uri.parse(capturedUrl);
+      final String? whereParam = uri.queryParameters['where'];
+
+      // assert - The JSON should be valid (no trailing commas)
+      expect(whereParam, isNotNull);
+
+      // This should not throw if JSON is valid
+      final decoded = jsonDecode(whereParam!);
+      expect(decoded, isA<Map>());
+
+      // Verify the structure is correct
+      expect(decoded['deliveryAreas'], isNotNull);
+      expect(decoded['deliveryAreas']['\$inQuery'], isNotNull);
+      expect(
+        decoded['deliveryAreas']['\$inQuery']['className'],
+        'DeliveryArea',
+      );
+      expect(decoded['deliveryAreas']['\$inQuery']['where'], isNotNull);
+    });
+
+    test('whereMatchesQuery with limiters should not have extra quotes', () async {
+      // arrange - This test specifically checks for the bug where limiters
+      // were incorrectly wrapped with extra quotes like ',"$lim"' instead of ',$lim'
+      // which produced patterns like ""include" (double quotes before limiter key)
+      // See: https://github.com/parse-community/Parse-SDK-Flutter/issues/932
+      ParseObject innerObject = ParseObject("InnerClass");
+      final innerQuery = QueryBuilder<ParseObject>(innerObject)
+        ..includeObject(["relatedField"])
+        ..whereEqualTo("status", "active");
+
+      ParseObject outerObject = ParseObject("OuterClass", client: client);
+      final outerQuery = QueryBuilder<ParseObject>(outerObject)
+        ..whereMatchesQuery('innerRef', innerQuery);
+
+      var desiredOutput = {"results": []};
+
+      when(
+        client.get(
+          any,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(desiredOutput),
+        ),
+      );
+
+      // act
+      await outerQuery.query();
+
+      final String capturedUrl = verify(
+        client.get(
+          captureAny,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).captured.single;
+
+      // assert - Check that the URL does NOT contain the buggy pattern ""include"
+      // (double quotes before 'include' which was caused by extra quotes around limiters)
+      // %22%22 is the URL-encoded form of "" (two consecutive double quotes)
+      expect(
+        capturedUrl.contains('%22%22include'),
+        isFalse,
+        reason: 'URL should not contain double quotes before limiter keys',
+      );
+
+      // Also verify the correct pattern exists: className followed by comma and include
+      // without extra quotes between them
+      // The pattern should be: "className":"InnerClass","include" not "className":"InnerClass",""include"
+      expect(
+        capturedUrl.contains('%22InnerClass%22,%22include%22'),
+        isTrue,
+        reason:
+            'URL should contain properly formatted className followed by include',
+      );
     });
 
     test('the result query should contains encoded special characters values', () {
