@@ -32,11 +32,11 @@ dependencies:
   #parse_server_sdk:
   #   path: ../dart
 
-  parse_server_sdk:
-    git:
-      url: https://github.com/pastordee/Parse-SDK-Flutter.git 
-      path: packages/dart
-      ref: pc_server 
+  # parse_server_sdk:
+  #   git:
+  #     url: https://github.com/pastordee/Parse-SDK-Flutter.git 
+  #     path: packages/dart
+  #     ref: pc_server 
 
   # Networking
   connectivity_plus: ^7.0.0
