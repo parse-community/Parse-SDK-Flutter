@@ -215,7 +215,8 @@ class ParseDioClient extends ParseClient {
   String _buildErrorJson(String errorMessage) {
     final Map<String, dynamic> errorPayload = <String, dynamic>{
       'code': ParseError.otherCause,
-      'error': errorMessage,
+      'error': 'NetworkError',
+      'exception': errorMessage,
     };
     return jsonEncode(errorPayload);
   }
