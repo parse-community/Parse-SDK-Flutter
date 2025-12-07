@@ -33,6 +33,7 @@ class ParseCoreData {
     ParseUserConstructor? parseUserConstructor,
     ParseFileConstructor? parseFileConstructor,
     List<int>? restRetryIntervals,
+    List<int>? restRetryIntervalsForWrites,
     List<int>? liveListRetryIntervals,
     ParseConnectivityProvider? connectivityProvider,
     String? fileDirectory,
@@ -55,6 +56,8 @@ class ParseCoreData {
     _instance.securityContext = securityContext;
     _instance.restRetryIntervals =
         restRetryIntervals ?? <int>[0, 250, 500, 1000, 2000];
+    _instance.restRetryIntervalsForWrites =
+        restRetryIntervalsForWrites ?? <int>[];
     _instance.liveListRetryIntervals =
         liveListRetryIntervals ??
         (parseIsWeb
@@ -93,6 +96,7 @@ class ParseCoreData {
   late CoreStore storage;
   late ParseSubClassHandler _subClassHandler;
   late List<int> restRetryIntervals;
+  late List<int> restRetryIntervalsForWrites;
   late List<int> liveListRetryIntervals;
   ParseConnectivityProvider? connectivityProvider;
   String? fileDirectory;

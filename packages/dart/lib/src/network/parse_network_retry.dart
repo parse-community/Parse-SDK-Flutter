@@ -24,21 +24,33 @@ part of '../../parse_server_sdk.dart';
 ///
 /// Important Note on Non-Idempotent Methods (POST/PUT):
 ///
-/// This retry mechanism is applied to ALL HTTP methods including POST and PUT.
-/// While GET and DELETE are generally safe to retry, POST and PUT operations
-/// may cause duplicate operations if the original request succeeded but the
-/// response was lost or corrupted.
-///
 /// **Parse Server does not provide automatic optimistic locking or built-in
-/// idempotency guarantees for POST/PUT operations.** Retrying these methods
-/// can result in duplicate data creation or unintended state changes.
+/// idempotency guarantees for POST/PUT operations.** To prevent duplicate
+/// data creation or unintended state changes, this SDK defaults to **no retries**
+/// for write operations (POST/PUT/postBytes).
 ///
-/// To mitigate retry risks for critical operations:
+/// Default Behavior:
+/// - **Write operations (POST/PUT)**: No retries (`restRetryIntervalsForWrites = []`)
+/// - **Read operations (GET)**: Retries enabled (`restRetryIntervals = [0, 250, 500, 1000, 2000]`)
+/// - **DELETE operations**: Retries enabled (generally safe to retry)
+///
+/// If you need to enable retries for write operations, configure
+/// `restRetryIntervalsForWrites` during initialization. Consider these mitigations:
 /// - Implement application-level idempotency keys or version tracking
-/// - Disable retries for create/update operations by setting
-///   `ParseCoreData().restRetryIntervals = []` before critical calls
 /// - Use Parse's experimental `X-Parse-Request-Id` header (if available)
 ///   with explicit duplicate detection in your application logic
+/// - Use conservative retry intervals (e.g., `[1000, 2000]`) to allow time
+///   for server-side processing before retrying
+///
+/// Example:
+/// ```dart
+/// await Parse().initialize(
+///   'appId',
+///   'serverUrl',
+///   // Enable retries for writes (use with caution)
+///   restRetryIntervalsForWrites: [1000, 2000],
+/// );
+/// ```
 ///
 /// Note: Retries only occur on network-level failures (status -1), not on
 /// successful operations that return Parse error codes
@@ -58,6 +70,9 @@ part of '../../parse_server_sdk.dart';
 /// Parameters:
 ///
 /// - [operation]: The network operation to execute and potentially retry
+/// - [isWriteOperation]: Whether this is a write operation (POST/PUT).
+///   Defaults to `false`. When `true`, uses [ParseCoreData.restRetryIntervalsForWrites]
+///   which defaults to no retries to prevent duplicate creates/updates.
 /// - [debug]: Whether to log retry attempts (defaults to [ParseCoreData.debug])
 ///
 /// Returns:
@@ -66,9 +81,12 @@ part of '../../parse_server_sdk.dart';
 /// after all retry attempts are exhausted.
 Future<T> executeWithRetry<T extends ParseNetworkResponse>({
   required Future<T> Function() operation,
+  bool isWriteOperation = false,
   bool? debug,
 }) async {
-  final List<int> retryIntervals = ParseCoreData().restRetryIntervals;
+  final List<int> retryIntervals = isWriteOperation
+      ? ParseCoreData().restRetryIntervalsForWrites
+      : ParseCoreData().restRetryIntervals;
   final bool debugEnabled = debug ?? ParseCoreData().debug;
 
   // Enforce maximum retry limit to prevent excessive attempts

@@ -103,6 +103,7 @@ class ParseHTTPClient extends ParseClient {
     ParseNetworkOptions? options,
   }) async {
     return executeWithRetry(
+      isWriteOperation: true,
       operation: () async {
         try {
           final http.Response response = await _client.put(
@@ -131,6 +132,7 @@ class ParseHTTPClient extends ParseClient {
     ParseNetworkOptions? options,
   }) async {
     return executeWithRetry(
+      isWriteOperation: true,
       operation: () async {
         try {
           final http.Response response = await _client.post(
@@ -161,6 +163,7 @@ class ParseHTTPClient extends ParseClient {
     dynamic cancelToken,
   }) async {
     return executeWithRetry(
+      isWriteOperation: true,
       operation: () async {
         try {
           final http.Response response = await _client.post(

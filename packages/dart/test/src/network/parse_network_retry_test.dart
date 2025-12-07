@@ -510,4 +510,131 @@ void main() {
       expect(result.data, contains('"error"'));
     });
   });
+
+  group('Write Operations (POST/PUT) Retry Behavior', () {
+    test(
+      'should not retry write operations by default (restRetryIntervalsForWrites is empty)',
+      () async {
+        int callCount = 0;
+        final result = await executeWithRetry(
+          isWriteOperation: true,
+          operation: () async {
+            callCount++;
+            return ParseNetworkResponse(
+              data: '{"code":-1,"error":"NetworkError"}',
+              statusCode: -1,
+            );
+          },
+        );
+
+        // Should only be called once (no retries)
+        expect(callCount, 1);
+        expect(result.statusCode, -1);
+      },
+    );
+
+    test(
+      'should use restRetryIntervalsForWrites when configured for write operations',
+      () async {
+        int callCount = 0;
+        final oldWriteIntervals = ParseCoreData().restRetryIntervalsForWrites;
+        ParseCoreData().restRetryIntervalsForWrites = [0, 10]; // 2 retries
+
+        final result = await executeWithRetry(
+          isWriteOperation: true,
+          operation: () async {
+            callCount++;
+            return ParseNetworkResponse(
+              data: '{"code":-1,"error":"NetworkError"}',
+              statusCode: -1,
+            );
+          },
+        );
+
+        // Should be called: initial + 2 retries = 3 times
+        expect(callCount, 3);
+        expect(result.statusCode, -1);
+
+        ParseCoreData().restRetryIntervalsForWrites = oldWriteIntervals;
+      },
+    );
+
+    test(
+      'should use restRetryIntervals for read operations (isWriteOperation=false)',
+      () async {
+        int callCount = 0;
+        final oldIntervals = ParseCoreData().restRetryIntervals;
+        ParseCoreData().restRetryIntervals = [0, 10]; // 2 retries
+
+        final result = await executeWithRetry(
+          isWriteOperation: false,
+          operation: () async {
+            callCount++;
+            return ParseNetworkResponse(
+              data: '{"code":-1,"error":"NetworkError"}',
+              statusCode: -1,
+            );
+          },
+        );
+
+        // Should be called: initial + 2 retries = 3 times
+        expect(callCount, 3);
+        expect(result.statusCode, -1);
+
+        ParseCoreData().restRetryIntervals = oldIntervals;
+      },
+    );
+
+    test(
+      'write operations succeed immediately on success without retries',
+      () async {
+        int callCount = 0;
+        final result = await executeWithRetry(
+          isWriteOperation: true,
+          operation: () async {
+            callCount++;
+            return ParseNetworkResponse(
+              data: '{"objectId":"abc123"}',
+              statusCode: 201,
+            );
+          },
+        );
+
+        expect(callCount, 1);
+        expect(result.statusCode, 201);
+      },
+    );
+
+    test(
+      'write operations can be configured with custom retry intervals',
+      () async {
+        int callCount = 0;
+        final oldWriteIntervals = ParseCoreData().restRetryIntervalsForWrites;
+        ParseCoreData().restRetryIntervalsForWrites = [5, 10, 15];
+
+        final result = await executeWithRetry(
+          isWriteOperation: true,
+          operation: () async {
+            callCount++;
+            if (callCount < 3) {
+              return ParseNetworkResponse(
+                data: '{"code":-1,"error":"NetworkError"}',
+                statusCode: -1,
+              );
+            }
+            return ParseNetworkResponse(
+              data: '{"objectId":"abc123"}',
+              statusCode: 201,
+            );
+          },
+        );
+
+        // Should succeed on third attempt
+        expect(callCount, 3);
+        expect(result.statusCode, 201);
+
+        ParseCoreData().restRetryIntervalsForWrites = oldWriteIntervals;
+      },
+    );
+  });
 }

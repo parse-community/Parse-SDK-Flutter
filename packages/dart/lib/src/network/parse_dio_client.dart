@@ -108,6 +108,7 @@ class ParseDioClient extends ParseClient {
     ParseNetworkOptions? options,
   }) async {
     return executeWithRetry(
+      isWriteOperation: true,
       operation: () async {
         try {
           final dio.Response<String> dioResponse = await _client.put<String>(
@@ -137,6 +138,7 @@ class ParseDioClient extends ParseClient {
     ParseNetworkOptions? options,
   }) async {
     return executeWithRetry(
+      isWriteOperation: true,
       operation: () async {
         try {
           final dio.Response<String> dioResponse = await _client.post<String>(
@@ -168,6 +170,7 @@ class ParseDioClient extends ParseClient {
     dynamic cancelToken,
   }) async {
     return executeWithRetry(
+      isWriteOperation: true,
       operation: () async {
         try {
           final dio.Response<String> dioResponse = await _client.post<String>(
