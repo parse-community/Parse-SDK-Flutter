@@ -105,10 +105,12 @@ class Parse {
   /// Parameters:
   ///
   /// * [restRetryIntervals] - Optional list of retry delay intervals (in milliseconds)
-  ///   for read operations (GET, DELETE). Defaults to [0, 250, 500, 1000, 2000].
+  ///   for read operations. Applies to: GET, DELETE, and getBytes methods.
+  ///   Defaults to [0, 250, 500, 1000, 2000].
   /// * [restRetryIntervalsForWrites] - Optional list of retry delay intervals for
-  ///   write operations (POST, PUT). Defaults to [] (no retries) to prevent duplicate
-  ///   data creation. Configure only if you have idempotency guarantees in place.
+  ///   write operations. Applies to: POST, PUT, and postBytes methods.
+  ///   Defaults to [] (no retries) to prevent duplicate data creation.
+  ///   Configure only if you have idempotency guarantees in place.
   /// * [liveListRetryIntervals] - Optional list of retry delay intervals for
   ///   LiveQuery operations.
   Future<Parse> initialize(
