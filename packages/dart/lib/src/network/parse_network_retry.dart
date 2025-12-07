@@ -14,8 +14,8 @@ part of '../../parse_server_sdk.dart';
 /// Retry Conditions:
 ///
 /// A request will be retried if:
-/// - Status code is `-1` (indicates network/parsing error)
-/// - Response body contains HTML markup (proxy/load balancer error)
+/// - Status code is `-1` (indicates network/parsing error, including HTML responses from proxies/load balancers)
+///   (HTML detection and conversion to status -1 happens in the HTTP client layer)
 /// - An exception is thrown during the request
 ///
 /// A request will NOT be retried for:
