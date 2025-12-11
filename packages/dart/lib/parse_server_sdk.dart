@@ -36,6 +36,7 @@ part 'src/network/options.dart';
 part 'src/network/parse_client.dart';
 part 'src/network/parse_connectivity.dart';
 part 'src/network/parse_live_query.dart';
+part 'src/network/parse_network_retry.dart';
 part 'src/network/parse_query.dart';
 part 'src/objects/parse_acl.dart';
 part 'src/objects/parse_array.dart';
@@ -102,6 +103,18 @@ class Parse {
   ///        debug: true,
   ///        liveQuery: true);
   /// ```
+  ///
+  /// Parameters:
+  ///
+  /// * [restRetryIntervals] - Optional list of retry delay intervals (in milliseconds)
+  ///   for read operations. Applies to: GET, DELETE, and getBytes methods.
+  ///   Defaults to [0, 250, 500, 1000, 2000].
+  /// * [restRetryIntervalsForWrites] - Optional list of retry delay intervals for
+  ///   write operations. Applies to: POST, PUT, and postBytes methods.
+  ///   Defaults to [] (no retries) to prevent duplicate data creation.
+  ///   Configure only if you have idempotency guarantees in place.
+  /// * [liveListRetryIntervals] - Optional list of retry delay intervals for
+  ///   LiveQuery operations.
   Future<Parse> initialize(
     String appId,
     String serverUrl, {
@@ -120,6 +133,8 @@ class Parse {
     Map<String, ParseObjectConstructor>? registeredSubClassMap,
     ParseUserConstructor? parseUserConstructor,
     ParseFileConstructor? parseFileConstructor,
+    List<int>? restRetryIntervals,
+    List<int>? restRetryIntervalsForWrites,
     List<int>? liveListRetryIntervals,
     ParseConnectivityProvider? connectivityProvider,
     String? fileDirectory,
@@ -146,6 +161,8 @@ class Parse {
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
+      restRetryIntervals: restRetryIntervals,
+      restRetryIntervalsForWrites: restRetryIntervalsForWrites,
       liveListRetryIntervals: liveListRetryIntervals,
       connectivityProvider: connectivityProvider,
       fileDirectory: fileDirectory,

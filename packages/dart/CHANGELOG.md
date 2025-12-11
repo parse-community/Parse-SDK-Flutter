@@ -1,3 +1,10 @@
+# [dart-v9.5.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.8...dart-9.5.0) (2025-12-11)
+
+
+### Features
+
+* Add client-to-server request retry mechanism to handle transient network failures ([#1102](https://github.com/parse-community/Parse-SDK-Flutter/issues/1102)) ([e3863f1](https://github.com/parse-community/Parse-SDK-Flutter/commit/e3863f1edfb1ebbe90554704f0cb8c4b7af96280))
+
 # [dart-v9.4.8](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.7...dart-9.4.8) (2025-12-05)
 
 
