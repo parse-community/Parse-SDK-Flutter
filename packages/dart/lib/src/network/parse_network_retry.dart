@@ -14,13 +14,14 @@ part of '../../parse_server_sdk.dart';
 /// Retry Conditions:
 ///
 /// A request will be retried if:
-/// - Status code is `-1` (indicates network/parsing error, including HTML responses from proxies/load balancers)
-///   (HTML detection and conversion to status -1 happens in the HTTP client layer)
-/// - An exception is thrown during the request
+/// - Status code is `ParseError.otherCause` (currently -1, indicates network/parsing error,
+///   including HTML responses from proxies/load balancers)
+///   (HTML detection and conversion happens in the HTTP client layer)
+/// - An exception is thrown during the request (socket errors, timeouts, etc.)
 ///
 /// A request will NOT be retried for:
 /// - Successful responses (status 200, 201)
-/// - Valid Parse Server errors (e.g., 101 for object not found)
+/// - Valid Parse Server errors (e.g., 101 for object not found, 209 for invalid session token)
 ///
 /// Important Note on Non-Idempotent Methods (POST/PUT):
 ///
@@ -52,8 +53,9 @@ part of '../../parse_server_sdk.dart';
 /// );
 /// ```
 ///
-/// Note: Retries only occur on network-level failures (status -1), not on
-/// successful operations that return Parse error codes
+/// Note: Retries occur only for network-level failures (status `ParseError.otherCause`)
+/// or exceptions thrown by the HTTP client. Responses that return valid Parse Server
+/// error codes (e.g., 101, 209) are returned immediately and are not retried.
 ///
 /// Example:
 ///
@@ -96,6 +98,14 @@ Future<T> executeWithRetry<T extends ParseNetworkResponse>({
       'restRetryIntervals cannot exceed $maxRetries elements '
       '(which allows up to ${maxRetries + 1} total attempts). '
       'Current length: ${retryIntervals.length}',
+    );
+  }
+
+  // Validate that all retry intervals are non-negative
+  if (retryIntervals.any((interval) => interval < 0)) {
+    throw ArgumentError(
+      'restRetryIntervals cannot contain negative values. '
+      'Current values: $retryIntervals',
     );
   }
 
@@ -176,9 +186,9 @@ Future<T> executeWithRetry<T extends ParseNetworkResponse>({
 ///
 /// Retry Triggers:
 ///
-/// - Status code `-1` (network/parsing errors from the HTTP client layer)
+/// - Status code `ParseError.otherCause` (currently -1, network/parsing errors from the HTTP client layer)
 ///   Note: HTML responses, socket exceptions, timeouts, and parse errors
-///   are converted to status -1 by the HTTP client before reaching here.
+///   are converted to `ParseError.otherCause` by the HTTP client before reaching here.
 ///
 /// No Retry:
 ///
@@ -186,6 +196,6 @@ Future<T> executeWithRetry<T extends ParseNetworkResponse>({
 /// - Valid Parse Server error codes (e.g., 100-series errors)
 ///   - These are application-level errors that won't resolve with retries
 bool _shouldRetryResponse(ParseNetworkResponse response) {
-  // Retry all -1 status codes (network/parse errors, including HTML from proxies)
+  // Retry all ParseError.otherCause status codes (network/parse errors, including HTML from proxies)
   return response.statusCode == ParseError.otherCause;
 }
