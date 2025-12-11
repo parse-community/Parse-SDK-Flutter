@@ -56,12 +56,12 @@
       
   <div>
     <ol class="annotation-list">
-        <li>@<a href="https://api.dart.dev/stable/3.10.3/dart-core/override-constant.html">override</a></li>
+        <li>@<a href="https://api.dart.dev/stable/3.10.4/dart-core/override-constant.html">override</a></li>
     </ol>
   </div>
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.3/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../parse_server_sdk/ParseNetworkResponse-class.html">ParseNetworkResponse</a></span>&gt;</span></span>
-<span class="name ">postBytes</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="postBytes-param-path"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.3/dart-core/String-class.html">String</a></span> <span class="parameter-name">path</span>, {</span></li>
-<li><span class="parameter" id="postBytes-param-data"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.3/dart-core/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.3/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.3/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">data</span>, </span></li>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.4/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../parse_server_sdk/ParseNetworkResponse-class.html">ParseNetworkResponse</a></span>&gt;</span></span>
+<span class="name ">postBytes</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="postBytes-param-path"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.4/dart-core/String-class.html">String</a></span> <span class="parameter-name">path</span>, {</span></li>
+<li><span class="parameter" id="postBytes-param-data"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.4/dart-core/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.4/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.10.4/dart-core/int-class.html">int</a></span>&gt;</span></span>&gt;</span>?</span> <span class="parameter-name">data</span>, </span></li>
 <li><span class="parameter" id="postBytes-param-options"><span class="type-annotation"><a href="../../parse_server_sdk/ParseNetworkOptions-class.html">ParseNetworkOptions</a>?</span> <span class="parameter-name">options</span>, </span></li>
 <li><span class="parameter" id="postBytes-param-onSendProgress"><span class="type-annotation"><a href="../../parse_server_sdk/ProgressCallback.html">ProgressCallback</a>?</span> <span class="parameter-name">onSendProgress</span>, </span></li>
 <li><span class="parameter" id="postBytes-param-cancelToken"><span class="type-annotation">dynamic</span> <span class="parameter-name">cancelToken</span>, </span></li>
@@ -84,31 +84,36 @@ Future&lt;ParseNetworkResponse&gt; postBytes(
   ProgressCallback? onSendProgress,
   dynamic cancelToken,
 }) async {
-  try {
-    final dio.Response&lt;String&gt; dioResponse = await _client.post&lt;String&gt;(
-      path,
-      data: data,
-      cancelToken: cancelToken,
-      options: _Options(headers: options?.headers),
-      onSendProgress: onSendProgress,
-    );
+  return executeWithRetry(
+    isWriteOperation: true,
+    operation: () async {
+      try {
+        final dio.Response&lt;String&gt; dioResponse = await _client.post&lt;String&gt;(
+          path,
+          data: data,
+          cancelToken: cancelToken,
+          options: _Options(headers: options?.headers),
+          onSendProgress: onSendProgress,
+        );
 
-    return ParseNetworkResponse(
-      data: dioResponse.data!,
-      statusCode: dioResponse.statusCode!,
-    );
-  } on dio.DioException catch (error) {
-    if (error.response != null) {
-      return ParseNetworkResponse(
-        data: error.response?.data ?? _fallbackErrorData,
-        statusCode: error.response?.statusCode ?? ParseError.otherCause,
-      );
-    } else {
-      return _getOtherCaseErrorForParseNetworkResponse(
-        error.error.toString(),
-      );
-    }
-  }
+        return ParseNetworkResponse(
+          data: dioResponse.data!,
+          statusCode: dioResponse.statusCode!,
+        );
+      } on dio.DioException catch (error) {
+        if (error.response != null) {
+          return ParseNetworkResponse(
+            data: error.response?.data ?? _fallbackErrorData,
+            statusCode: error.response?.statusCode ?? ParseError.otherCause,
+          );
+        } else {
+          return _getOtherCaseErrorForParseNetworkResponse(
+            error.error.toString(),
+          );
+        }
+      }
+    },
+  );
 }</code></pre>
 </section>
 
@@ -137,7 +142,7 @@ Future&lt;ParseNetworkResponse&gt; postBytes(
 <footer>
   <span class="no-break">
     parse_server_sdk
-      9.4.8
+      9.5.0
   </span>
   
 </footer>

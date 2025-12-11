@@ -56,11 +56,11 @@
       
   <div>
     <ol class="annotation-list">
-        <li>@<a href="https://api.dart.dev/stable/3.10.3/dart-core/override-constant.html">override</a></li>
+        <li>@<a href="https://api.dart.dev/stable/3.10.4/dart-core/override-constant.html">override</a></li>
     </ol>
   </div>
-<span class="returntype"><a href="https://api.dart.dev/stable/3.10.3/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../parse_server_sdk/ParseNetworkByteResponse-class.html">ParseNetworkByteResponse</a></span>&gt;</span></span>
-<span class="name ">getBytes</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="getBytes-param-path"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.3/dart-core/String-class.html">String</a></span> <span class="parameter-name">path</span>, {</span></li>
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.4/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../../parse_server_sdk/ParseNetworkByteResponse-class.html">ParseNetworkByteResponse</a></span>&gt;</span></span>
+<span class="name ">getBytes</span>(<wbr><ol class="parameter-list"> <li><span class="parameter" id="getBytes-param-path"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.4/dart-core/String-class.html">String</a></span> <span class="parameter-name">path</span>, {</span></li>
 <li><span class="parameter" id="getBytes-param-options"><span class="type-annotation"><a href="../../parse_server_sdk/ParseNetworkOptions-class.html">ParseNetworkOptions</a>?</span> <span class="parameter-name">options</span>, </span></li>
 <li><span class="parameter" id="getBytes-param-onReceiveProgress"><span class="type-annotation"><a href="../../parse_server_sdk/ProgressCallback.html">ProgressCallback</a>?</span> <span class="parameter-name">onReceiveProgress</span>, </span></li>
 <li><span class="parameter" id="getBytes-param-cancelToken"><span class="type-annotation">dynamic</span> <span class="parameter-name">cancelToken</span>, </span></li>
@@ -82,13 +82,24 @@ Future&lt;ParseNetworkByteResponse&gt; getBytes(
   ProgressCallback? onReceiveProgress,
   dynamic cancelToken,
 }) async {
-  final http.Response response = await _client.get(
-    Uri.parse(path),
-    headers: options?.headers,
-  );
-  return ParseNetworkByteResponse(
-    bytes: response.bodyBytes,
-    statusCode: response.statusCode,
+  return executeWithRetry(
+    operation: () async {
+      try {
+        final http.Response response = await _client.get(
+          Uri.parse(path),
+          headers: options?.headers,
+        );
+        return ParseNetworkByteResponse(
+          bytes: response.bodyBytes,
+          statusCode: response.statusCode,
+        );
+      } catch (e) {
+        return ParseNetworkByteResponse(
+          data: _buildErrorJson(e.toString()),
+          statusCode: ParseError.otherCause,
+        );
+      }
+    },
   );
 }</code></pre>
 </section>
@@ -118,7 +129,7 @@ Future&lt;ParseNetworkByteResponse&gt; getBytes(
 <footer>
   <span class="no-break">
     parse_server_sdk
-      9.4.8
+      9.5.0
   </span>
   
 </footer>

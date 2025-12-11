@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the executeWithRetry function from the parse_server_sdk library, for the Dart programming language.">
+  <title>executeWithRetry function - parse_server_sdk library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">parse_server_sdk</a></li>
+    <li><a href="../parse_server_sdk/">parse_server_sdk.dart</a></li>
+    <li class="self-crumb">executeWithRetry&lt;<wbr><span class="type-parameter">T extends ParseNetworkResponse</span>&gt; function</li>
+  </ol>
+  <div class="self-name">executeWithRetry</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="parse_server_sdk&#47;parse_server_sdk-library-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-function">executeWithRetry&lt;<wbr><span class="type-parameter">T extends ParseNetworkResponse</span>&gt;</span> function 
+ 
+</h1></div>
+
+    <section class="multi-line-signature">
+        
+<span class="returntype"><a href="https://api.dart.dev/stable/3.10.4/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+<span class="name ">executeWithRetry</span>&lt;<wbr><span class="type-parameter">T extends ParseNetworkResponse</span>&gt;(<wbr>{<ol class="parameter-list"> <li><span class="parameter" id="executeWithRetry-param-operation"><span>required</span> <span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.4/dart-core/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">operation</span>(), </span></li>
+<li><span class="parameter" id="executeWithRetry-param-isWriteOperation"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.4/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">isWriteOperation</span> = <span class="default-value">false</span>, </span></li>
+<li><span class="parameter" id="executeWithRetry-param-debug"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.10.4/dart-core/bool-class.html">bool</a>?</span> <span class="parameter-name">debug</span>, </span></li>
+</ol>})
+
+        
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Executes a network operation with automatic retry on transient failures.</p>
+<p>This function will retry REST API requests that fail due to network issues,
+such as receiving HTML error pages from proxies/load balancers instead of
+JSON responses, or experiencing connection failures.</p>
+<p>Retries are performed based on <a href="../parse_server_sdk/ParseCoreData/restRetryIntervals.html">ParseCoreData.restRetryIntervals</a>.
+Each retry is delayed according to the corresponding interval in milliseconds.
+The maximum number of retries is enforced to prevent excessive retry attempts
+(limited to 100 retries maximum).</p>
+<p>Retry Conditions:</p>
+<p>A request will be retried if:</p>
+<ul>
+<li>Status code is <code>ParseError.otherCause</code> (currently -1, indicates network/parsing error,
+including HTML responses from proxies/load balancers)
+(HTML detection and conversion happens in the HTTP client layer)</li>
+<li>An exception is thrown during the request (socket errors, timeouts, etc.)</li>
+</ul>
+<p>A request will NOT be retried for:</p>
+<ul>
+<li>Successful responses (status 200, 201)</li>
+<li>Valid Parse Server errors (e.g., 101 for object not found, 209 for invalid session token)</li>
+</ul>
+<p>Important Note on Non-Idempotent Methods (POST/PUT):</p>
+<p><strong>While Parse Server supports idempotency headers for preventing duplicate
+requests, this SDK does not currently implement that feature.</strong> To prevent
+duplicate data creation or unintended state changes, this SDK defaults to
+<strong>no retries</strong> for write operations (POST/PUT/postBytes).</p>
+<p>Default Behavior:</p>
+<ul>
+<li><strong>Write operations (POST/PUT)</strong>: No retries (<code>restRetryIntervalsForWrites = []</code>)</li>
+<li><strong>Read operations (GET)</strong>: Retries enabled (<code>restRetryIntervals = [0, 250, 500, 1000, 2000]</code>)</li>
+<li><strong>DELETE operations</strong>: Retries enabled (generally safe to retry)</li>
+</ul>
+<p>If you need to enable retries for write operations, configure
+<code>restRetryIntervalsForWrites</code> during initialization. Consider these mitigations:</p>
+<ul>
+<li>Implement application-level idempotency keys or version tracking</li>
+<li>Use Parse's experimental <code>X-Parse-Request-Id</code> header (if available)
+with explicit duplicate detection in your application logic</li>
+<li>Use conservative retry intervals (e.g., <code>[1000, 2000]</code>) to allow time
+for server-side processing before retrying</li>
+</ul>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">await Parse().initialize(
+  'appId',
+  'serverUrl',
+  // Enable retries for writes (use with caution)
+  restRetryIntervalsForWrites: [1000, 2000],
+);
+</code></pre>
+<p>Note: Retries occur only for network-level failures (status <code>ParseError.otherCause</code>)
+or exceptions thrown by the HTTP client. Responses that return valid Parse Server
+error codes (e.g., 101, 209) are returned immediately and are not retried.</p>
+<p>Example:</p>
+<pre class="language-dart"><code class="language-dart">final response = await executeWithRetry(
+  operation: () async {
+    final result = await client.get(url);
+    return result;
+  },
+  debug: true,
+);
+</code></pre>
+<p>Parameters:</p>
+<ul>
+<li><code>operation</code>: The network operation to execute and potentially retry</li>
+<li><code>isWriteOperation</code>: Whether this is a write operation (POST/PUT).
+Defaults to <code>false</code>. When <code>true</code>, uses <a href="../parse_server_sdk/ParseCoreData/restRetryIntervalsForWrites.html">ParseCoreData.restRetryIntervalsForWrites</a>
+which defaults to no retries to prevent duplicate creates/updates.</li>
+<li><code>debug</code>: Whether to log retry attempts (defaults to <a href="../parse_server_sdk/ParseCoreData/debug.html">ParseCoreData.debug</a>)</li>
+</ul>
+<p>Returns:</p>
+<p>The final response (either <a href="../parse_server_sdk/ParseNetworkResponse-class.html">ParseNetworkResponse</a> or <a href="../parse_server_sdk/ParseNetworkByteResponse-class.html">ParseNetworkByteResponse</a>)
+after all retry attempts are exhausted.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Future&lt;T&gt; executeWithRetry&lt;T extends ParseNetworkResponse&gt;({
+  required Future&lt;T&gt; Function() operation,
+  bool isWriteOperation = false,
+  bool? debug,
+}) async {
+  final List&lt;int&gt; retryIntervals = isWriteOperation
+      ? ParseCoreData().restRetryIntervalsForWrites
+      : ParseCoreData().restRetryIntervals;
+  final bool debugEnabled = debug ?? ParseCoreData().debug;
+
+  &#47;&#47; Enforce maximum retry limit to prevent excessive attempts
+  const int maxRetries = 100;
+  if (retryIntervals.length &gt; maxRetries) {
+    throw ArgumentError(
+      &#39;restRetryIntervals cannot exceed $maxRetries elements &#39;
+      &#39;(which allows up to ${maxRetries + 1} total attempts). &#39;
+      &#39;Current length: ${retryIntervals.length}&#39;,
+    );
+  }
+
+  &#47;&#47; Validate that all retry intervals are non-negative
+  if (retryIntervals.any((interval) =&gt; interval &lt; 0)) {
+    throw ArgumentError(
+      &#39;restRetryIntervals cannot contain negative values. &#39;
+      &#39;Current values: $retryIntervals&#39;,
+    );
+  }
+
+  int attemptNumber = 0;
+  T? lastResponse;
+
+  &#47;&#47; Attempt initial request plus retries based on interval list
+  for (int i = 0; i &lt;= retryIntervals.length; i++) {
+    attemptNumber = i + 1;
+
+    try {
+      lastResponse = await operation();
+
+      &#47;&#47; Check if we should retry this response
+      if (!_shouldRetryResponse(lastResponse)) {
+        &#47;&#47; Success or non-retryable error - return immediately
+        if (debugEnabled &amp;&amp; i &gt; 0) {
+          print(
+            &#39;Parse REST retry: Attempt $attemptNumber succeeded after $i ${i == 1 ? &#39;retry&#39; : &#39;retries&#39;}&#39;,
+          );
+        }
+        return lastResponse;
+      }
+
+      &#47;&#47; If this was the last attempt, return the failure
+      if (i &gt;= retryIntervals.length) {
+        if (debugEnabled) {
+          print(
+            &#39;Parse REST retry: All $attemptNumber attempts failed, returning error&#39;,
+          );
+        }
+        return lastResponse;
+      }
+
+      &#47;&#47; Wait before next retry
+      final int delayMs = retryIntervals[i];
+      if (debugEnabled) {
+        print(
+          &#39;Parse REST retry: Attempt $attemptNumber failed (status: ${lastResponse.statusCode}), &#39;
+          &#39;retrying in ${delayMs}ms... (${i + 1}&#47;${retryIntervals.length} retries)&#39;,
+        );
+      }
+      await Future&lt;void&gt;.delayed(Duration(milliseconds: delayMs));
+    } catch (e) {
+      &#47;&#47; If this was the last attempt, rethrow the exception
+      if (i &gt;= retryIntervals.length) {
+        if (debugEnabled) {
+          print(
+            &#39;Parse REST retry: All $attemptNumber attempts failed with exception: $e&#39;,
+          );
+        }
+        rethrow;
+      }
+
+      &#47;&#47; Wait before next retry
+      final int delayMs = retryIntervals[i];
+      if (debugEnabled) {
+        print(
+          &#39;Parse REST retry: Attempt $attemptNumber threw exception: $e, &#39;
+          &#39;retrying in ${delayMs}ms... (${i + 1}&#47;${retryIntervals.length} retries)&#39;,
+        );
+      }
+      await Future&lt;void&gt;.delayed(Duration(milliseconds: delayMs));
+    }
+  }
+
+  &#47;&#47; This should never be reached due to the loop logic above
+  throw StateError(
+    &#39;Retry loop completed without returning or rethrowing. &#39;
+    &#39;This indicates a logic error.&#39;,
+  );
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">parse_server_sdk</a></li>
+    <li><a href="../parse_server_sdk/">parse_server_sdk</a></li>
+    <li class="self-crumb">executeWithRetry&lt;<wbr><span class="type-parameter">T extends ParseNetworkResponse</span>&gt; function</li>
+</ol>
+
+    <h5>parse_server_sdk library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-left-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    parse_server_sdk
+      9.5.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

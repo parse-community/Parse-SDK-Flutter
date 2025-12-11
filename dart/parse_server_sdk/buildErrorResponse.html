@@ -75,14 +75,29 @@
   ParseResponse response,
   ParseNetworkResponse apiResponse,
 ) {
-  final Map&lt;String, dynamic&gt; responseData = json.decode(apiResponse.data);
+  try {
+    final Map&lt;String, dynamic&gt; responseData = json.decode(apiResponse.data);
 
-  response.error = ParseError(
-    code: responseData[keyCode] ?? ParseError.otherCause,
-    message: responseData[keyError].toString(),
-  );
+    response.error = ParseError(
+      code: responseData[keyCode] ?? ParseError.otherCause,
+      message: responseData[keyError].toString(),
+    );
 
-  response.statusCode = responseData[keyCode] ?? ParseError.otherCause;
+    response.statusCode = responseData[keyCode] ?? ParseError.otherCause;
+  } on FormatException catch (e) {
+    &#47;&#47; Handle non-JSON responses (e.g., HTML from proxy&#47;load balancer)
+    final String preview = apiResponse.data.length &gt; 100
+        ? &#39;${apiResponse.data.substring(0, 100)}...&#39;
+        : apiResponse.data;
+
+    response.error = ParseError(
+      code: ParseError.otherCause,
+      message: &#39;Invalid response format (expected JSON): $preview&#39;,
+      exception: e,
+    );
+
+    response.statusCode = ParseError.otherCause;
+  }
 
   return response;
 }</code></pre>
@@ -112,7 +127,7 @@
 <footer>
   <span class="no-break">
     parse_server_sdk
-      9.4.8
+      9.5.0
   </span>
   
 </footer>
