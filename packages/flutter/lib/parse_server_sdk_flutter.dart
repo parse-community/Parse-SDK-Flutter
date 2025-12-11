@@ -66,6 +66,8 @@ class Parse extends sdk.Parse
     Map<String, sdk.ParseObjectConstructor>? registeredSubClassMap,
     sdk.ParseUserConstructor? parseUserConstructor,
     sdk.ParseFileConstructor? parseFileConstructor,
+    List<int>? restRetryIntervals,
+    List<int>? restRetryIntervalsForWrites,
     List<int>? liveListRetryIntervals,
     sdk.ParseConnectivityProvider? connectivityProvider,
     String? fileDirectory,
@@ -102,6 +104,8 @@ class Parse extends sdk.Parse
           registeredSubClassMap: registeredSubClassMap,
           parseUserConstructor: parseUserConstructor,
           parseFileConstructor: parseFileConstructor,
+          restRetryIntervals: restRetryIntervals,
+          restRetryIntervalsForWrites: restRetryIntervalsForWrites,
           liveListRetryIntervals: liveListRetryIntervals,
           connectivityProvider: connectivityProvider ?? this,
           fileDirectory:
