@@ -19,6 +19,8 @@ void main() {
       sessionId: 'sessionId',
       fileDirectory: 'someDirectory',
       debug: true,
+      restRetryIntervals: [100, 200, 300],
+      restRetryIntervalsForWrites: [500, 1000],
     );
 
     // assert
@@ -33,5 +35,7 @@ void main() {
     expect(ParseCoreData().sessionId, 'sessionId');
     expect(ParseCoreData().debug, true);
     expect(ParseCoreData().fileDirectory, 'someDirectory');
+    expect(ParseCoreData().restRetryIntervals, [100, 200, 300]);
+    expect(ParseCoreData().restRetryIntervalsForWrites, [500, 1000]);
   });
 }

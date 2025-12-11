@@ -47,6 +47,16 @@ class Parse extends sdk.Parse
   /// ```
   /// [appName], [appVersion] and [appPackageName] are automatically set on Android and IOS, if they are not defined. You should provide a value on web.
   /// [fileDirectory] is not used on web
+  ///
+  /// [restRetryIntervals] - Retry intervals in milliseconds for read operations.
+  ///   Applies to: GET, DELETE, and getBytes methods.
+  ///   Default: [0, 250, 500, 1000, 2000] (5 retry attempts with exponential backoff).
+  ///   Set to [] to disable retries for read operations.
+  ///
+  /// [restRetryIntervalsForWrites] - Retry intervals in milliseconds for write operations.
+  ///   Applies to: POST, PUT, and postBytes methods.
+  ///   Default: [] (no retries to prevent duplicate data creation).
+  ///   Configure only if you have idempotency guarantees in place.
   @override
   Future<Parse> initialize(
     String appId,
