@@ -3,7 +3,11 @@ library;
 import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:parse_server_sdk_flutter/src/mixins/connectivity_handler_mixin.dart';
+import 'package:parse_server_sdk_flutter/src/utils/parse_cached_live_list.dart';
 import 'package:path/path.dart' as path;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -18,6 +22,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 export 'package:parse_server_sdk/parse_server_sdk.dart'
     hide Parse, CoreStoreSembastImp;
 
+// Analytics integration
+export 'src/analytics/parse_analytics.dart';
+export 'src/analytics/parse_analytics_endpoints.dart';
+
 part 'src/storage/core_store_shared_preferences.dart';
 
 part 'src/storage/core_store_sembast.dart';
@@ -26,9 +34,14 @@ part 'src/utils/parse_live_grid.dart';
 
 part 'src/utils/parse_live_list.dart';
 
+part 'src/utils/parse_live_sliver_list.dart';
+part 'src/utils/parse_live_sliver_grid.dart';
+
+part 'src/utils/parse_live_page_view.dart';
+
 part 'src/notification/parse_notification.dart';
 
-part 'src/push//parse_push.dart';
+part 'src/push/parse_push.dart';
 
 class Parse extends sdk.Parse
     with WidgetsBindingObserver
@@ -67,6 +80,8 @@ class Parse extends sdk.Parse
     sdk.ParseUserConstructor? parseUserConstructor,
     sdk.ParseFileConstructor? parseFileConstructor,
     List<int>? liveListRetryIntervals,
+    List<int>? restRetryIntervals,
+    List<int>? restRetryIntervalsForWrites,
     sdk.ParseConnectivityProvider? connectivityProvider,
     String? fileDirectory,
     Stream<void>? appResumedStream,
@@ -103,6 +118,8 @@ class Parse extends sdk.Parse
           parseUserConstructor: parseUserConstructor,
           parseFileConstructor: parseFileConstructor,
           liveListRetryIntervals: liveListRetryIntervals,
+          restRetryIntervals: restRetryIntervals,
+          restRetryIntervalsForWrites: restRetryIntervalsForWrites,
           connectivityProvider: connectivityProvider ?? this,
           fileDirectory:
               fileDirectory ?? (await CoreStoreDirectory().getTempDirectory()),
@@ -125,8 +142,6 @@ class Parse extends sdk.Parse
   ) {
     if (results.contains(ConnectivityResult.wifi)) {
       return sdk.ParseConnectivityResult.wifi;
-    } else if (results.contains(ConnectivityResult.ethernet)) {
-      return sdk.ParseConnectivityResult.ethernet;
     } else if (results.contains(ConnectivityResult.mobile)) {
       return sdk.ParseConnectivityResult.mobile;
     } else {
