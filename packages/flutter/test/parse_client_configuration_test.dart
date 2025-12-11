@@ -38,4 +38,27 @@ void main() {
     expect(ParseCoreData().restRetryIntervals, [100, 200, 300]);
     expect(ParseCoreData().restRetryIntervalsForWrites, [500, 1000]);
   });
+
+  test('testDefaultValues', () async {
+    // arrange - initialize with only required parameters
+    await Parse().initialize(
+      'appId',
+      'serverUrl',
+      appName: 'appName',
+      appPackageName: 'somePackageName',
+      appVersion: 'someAppVersion',
+    );
+
+    // assert - verify default values are used
+    expect(ParseCoreData().applicationId, 'appId');
+    expect(ParseCoreData().serverUrl, 'serverUrl');
+    expect(ParseCoreData().debug, false); // default
+    expect(ParseCoreData().autoSendSessionId, true); // default
+    expect(ParseCoreData().clientKey, null); // not provided
+    expect(ParseCoreData().masterKey, null); // not provided
+    expect(ParseCoreData().sessionId, null); // not provided
+    expect(ParseCoreData().liveQueryURL, null); // not provided
+    expect(ParseCoreData().restRetryIntervals, [0, 250, 500, 1000, 2000]);
+    expect(ParseCoreData().restRetryIntervalsForWrites, <int>[]);
+  });
 }
