@@ -3,6 +3,7 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   SharedPreferences.setMockInitialValues(<String, String>{});
 
   test('testBuilder', () async {
@@ -40,24 +41,30 @@ void main() {
   });
 
   test('testDefaultValues', () async {
-    // arrange - initialize with only required parameters
+    // arrange - initialize with minimal parameters to test defaults
     await Parse().initialize(
       'appId',
       'serverUrl',
       appName: 'appName',
       appPackageName: 'somePackageName',
       appVersion: 'someAppVersion',
+      fileDirectory: 'someDirectory',
     );
 
     // assert - verify default values are used
     expect(ParseCoreData().applicationId, 'appId');
     expect(ParseCoreData().serverUrl, 'serverUrl');
+    expect(ParseCoreData().appName, 'appName');
+    expect(ParseCoreData().appPackageName, 'somePackageName');
+    expect(ParseCoreData().appVersion, 'someAppVersion');
     expect(ParseCoreData().debug, false); // default
     expect(ParseCoreData().autoSendSessionId, true); // default
     expect(ParseCoreData().clientKey, null); // not provided
     expect(ParseCoreData().masterKey, null); // not provided
     expect(ParseCoreData().sessionId, null); // not provided
     expect(ParseCoreData().liveQueryURL, null); // not provided
+    // Note: default retry values mirror parse_server_sdk defaults and may need
+    // updating if those change in future versions
     expect(ParseCoreData().restRetryIntervals, [0, 250, 500, 1000, 2000]);
     expect(ParseCoreData().restRetryIntervalsForWrites, <int>[]);
   });
