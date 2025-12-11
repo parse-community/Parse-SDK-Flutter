@@ -24,10 +24,10 @@ part of '../../parse_server_sdk.dart';
 ///
 /// Important Note on Non-Idempotent Methods (POST/PUT):
 ///
-/// **Parse Server does not provide automatic optimistic locking or built-in
-/// idempotency guarantees for POST/PUT operations.** To prevent duplicate
-/// data creation or unintended state changes, this SDK defaults to **no retries**
-/// for write operations (POST/PUT/postBytes).
+/// **While Parse Server supports idempotency headers for preventing duplicate
+/// requests, this SDK does not currently implement that feature.** To prevent
+/// duplicate data creation or unintended state changes, this SDK defaults to
+/// **no retries** for write operations (POST/PUT/postBytes).
 ///
 /// Default Behavior:
 /// - **Write operations (POST/PUT)**: No retries (`restRetryIntervalsForWrites = []`)
