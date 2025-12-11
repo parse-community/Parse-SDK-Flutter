@@ -80,6 +80,8 @@ class Parse extends sdk.Parse
     sdk.ParseUserConstructor? parseUserConstructor,
     sdk.ParseFileConstructor? parseFileConstructor,
     List<int>? liveListRetryIntervals,
+    List<int>? restRetryIntervals,
+    List<int>? restRetryIntervalsForWrites,
     sdk.ParseConnectivityProvider? connectivityProvider,
     String? fileDirectory,
     Stream<void>? appResumedStream,
@@ -116,6 +118,8 @@ class Parse extends sdk.Parse
           parseUserConstructor: parseUserConstructor,
           parseFileConstructor: parseFileConstructor,
           liveListRetryIntervals: liveListRetryIntervals,
+          restRetryIntervals: restRetryIntervals,
+          restRetryIntervalsForWrites: restRetryIntervalsForWrites,
           connectivityProvider: connectivityProvider ?? this,
           fileDirectory:
               fileDirectory ?? (await CoreStoreDirectory().getTempDirectory()),
