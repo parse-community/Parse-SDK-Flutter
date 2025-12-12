@@ -1,3 +1,10 @@
+# [flutter-v10.7.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.6.2...flutter-10.7.0) (2025-12-12)
+
+
+### Features
+
+* Add client-to-server request retry parameter support ([#1103](https://github.com/parse-community/Parse-SDK-Flutter/issues/1103)) ([534e9ba](https://github.com/parse-community/Parse-SDK-Flutter/commit/534e9ba941ad6274a906b56a649fea737b9662d0))
+
 # [flutter-v10.6.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/flutter-10.6.1...flutter-10.6.2) (2025-12-04)
 
 
