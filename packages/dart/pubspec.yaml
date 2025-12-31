@@ -25,7 +25,7 @@ dependencies:
   dio: ^5.7.0
   http: ^1.2.0
   web_socket_channel: ^3.0.3
-
+  socket_io_client: ^3.1.2
   #Database
   sembast: ^3.6.0
   sembast_web: ^2.2.0
