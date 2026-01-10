@@ -97,12 +97,12 @@ class ParseInstallation extends ParseObject {
     tz.initializeTimeZones();
     var locations = tz.timeZoneDatabase.locations;
 
-    int milliseconds = DateTime.now().timeZoneOffset.inMilliseconds;
+    Duration offset = DateTime.now().timeZoneOffset;
     String name = "";
 
     locations.forEach((key, value) {
       for (var element in value.zones) {
-        if (element.offset == milliseconds) {
+        if (element.offset == offset) {
           name = value.name;
           break;
         }
