@@ -1,3 +1,10 @@
+# [dart-v9.6.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.5.0...dart-9.6.0) (2026-01-11)
+
+
+### Features
+
+* Upgrade timezone from 0.10.1 to 0.11.0 ([#1104](https://github.com/parse-community/Parse-SDK-Flutter/issues/1104)) ([63ecc18](https://github.com/parse-community/Parse-SDK-Flutter/commit/63ecc18d7966196920d96cff4d50181af5a5959c))
+
 # [dart-v9.5.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.8...dart-9.5.0) (2025-12-11)
 
 
