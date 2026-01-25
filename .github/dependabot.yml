@@ -18,6 +18,15 @@ updates:
     commit-message:
       prefix: "feat"
 
+  # NPM dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "refactor"
+
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
