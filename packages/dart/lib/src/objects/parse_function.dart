@@ -20,10 +20,6 @@ class ParseCloudFunction extends ParseObject {
 
   final String functionName;
 
-  @override
-  // ignore: overridden_fields
-  late String _path;
-
   /// Executes a cloud function
   ///
   /// To add the parameters, create an object and call [set](value to set)
