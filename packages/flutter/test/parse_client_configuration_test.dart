@@ -1,6 +1,3 @@
-@TestOn('vm')
-library;
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';

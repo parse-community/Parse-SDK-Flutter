@@ -1,6 +1,3 @@
-@TestOn('vm')
-library;
-
 import 'dart:async';
 
 import 'package:connectivity_plus_platform_interface/connectivity_plus_platform_interface.dart';
