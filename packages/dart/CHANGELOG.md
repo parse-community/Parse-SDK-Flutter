@@ -1,3 +1,10 @@
+# [dart-v9.6.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.6.0...dart-9.6.1) (2026-01-25)
+
+
+### Bug Fixes
+
+* Docs analyzer issue causing low pub.dev score ([#1111](https://github.com/parse-community/Parse-SDK-Flutter/issues/1111)) ([4dc80cd](https://github.com/parse-community/Parse-SDK-Flutter/commit/4dc80cd3c7fa134efcf1ef6084d6af65956aba57))
+
 # [dart-v9.6.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.5.0...dart-9.6.0) (2026-01-11)
 
 
