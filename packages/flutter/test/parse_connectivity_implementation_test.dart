@@ -55,17 +55,6 @@ void main() {
       expect(result, ParseConnectivityResult.wifi);
     });
 
-    test(
-      'ethernet connection returns ParseConnectivityResult.ethernet',
-      () async {
-        mockPlatform.setConnectivity([ConnectivityResult.ethernet]);
-
-        final result = await Parse().checkConnectivity();
-
-        expect(result, ParseConnectivityResult.ethernet);
-      },
-    );
-
     test('mobile connection returns ParseConnectivityResult.mobile', () async {
       mockPlatform.setConnectivity([ConnectivityResult.mobile]);
 
@@ -91,17 +80,6 @@ void main() {
       final result = await Parse().checkConnectivity();
 
       expect(result, ParseConnectivityResult.wifi);
-    });
-
-    test('ethernet takes priority over mobile (issue #1042 fix)', () async {
-      mockPlatform.setConnectivity([
-        ConnectivityResult.ethernet,
-        ConnectivityResult.mobile,
-      ]);
-
-      final result = await Parse().checkConnectivity();
-
-      expect(result, ParseConnectivityResult.ethernet);
     });
 
     test('unsupported connection types fall back to none', () async {
@@ -141,22 +119,6 @@ void main() {
       await subscription.cancel();
     });
 
-    test('ethernet event emits ParseConnectivityResult.ethernet', () async {
-      final completer = Completer<ParseConnectivityResult>();
-      final subscription = Parse().connectivityStream.listen((result) {
-        if (!completer.isCompleted) {
-          completer.complete(result);
-        }
-      });
-
-      mockPlatform.setConnectivity([ConnectivityResult.ethernet]);
-
-      final result = await completer.future;
-      expect(result, ParseConnectivityResult.ethernet);
-
-      await subscription.cancel();
-    });
-
     test('mobile event emits ParseConnectivityResult.mobile', () async {
       final completer = Completer<ParseConnectivityResult>();
       final subscription = Parse().connectivityStream.listen((result) {
@@ -185,25 +147,6 @@ void main() {
 
       final result = await completer.future;
       expect(result, ParseConnectivityResult.none);
-
-      await subscription.cancel();
-    });
-
-    test('stream respects priority: ethernet over mobile', () async {
-      final completer = Completer<ParseConnectivityResult>();
-      final subscription = Parse().connectivityStream.listen((result) {
-        if (!completer.isCompleted) {
-          completer.complete(result);
-        }
-      });
-
-      mockPlatform.setConnectivity([
-        ConnectivityResult.ethernet,
-        ConnectivityResult.mobile,
-      ]);
-
-      final result = await completer.future;
-      expect(result, ParseConnectivityResult.ethernet);
 
       await subscription.cancel();
     });

@@ -15,16 +15,21 @@ dependencies:
   parse_server_sdk_flutter:
     path: ../
 
+  # parse_offline_extension: ^1.0.0
+  # parse_server_sdk: 9.2.0
+  # parse_server_sdk:
+  #   git:
+  #     url: https://github.com/pastordee/Parse-SDK-Flutter.git 
+  #     path: packages/dart
+  #     ref: pc_server 
+
   cupertino_icons: ^1.0.5
-  path: ^1.8.2
+  path: ^1.9.1
   path_provider: ^2.0.15
   sembast: ^3.4.6+1
   shared_preferences: ^2.2.0
 
-# Uncomment for local testing
-# dependency_overrides:
-#   parse_server_sdk:
-#     path: ../../dart
+
 
 dev_dependencies:
   flutter_test:
