@@ -38,7 +38,10 @@ void main() {
 
       // assert
       expect(parseDioClient.additionalHeaders, equals(headers));
-      expect(parseDioClient.additionalHeaders!['X-Custom-Header'], 'test-value');
+      expect(
+        parseDioClient.additionalHeaders!['X-Custom-Header'],
+        'test-value',
+      );
       expect(parseDioClient.additionalHeaders!['X-Another'], 'value2');
     });
 
