@@ -1,3 +1,11 @@
+## [8.0.1] (2026-03-12)
+
+### Bug Fixes
+
+* Fix `ParseAggregate.execute()` pipeline encoding: send each stage as an individual query parameter with JSON-encoded value instead of bundling into a single `pipeline` string, improving compatibility with Parse Server's `getPipeline()` format
+* Remove debug `print()` statement in `ParseAggregate.execute()` that leaked the full pipeline URL to console
+* Use `handleResponse` in `ParseAggregate.execute()` for consistent response handling with other `ParseObject` subclasses
+
 ## [8.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-7.0.1...dart-8.0.0) (2024-12-20)
 
 ### BREAKING CHANGES
