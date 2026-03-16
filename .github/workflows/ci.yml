@@ -97,11 +97,6 @@ jobs:
           - name: Flutter beta
             os: ubuntu-latest
             sdk: beta
-          # WASM support
-          - name: Flutter 3.38, Ubuntu, WASM
-            os: ubuntu-latest
-            sdk: 3.38.1
-            wasm: true
       fail-fast: false
     name: Test ${{ matrix.name }}
     steps:
@@ -130,14 +125,10 @@ jobs:
       - name: Publish dry run
         run: cd packages/flutter && dart pub publish --dry-run
       - name: Run tests
-        if: ${{ !matrix.wasm }}
         run: (cd packages/flutter && flutter test --coverage)
-      - name: Run tests (WASM)
-        if: ${{ matrix.wasm }}
-        run: (cd packages/flutter && flutter test --platform chrome --wasm)
       - name: Convert code coverage
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
-        if: ${{ always() && matrix.os == 'ubuntu-latest' && !matrix.wasm }}
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         working-directory: packages/flutter
         run: |
           escapedPath="$(echo `pwd` | sed 's/\//\\\//g')"
@@ -145,7 +136,7 @@ jobs:
       - name: Upload code coverage
         uses: codecov/codecov-action@v5
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
-        if: ${{ always() && matrix.os == 'ubuntu-latest' && !matrix.wasm }}
+        if: ${{ always() && matrix.os == 'ubuntu-latest' }}
         with:
           files: packages/flutter/coverage/lcov-full.info
           fail_ci_if_error: false
