@@ -1,3 +1,10 @@
+# [dart-v9.7.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.6.1...dart-9.7.0) (2026-03-29)
+
+
+### Features
+
+* Expose `ParseDioClient.additionalHeaders` to set additional custom headers applied to all requests ([#1113](https://github.com/parse-community/Parse-SDK-Flutter/issues/1113)) ([82e09df](https://github.com/parse-community/Parse-SDK-Flutter/commit/82e09dfdccdab2ef433b6b357e94d2c831e4409d))
+
 # [dart-v9.6.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.6.0...dart-9.6.1) (2026-01-25)
 
 

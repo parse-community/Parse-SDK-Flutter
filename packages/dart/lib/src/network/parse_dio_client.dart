@@ -32,6 +32,15 @@ class ParseDioClient extends ParseClient {
 
   dio.Dio get client => _client;
 
+  /// Custom headers to include in every request made by this client.
+  ///
+  /// This mirrors the same functionality already exposed by [ParseHTTPClient].
+  /// The internal [_ParseDioClient] reads these headers in its [request]
+  /// override and merges them into every outgoing request.
+  Map<String, String>? get additionalHeaders => _client.additionalHeaders;
+  set additionalHeaders(Map<String, String>? additionalHeaders) =>
+      _client.additionalHeaders = additionalHeaders;
+
   @override
   Future<ParseNetworkResponse> get(
     String path, {
