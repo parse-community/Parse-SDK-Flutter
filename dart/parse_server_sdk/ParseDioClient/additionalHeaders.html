@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the longitude property from the ParseGeoPoint class, for the Dart programming language.">
-  <title>longitude property - ParseGeoPoint class - parse_server_sdk library - Dart API</title>
+  <meta name="description" content="API docs for the additionalHeaders property from the ParseDioClient class, for the Dart programming language.">
+  <title>additionalHeaders property - ParseDioClient class - parse_server_sdk library - Dart API</title>
 
 
   
@@ -26,10 +26,10 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="../../index.html">parse_server_sdk</a></li>
     <li><a href="../../parse_server_sdk/">parse_server_sdk.dart</a></li>
-    <li><a href="../../parse_server_sdk/ParseGeoPoint-class.html">ParseGeoPoint</a></li>
-    <li class="self-crumb">longitude property</li>
+    <li><a href="../../parse_server_sdk/ParseDioClient-class.html">ParseDioClient</a></li>
+    <li class="self-crumb">additionalHeaders property</li>
   </ol>
-  <div class="self-name">longitude</div>
+  <div class="self-name">additionalHeaders</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -46,30 +46,63 @@
 <div
     id="dartdoc-main-content"
     class="main-content"
-    data-above-sidebar="parse_server_sdk&#47;ParseGeoPoint-class-sidebar.html"
+    data-above-sidebar="parse_server_sdk&#47;ParseDioClient-class-sidebar.html"
     data-below-sidebar="">
     <div>
-<h1><span class="kind-property">longitude</span> property 
+<h1><span class="kind-property">additionalHeaders</span> property 
 </h1></div>
 
     
-      <section class="multi-line-signature">
-        
-        <a href="https://api.dart.dev/stable/3.11.4/dart-core/double-class.html">double</a>
-        <span class="name ">longitude</span>
-        <div class="features"><span class="feature">getter/setter pair</span></div>
-
-      </section>
-      
-
-      
-<section class="summary source-code" id="source">
-  <h2><span>Implementation</span></h2>
-  <pre class="language-dart"><code class="language-dart">double latitude, longitude;</code></pre>
-</section>
-
 
     
+        
+  <section id="getter">
+    <section class="multi-line-signature">
+      
+      <span class="returntype"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>&gt;</span>?</span>
+      get
+      <span class="name ">additionalHeaders</span>
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Custom headers to include in every request made by this client.</p>
+<p>This mirrors the same functionality already exposed by <a href="../../parse_server_sdk/ParseHTTPClient-class.html">ParseHTTPClient</a>.
+The internal <code>_ParseDioClient</code> reads these headers in its <code>request</code>
+override and merges them into every outgoing request.</p>
+</section>
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">Map&lt;String, String&gt;? get additionalHeaders =&gt; _client.additionalHeaders;</code></pre>
+</section>
+
+  </section>
+
+
+        
+  <section id="setter">
+    <section class="multi-line-signature">
+      
+      set
+      <span class="name ">additionalHeaders</span>
+      <span class="signature">(<wbr><span class="parameter" id="additionalHeaders=-param-additionalHeaders"><span class="type-annotation"><a href="https://api.dart.dev/stable/3.11.4/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.dart.dev/stable/3.11.4/dart-core/String-class.html">String</a></span>&gt;</span>?</span> <span class="parameter-name">additionalHeaders</span></span>)</span>
+      
+
+    </section>
+    
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">set additionalHeaders(Map&lt;String, String&gt;? additionalHeaders) =&gt;
+    _client.additionalHeaders = additionalHeaders;</code></pre>
+</section>
+
+  </section>
+
 </div> <!-- /.main-content -->
 <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
   <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
@@ -81,11 +114,11 @@
 <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
     <li><a href="../../index.html">parse_server_sdk</a></li>
     <li><a href="../../parse_server_sdk/">parse_server_sdk</a></li>
-    <li><a href="../../parse_server_sdk/ParseGeoPoint-class.html">ParseGeoPoint</a></li>
-    <li class="self-crumb">longitude property</li>
+    <li><a href="../../parse_server_sdk/ParseDioClient-class.html">ParseDioClient</a></li>
+    <li class="self-crumb">additionalHeaders property</li>
 </ol>
 
-  <h5>ParseGeoPoint class</h5>
+  <h5>ParseDioClient class</h5>
   <div id="dartdoc-sidebar-left-content"></div>
 </div><!--/.sidebar-offcanvas-->
 <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
