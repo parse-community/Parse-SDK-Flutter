@@ -252,7 +252,7 @@ class QueryBuilder<T extends ParseObject> {
   void whereContainedIn(String column, List<dynamic> value) {
     queries.add(
       _buildQueryWithColumnValueAndOperator(
-        MapEntry<String, dynamic>(column, value),
+        MapEntry<String, dynamic>(column, _encodeStringElements(value)),
         '\$in',
       ),
     );
@@ -262,7 +262,7 @@ class QueryBuilder<T extends ParseObject> {
   void whereNotContainedIn(String column, List<dynamic> value) {
     queries.add(
       _buildQueryWithColumnValueAndOperator(
-        MapEntry<String, dynamic>(column, value),
+        MapEntry<String, dynamic>(column, _encodeStringElements(value)),
         '\$nin',
       ),
     );
@@ -312,10 +312,21 @@ class QueryBuilder<T extends ParseObject> {
   void whereArrayContainsAll(String column, List<dynamic> value) {
     queries.add(
       _buildQueryWithColumnValueAndOperator(
-        MapEntry<String, dynamic>(column, value),
+        MapEntry<String, dynamic>(column, _encodeStringElements(value)),
         '\$all',
       ),
     );
+  }
+
+  /// Percent-encodes String elements of [value] so that characters such as
+  /// `&`, `=`, `+`, and `#` survive URL querystring parsing when the list is
+  /// serialized into `where={...}` via [buildQuery]. Non-String elements are
+  /// left untouched. Mirrors the per-argument encoding applied by the scalar
+  /// [whereEqualTo] / [whereContains] family of methods.
+  List<dynamic> _encodeStringElements(List<dynamic> value) {
+    return value
+        .map<dynamic>((dynamic e) => e is String ? Uri.encodeComponent(e) : e)
+        .toList();
   }
 
   /// Returns an object where the [String] column has a regEx performed on,

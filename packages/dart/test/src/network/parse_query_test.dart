@@ -695,5 +695,51 @@ void main() {
 
       expect(queryString, equals(expectedQueryString.toString()));
     });
+
+    test(
+        'list-based where methods encode special characters in String elements',
+        () {
+      // arrange
+      final queryBuilder = QueryBuilder.name('Diet_Plans');
+
+      // act
+      queryBuilder.whereContainedIn('topics', <dynamic>[
+        "RFI's & Change Orders",
+        'Schedule (Impacts, Delays, Inspections)',
+      ]);
+      queryBuilder.whereNotContainedIn('excluded', <dynamic>['a=b', 'c+d']);
+      queryBuilder.whereArrayContainsAll('tags', <dynamic>['x#y', 'z&w']);
+
+      // assert
+      final queryString = queryBuilder.buildQuery();
+      const encodedAmp = '%26'; // &
+      const encodedEq = '%3D'; // =
+      const encodedPlus = '%2B'; // +
+      const encodedHash = '%23'; // #
+
+      expect(queryString, contains(encodedAmp));
+      expect(queryString, contains(encodedEq));
+      expect(queryString, contains(encodedPlus));
+      expect(queryString, contains(encodedHash));
+
+      // Ensure the raw unencoded delimiters do NOT appear inside the JSON
+      // values (they would break querystring parsing on the server).
+      expect(queryString.contains('& Change Orders'), isFalse);
+      expect(queryString.contains('a=b'), isFalse);
+      expect(queryString.contains('c+d'), isFalse);
+      expect(queryString.contains('x#y'), isFalse);
+    });
+
+    test('list-based where methods leave non-String elements untouched', () {
+      // arrange
+      final queryBuilder = QueryBuilder.name('Diet_Plans');
+
+      // act
+      queryBuilder.whereContainedIn('nums', <dynamic>[1, 2, 3]);
+
+      // assert
+      final queryString = queryBuilder.buildQuery();
+      expect(queryString, contains('"\$in":[1,2,3]'));
+    });
   });
 }
