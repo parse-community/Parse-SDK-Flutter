@@ -318,14 +318,23 @@ class QueryBuilder<T extends ParseObject> {
     );
   }
 
-  /// Percent-encodes String elements of [value] so that characters such as
-  /// `&`, `=`, `+`, and `#` survive URL querystring parsing when the list is
-  /// serialized into `where={...}` via [buildQuery]. Non-String elements are
-  /// left untouched. Mirrors the per-argument encoding applied by the scalar
-  /// [whereEqualTo] / [whereContains] family of methods.
+  /// JSON-escapes [value] and then percent-encodes the escaped content. The
+  /// JSON escaping keeps `"`, `\` and newlines valid inside the surrounding
+  /// string literal once the server URL-decodes the query; the percent
+  /// encoding keeps `&`, `=`, `+` and `#` from being chewed up by querystring
+  /// parsing on the way in.
+  String _encodeStringElement(String value) {
+    final String jsonString = jsonEncode(value);
+    return Uri.encodeComponent(
+      jsonString.substring(1, jsonString.length - 1),
+    );
+  }
+
+  /// Runs [_encodeStringElement] on each String in [value]; other elements
+  /// are passed through unchanged.
   List<dynamic> _encodeStringElements(List<dynamic> value) {
     return value
-        .map<dynamic>((dynamic e) => e is String ? Uri.encodeComponent(e) : e)
+        .map<dynamic>((dynamic e) => e is String ? _encodeStringElement(e) : e)
         .toList();
   }
 
