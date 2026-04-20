@@ -129,7 +129,7 @@ class QueryBuilder<T extends ParseObject> {
     String prefix, {
     bool caseSensitive = false,
   }) {
-    prefix = Uri.encodeComponent(prefix);
+    prefix = _encodeStringElement(prefix);
 
     if (caseSensitive) {
       queries.add(
@@ -155,7 +155,7 @@ class QueryBuilder<T extends ParseObject> {
     String prefix, {
     bool caseSensitive = false,
   }) {
-    prefix = Uri.encodeComponent(prefix);
+    prefix = _encodeStringElement(prefix);
 
     if (caseSensitive) {
       queries.add(
@@ -178,7 +178,7 @@ class QueryBuilder<T extends ParseObject> {
   /// to be equal to the provided [value]
   void whereEqualTo(String column, dynamic value) {
     if (value is String) {
-      value = Uri.encodeComponent(value);
+      value = _encodeStringElement(value);
     }
 
     queries.add(
@@ -237,7 +237,7 @@ class QueryBuilder<T extends ParseObject> {
   /// to be not equal to the provided [value]
   void whereNotEqualTo(String column, dynamic value) {
     if (value is String) {
-      value = Uri.encodeComponent(value);
+      value = _encodeStringElement(value);
     }
 
     queries.add(
@@ -356,7 +356,7 @@ class QueryBuilder<T extends ParseObject> {
     String substring, {
     bool caseSensitive = false,
   }) {
-    substring = Uri.encodeComponent(substring);
+    substring = _encodeStringElement(substring);
 
     if (caseSensitive) {
       queries.add(
@@ -385,7 +385,7 @@ class QueryBuilder<T extends ParseObject> {
     bool orderByScore = true,
     bool diacriticSensitive = false,
   }) {
-    searchTerm = Uri.encodeComponent(searchTerm);
+    searchTerm = _encodeStringElement(searchTerm);
 
     queries.add(
       MapEntry<String, dynamic>(

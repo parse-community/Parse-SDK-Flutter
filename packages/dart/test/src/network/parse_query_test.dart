@@ -757,5 +757,29 @@ void main() {
       final queryString = queryBuilder.buildQuery();
       expect(queryString, contains('"\$in":[1,2,3]'));
     });
+
+    test(
+        'scalar where methods JSON-escape quotes and backslashes in String values',
+        () {
+      final queryBuilder = QueryBuilder.name('Diet_Plans');
+
+      queryBuilder.whereEqualTo('title', 'He said "hi"');
+      queryBuilder.whereNotEqualTo('note', r'C:\path');
+      queryBuilder.whereStartsWith('name', 'quote"prefix');
+      queryBuilder.whereContains('body', r'back\slash');
+
+      final queryString = queryBuilder.buildQuery();
+
+      // `"` and `\` must come through percent-encoded as `\"` / `\\` so the
+      // JSON stays valid after the server URL-decodes the query.
+      expect(queryString, contains('%5C%22'));
+      expect(queryString, contains('%5C%5C'));
+
+      // Raw `"` and `\` inside the values would break JSON parsing.
+      expect(queryString.contains('"He said "hi""'), isFalse);
+      expect(queryString.contains(r'C:\path'), isFalse);
+      expect(queryString.contains('quote"prefix'), isFalse);
+      expect(queryString.contains(r'back\slash'), isFalse);
+    });
   });
 }
