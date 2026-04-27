@@ -325,9 +325,7 @@ class QueryBuilder<T extends ParseObject> {
   /// parsing on the way in.
   String _encodeStringElement(String value) {
     final String jsonString = jsonEncode(value);
-    return Uri.encodeComponent(
-      jsonString.substring(1, jsonString.length - 1),
-    );
+    return Uri.encodeComponent(jsonString.substring(1, jsonString.length - 1));
   }
 
   /// Runs [_encodeStringElement] on each String in [value]; other elements

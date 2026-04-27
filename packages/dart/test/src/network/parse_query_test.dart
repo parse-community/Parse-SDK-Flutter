@@ -697,57 +697,59 @@ void main() {
     });
 
     test(
-        'list-based where methods encode special characters in String elements',
-        () {
-      final queryBuilder = QueryBuilder.name('Diet_Plans');
+      'list-based where methods encode special characters in String elements',
+      () {
+        final queryBuilder = QueryBuilder.name('Diet_Plans');
 
-      queryBuilder.whereContainedIn('topics', <String>[
-        "RFI's & Change Orders",
-        'Schedule (Impacts, Delays, Inspections)',
-      ]);
-      queryBuilder.whereNotContainedIn('excluded', <String>['a=b', 'c+d']);
-      queryBuilder.whereArrayContainsAll('tags', <String>['x#y', 'z&w']);
+        queryBuilder.whereContainedIn('topics', <String>[
+          "RFI's & Change Orders",
+          'Schedule (Impacts, Delays, Inspections)',
+        ]);
+        queryBuilder.whereNotContainedIn('excluded', <String>['a=b', 'c+d']);
+        queryBuilder.whereArrayContainsAll('tags', <String>['x#y', 'z&w']);
 
-      final queryString = queryBuilder.buildQuery();
-      const encodedAmp = '%26'; // &
-      const encodedEq = '%3D'; // =
-      const encodedPlus = '%2B'; // +
-      const encodedHash = '%23'; // #
+        final queryString = queryBuilder.buildQuery();
+        const encodedAmp = '%26'; // &
+        const encodedEq = '%3D'; // =
+        const encodedPlus = '%2B'; // +
+        const encodedHash = '%23'; // #
 
-      expect(queryString, contains(encodedAmp));
-      expect(queryString, contains(encodedEq));
-      expect(queryString, contains(encodedPlus));
-      expect(queryString, contains(encodedHash));
+        expect(queryString, contains(encodedAmp));
+        expect(queryString, contains(encodedEq));
+        expect(queryString, contains(encodedPlus));
+        expect(queryString, contains(encodedHash));
 
-      // Raw delimiters would break querystring parsing on the server, so
-      // verify they are not present in the encoded output.
-      expect(queryString.contains('& Change Orders'), isFalse);
-      expect(queryString.contains('a=b'), isFalse);
-      expect(queryString.contains('c+d'), isFalse);
-      expect(queryString.contains('x#y'), isFalse);
-    });
+        // Raw delimiters would break querystring parsing on the server, so
+        // verify they are not present in the encoded output.
+        expect(queryString.contains('& Change Orders'), isFalse);
+        expect(queryString.contains('a=b'), isFalse);
+        expect(queryString.contains('c+d'), isFalse);
+        expect(queryString.contains('x#y'), isFalse);
+      },
+    );
 
     test(
-        'list-based where methods JSON-escape quotes and backslashes in String elements',
-        () {
-      final queryBuilder = QueryBuilder.name('Diet_Plans');
+      'list-based where methods JSON-escape quotes and backslashes in String elements',
+      () {
+        final queryBuilder = QueryBuilder.name('Diet_Plans');
 
-      queryBuilder.whereContainedIn('topics', <String>[
-        'He said "hi"',
-        r'C:\path',
-      ]);
+        queryBuilder.whereContainedIn('topics', <String>[
+          'He said "hi"',
+          r'C:\path',
+        ]);
 
-      final queryString = queryBuilder.buildQuery();
+        final queryString = queryBuilder.buildQuery();
 
-      // Encoded form of `\"` and `\\`: the backslash must survive URL decoding
-      // so the server sees valid JSON (e.g. "He said \"hi\"").
-      expect(queryString, contains('%5C%22'));
-      expect(queryString, contains('%5C%5C'));
+        // Encoded form of `\"` and `\\`: the backslash must survive URL decoding
+        // so the server sees valid JSON (e.g. "He said \"hi\"").
+        expect(queryString, contains('%5C%22'));
+        expect(queryString, contains('%5C%5C'));
 
-      // Unescaped `"` and `\` inside the string values would corrupt the JSON.
-      expect(queryString.contains('"He said "hi""'), isFalse);
-      expect(queryString.contains(r'C:\path'), isFalse);
-    });
+        // Unescaped `"` and `\` inside the string values would corrupt the JSON.
+        expect(queryString.contains('"He said "hi""'), isFalse);
+        expect(queryString.contains(r'C:\path'), isFalse);
+      },
+    );
 
     test('list-based where methods leave non-String elements untouched', () {
       final queryBuilder = QueryBuilder.name('Diet_Plans');
@@ -759,27 +761,28 @@ void main() {
     });
 
     test(
-        'scalar where methods JSON-escape quotes and backslashes in String values',
-        () {
-      final queryBuilder = QueryBuilder.name('Diet_Plans');
+      'scalar where methods JSON-escape quotes and backslashes in String values',
+      () {
+        final queryBuilder = QueryBuilder.name('Diet_Plans');
 
-      queryBuilder.whereEqualTo('title', 'He said "hi"');
-      queryBuilder.whereNotEqualTo('note', r'C:\path');
-      queryBuilder.whereStartsWith('name', 'quote"prefix');
-      queryBuilder.whereContains('body', r'back\slash');
+        queryBuilder.whereEqualTo('title', 'He said "hi"');
+        queryBuilder.whereNotEqualTo('note', r'C:\path');
+        queryBuilder.whereStartsWith('name', 'quote"prefix');
+        queryBuilder.whereContains('body', r'back\slash');
 
-      final queryString = queryBuilder.buildQuery();
+        final queryString = queryBuilder.buildQuery();
 
-      // `"` and `\` must come through percent-encoded as `\"` / `\\` so the
-      // JSON stays valid after the server URL-decodes the query.
-      expect(queryString, contains('%5C%22'));
-      expect(queryString, contains('%5C%5C'));
+        // `"` and `\` must come through percent-encoded as `\"` / `\\` so the
+        // JSON stays valid after the server URL-decodes the query.
+        expect(queryString, contains('%5C%22'));
+        expect(queryString, contains('%5C%5C'));
 
-      // Raw `"` and `\` inside the values would break JSON parsing.
-      expect(queryString.contains('"He said "hi""'), isFalse);
-      expect(queryString.contains(r'C:\path'), isFalse);
-      expect(queryString.contains('quote"prefix'), isFalse);
-      expect(queryString.contains(r'back\slash'), isFalse);
-    });
+        // Raw `"` and `\` inside the values would break JSON parsing.
+        expect(queryString.contains('"He said "hi""'), isFalse);
+        expect(queryString.contains(r'C:\path'), isFalse);
+        expect(queryString.contains('quote"prefix'), isFalse);
+        expect(queryString.contains(r'back\slash'), isFalse);
+      },
+    );
   });
 }
