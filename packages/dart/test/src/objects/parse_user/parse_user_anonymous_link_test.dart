@@ -25,9 +25,7 @@ void main() {
       client = MockParseClient();
     });
 
-    ParseUser anonymousUserWithObjectId({
-      Map<String, dynamic>? extraAuthData,
-    }) {
+    ParseUser anonymousUserWithObjectId({Map<String, dynamic>? extraAuthData}) {
       final ParseUser user = ParseUser(null, null, null, client: client);
       final Map<String, dynamic> authData = <String, dynamic>{
         'anonymous': <String, dynamic>{'id': anonymousId},
@@ -60,49 +58,82 @@ void main() {
       },
     );
 
-    test(
-      'after a successful save, the local authData no longer contains the '
-      'anonymous entry. this matches the post-cleanup server record without '
-      'requiring a follow-up GET — the PUT response from Parse Server omits '
-      'authData even after the beforeSave trigger strips the anonymous entry',
-      () async {
-        final ParseUser user = anonymousUserWithObjectId();
+    test('after a successful save(), the local authData no longer contains '
+        'the anonymous entry. the PUT response carries only the fields the '
+        'client wrote, so the post-save cleanup is what reconciles local '
+        'state with the server-side unlink', () async {
+      final ParseUser user = anonymousUserWithObjectId();
 
-        // Server response only carries the dirty fields it processed; no
-        // authData echoed back. This is the realistic Parse Server shape.
-        when(
-          client.put(
-            putPath,
-            options: anyNamed('options'),
-            data: anyNamed('data'),
-          ),
-        ).thenAnswer(
-          (_) async => ParseNetworkResponse(
-            statusCode: 200,
-            data: jsonEncode(<String, dynamic>{
-              keyVarUsername: 'alice@example.com',
-              keyVarUpdatedAt: '2026-04-28T12:00:01.000Z',
-              keyVarSessionToken: 'r:newtoken',
-            }),
-          ),
-        );
+      when(
+        client.put(
+          putPath,
+          options: anyNamed('options'),
+          data: anyNamed('data'),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(<String, dynamic>{
+            keyVarUsername: 'alice@example.com',
+            keyVarUpdatedAt: '2026-04-28T12:00:01.000Z',
+            keyVarSessionToken: 'r:newtoken',
+          }),
+        ),
+      );
 
-        user.username = 'alice@example.com';
-        user.password = 'hunter2';
+      user.username = 'alice@example.com';
+      user.password = 'hunter2';
 
-        final ParseResponse response = await user.save();
+      final ParseResponse response = await user.save();
 
-        expect(response.success, isTrue);
-        final Map<String, dynamic>? cleaned = user.authData;
-        expect(
-          cleaned == null || !cleaned.containsKey('anonymous'),
-          isTrue,
-          reason:
-              'authData.anonymous should be removed locally after a '
-              'successful conversion save',
-        );
-      },
-    );
+      expect(response.success, isTrue);
+      final Map<String, dynamic>? cleaned = user.authData;
+      expect(
+        cleaned == null || !cleaned.containsKey('anonymous'),
+        isTrue,
+        reason:
+            'authData.anonymous should be removed locally after a '
+            'successful conversion save',
+      );
+    });
+
+    test('after a successful update(), the local authData no longer contains '
+        'the anonymous entry. update() and save() both run the post-save '
+        'cleanup, so each path needs independent coverage', () async {
+      final ParseUser user = anonymousUserWithObjectId();
+
+      when(
+        client.put(
+          putPath,
+          options: anyNamed('options'),
+          data: anyNamed('data'),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(<String, dynamic>{
+            keyVarUsername: 'alice@example.com',
+            keyVarUpdatedAt: '2026-04-28T12:00:01.000Z',
+            keyVarSessionToken: 'r:newtoken',
+          }),
+        ),
+      );
+
+      user.username = 'alice@example.com';
+      user.password = 'hunter2';
+
+      final ParseResponse response = await user.update();
+
+      expect(response.success, isTrue);
+      final Map<String, dynamic>? cleaned = user.authData;
+      expect(
+        cleaned == null || !cleaned.containsKey('anonymous'),
+        isTrue,
+        reason:
+            'authData.anonymous should be removed locally after a '
+            'successful conversion update',
+      );
+    });
 
     test(
       'the PUT body for an anonymous-conversion save carries '
@@ -184,30 +215,27 @@ void main() {
       },
     );
 
-    test(
-      'on a lazy (no objectId) anonymous user, setting username drops the '
-      'anonymous entry locally without leaving a null marker. unpersisted '
-      'users have nothing to unlink server-side, so no marker is needed',
-      () {
-        final ParseUser user = ParseUser(null, null, null, client: client);
-        user.fromJson(<String, dynamic>{
-          keyVarAuthData: <String, dynamic>{
-            'anonymous': <String, dynamic>{'id': anonymousId},
-          },
-        });
+    test('on a lazy (no objectId) anonymous user, setting username drops the '
+        'anonymous entry locally without leaving a null marker. unpersisted '
+        'users have nothing to unlink server-side, so no marker is needed', () {
+      final ParseUser user = ParseUser(null, null, null, client: client);
+      user.fromJson(<String, dynamic>{
+        keyVarAuthData: <String, dynamic>{
+          'anonymous': <String, dynamic>{'id': anonymousId},
+        },
+      });
 
-        user.username = 'alice@example.com';
+      user.username = 'alice@example.com';
 
-        final Map<String, dynamic>? cleaned = user.authData;
-        expect(
-          cleaned == null || !cleaned.containsKey('anonymous'),
-          isTrue,
-          reason:
-              'unpersisted anonymous user should drop the entry without '
-              'leaving a null marker',
-        );
-      },
-    );
+      final Map<String, dynamic>? cleaned = user.authData;
+      expect(
+        cleaned == null || !cleaned.containsKey('anonymous'),
+        isTrue,
+        reason:
+            'unpersisted anonymous user should drop the entry without '
+            'leaving a null marker',
+      );
+    });
   });
 
   group('ParseUser save() regression — non-anonymous users', () {
