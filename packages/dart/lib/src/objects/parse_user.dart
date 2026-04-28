@@ -541,7 +541,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
     } else {
       authData[_keyAuthAnonymous] = null;
     }
-    _unsavedChanges[keyVarAuthData] = authData;
+    if (authData.isEmpty) {
+      _unsavedChanges.remove(keyVarAuthData);
+    } else {
+      _unsavedChanges[keyVarAuthData] = authData;
+    }
   }
 
   void _cleanUpAuthData() {
