@@ -516,7 +516,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   /// Adopt a new sessionToken from a save/update response. Parse Server
   /// mints a fresh session when `password` is set on an existing _User
-  /// (revokeSessionOnPasswordReset, default true since 9.x); the prior
+  /// (revokeSessionOnPasswordReset, current default in 9.x); the prior
   /// session is destroyed server-side, so the global session must be
   /// updated or subsequent requests will fail with invalidSessionToken.
   /// Mirrors iOS PFUser's _mergeFromServerWithResult.
