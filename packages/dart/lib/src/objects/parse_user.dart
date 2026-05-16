@@ -220,15 +220,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
       final Uri url = getSanitisedUri(_client, path);
       final String body = json.encode(toJson(forApiRQ: true));
       _saveChanges();
-      final String? installationId = await _getInstallationId();
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
         options: ParseNetworkOptions(
-          headers: <String, String>{
-            keyHeaderRevocableSession: '1',
-            if (installationId != null && !doNotSendInstallationID)
-              keyHeaderInstallationId: installationId,
-          },
+          headers: <String, String>{keyHeaderRevocableSession: '1'},
+          sendInstallationId: !doNotSendInstallationID,
         ),
         data: body,
       );
@@ -259,18 +255,14 @@ class ParseUser extends ParseObject implements ParseCloneable {
         keyVarUsername: username!,
         keyVarPassword: password!,
       };
-      final String? installationId = await _getInstallationId();
       final Uri url = getSanitisedUri(_client, keyEndPointLogin);
       _saveChanges();
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
         data: jsonEncode(queryParams),
         options: ParseNetworkOptions(
-          headers: <String, String>{
-            keyHeaderRevocableSession: '1',
-            if (installationId != null && !doNotSendInstallationID)
-              keyHeaderInstallationId: installationId,
-          },
+          headers: <String, String>{keyHeaderRevocableSession: '1'},
+          sendInstallationId: !doNotSendInstallationID,
         ),
       );
 
@@ -302,16 +294,12 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, keyEndPointUsers);
       const Uuid uuid = Uuid();
-      final String? installationId = await _getInstallationId();
 
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
         options: ParseNetworkOptions(
-          headers: <String, String>{
-            keyHeaderRevocableSession: '1',
-            if (installationId != null && !doNotSendInstallationID)
-              keyHeaderInstallationId: installationId,
-          },
+          headers: <String, String>{keyHeaderRevocableSession: '1'},
+          sendInstallationId: !doNotSendInstallationID,
         ),
         data: jsonEncode(<String, dynamic>{
           'authData': <String, dynamic>{
@@ -366,17 +354,13 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }) async {
     try {
       final Uri url = getSanitisedUri(_client, keyEndPointUsers);
-      final String? installationId = await _getInstallationId();
       final Map<String, dynamic> body = toJson(forApiRQ: true);
       body['authData'] = <String, dynamic>{provider: authData};
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
         options: ParseNetworkOptions(
-          headers: <String, String>{
-            keyHeaderRevocableSession: '1',
-            if (installationId != null && !doNotSendInstallationID)
-              keyHeaderInstallationId: installationId,
-          },
+          headers: <String, String>{keyHeaderRevocableSession: '1'},
+          sendInstallationId: !doNotSendInstallationID,
         ),
         data: jsonEncode(body),
       );
@@ -696,10 +680,4 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   static ParseUser _getEmptyUser() =>
       ParseCoreData.instance.createParseUser(null, null, null);
-
-  static Future<String?> _getInstallationId() async {
-    final ParseInstallation parseInstallation =
-        await ParseInstallation.currentInstallation();
-    return parseInstallation.installationId;
-  }
 }
