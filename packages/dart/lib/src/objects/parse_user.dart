@@ -503,8 +503,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
     if (objectId == null) {
       return await signUp();
     } else {
+      final String? tokenBefore = sessionToken;
       final ParseResponse response = await super.save();
       if (response.success) {
+        _adoptResponseSessionTokenIfChanged(tokenBefore);
         _cleanUpAuthData();
         await _onResponseSuccess();
       }
@@ -517,13 +519,28 @@ class ParseUser extends ParseObject implements ParseCloneable {
     if (objectId == null) {
       return await signUp();
     } else {
+      final String? tokenBefore = sessionToken;
       final ParseResponse response = await super.update();
       if (response.success) {
+        _adoptResponseSessionTokenIfChanged(tokenBefore);
         _cleanUpAuthData();
         await _onResponseSuccess();
       }
       return response;
     }
+  }
+
+  /// Adopt a new sessionToken from a save/update response. Parse Server
+  /// mints a fresh session when `password` is set on an existing _User
+  /// (revokeSessionOnPasswordReset, default true since 9.x); the prior
+  /// session is destroyed server-side, so the global session must be
+  /// updated or subsequent requests will fail with invalidSessionToken.
+  /// Mirrors iOS PFUser's _mergeFromServerWithResult.
+  void _adoptResponseSessionTokenIfChanged(String? tokenBefore) {
+    final String? tokenAfter = sessionToken;
+    if (tokenAfter == null || tokenAfter.isEmpty) return;
+    if (tokenAfter == tokenBefore) return;
+    ParseCoreData().setSessionId(tokenAfter);
   }
 
   Future<void> _onResponseSuccess() async {
