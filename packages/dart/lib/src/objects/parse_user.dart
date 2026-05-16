@@ -315,7 +315,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
         ),
         data: jsonEncode(<String, dynamic>{
           'authData': <String, dynamic>{
-            'anonymous': <String, dynamic>{'id': uuid.v4()},
+            _keyAuthAnonymous: <String, dynamic>{'id': uuid.v4()},
           },
         }),
       );
