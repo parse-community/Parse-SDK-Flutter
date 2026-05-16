@@ -209,4 +209,14 @@ class MockParseClient extends _i1.Mock implements _i2.ParseClient {
             ),
           )
           as _i3.Future<_i2.ParseNetworkByteResponse>);
+
+  @override
+  _i3.Future<Map<String, String>?> buildHeaders(
+    _i2.ParseNetworkOptions? options,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#buildHeaders, [options]),
+            returnValue: _i3.Future<Map<String, String>?>.value(),
+          )
+          as _i3.Future<Map<String, String>?>);
 }
