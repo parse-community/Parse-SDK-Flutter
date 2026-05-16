@@ -47,12 +47,13 @@ class ParseDioClient extends ParseClient {
     ParseNetworkOptions? options,
     ProgressCallback? onReceiveProgress,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       operation: () async {
         try {
           final dio.Response<String> dioResponse = await _client.get<String>(
             path,
-            options: _Options(headers: options?.headers),
+            options: _Options(headers: headers),
           );
 
           return ParseNetworkResponse(
@@ -76,6 +77,7 @@ class ParseDioClient extends ParseClient {
     ProgressCallback? onReceiveProgress,
     dynamic cancelToken,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       operation: () async {
         try {
@@ -85,7 +87,7 @@ class ParseDioClient extends ParseClient {
                 cancelToken: cancelToken,
                 onReceiveProgress: onReceiveProgress,
                 options: _Options(
-                  headers: options?.headers,
+                  headers: headers,
                   responseType: dio.ResponseType.bytes,
                 ),
               );
@@ -116,6 +118,7 @@ class ParseDioClient extends ParseClient {
     String? data,
     ParseNetworkOptions? options,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       isWriteOperation: true,
       operation: () async {
@@ -123,7 +126,7 @@ class ParseDioClient extends ParseClient {
           final dio.Response<String> dioResponse = await _client.put<String>(
             path,
             data: data,
-            options: _Options(headers: options?.headers),
+            options: _Options(headers: headers),
           );
 
           return ParseNetworkResponse(
@@ -146,6 +149,7 @@ class ParseDioClient extends ParseClient {
     String? data,
     ParseNetworkOptions? options,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       isWriteOperation: true,
       operation: () async {
@@ -153,7 +157,7 @@ class ParseDioClient extends ParseClient {
           final dio.Response<String> dioResponse = await _client.post<String>(
             path,
             data: data,
-            options: _Options(headers: options?.headers),
+            options: _Options(headers: headers),
           );
 
           return ParseNetworkResponse(
@@ -178,6 +182,7 @@ class ParseDioClient extends ParseClient {
     ProgressCallback? onSendProgress,
     dynamic cancelToken,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       isWriteOperation: true,
       operation: () async {
@@ -186,7 +191,7 @@ class ParseDioClient extends ParseClient {
             path,
             data: data,
             cancelToken: cancelToken,
-            options: _Options(headers: options?.headers),
+            options: _Options(headers: headers),
             onSendProgress: onSendProgress,
           );
 
@@ -235,12 +240,13 @@ class ParseDioClient extends ParseClient {
     String path, {
     ParseNetworkOptions? options,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       operation: () async {
         try {
           final dio.Response<String> dioResponse = await _client.delete<String>(
             path,
-            options: _Options(headers: options?.headers),
+            options: _Options(headers: headers),
           );
 
           return ParseNetworkResponse(

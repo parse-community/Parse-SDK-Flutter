@@ -4,6 +4,27 @@ import 'package:test/test.dart';
 
 import '../../test_utils.dart';
 
+/// Records the headers of every request made through it without performing
+/// the actual HTTP call. Returns an empty 200 OK so callers can `await`.
+class _HeaderCapturingAdapter implements HttpClientAdapter {
+  final List<Map<String, dynamic>> requests = [];
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<List<int>>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    requests.add(Map<String, dynamic>.from(options.headers));
+    return ResponseBody.fromString('{}', 200, headers: <String, List<String>>{
+      Headers.contentTypeHeader: <String>[Headers.jsonContentType],
+    });
+  }
+
+  @override
+  void close({bool force = false}) {}
+}
+
 void main() {
   setUpAll(() async {
     await initializeParse();
@@ -56,5 +77,34 @@ void main() {
       // assert
       expect(parseDioClient.additionalHeaders, isNull);
     });
+  });
+
+  group('ParseDioClient request pipeline integration', () {
+    late ParseDioClient parseDioClient;
+    late _HeaderCapturingAdapter adapter;
+
+    setUp(() async {
+      parseDioClient = ParseDioClient();
+      adapter = _HeaderCapturingAdapter();
+      parseDioClient.client.httpClientAdapter = adapter;
+    });
+
+    test(
+      'headers returned by buildHeaders reach the outgoing request. This is '
+      'the wiring check between the inherited helper (covered in detail by '
+      'parse_client_test.dart) and dio\'s request pipeline — without it, a '
+      'refactor that bypassed buildHeaders would silently drop install IDs '
+      'on every request',
+      () async {
+        await parseDioClient.put('$serverUrl/classes/_User/abc', data: '{}');
+
+        expect(adapter.requests, hasLength(1));
+        expect(
+          adapter.requests.first[keyHeaderInstallationId],
+          isNotEmpty,
+          reason: 'install ID added by buildHeaders must reach the wire',
+        );
+      },
+    );
   });
 }
