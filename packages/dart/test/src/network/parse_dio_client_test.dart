@@ -16,9 +16,13 @@ class _HeaderCapturingAdapter implements HttpClientAdapter {
     Future<void>? cancelFuture,
   ) async {
     requests.add(Map<String, dynamic>.from(options.headers));
-    return ResponseBody.fromString('{}', 200, headers: <String, List<String>>{
-      Headers.contentTypeHeader: <String>[Headers.jsonContentType],
-    });
+    return ResponseBody.fromString(
+      '{}',
+      200,
+      headers: <String, List<String>>{
+        Headers.contentTypeHeader: <String>[Headers.jsonContentType],
+      },
+    );
   }
 
   @override
@@ -89,22 +93,19 @@ void main() {
       parseDioClient.client.httpClientAdapter = adapter;
     });
 
-    test(
-      'headers returned by buildHeaders reach the outgoing request. This is '
-      'the wiring check between the inherited helper (covered in detail by '
-      'parse_client_test.dart) and dio\'s request pipeline — without it, a '
-      'refactor that bypassed buildHeaders would silently drop install IDs '
-      'on every request',
-      () async {
-        await parseDioClient.put('$serverUrl/classes/_User/abc', data: '{}');
+    test('headers returned by buildHeaders reach the outgoing request. This is '
+        'the wiring check between the inherited helper (covered in detail by '
+        'parse_client_test.dart) and dio\'s request pipeline — without it, a '
+        'refactor that bypassed buildHeaders would silently drop install IDs '
+        'on every request', () async {
+      await parseDioClient.put('$serverUrl/classes/_User/abc', data: '{}');
 
-        expect(adapter.requests, hasLength(1));
-        expect(
-          adapter.requests.first[keyHeaderInstallationId],
-          isNotEmpty,
-          reason: 'install ID added by buildHeaders must reach the wire',
-        );
-      },
-    );
+      expect(adapter.requests, hasLength(1));
+      expect(
+        adapter.requests.first[keyHeaderInstallationId],
+        isNotEmpty,
+        reason: 'install ID added by buildHeaders must reach the wire',
+      );
+    });
   });
 }
