@@ -14,6 +14,7 @@ void main() {
 
   group('ParseUser save()/update() — sessionToken adoption from response', () {
     late MockParseClient client;
+    String? previousSessionId;
 
     const String userObjectId = 'sess123';
     final String putPath = Uri.parse(
@@ -22,6 +23,11 @@ void main() {
 
     setUp(() {
       client = MockParseClient();
+      previousSessionId = ParseCoreData().sessionId;
+    });
+
+    tearDown(() {
+      ParseCoreData().sessionId = previousSessionId;
     });
 
     test(
