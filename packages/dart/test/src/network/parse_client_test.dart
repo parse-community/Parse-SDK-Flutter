@@ -69,41 +69,35 @@ void main() {
       client = _StubParseClient();
     });
 
-    test(
-      'attaches X-Parse-Installation-Id by default. Matches iOS '
-      'PFURLSessionCommandRunner behaviour — every request carries the '
-      'install ID so parse-server can bind created _Session rows to the '
-      'right installation and so destroyDuplicatedSessions can clean up '
-      'prior sessions on the same install during login',
-      () async {
-        final Map<String, String>? headers = await client.exposedBuildHeaders(
-          null,
-        );
+    test('attaches X-Parse-Installation-Id by default. Matches iOS '
+        'PFURLSessionCommandRunner behaviour — every request carries the '
+        'install ID so parse-server can bind created _Session rows to the '
+        'right installation and so destroyDuplicatedSessions can clean up '
+        'prior sessions on the same install during login', () async {
+      final Map<String, String>? headers = await client.exposedBuildHeaders(
+        null,
+      );
 
-        expect(headers, isNotNull);
-        expect(headers![keyHeaderInstallationId], isNotEmpty);
-      },
-    );
+      expect(headers, isNotNull);
+      expect(headers![keyHeaderInstallationId], isNotEmpty);
+    });
 
-    test(
-      'omits X-Parse-Installation-Id when caller passes '
-      'sendInstallationId: false. The opt-out is forwarded by methods such '
-      'as ParseUser.signUp(doNotSendInstallationID: true) for callers that '
-      'cannot allow-list the header on their parse-server',
-      () async {
-        final Map<String, String>? headers = await client.exposedBuildHeaders(
-          ParseNetworkOptions(sendInstallationId: false),
-        );
+    test('omits X-Parse-Installation-Id when caller passes '
+        'sendInstallationId: false. The opt-out is forwarded by methods such '
+        'as ParseUser.signUp(doNotSendInstallationID: true) for callers that '
+        'cannot allow-list the header on their parse-server', () async {
+      final Map<String, String>? headers = await client.exposedBuildHeaders(
+        ParseNetworkOptions(sendInstallationId: false),
+      );
 
-        expect(
-          headers?[keyHeaderInstallationId],
-          isNull,
-          reason:
-              'sendInstallationId=false must suppress the header even when '
-              'an install ID is available',
-        );
-      },
-    );
+      expect(
+        headers?[keyHeaderInstallationId],
+        isNull,
+        reason:
+            'sendInstallationId=false must suppress the header even when '
+            'an install ID is available',
+      );
+    });
 
     test(
       'preserves a caller-supplied X-Parse-Installation-Id rather than '
@@ -120,20 +114,15 @@ void main() {
       },
     );
 
-    test(
-      'merges caller-supplied headers with the install ID. Custom headers '
-      'and the auto-attached install ID must coexist — neither side '
-      'overrides the other',
-      () async {
-        final Map<String, String>? headers = await client.exposedBuildHeaders(
-          ParseNetworkOptions(
-            headers: <String, String>{'X-Custom': 'value'},
-          ),
-        );
+    test('merges caller-supplied headers with the install ID. Custom headers '
+        'and the auto-attached install ID must coexist — neither side '
+        'overrides the other', () async {
+      final Map<String, String>? headers = await client.exposedBuildHeaders(
+        ParseNetworkOptions(headers: <String, String>{'X-Custom': 'value'}),
+      );
 
-        expect(headers!['X-Custom'], equals('value'));
-        expect(headers[keyHeaderInstallationId], isNotEmpty);
-      },
-    );
+      expect(headers!['X-Custom'], equals('value'));
+      expect(headers[keyHeaderInstallationId], isNotEmpty);
+    });
   });
 }
