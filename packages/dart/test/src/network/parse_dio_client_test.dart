@@ -107,5 +107,63 @@ void main() {
         reason: 'install ID added by buildHeaders must reach the wire',
       );
     });
+
+    test('get() attaches X-Parse-Installation-Id', () async {
+      await parseDioClient.get('$serverUrl/classes/Item/abc');
+
+      expect(adapter.requests, hasLength(1));
+      expect(adapter.requests.first[keyHeaderInstallationId], isNotEmpty);
+    });
+
+    test('getBytes() attaches X-Parse-Installation-Id', () async {
+      await parseDioClient.getBytes('$serverUrl/files/abc.bin');
+
+      expect(adapter.requests, hasLength(1));
+      expect(adapter.requests.first[keyHeaderInstallationId], isNotEmpty);
+    });
+
+    test('post() attaches X-Parse-Installation-Id', () async {
+      await parseDioClient.post('$serverUrl/classes/Item', data: '{"k":"v"}');
+
+      expect(adapter.requests, hasLength(1));
+      expect(adapter.requests.first[keyHeaderInstallationId], isNotEmpty);
+    });
+
+    test('postBytes() attaches X-Parse-Installation-Id', () async {
+      await parseDioClient.postBytes(
+        '$serverUrl/files/abc.bin',
+        data: Stream<List<int>>.fromIterable(<List<int>>[
+          <int>[1, 2, 3],
+        ]),
+      );
+
+      expect(adapter.requests, hasLength(1));
+      expect(adapter.requests.first[keyHeaderInstallationId], isNotEmpty);
+    });
+
+    test('delete() attaches X-Parse-Installation-Id', () async {
+      await parseDioClient.delete('$serverUrl/classes/Item/abc');
+
+      expect(adapter.requests, hasLength(1));
+      expect(adapter.requests.first[keyHeaderInstallationId], isNotEmpty);
+    });
+
+    test('caller can suppress X-Parse-Installation-Id per request. '
+        'sendInstallationId: false matches ParseUser.signUp(doNotSendInstallationID: true) '
+        'and must propagate through every verb', () async {
+      await parseDioClient.post(
+        '$serverUrl/classes/Item',
+        data: '{"k":"v"}',
+        options: ParseNetworkOptions(sendInstallationId: false),
+      );
+
+      expect(adapter.requests, hasLength(1));
+      expect(
+        adapter.requests.first[keyHeaderInstallationId],
+        isNull,
+        reason:
+            'sendInstallationId: false must suppress the header on the wire',
+      );
+    });
   });
 }
