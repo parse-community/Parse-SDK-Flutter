@@ -84,8 +84,26 @@ class ParseInstallation extends ParseObject {
     //Locale
     set<String?>(keyLocaleIdentifier, ParseCoreData().locale);
 
-    //Timezone
-    set<String>(keyTimeZone, _getNameLocalTimeZone());
+    //Timezone — don't overwrite a value the caller already set. The pure-Dart
+    //offset-match here picks the first IANA zone with the local offset, which
+    //is alphabetical (e.g. "America/Anguilla" for UTC-4 instead of
+    //"America/New_York"). Apps that need a real IANA name (via a Flutter
+    //plugin like flutter_timezone, or a Kotlin/Swift channel) should set
+    //`timeZone` on the installation before calling save(); the SDK will only
+    //fill it in when nothing is set.
+    //
+    //First-launch caveat: _createInstallation() runs this method and then
+    //persists the full installation JSON to the local store before any
+    //caller code runs. That means the offset-matched fallback IS written to
+    //disk on first launch. If the app crashes before the caller's
+    //set+save() runs, the next launch reads the fallback from storage, the
+    //gate sees it as "existing", and the SDK won't auto-correct. The
+    //caller's set+save self-heals as soon as it runs. Apps that resolve a
+    //real IANA name should do so early in startup.
+    final String? existingTimeZone = super.get<String>(keyTimeZone);
+    if (existingTimeZone == null || existingTimeZone.isEmpty) {
+      set<String>(keyTimeZone, _getNameLocalTimeZone());
+    }
 
     //App info
     set<String?>(keyAppName, ParseCoreData().appName);
