@@ -131,14 +131,30 @@ class ParseInstallation extends ParseObject {
     }
 
     // Fall back to a location whose *current* zone matches the local
-    // offset. The previous implementation scanned every historical zone
+    // offset, but only if exactly one IANA zone matches. Many zones share
+    // an offset at any instant (e.g. America/Los_Angeles, America/Vancouver,
+    // America/Tijuana), so returning the first match would arbitrarily pick
+    // a wrong location. Returning the OS string instead is non-IANA but at
+    // least not a fabricated guess.
+    //
+    // The previous implementation also scanned every historical zone
     // (LMT, pre-DST, etc.) and compared a Duration against an int offset,
     // which on timezone <0.11.0 is always false and produced "".
     final int localOffsetMs = now.timeZoneOffset.inMilliseconds;
+    String? offsetMatch;
     for (final location in tz.timeZoneDatabase.locations.values) {
-      if (_zoneOffsetMs(location.currentTimeZone.offset) == localOffsetMs) {
-        return location.name;
+      if (_zoneOffsetMs(location.currentTimeZone.offset) != localOffsetMs) {
+        continue;
       }
+      if (offsetMatch != null) {
+        // Ambiguous: multiple zones share this offset. Don't guess.
+        offsetMatch = null;
+        break;
+      }
+      offsetMatch = location.name;
+    }
+    if (offsetMatch != null) {
+      return offsetMatch;
     }
 
     // Last resort: return whatever the OS gave us rather than "".
