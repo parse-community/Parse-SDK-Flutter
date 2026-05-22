@@ -16,6 +16,16 @@ Future<void> _initParse() => Parse().initialize(
 void main() {
   setUpAll(() async {
     await _initParse();
+    // Initialize the timezone database once for the whole suite; it loads a
+    // large dataset and only needs to happen once per process.
+    tz.initializeTimeZones();
+  });
+
+  // Each test re-derives the installation's timeZone from `DateTime.now()`, so
+  // it must not see a stale installation persisted by a previous test (which
+  // could differ across a DST boundary).
+  setUp(() async {
+    await ParseCoreData().getStore().remove(keyParseStoreInstallation);
   });
 
   test('installation has a timeZone field', () async {
@@ -40,12 +50,12 @@ void main() {
 
   test('installation timeZone is an IANA name or the OS-reported name',
       () async {
-    tz.initializeTimeZones();
+    final now = DateTime.now();
     final installation = await ParseInstallation.currentInstallation();
     final tzValue = installation.get<String>(keyTimeZone)!;
 
     final bool isIana = tz.timeZoneDatabase.locations.containsKey(tzValue);
-    final bool matchesSystem = tzValue == DateTime.now().timeZoneName;
+    final bool matchesSystem = tzValue == now.timeZoneName;
 
     expect(
       isIana || matchesSystem,
@@ -58,7 +68,8 @@ void main() {
 
   test('when timeZone is matched via offset, its offset equals the local offset',
       () async {
-    tz.initializeTimeZones();
+    // Capture once so a DST transition between reads can't make this flake.
+    final now = DateTime.now();
     final installation = await ParseInstallation.currentInstallation();
     final tzValue = installation.get<String>(keyTimeZone)!;
 
@@ -73,6 +84,6 @@ void main() {
         ? zoneOffset.inMilliseconds
         : zoneOffset as int;
 
-    expect(zoneOffsetMs, equals(DateTime.now().timeZoneOffset.inMilliseconds));
+    expect(zoneOffsetMs, equals(now.timeZoneOffset.inMilliseconds));
   });
 }

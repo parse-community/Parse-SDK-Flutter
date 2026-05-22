@@ -22,6 +22,7 @@ class ParseInstallation extends ParseObject {
     keyParseVersion,
   ];
   static String? _currentInstallationId;
+  static bool _timeZonesInitialized = false;
 
   //Getters/setters
   Map<String, dynamic> get acl => super.get<Map<String, dynamic>>(
@@ -94,7 +95,11 @@ class ParseInstallation extends ParseObject {
   }
 
   String _getNameLocalTimeZone() {
-    tz.initializeTimeZones();
+    // The timezone database is large; initialize it at most once per process.
+    if (!_timeZonesInitialized) {
+      tz.initializeTimeZones();
+      _timeZonesInitialized = true;
+    }
 
     // Capture once to avoid a DST-transition race between the two reads.
     final DateTime now = DateTime.now();
@@ -113,11 +118,7 @@ class ParseInstallation extends ParseObject {
     // which on timezone <0.11.0 is always false and produced "".
     final int localOffsetMs = now.timeZoneOffset.inMilliseconds;
     for (final location in tz.timeZoneDatabase.locations.values) {
-      final dynamic zoneOffset = location.currentTimeZone.offset;
-      final int zoneOffsetMs = zoneOffset is Duration
-          ? zoneOffset.inMilliseconds
-          : zoneOffset as int;
-      if (zoneOffsetMs == localOffsetMs) {
+      if (_zoneOffsetMs(location.currentTimeZone.offset) == localOffsetMs) {
         return location.name;
       }
     }
@@ -126,6 +127,14 @@ class ParseInstallation extends ParseObject {
     // Note: on Windows/Web this may be a non-IANA name (e.g.
     // "Pacific Standard Time" or "EDT"), but it's still better than "".
     return systemName;
+  }
+
+  // The `timezone` package returns `TimeZone.offset` as `int` (milliseconds)
+  // on <0.11.0 and as `Duration` on >=0.11.0. Normalize to milliseconds so
+  // the same comparison works across the full supported version range.
+  static int _zoneOffsetMs(dynamic offset) {
+    if (offset is Duration) return offset.inMilliseconds;
+    return offset as int;
   }
 
   @override
