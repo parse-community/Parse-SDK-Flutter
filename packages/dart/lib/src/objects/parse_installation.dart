@@ -95,20 +95,37 @@ class ParseInstallation extends ParseObject {
 
   String _getNameLocalTimeZone() {
     tz.initializeTimeZones();
-    var locations = tz.timeZoneDatabase.locations;
 
-    Duration offset = DateTime.now().timeZoneOffset;
-    String name = "";
+    // Capture once to avoid a DST-transition race between the two reads.
+    final DateTime now = DateTime.now();
 
-    locations.forEach((key, value) {
-      for (var element in value.zones) {
-        if (element.offset == offset) {
-          name = value.name;
-          break;
-        }
+    // Prefer the OS-reported zone name when it's a valid IANA location
+    // (e.g. "America/New_York" on macOS/Linux/iOS/Android). Avoids the
+    // ambiguity of matching by offset, where many zones share an offset.
+    final String systemName = now.timeZoneName;
+    if (tz.timeZoneDatabase.locations.containsKey(systemName)) {
+      return systemName;
+    }
+
+    // Fall back to a location whose *current* zone matches the local
+    // offset. The previous implementation scanned every historical zone
+    // (LMT, pre-DST, etc.) and compared a Duration against an int offset,
+    // which on timezone <0.11.0 is always false and produced "".
+    final int localOffsetMs = now.timeZoneOffset.inMilliseconds;
+    for (final location in tz.timeZoneDatabase.locations.values) {
+      final dynamic zoneOffset = location.currentTimeZone.offset;
+      final int zoneOffsetMs = zoneOffset is Duration
+          ? zoneOffset.inMilliseconds
+          : zoneOffset as int;
+      if (zoneOffsetMs == localOffsetMs) {
+        return location.name;
       }
-    });
-    return name;
+    }
+
+    // Last resort: return whatever the OS gave us rather than "".
+    // Note: on Windows/Web this may be a non-IANA name (e.g.
+    // "Pacific Standard Time" or "EDT"), but it's still better than "".
+    return systemName;
   }
 
   @override
