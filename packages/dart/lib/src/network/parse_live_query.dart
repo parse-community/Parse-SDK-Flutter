@@ -210,8 +210,19 @@ class LiveQueryClient {
     return parse_web_socket.WebSocket.connecting;
   }
 
+  /// Removes specific subscriptions from the map by requestId.
+/// Use this instead of clearAllSubscriptions() when other subscriptions
+/// (banners, notifications) must stay alive.
+void removeSubscriptions(List<Subscription> subs) {
+  for (final sub in subs) {
+    sub._enabled = false;
+    _requestSubscription.remove(sub.requestId);
+  }
+}
+
   /// Removes all subscriptions from the internal map.
 /// Call before disconnect when leaving a live room.
+  
 void clearAllSubscriptions() {
   _requestSubscription.values.toList().forEach((sub) {
     sub._enabled = false;
