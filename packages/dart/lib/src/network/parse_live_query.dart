@@ -239,6 +239,11 @@ static Future<void> resetInstance() async {
     try {
       await existing.disconnect(userInitialized: false);
     } catch (_) {}
+    // Close the stream controller so asBroadcastStream() 
+    // doesn't throw on the next _internal() construction
+    try {
+      await existing._clientEventStreamController.close();
+    } catch (_) {}
   }
   _instance = null;
   _requestIdCount = 1;
