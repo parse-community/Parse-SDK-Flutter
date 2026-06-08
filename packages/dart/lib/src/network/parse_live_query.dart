@@ -210,6 +210,28 @@ class LiveQueryClient {
     return parse_web_socket.WebSocket.connecting;
   }
 
+  /// Removes all subscriptions from the internal map.
+/// Call before disconnect when leaving a live room.
+void clearAllSubscriptions() {
+  _requestSubscription.values.toList().forEach((sub) {
+    sub._enabled = false;
+  });
+  _requestSubscription.clear();
+}
+  /// Fully resets the singleton — clears subscriptions, closes socket,
+/// nulls the instance so the next LiveQueryClient() call starts fresh.
+/// Use userInitialized: false so reconnect still works after reset.
+static Future<void> resetInstance() async {
+  final existing = _instance;
+  if (existing != null) {
+    existing.clearAllSubscriptions();
+    try {
+      await existing.disconnect(userInitialized: false);
+    } catch (_) {}
+  }
+  _instance = null;
+  _requestIdCount = 1;
+}
   Future<dynamic> disconnect({bool userInitialized = false}) async {
     parse_web_socket.WebSocket? webSocket = _webSocket;
     if (webSocket != null &&
@@ -262,21 +284,21 @@ class LiveQueryClient {
   }
 
   void unSubscribe<T extends ParseObject>(Subscription<T> subscription) {
-    //Mount message for Unsubscribe
-    final Map<String, dynamic> unsubscribeMessage = <String, dynamic>{
-      'op': 'unsubscribe',
-      'requestId': subscription.requestId,
-    };
-    WebSocketChannel? channel = _channel;
-    if (channel != null) {
-      if (_debug) {
-        print('$_printConstLiveQuery: UnsubscribeMessage: $unsubscribeMessage');
-      }
-      channel.sink.add(jsonEncode(unsubscribeMessage));
-      subscription._enabled = false;
-      _requestSubscription.remove(subscription.requestId);
+  final Map<String, dynamic> unsubscribeMessage = <String, dynamic>{
+    'op': 'unsubscribe',
+    'requestId': subscription.requestId,
+  };
+  WebSocketChannel? channel = _channel;
+  if (channel != null) {
+    if (_debug) {
+      print('$_printConstLiveQuery: UnsubscribeMessage: $unsubscribeMessage');
     }
+    channel.sink.add(jsonEncode(unsubscribeMessage));
   }
+  // Always remove from map regardless of socket state
+  subscription._enabled = false;
+  _requestSubscription.remove(subscription.requestId);
+}
 
   static int _requestIdCount = 1;
 
