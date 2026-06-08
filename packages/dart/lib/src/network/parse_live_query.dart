@@ -201,6 +201,11 @@ class LiveQueryClient {
     await _connect(userInitialized: userInitialized);
     await _connectLiveQuery();
   }
+  void _safeAddEvent(LiveQueryClientEvent event) {
+  if (!_clientEventStreamController.isClosed) {
+    _clientEventStreamController.sink.add(event);
+  }
+}
 
   int readyState() {
     parse_web_socket.WebSocket? webSocket = _webSocket;
@@ -234,19 +239,23 @@ void clearAllSubscriptions() {
 /// Use userInitialized: false so reconnect still works after reset.
 static Future<void> resetInstance() async {
   final existing = _instance;
+  _instance = null;      // ← null first so new LiveQuery() calls don't
+  _requestIdCount = 1;   //   reuse the dying instance
+
   if (existing != null) {
     existing.clearAllSubscriptions();
     try {
       await existing.disconnect(userInitialized: false);
     } catch (_) {}
-    // Close the stream controller so asBroadcastStream() 
-    // doesn't throw on the next _internal() construction
+
+    // Wait for any in-flight socket callbacks (onDone etc.) to fire
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    // Close the stream controller last
     try {
       await existing._clientEventStreamController.close();
     } catch (_) {}
   }
-  _instance = null;
-  _requestIdCount = 1;
 }
   Future<dynamic> disconnect({bool userInitialized = false}) async {
     parse_web_socket.WebSocket? webSocket = _webSocket;
@@ -271,9 +280,7 @@ static Future<void> resetInstance() async {
     });
     _connecting = false;
     if (userInitialized) {
-      _clientEventStreamController.sink.add(
-        LiveQueryClientEvent.userDisconnected,
-      );
+      _safeAddEvent(LiveQueryClientEvent.userDisconnected);
     }
   }
 
@@ -354,9 +361,8 @@ static Future<void> resetInstance() async {
           chanelStream?.sink.add(message);
         },
         onDone: () {
-          _clientEventStreamController.sink.add(
-            LiveQueryClientEvent.disconnected,
-          );
+         _safeAddEvent(LiveQueryClientEvent.disconnected);
+
           if (_debug) {
             print('$_printConstLiveQuery: Done');
           }
@@ -382,7 +388,7 @@ static Future<void> resetInstance() async {
       );
     } on Exception catch (e) {
       _connecting = false;
-      _clientEventStreamController.sink.add(LiveQueryClientEvent.disconnected);
+      _safeAddEvent(LiveQueryClientEvent.disconnected);
       if (_debug) {
         print('$_printConstLiveQuery: Error: ${e.toString()}');
       }
@@ -482,7 +488,7 @@ static Future<void> resetInstance() async {
       _requestSubscription.values.toList().forEach((Subscription subscription) {
         _subscribeLiveQuery(subscription);
       });
-      _clientEventStreamController.sink.add(LiveQueryClientEvent.connected);
+_safeAddEvent(LiveQueryClientEvent.connected);
       return;
     }
     if (actionData.containsKey('requestId')) {
