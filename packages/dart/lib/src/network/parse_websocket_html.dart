@@ -1,15 +1,11 @@
 /// If you change this file, you should apply the same changes to the 'parse_websocket_io.dart' file
 library;
 
-<<<<<<< HEAD
-=======
-// ignore: deprecated_member_use
-import 'dart:html' as html;
->>>>>>> parse-community/master
+
 
 import 'dart:async';
 
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:web_socket_channel/html.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -20,8 +16,7 @@ class WebSocket {
   static const int open = 1;
   static const int closing = 2;
   static const int closed = 3;
-
-  final IO.Socket _webSocket;
+  final io.Socket _webSocket;
 
   static final Map<String, int> _states={
     'closed':3,
@@ -31,9 +26,9 @@ class WebSocket {
   };
   static Future<WebSocket> connect(String liveQueryURL) async {
     Completer<WebSocket> completer= Completer();
-    final IO.Socket webSocket = IO.io(
+    final io.Socket webSocket = io.io(
       liveQueryURL,
-      IO.OptionBuilder().setTransports(['websocket']).enableReconnection().build()
+      io.OptionBuilder().setTransports(['websocket']).enableReconnection().build()
     );
     webSocket.connect();
     webSocket.onConnect((handler){
@@ -53,8 +48,7 @@ class WebSocket {
   }
 
   int get readyState => _states[_webSocket.io.readyState]!;
-
-  Future<IO.Socket> close() async {
+  Future<io.Socket> close() async {
     return _webSocket.disconnect();
   }
 

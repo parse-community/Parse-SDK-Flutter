@@ -19,8 +19,6 @@ class ParseAggregate extends ParseObject {
 
   final String functionName;
 
-  @override
-  late String _path;
 
   Future<ParseResponse> execute(
     Map<String, dynamic> pipeline, {
