@@ -102,7 +102,12 @@ class ParseInstallation extends ParseObject {
 
     locations.forEach((key, value) {
       for (var element in value.zones) {
-        if (element.offset == offset.inMilliseconds) {
+        dynamic eOffset = element.offset;
+        if (eOffset is int && eOffset == offset.inMilliseconds) {
+          name = value.name;
+          break;
+        } else if (eOffset is Duration &&
+            eOffset.inMilliseconds == offset.inMilliseconds) {
           name = value.name;
           break;
         }
