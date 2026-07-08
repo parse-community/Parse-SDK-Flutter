@@ -27,9 +27,7 @@ class ParseResponse {
   ///
   /// You typically don't instantiate this directly — it's created by
   /// internal SDK logic, e.g. through [fromParseNetworkResponse].
-  ParseResponse({
-    this.error,
-  });
+  ParseResponse({this.error});
 
   /// Whether the request was successful.
   ///
@@ -71,7 +69,9 @@ class ParseResponse {
   /// - Decodes JSON data
   /// - Determines `success` based on HTTP status codes
   /// - Populates [results] and [count] if the response contains a list
-  factory ParseResponse.fromParseNetworkResponse(ParseNetworkResponse response) {
+  factory ParseResponse.fromParseNetworkResponse(
+    ParseNetworkResponse response,
+  ) {
     final ParseResponse result = ParseResponse();
     result.statusCode = response.statusCode;
     result.success = response.statusCode >= 200 && response.statusCode < 300;
@@ -88,20 +88,23 @@ class ParseResponse {
             result.results = resultList;
             result.count = resultList.length;
           }
-        }else if(data.containsKey('error')){
-          result.error=ParseError(code:response.statusCode, message:data['error'].toString() );
+        } else if (data.containsKey('error')) {
+          result.error = ParseError(
+            code: response.statusCode,
+            message: data['error'].toString(),
+          );
         }
       } else if (data is List) {
         result.results = data;
         result.count = data.length;
       }
       result.results ??= [data];
-    } catch (e,s) {
-      result.error = ParseError(message: e.toString(),exception: Exception(s));
+    } catch (e, s) {
+      result.error = ParseError(message: e.toString(), exception: Exception(s));
     }
     return result;
   }
-  Map<String,dynamic> get toMap=>{
+  Map<String, dynamic> get toMap => {
     'success': success,
     'statusCode': statusCode,
     // 'result': result,

@@ -1,4 +1,4 @@
-class UrlReplace{
+class UrlReplace {
   String? scheme;
   String? userInfo;
   String? host;
@@ -20,5 +20,4 @@ class UrlReplace{
     this.queryParameters,
     this.fragment,
   });
-
 }

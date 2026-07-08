@@ -17,8 +17,6 @@ Future<void> main() async {
     ..set('Name', 'Ketogenic')
     ..set('Fat', 65);
 
-
-
   var response = await dietPlan.save();
 
   if (response.success) {
@@ -35,5 +33,4 @@ Future<void> main() async {
   });
 
   print('${res.statusCode}, ${res.results}');
-
 }
