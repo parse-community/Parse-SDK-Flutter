@@ -6,15 +6,10 @@ class ParseJobs extends ParseObject {
   /// {https://docs.parseplatform.org/cloudcode/guide/}
   ParseJobs(
     this.functionName, {
-    bool? debug,
-    ParseClient? client,
-    bool? autoSendSessionId,
-  }) : super(
-         functionName,
-         client: client,
-         autoSendSessionId: autoSendSessionId,
-         debug: debug,
-       ) {
+    super.debug,
+    super.client,
+    super.autoSendSessionId,
+  }) : super(functionName) {
     _path = '$keyEndPointJobs$functionName';
   }
 
