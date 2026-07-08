@@ -24,7 +24,6 @@ dependencies:
   # Networking
   dio: ^5.7.0
   http: ^1.2.0
-  socket_io_client: ^3.1.2
   web_socket_channel: ">=2.4.3 <4.0.0"
 
   #Database
