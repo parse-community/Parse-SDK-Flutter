@@ -46,12 +46,12 @@ void main() {
             "user": {
               "__type": "Pointer",
               "className": "_User",
-              "objectId": "cmWCmCAyQQ"
+              "objectId": "cmWCmCAyQQ",
             },
             "createdAt": "2023-02-24T15:39:44.800Z",
             "updatedAt": "2023-02-24T22:28:17.867Z",
             "location": {"__type": "GeoPoint", "latitude": 50, "longitude": 0},
-            "anArray": ["3", "4"]
+            "anArray": ["3", "4"],
           },
           {
             "objectId": "15NCdmBFBw",
@@ -65,7 +65,7 @@ void main() {
             "user": {
               "__type": "Pointer",
               "className": "_User",
-              "objectId": "cmWCmCAyQQ"
+              "objectId": "cmWCmCAyQQ",
             },
             "createdAt": "2023-02-24T15:44:17.781Z",
             "updatedAt": "2023-02-24T22:28:45.446Z",
@@ -74,20 +74,24 @@ void main() {
             "afile": {
               "__type": "File",
               "name": "33b6acb416c0mmer-wallpapers.png",
-              "url": "https://parsefiles.back4app.com/gyBkQBRSapgwfxB/cers.png"
-            }
-          }
-        ]
+              "url": "https://parsefiles.back4app.com/gyBkQBRSapgwfxB/cers.png",
+            },
+          },
+        ],
       };
 
-      when(client.get(
-        getPath,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenAnswer((_) async => ParseNetworkResponse(
-            statusCode: 200,
-            data: jsonEncode(desiredOutput),
-          ));
+      when(
+        client.get(
+          getPath,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(desiredOutput),
+        ),
+      );
 
       // act
       ParseResponse response = await dietPlansObject.getAll();
@@ -101,16 +105,15 @@ void main() {
 
       expect(response.count, equals(2));
 
-      expect(
-        listParseObject.length,
-        equals(desiredOutput["results"]!.length),
-      );
+      expect(listParseObject.length, equals(desiredOutput["results"]!.length));
 
-      verify(client.get(
-        getPath,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).called(1);
+      verify(
+        client.get(
+          getPath,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).called(1);
 
       verifyNoMoreInteractions(client);
     });
@@ -120,11 +123,13 @@ void main() {
 
       final error = Exception('error');
 
-      when(client.get(
-        getPath,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).thenThrow(error);
+      when(
+        client.get(
+          getPath,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenThrow(error);
 
       // act
       ParseResponse response = await dietPlansObject.getAll();
@@ -144,11 +149,13 @@ void main() {
 
       expect(response.error!.code, equals(-1));
 
-      verify(client.get(
-        getPath,
-        options: anyNamed("options"),
-        onReceiveProgress: anyNamed("onReceiveProgress"),
-      )).called(1);
+      verify(
+        client.get(
+          getPath,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).called(1);
 
       verifyNoMoreInteractions(client);
     });

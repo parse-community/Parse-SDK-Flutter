@@ -6,8 +6,7 @@ import '../../../test_utils.dart';
 
 @GenerateMocks([ParseClient])
 void main() {
-  test(
-      'The parseClassName property in the ParseObject class should be equal '
+  test('The parseClassName property in the ParseObject class should be equal '
       'to the name passed via the constructor', () async {
     // arrange
 

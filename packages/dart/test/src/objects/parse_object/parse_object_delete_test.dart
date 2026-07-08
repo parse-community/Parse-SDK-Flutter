@@ -23,8 +23,7 @@ void main() {
       dietPlansObject = ParseObject("Diet_Plans", client: client);
     });
 
-    test(
-        'delete() should delete object form the server and all the object '
+    test('delete() should delete object form the server and all the object '
         'data/state should be the same after the deletion', () async {
       // arrange
       dietPlansObject.objectId = "cmWCmCAyQQ";
@@ -39,9 +38,7 @@ void main() {
 
       final resultFromServer = {};
 
-      when(client.delete(
-        deletePath,
-      )).thenAnswer(
+      when(client.delete(deletePath)).thenAnswer(
         (_) async => ParseNetworkResponse(
           statusCode: 200,
           data: jsonEncode(resultFromServer),
@@ -79,9 +76,7 @@ void main() {
         equals(jsonEncode(dietPlansObjectDataBeforeDeletion)),
       );
 
-      verify(client.delete(
-        deletePath,
-      )).called(1);
+      verify(client.delete(deletePath)).called(1);
 
       verifyNoMoreInteractions(client);
     });
@@ -92,8 +87,9 @@ void main() {
 
       dietPlansObject.set('Fat', 15);
 
-      final dietPlansObjectDataBeforeDeletion =
-          dietPlansObject.toJson(full: true);
+      final dietPlansObjectDataBeforeDeletion = dietPlansObject.toJson(
+        full: true,
+      );
 
       final deletePath = Uri.parse(
         '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
@@ -101,9 +97,7 @@ void main() {
 
       final error = Exception('error');
 
-      when(client.delete(
-        deletePath,
-      )).thenThrow(error);
+      when(client.delete(deletePath)).thenThrow(error);
 
       // act
       final response = await dietPlansObject.delete();
@@ -123,87 +117,82 @@ void main() {
 
       expect(response.error!.code, equals(ParseError.otherCause));
 
-      final dietPlansObjectDataAfterDeletion =
-          dietPlansObject.toJson(full: true);
+      final dietPlansObjectDataAfterDeletion = dietPlansObject.toJson(
+        full: true,
+      );
 
       expect(
         jsonEncode(dietPlansObjectDataAfterDeletion),
         equals(jsonEncode(dietPlansObjectDataBeforeDeletion)),
       );
 
-      verify(client.delete(
-        deletePath,
-      )).called(1);
+      verify(client.delete(deletePath)).called(1);
 
       verifyNoMoreInteractions(client);
     });
 
     test(
-        'delete(id: id) should delete object form the server and all the object '
-        'data/state should be the same after the deletion using id parameter',
-        () async {
-      // arrange
-      const id = "cmWCmCAyQQ";
+      'delete(id: id) should delete object form the server and all the object '
+      'data/state should be the same after the deletion using id parameter',
+      () async {
+        // arrange
+        const id = "cmWCmCAyQQ";
 
-      dietPlansObject.set('Fat', 15);
+        dietPlansObject.set('Fat', 15);
 
-      final dietPlansObjectDataBeforeDeletion = dietPlansObject.toJson();
+        final dietPlansObjectDataBeforeDeletion = dietPlansObject.toJson();
 
-      final deletePath = Uri.parse(
-        '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/$id',
-      ).toString();
+        final deletePath = Uri.parse(
+          '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/$id',
+        ).toString();
 
-      final resultFromServer = {};
+        final resultFromServer = {};
 
-      when(client.delete(
-        deletePath,
-      )).thenAnswer(
-        (_) async => ParseNetworkResponse(
-          statusCode: 200,
-          data: jsonEncode(resultFromServer),
-        ),
-      );
+        when(client.delete(deletePath)).thenAnswer(
+          (_) async => ParseNetworkResponse(
+            statusCode: 200,
+            data: jsonEncode(resultFromServer),
+          ),
+        );
 
-      // act
-      final response = await dietPlansObject.delete(id: id);
+        // act
+        final response = await dietPlansObject.delete(id: id);
 
-      // assert
+        // assert
 
-      expect(response.success, isTrue);
+        expect(response.success, isTrue);
 
-      expect(response.count, equals(1));
+        expect(response.count, equals(1));
 
-      expect(response.error, isNull);
+        expect(response.error, isNull);
 
-      expect(response.results, isNotNull);
+        expect(response.results, isNotNull);
 
-      expect(response.results, isA<List<ParseObject?>>());
+        expect(response.results, isA<List<ParseObject?>>());
 
-      expect(response.results!.isNotEmpty, isTrue);
+        expect(response.results!.isNotEmpty, isTrue);
 
-      final objectFromResponse = response.results!.first;
+        final objectFromResponse = response.results!.first;
 
-      expect(objectFromResponse, isA<ParseObject>());
+        expect(objectFromResponse, isA<ParseObject>());
 
-      expect(identical(objectFromResponse, dietPlansObject), isTrue);
+        expect(identical(objectFromResponse, dietPlansObject), isTrue);
 
-      final dietPlansObjectDataAfterDeletion =
-          (objectFromResponse as ParseObject).toJson();
+        final dietPlansObjectDataAfterDeletion =
+            (objectFromResponse as ParseObject).toJson();
 
-      expect(
-        jsonEncode(dietPlansObjectDataAfterDeletion),
-        equals(jsonEncode(dietPlansObjectDataBeforeDeletion)),
-      );
+        expect(
+          jsonEncode(dietPlansObjectDataAfterDeletion),
+          equals(jsonEncode(dietPlansObjectDataBeforeDeletion)),
+        );
 
-      verify(client.delete(
-        deletePath,
-      )).called(1);
+        verify(client.delete(deletePath)).called(1);
 
-      verifyNoMoreInteractions(client);
-    });
+        verifyNoMoreInteractions(client);
+      },
+    );
 
-    test(
-        'delete() should throw Exception if both objectId and id parameter '
+    test('delete() should throw Exception if both objectId and id parameter '
         'is null or empty', () async {
       // arrange
       dietPlansObject.objectId = null;

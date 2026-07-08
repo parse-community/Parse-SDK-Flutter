@@ -47,8 +47,8 @@ void main() {
           "lastPreformedOperation": {
             "__op": "Increment",
             "amount": 4.0,
-            "estimatedValue": 4
-          }
+            "estimatedValue": 4,
+          },
         },
         "string_val": "some String",
         "double_val": {
@@ -59,44 +59,44 @@ void main() {
           "lastPreformedOperation": {
             "__op": "Increment",
             "amount": 0.5,
-            "estimatedValue": 0.5
-          }
+            "estimatedValue": 0.5,
+          },
         },
         "array_1_val": {
           "className": "ParseArray",
           "estimatedArray": [1, 2, 3, 3],
           "savedArray": [],
-          "lastPreformedOperation": null
+          "lastPreformedOperation": null,
         },
         "array_2_val": {
           "className": "ParseArray",
           "estimatedArray": [1, 2, 3, 4],
           "savedArray": [],
-          "lastPreformedOperation": null
+          "lastPreformedOperation": null,
         },
         "array_3_val": {
           "className": "ParseArray",
           "estimatedArray": [1, 2],
           "savedArray": [],
-          "lastPreformedOperation": null
+          "lastPreformedOperation": null,
         },
         "relation_val": {
           "className": "ParseRelation",
           "targetClass": "object_in_relation2",
           "key": "relation_val",
           "objects": [
-            {"className": "object_in_relation2", "objectId": "GDIJPWW"}
+            {"className": "object_in_relation2", "objectId": "GDIJPWW"},
           ],
           "lastPreformedOperation": {
             "__op": "AddRelation",
             "objects": [
-              {"className": "object_in_relation2", "objectId": "GDIJPWW"}
+              {"className": "object_in_relation2", "objectId": "GDIJPWW"},
             ],
             "valueForAPIRequest": [
-              {"className": "object_in_relation2", "objectId": "GDIJPWW"}
-            ]
-          }
-        }
+              {"className": "object_in_relation2", "objectId": "GDIJPWW"},
+            ],
+          },
+        },
       };
 
       expect(jsonEncode(encodeResult), equals(jsonEncode(expectedValue)));

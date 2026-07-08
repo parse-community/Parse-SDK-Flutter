@@ -10,6 +10,20 @@ We actively welcome your pull requests. When we get one, we'll run some Parse-sp
 2. Add unit tests for any new code you add.
 3. If you've changed APIs, update the documentation.
 4. Ensure the test suite passes.
+5. Follow the commit message format for automated versioning (see below).
+6. For dependency updates, see the [Dependency Management](#dependency-management) section.
+
+## Dependency Management
+
+The Parse SDK follows a structured approach to dependency management. See [VERSIONING_POLICY.md](VERSIONING_POLICY.md) for full details.
+
+## Framework Support Policy
+
+The Parse SDK supports Dart and Flutter versions for 6 months after the next significant version release. When contributing:
+
+- Ensure compatibility with all supported versions (see README compatibility tables)
+- Don't use features only available in the latest version without version checks
+- CI will test your PR against all supported versions
 
 ## Code of Conduct
 

@@ -47,6 +47,16 @@ class Parse extends sdk.Parse
   /// ```
   /// [appName], [appVersion] and [appPackageName] are automatically set on Android and IOS, if they are not defined. You should provide a value on web.
   /// [fileDirectory] is not used on web
+  ///
+  /// [restRetryIntervals] - Retry intervals in milliseconds for read operations.
+  ///   Applies to: GET, DELETE, and getBytes methods.
+  ///   Default: [0, 250, 500, 1000, 2000] (5 retry attempts with exponential backoff).
+  ///   Set to [] to disable retries for read operations.
+  ///
+  /// [restRetryIntervalsForWrites] - Retry intervals in milliseconds for write operations.
+  ///   Applies to: POST, PUT, and postBytes methods.
+  ///   Default: [] (no retries to prevent duplicate data creation).
+  ///   Configure only if you have idempotency guarantees in place.
   @override
   Future<Parse> initialize(
     String appId,
@@ -66,6 +76,8 @@ class Parse extends sdk.Parse
     Map<String, sdk.ParseObjectConstructor>? registeredSubClassMap,
     sdk.ParseUserConstructor? parseUserConstructor,
     sdk.ParseFileConstructor? parseFileConstructor,
+    List<int>? restRetryIntervals,
+    List<int>? restRetryIntervalsForWrites,
     List<int>? liveListRetryIntervals,
     sdk.ParseConnectivityProvider? connectivityProvider,
     String? fileDirectory,
@@ -80,45 +92,56 @@ class Parse extends sdk.Parse
     }
 
     return await super.initialize(
-      appId,
-      serverUrl,
-      debug: debug,
-      appName: appName,
-      appVersion: appVersion,
-      appPackageName: appPackageName,
-      locale: locale ??
-          (sdk.parseIsWeb
-              ? PlatformDispatcher.instance.locale.toString()
-              : Platform.localeName),
-      liveQueryUrl: liveQueryUrl,
-      clientKey: clientKey,
-      masterKey: masterKey,
-      sessionId: sessionId,
-      autoSendSessionId: autoSendSessionId,
-      securityContext: securityContext,
-      coreStore: coreStore ?? await CoreStoreSharedPreferences.getInstance(),
-      registeredSubClassMap: registeredSubClassMap,
-      parseUserConstructor: parseUserConstructor,
-      parseFileConstructor: parseFileConstructor,
-      liveListRetryIntervals: liveListRetryIntervals,
-      connectivityProvider: connectivityProvider ?? this,
-      fileDirectory:
-          fileDirectory ?? (await CoreStoreDirectory().getTempDirectory()),
-      appResumedStream: appResumedStream ?? _appResumedStreamController.stream,
-      clientCreator: clientCreator,
-    ) as Parse;
+          appId,
+          serverUrl,
+          debug: debug,
+          appName: appName,
+          appVersion: appVersion,
+          appPackageName: appPackageName,
+          locale:
+              locale ??
+              (sdk.parseIsWeb
+                  ? PlatformDispatcher.instance.locale.toString()
+                  : Platform.localeName),
+          liveQueryUrl: liveQueryUrl,
+          clientKey: clientKey,
+          masterKey: masterKey,
+          sessionId: sessionId,
+          autoSendSessionId: autoSendSessionId,
+          securityContext: securityContext,
+          coreStore:
+              coreStore ?? await CoreStoreSharedPreferences.getInstance(),
+          registeredSubClassMap: registeredSubClassMap,
+          parseUserConstructor: parseUserConstructor,
+          parseFileConstructor: parseFileConstructor,
+          restRetryIntervals: restRetryIntervals,
+          restRetryIntervalsForWrites: restRetryIntervalsForWrites,
+          liveListRetryIntervals: liveListRetryIntervals,
+          connectivityProvider: connectivityProvider ?? this,
+          fileDirectory:
+              fileDirectory ?? (await CoreStoreDirectory().getTempDirectory()),
+          appResumedStream:
+              appResumedStream ?? _appResumedStreamController.stream,
+          clientCreator: clientCreator,
+        )
+        as Parse;
   }
 
   final StreamController<void> _appResumedStreamController =
       StreamController<void>();
 
-  @override
-  Future<sdk.ParseConnectivityResult> checkConnectivity() async {
-    List<ConnectivityResult> list = await Connectivity().checkConnectivity();
-
-    if (list.contains(ConnectivityResult.wifi)) {
+  /// Maps connectivity_plus results to ParseConnectivityResult.
+  ///
+  /// Priority: wifi > ethernet > mobile > none
+  /// This ensures ethernet is treated as an online connection type.
+  sdk.ParseConnectivityResult _mapConnectivity(
+    List<ConnectivityResult> results,
+  ) {
+    if (results.contains(ConnectivityResult.wifi)) {
       return sdk.ParseConnectivityResult.wifi;
-    } else if (list.contains(ConnectivityResult.mobile)) {
+    } else if (results.contains(ConnectivityResult.ethernet)) {
+      return sdk.ParseConnectivityResult.ethernet;
+    } else if (results.contains(ConnectivityResult.mobile)) {
       return sdk.ParseConnectivityResult.mobile;
     } else {
       return sdk.ParseConnectivityResult.none;
@@ -126,18 +149,14 @@ class Parse extends sdk.Parse
   }
 
   @override
+  Future<sdk.ParseConnectivityResult> checkConnectivity() async {
+    List<ConnectivityResult> list = await Connectivity().checkConnectivity();
+    return _mapConnectivity(list);
+  }
+
+  @override
   Stream<sdk.ParseConnectivityResult> get connectivityStream {
-    return Connectivity().onConnectivityChanged.map(
-      (List<ConnectivityResult> event) {
-        if (event.contains(ConnectivityResult.wifi)) {
-          return sdk.ParseConnectivityResult.wifi;
-        } else if (event.contains(ConnectivityResult.mobile)) {
-          return sdk.ParseConnectivityResult.mobile;
-        } else {
-          return sdk.ParseConnectivityResult.none;
-        }
-      },
-    );
+    return Connectivity().onConnectivityChanged.map(_mapConnectivity);
   }
 
   @override

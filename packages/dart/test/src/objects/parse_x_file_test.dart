@@ -15,5 +15,35 @@ void main() {
       final parseFile = ParseXFile(file, name: 'bb.jpg');
       expect(parseFile.name, 'bb.jpg');
     });
+
+    test('should handle files with various extensions', () {
+      // Test various file extensions
+      final testCases = [
+        'image.jpg',
+        'photo.png',
+        'document.pdf',
+        'myfile.txt',
+        'archive.zip',
+      ];
+
+      for (final filename in testCases) {
+        XFile file = XFile('/path/to/$filename');
+        final parseFile = ParseXFile(file, name: filename);
+        // Verify that the name is set correctly
+        expect(parseFile.name, filename);
+      }
+    });
+
+    test('should handle files without extensions', () {
+      // Test files without extensions
+      final testCases = ['image', 'file', 'document'];
+
+      for (final filename in testCases) {
+        XFile file = XFile('/path/to/$filename');
+        final parseFile = ParseXFile(file, name: filename);
+        // Verify that the name is set correctly
+        expect(parseFile.name, filename);
+      }
+    });
   });
 }

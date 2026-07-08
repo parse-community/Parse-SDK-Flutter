@@ -36,7 +36,7 @@ class _ParseNumber implements _Valuable<num>, _ParseSaveStateAwareChild {
         'estimateNumber': estimateNumber,
         'savedNumber': _savedNumber,
         'setMode': setMode,
-        'lastPreformedOperation': lastPreformedOperation?.toJson(full: full)
+        'lastPreformedOperation': lastPreformedOperation?.toJson(full: full),
       };
     }
 

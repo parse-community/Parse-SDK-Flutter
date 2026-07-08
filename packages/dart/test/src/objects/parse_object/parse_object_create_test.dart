@@ -36,80 +36,71 @@ void main() {
     });
 
     test(
-        'create() should create new object on the server, return the created '
-        'object in ParseResponse results and update the calling object '
-        'with the new data (objectId,createdAt). i.e: mutate the object state',
-        () async {
-      // arrange
+      'create() should create new object on the server, return the created '
+      'object in ParseResponse results and update the calling object '
+      'with the new data (objectId,createdAt). i.e: mutate the object state',
+      () async {
+        // arrange
 
-      const resultFromServer = {
-        keyVarObjectId: "DLde4rYA8C",
-        keyVarCreatedAt: "2023-02-26T00:20:37.187Z"
-      };
-      final postData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
+        const resultFromServer = {
+          keyVarObjectId: "DLde4rYA8C",
+          keyVarCreatedAt: "2023-02-26T00:20:37.187Z",
+        };
+        final postData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
 
-      when(client.post(
-        postPath,
-        options: anyNamed("options"),
-        data: postData,
-      )).thenAnswer(
-        (_) async => ParseNetworkResponse(
-          statusCode: 200,
-          data: jsonEncode(resultFromServer),
-        ),
-      );
+        when(
+          client.post(postPath, options: anyNamed("options"), data: postData),
+        ).thenAnswer(
+          (_) async => ParseNetworkResponse(
+            statusCode: 200,
+            data: jsonEncode(resultFromServer),
+          ),
+        );
 
-      // act
-      ParseResponse response = await dietPlansObject.create();
+        // act
+        ParseResponse response = await dietPlansObject.create();
 
-      // assert
-      final resultList = response.results;
+        // assert
+        final resultList = response.results;
 
-      expect(resultList, isNotNull);
+        expect(resultList, isNotNull);
 
-      expect(resultList, isA<List<ParseObject?>>());
+        expect(resultList, isA<List<ParseObject?>>());
 
-      expect(resultList!.first, isNotNull);
+        expect(resultList!.first, isNotNull);
 
-      expect(resultList.first, isA<ParseObject>());
+        expect(resultList.first, isA<ParseObject>());
 
-      final parseObject = (resultList.first as ParseObject);
+        final parseObject = (resultList.first as ParseObject);
 
-      expect(
-        parseObject.createdAt!.toIso8601String(),
-        equals(resultFromServer[keyVarCreatedAt]),
-      );
+        expect(
+          parseObject.createdAt!.toIso8601String(),
+          equals(resultFromServer[keyVarCreatedAt]),
+        );
 
-      expect(
-        dietPlansObject.createdAt!.toIso8601String(),
-        equals(resultFromServer[keyVarCreatedAt]),
-      );
+        expect(
+          dietPlansObject.createdAt!.toIso8601String(),
+          equals(resultFromServer[keyVarCreatedAt]),
+        );
 
-      expect(
-        parseObject.objectId,
-        equals(resultFromServer[keyVarObjectId]),
-      );
+        expect(parseObject.objectId, equals(resultFromServer[keyVarObjectId]));
 
-      expect(
-        dietPlansObject.objectId,
-        equals(resultFromServer[keyVarObjectId]),
-      );
+        expect(
+          dietPlansObject.objectId,
+          equals(resultFromServer[keyVarObjectId]),
+        );
 
-      // the calling object (dietPlansObject) will be identical to the object
-      // in the ParseResponse results
-      expect(
-        identical(dietPlansObject, parseObject),
-        isTrue,
-      );
+        // the calling object (dietPlansObject) will be identical to the object
+        // in the ParseResponse results
+        expect(identical(dietPlansObject, parseObject), isTrue);
 
-      verify(client.post(
-        postPath,
-        options: anyNamed("options"),
-        data: postData,
-      )).called(1);
+        verify(
+          client.post(postPath, options: anyNamed("options"), data: postData),
+        ).called(1);
 
-      verifyNoMoreInteractions(client);
-    });
+        verifyNoMoreInteractions(client);
+      },
+    );
 
     test('create() should return error', () async {
       // arrange
@@ -117,11 +108,9 @@ void main() {
       final postData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
       final errorData = jsonEncode({keyCode: -1, keyError: "someError"});
 
-      when(client.post(
-        postPath,
-        options: anyNamed("options"),
-        data: postData,
-      )).thenAnswer(
+      when(
+        client.post(postPath, options: anyNamed("options"), data: postData),
+      ).thenAnswer(
         (_) async => ParseNetworkResponse(data: errorData, statusCode: -1),
       );
 
@@ -147,11 +136,9 @@ void main() {
 
       expect(dietPlansObject.createdAt, isNull);
 
-      verify(client.post(
-        postPath,
-        options: anyNamed("options"),
-        data: postData,
-      )).called(1);
+      verify(
+        client.post(postPath, options: anyNamed("options"), data: postData),
+      ).called(1);
 
       verifyNoMoreInteractions(client);
     });

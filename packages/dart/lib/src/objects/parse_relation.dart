@@ -7,10 +7,7 @@ abstract class ParseRelation<T extends ParseObject> {
   //The key of the relation in the parent object. i.e. the column name
   String getKey();
 
-  factory ParseRelation({
-    required ParseObject parent,
-    required String key,
-  }) {
+  factory ParseRelation({required ParseObject parent, required String key}) {
     return _ParseRelation(parent: parent, key: key);
   }
 
@@ -64,7 +61,7 @@ class _ParseRelation<T extends ParseObject>
 
   // For offline caching, we keep track of every object
   // we've known to be in the relation.
-  Set<T> knownObjects = <T>{};
+  Set<ParseObject> knownObjects = <ParseObject>{};
 
   _ParseRelationOperation? lastPreformedOperation;
 
@@ -93,7 +90,7 @@ class _ParseRelation<T extends ParseObject>
 
     lastPreformedOperation = relationOperation;
 
-    knownObjects = lastPreformedOperation!.value.toSet() as Set<T>;
+    knownObjects = lastPreformedOperation!.value.toSet();
 
     return this;
   }
@@ -105,7 +102,8 @@ class _ParseRelation<T extends ParseObject>
 
     if (parentObjectId == null) {
       throw ParseRelationException(
-          'The parent objectId is null. Query based on a Relation require ObjectId');
+        'The parent objectId is null. Query based on a Relation require ObjectId',
+      );
     }
 
     final QueryBuilder queryBuilder;
@@ -156,7 +154,8 @@ class _ParseRelation<T extends ParseObject>
 
     if (_targetClass != targetClass) {
       throw ParseRelationException(
-          'The target class can not be modified if it is already set');
+        'The target class can not be modified if it is already set',
+      );
     }
   }
 
@@ -194,7 +193,7 @@ class _ParseRelation<T extends ParseObject>
         'targetClass': targetClass,
         'key': key,
         'objects': parseEncode(knownObjects, full: full),
-        'lastPreformedOperation': lastPreformedOperation?.toJson(full: full)
+        'lastPreformedOperation': lastPreformedOperation?.toJson(full: full),
       };
     }
 
@@ -213,8 +212,9 @@ class _ParseRelation<T extends ParseObject>
 
       if (_targetClass != null && potentialTargetClass != _targetClass) {
         throw ParseRelationException(
-            'Can not add more then one class for a relation. the current target '
-            'class $targetClass and the passed class $potentialTargetClass');
+          'Can not add more then one class for a relation. the current target '
+          'class $targetClass and the passed class $potentialTargetClass',
+        );
       }
     }
 
@@ -231,8 +231,9 @@ class _ParseRelation<T extends ParseObject>
       lastPreformedOperation = null;
     } else {
       // remove the saved objects and keep the new added objects while saving
-      lastPreformedOperation?.valueForApiRequest
-          .removeAll(_valueForApiRequestBeforeSaving ?? []);
+      lastPreformedOperation?.valueForApiRequest.removeAll(
+        _valueForApiRequestBeforeSaving ?? [],
+      );
     }
 
     _lastPreformedOperationBeforeSaving = null;
@@ -242,8 +243,8 @@ class _ParseRelation<T extends ParseObject>
   @override
   void onSaving() {
     _lastPreformedOperationBeforeSaving = lastPreformedOperation;
-    _valueForApiRequestBeforeSaving =
-        lastPreformedOperation?.valueForApiRequest.toList();
+    _valueForApiRequestBeforeSaving = lastPreformedOperation?.valueForApiRequest
+        .toList();
   }
 
   @override

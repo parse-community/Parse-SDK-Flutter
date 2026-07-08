@@ -69,20 +69,18 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   State<ParseLiveGridWidget<T>> createState() => _ParseLiveGridWidgetState<T>();
 
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
-      BuildContext context, sdk.ParseLiveListElementSnapshot<T> snapshot) {
+    BuildContext context,
+    sdk.ParseLiveListElementSnapshot<T> snapshot,
+  ) {
     Widget child;
     if (snapshot.failed) {
       child = const Text('something went wrong!');
     } else if (snapshot.hasData) {
       child = ListTile(
-        title: Text(
-          snapshot.loadedData!.get<String>(sdk.keyVarObjectId)!,
-        ),
+        title: Text(snapshot.loadedData!.get<String>(sdk.keyVarObjectId)!),
       );
     } else {
-      child = const ListTile(
-        leading: CircularProgressIndicator(),
-      );
+      child = const ListTile(leading: CircularProgressIndicator());
     }
     return child;
   }
@@ -113,8 +111,9 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       }
       setState(() {
         _liveGrid = value;
-        _liveGrid!.stream
-            .listen((sdk.ParseLiveListEvent<sdk.ParseObject> event) {
+        _liveGrid!.stream.listen((
+          sdk.ParseLiveListEvent<sdk.ParseObject> event,
+        ) {
           if (mounted) {
             setState(() {});
           }
@@ -145,48 +144,40 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
 
   Widget buildAnimatedGrid(sdk.ParseLiveList<T> liveGrid) {
     Animation<double> boxAnimation;
-    boxAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
+    boxAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         // TODO: AnimationController is always null, so this breaks
         parent: widget.animationController!,
-        curve: const Interval(
-          0,
-          0.5,
-          curve: Curves.decelerate,
-        ),
+        curve: const Interval(0, 0.5, curve: Curves.decelerate),
       ),
     );
     return GridView.builder(
-        reverse: widget.reverse,
-        padding: widget.padding,
-        physics: widget.scrollPhysics,
-        controller: widget.scrollController,
-        scrollDirection: widget.scrollDirection,
-        shrinkWrap: widget.shrinkWrap,
-        itemCount: liveGrid.size,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: widget.crossAxisCount,
-            crossAxisSpacing: widget.crossAxisSpacing,
-            mainAxisSpacing: widget.mainAxisSpacing,
-            childAspectRatio: widget.childAspectRatio),
-        itemBuilder: (
-          BuildContext context,
-          int index,
-        ) {
-          return ParseLiveListElementWidget<T>(
-            key: ValueKey<String>(liveGrid.getIdentifier(index)),
-            stream: () => liveGrid.getAt(index),
-            loadedData: () => liveGrid.getLoadedAt(index)!,
-            preLoadedData: () => liveGrid.getPreLoadedAt(index)!,
-            sizeFactor: boxAnimation,
-            duration: widget.duration,
-            childBuilder:
-                widget.childBuilder ?? ParseLiveGridWidget.defaultChildBuilder,
-          );
-        });
+      reverse: widget.reverse,
+      padding: widget.padding,
+      physics: widget.scrollPhysics,
+      controller: widget.scrollController,
+      scrollDirection: widget.scrollDirection,
+      shrinkWrap: widget.shrinkWrap,
+      itemCount: liveGrid.size,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: widget.crossAxisCount,
+        crossAxisSpacing: widget.crossAxisSpacing,
+        mainAxisSpacing: widget.mainAxisSpacing,
+        childAspectRatio: widget.childAspectRatio,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        return ParseLiveListElementWidget<T>(
+          key: ValueKey<String>(liveGrid.getIdentifier(index)),
+          stream: () => liveGrid.getAt(index),
+          loadedData: () => liveGrid.getLoadedAt(index)!,
+          preLoadedData: () => liveGrid.getPreLoadedAt(index)!,
+          sizeFactor: boxAnimation,
+          duration: widget.duration,
+          childBuilder:
+              widget.childBuilder ?? ParseLiveGridWidget.defaultChildBuilder,
+        );
+      },
+    );
   }
 
   @override

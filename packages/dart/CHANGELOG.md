@@ -1,10 +1,138 @@
-## [8.0.1] (2026-03-12)
+# [dart-v9.7.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.6.1...dart-9.7.0) (2026-03-29)
+
+
+### Features
+
+* Expose `ParseDioClient.additionalHeaders` to set additional custom headers applied to all requests ([#1113](https://github.com/parse-community/Parse-SDK-Flutter/issues/1113)) ([82e09df](https://github.com/parse-community/Parse-SDK-Flutter/commit/82e09dfdccdab2ef433b6b357e94d2c831e4409d))
+
+# [dart-v9.6.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.6.0...dart-9.6.1) (2026-01-25)
+
 
 ### Bug Fixes
 
-* Fix `ParseAggregate.execute()` pipeline encoding: send each stage as an individual query parameter with JSON-encoded value instead of bundling into a single `pipeline` string, improving compatibility with Parse Server's `getPipeline()` format
-* Remove debug `print()` statement in `ParseAggregate.execute()` that leaked the full pipeline URL to console
-* Use `handleResponse` in `ParseAggregate.execute()` for consistent response handling with other `ParseObject` subclasses
+* Docs analyzer issue causing low pub.dev score ([#1111](https://github.com/parse-community/Parse-SDK-Flutter/issues/1111)) ([4dc80cd](https://github.com/parse-community/Parse-SDK-Flutter/commit/4dc80cd3c7fa134efcf1ef6084d6af65956aba57))
+
+# [dart-v9.6.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.5.0...dart-9.6.0) (2026-01-11)
+
+
+### Features
+
+* Upgrade timezone from 0.10.1 to 0.11.0 ([#1104](https://github.com/parse-community/Parse-SDK-Flutter/issues/1104)) ([63ecc18](https://github.com/parse-community/Parse-SDK-Flutter/commit/63ecc18d7966196920d96cff4d50181af5a5959c))
+
+# [dart-v9.5.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.8...dart-9.5.0) (2025-12-11)
+
+
+### Features
+
+* Add client-to-server request retry mechanism to handle transient network failures ([#1102](https://github.com/parse-community/Parse-SDK-Flutter/issues/1102)) ([e3863f1](https://github.com/parse-community/Parse-SDK-Flutter/commit/e3863f1edfb1ebbe90554704f0cb8c4b7af96280))
+
+# [dart-v9.4.8](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.7...dart-9.4.8) (2025-12-05)
+
+
+### Bug Fixes
+
+* Invalid JSON in `whereMatchesQuery` due to extra quotes around limiters ([#1100](https://github.com/parse-community/Parse-SDK-Flutter/issues/1100)) ([a8cf4f3](https://github.com/parse-community/Parse-SDK-Flutter/commit/a8cf4f3713f2123cc573a8001c757d6b008a6112))
+
+# [dart-v9.4.7](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.6...dart-9.4.7) (2025-12-05)
+
+
+### Bug Fixes
+
+* `ParseLiveList.getAt()` causes unnecessary requests to server ([#1099](https://github.com/parse-community/Parse-SDK-Flutter/issues/1099)) ([9114d4a](https://github.com/parse-community/Parse-SDK-Flutter/commit/9114d4ae98a5d34a301e04d0f62686cfaf99390c))
+
+# [dart-v9.4.6](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.5...dart-9.4.6) (2025-12-04)
+
+
+### Bug Fixes
+
+* TypeError on `addRelation` function ([#1098](https://github.com/parse-community/Parse-SDK-Flutter/issues/1098)) ([f284944](https://github.com/parse-community/Parse-SDK-Flutter/commit/f2849442f71ebf311bf10d01e967a7612ba66fe4))
+
+# [dart-v9.4.5](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.4...dart-9.4.5) (2025-12-04)
+
+
+### Bug Fixes
+
+* Incompatible `parseIsWeb` detection prevents WASM support ([#1096](https://github.com/parse-community/Parse-SDK-Flutter/issues/1096)) ([5b157b8](https://github.com/parse-community/Parse-SDK-Flutter/commit/5b157b897339634ecc2d0f66e3b3de612a243ea3))
+
+# [dart-v9.4.4](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.3...dart-9.4.4) (2025-12-04)
+
+
+### Bug Fixes
+
+* `ParseBase.toJson()` failure when date fields are stored as Maps ([#1094](https://github.com/parse-community/Parse-SDK-Flutter/issues/1094)) ([04a8d5b](https://github.com/parse-community/Parse-SDK-Flutter/commit/04a8d5b6d3d811636ea1b54247e73871b25266d1))
+
+# [dart-v9.4.3](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.2...dart-9.4.3) (2025-12-04)
+
+
+### Bug Fixes
+
+* Flutter Web build failure with ambiguous import from `sembast` and `idb_shim` ([#1093](https://github.com/parse-community/Parse-SDK-Flutter/issues/1093)) ([71aa5f2](https://github.com/parse-community/Parse-SDK-Flutter/commit/71aa5f20ab160a6113ac8167d66c540de11ff88f))
+
+# [dart-v9.4.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.1...dart-9.4.2) (2025-12-02)
+
+
+### Bug Fixes
+
+* Ethernet not recognized as connectivity state ([#1090](https://github.com/parse-community/Parse-SDK-Flutter/issues/1090)) ([f76fde4](https://github.com/parse-community/Parse-SDK-Flutter/commit/f76fde4f348af5d3992663795d279d57658f4e87))
+
+# [dart-v9.4.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.4.0...dart-9.4.1) (2025-11-30)
+
+
+### Bug Fixes
+
+* `ParseGeoPoint` longitude validation checks wrong variable ([#1089](https://github.com/parse-community/Parse-SDK-Flutter/issues/1089)) ([6b9ef6b](https://github.com/parse-community/Parse-SDK-Flutter/commit/6b9ef6b034741f6f829af3b7edf990f9915fb7fb))
+
+# [9.4.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.3.0...dart-9.4.0) (2025-11-29)
+
+
+### Features
+
+* Bump lints from 4.0.0 to 6.0.0 in /packages/dart ([#1065](https://github.com/parse-community/Parse-SDK-Flutter/issues/1065)) ([3c58597](https://github.com/parse-community/Parse-SDK-Flutter/commit/3c58597d92fad8a25a1632c0bbd25ff48a2750f3))
+
+# [9.3.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.2.0...dart-9.3.0) (2025-11-29)
+
+
+### Features
+
+* Bump mime from 1.0.6 to 2.0.0 in /packages/dart ([#1066](https://github.com/parse-community/Parse-SDK-Flutter/issues/1066)) ([2e143bf](https://github.com/parse-community/Parse-SDK-Flutter/commit/2e143bf08c71b768f922fbf33d1c6308e6667397))
+
+# [9.2.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.1.0...dart-9.2.0) (2025-11-29)
+
+
+### Features
+
+* Bump web_socket_channel from 2.4.5 to 3.0.3 in /packages/dart ([#1064](https://github.com/parse-community/Parse-SDK-Flutter/issues/1064)) ([5b6aacf](https://github.com/parse-community/Parse-SDK-Flutter/commit/5b6aacf64457ccbf1c121a36204fcb51be6a6682))
+
+# [9.1.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.0.0...dart-9.1.0) (2025-11-28)
+
+
+### Features
+
+* Bump timezone from 0.9.4 to 0.10.1 in /packages/dart ([#1063](https://github.com/parse-community/Parse-SDK-Flutter/issues/1063)) ([d3f2333](https://github.com/parse-community/Parse-SDK-Flutter/commit/d3f23338d5c8ca1e0239656814ac84818741f39d))
+
+# [9.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.2...dart-9.0.0) (2025-11-28)
+
+
+### Features
+
+* Remove support for expired Dart and Flutter versions ([#1052](https://github.com/parse-community/Parse-SDK-Flutter/issues/1052)) ([dbeb5cb](https://github.com/parse-community/Parse-SDK-Flutter/commit/dbeb5cbdb7e14c6fac5cf51a90addb0872ca88f2))
+
+
+### BREAKING CHANGES
+
+* This release removes support for Dart 3.2 - 3.9 and Flutter 3.16 - 3.37. These versions exceeded their 6-month support window after the next significant version release. The minimum required versions are now Dart 3.10 and Flutter 3.38. ([dbeb5cb](dbeb5cb))
+
+## [8.0.2](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.1...dart-8.0.2) (2025-11-28)
+
+### Bug Fixes
+
+* `ParseXFile` uploads file with content-type `application/octet-stream` if not explicitly set ([#1048](https://github.com/parse-community/Parse-SDK-Flutter/pull/1048))
+
+## [8.0.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-8.0.0...dart-8.0.1) (2025-11-22)
+
+### Bug Fixes
+
+* Fix Http client exception not handled properly resulting in incorrectly formatted error ([#1021](https://github.com/parse-community/Parse-SDK-Flutter/pull/1021))
 
 ## [8.0.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-7.0.1...dart-8.0.0) (2024-12-20)
 

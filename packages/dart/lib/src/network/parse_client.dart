@@ -1,7 +1,10 @@
 part of '../../parse_server_sdk.dart';
 
-typedef ParseClientCreator = ParseClient Function(
-    {required bool sendSessionId, SecurityContext? securityContext});
+typedef ParseClientCreator =
+    ParseClient Function({
+      required bool sendSessionId,
+      SecurityContext? securityContext,
+    });
 
 abstract class ParseClient {
   Future<ParseNetworkResponse> get(
@@ -81,10 +84,7 @@ abstract class ParseClient {
 typedef ProgressCallback = void Function(int count, int total);
 
 class ParseNetworkResponse {
-  ParseNetworkResponse({
-    required this.data,
-    this.statusCode = -1,
-  });
+  ParseNetworkResponse({required this.data, this.statusCode = -1});
 
   final String data;
   final int statusCode;

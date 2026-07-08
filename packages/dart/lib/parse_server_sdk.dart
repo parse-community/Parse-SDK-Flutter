@@ -1,5 +1,4 @@
 // ignore_for_file: unnecessary_import
-library flutter_parse_sdk;
 
 import 'dart:async';
 import 'dart:convert';
@@ -9,6 +8,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:dio/dio.dart';
+import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as path;
@@ -37,6 +37,7 @@ part 'src/network/options.dart';
 part 'src/network/parse_client.dart';
 part 'src/network/parse_connectivity.dart';
 part 'src/network/parse_live_query.dart';
+part 'src/network/parse_network_retry.dart';
 part 'src/network/parse_query.dart';
 part 'src/objects/parse_acl.dart';
 part 'src/objects/parse_aggregate.dart';
@@ -103,6 +104,18 @@ class Parse {
   ///        debug: true,
   ///        liveQuery: true);
   /// ```
+  ///
+  /// Parameters:
+  ///
+  /// * [restRetryIntervals] - Optional list of retry delay intervals (in milliseconds)
+  ///   for read operations. Applies to: GET, DELETE, and getBytes methods.
+  ///   Defaults to [0, 250, 500, 1000, 2000].
+  /// * [restRetryIntervalsForWrites] - Optional list of retry delay intervals for
+  ///   write operations. Applies to: POST, PUT, and postBytes methods.
+  ///   Defaults to [] (no retries) to prevent duplicate data creation.
+  ///   Configure only if you have idempotency guarantees in place.
+  /// * [liveListRetryIntervals] - Optional list of retry delay intervals for
+  ///   LiveQuery operations.
   Future<Parse> initialize(
     String appId,
     String serverUrl, {
@@ -121,6 +134,8 @@ class Parse {
     Map<String, ParseObjectConstructor>? registeredSubClassMap,
     ParseUserConstructor? parseUserConstructor,
     ParseFileConstructor? parseFileConstructor,
+    List<int>? restRetryIntervals,
+    List<int>? restRetryIntervalsForWrites,
     List<int>? liveListRetryIntervals,
     ParseConnectivityProvider? connectivityProvider,
     String? fileDirectory,
@@ -147,6 +162,8 @@ class Parse {
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
+      restRetryIntervals: restRetryIntervals,
+      restRetryIntervalsForWrites: restRetryIntervalsForWrites,
       liveListRetryIntervals: liveListRetryIntervals,
       connectivityProvider: connectivityProvider,
       fileDirectory: fileDirectory,
@@ -167,22 +184,28 @@ class Parse {
 
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
-  Future<ParseResponse> healthCheck(
-      {bool? debug, ParseClient? client, bool? sendSessionIdByDefault}) async {
+  Future<ParseResponse> healthCheck({
+    bool? debug,
+    ParseClient? client,
+    bool? sendSessionIdByDefault,
+  }) async {
     final bool debugLocal = isDebugEnabled(objectLevelDebug: debug);
 
-    final ParseClient clientLocal = client ??
+    final ParseClient clientLocal =
+        client ??
         ParseCoreData().clientCreator(
-            sendSessionId:
-                sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
-            securityContext: ParseCoreData().securityContext);
+          sendSessionId:
+              sendSessionIdByDefault ?? ParseCoreData().autoSendSessionId,
+          securityContext: ParseCoreData().securityContext,
+        );
 
     const String className = 'parseBase';
     const ParseApiRQ type = ParseApiRQ.healthCheck;
 
     try {
-      final ParseNetworkResponse response = await clientLocal
-          .get('${ParseCoreData().serverUrl}$keyEndPointHealth');
+      final ParseNetworkResponse response = await clientLocal.get(
+        '${ParseCoreData().serverUrl}$keyEndPointHealth',
+      );
       return handleResponse<Parse>(null, response, type, debugLocal, className);
     } on Exception catch (e) {
       return handleException(e, type, debugLocal, className);

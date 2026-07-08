@@ -11,8 +11,9 @@ class CoreStoreSharedPreferences implements sdk.CoreStore {
   /// If no instance exists, this function creates a new instance of
   /// `SharedPreferences` and passes it as a parameter to the constructor of
   /// `CoreStoreSharedPrefsImp`.
-  static Future<CoreStoreSharedPreferences> getInstance(
-      {SharedPreferences? store}) async {
+  static Future<CoreStoreSharedPreferences> getInstance({
+    SharedPreferences? store,
+  }) async {
     if (_instance == null) {
       store ??= await SharedPreferences.getInstance();
       _instance = CoreStoreSharedPreferences._internal(store);

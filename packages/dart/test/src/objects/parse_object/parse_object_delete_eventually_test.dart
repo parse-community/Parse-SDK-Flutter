@@ -31,23 +31,22 @@ void main() {
       'should exist parse object in ParseCoreData next saveEventually',
       () async {
         // arrange
-        when(client1.delete(
-          any,
-          options: anyNamed("options"),
-        )).thenThrow(Exception('NetworkError'));
+        when(
+          client1.delete(any, options: anyNamed("options")),
+        ).thenThrow(Exception('NetworkError'));
 
-        when(client2.delete(
-          "$serverUrl/classes/Diet_Plans/fakeObjectId",
-          options: anyNamed("options"),
-        )).thenAnswer(
+        when(
+          client2.delete(
+            "$serverUrl/classes/Diet_Plans/fakeObjectId",
+            options: anyNamed("options"),
+          ),
+        ).thenAnswer(
           (_) async => ParseNetworkResponse(
             statusCode: 200,
             data: jsonEncode([
               {
-                "success": {
-                  "delete": "ok",
-                }
-              }
+                "success": {"delete": "ok"},
+              },
             ]),
           ),
         );

@@ -38,24 +38,19 @@ void main() {
         '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
       ).toString();
     });
-    test(
-        'update() should update an object on the server, return the updated '
+    test('update() should update an object on the server, return the updated '
         'object in ParseResponse results and update the calling object '
         'with the new data (updatedAt).'
         'i.e: mutate the object state to reflect the new update', () async {
       // arrange
 
-      const resultFromServer = {
-        keyVarUpdatedAt: "2023-02-26T13:25:27.865Z",
-      };
+      const resultFromServer = {keyVarUpdatedAt: "2023-02-26T13:25:27.865Z"};
 
       final putData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
 
-      when(client.put(
-        putPath,
-        options: anyNamed("options"),
-        data: putData,
-      )).thenAnswer(
+      when(
+        client.put(putPath, options: anyNamed("options"), data: putData),
+      ).thenAnswer(
         (_) async => ParseNetworkResponse(
           statusCode: 200,
           data: jsonEncode(resultFromServer),
@@ -83,89 +78,72 @@ void main() {
         equals(resultFromServer[keyVarUpdatedAt]),
       );
 
-      expect(
-        parseObjectFromRes.get(keyName),
-        equals(newNameValue),
-      );
-      expect(
-        parseObjectFromRes.get(keyFat),
-        equals(newFatValue),
-      );
+      expect(parseObjectFromRes.get(keyName), equals(newNameValue));
+      expect(parseObjectFromRes.get(keyFat), equals(newFatValue));
 
       // the calling object (dietPlansObject) will be identical to the object
       // in the ParseResponse results
-      expect(
-        identical(dietPlansObject, parseObjectFromRes),
-        isTrue,
-      );
+      expect(identical(dietPlansObject, parseObjectFromRes), isTrue);
 
-      verify(client.put(
-        putPath,
-        options: anyNamed("options"),
-        data: putData,
-      )).called(1);
+      verify(
+        client.put(putPath, options: anyNamed("options"), data: putData),
+      ).called(1);
 
       verifyNoMoreInteractions(client);
     });
 
     test(
-        'update() should return error and the updated values should remain the same',
-        () async {
-      // arrange
+      'update() should return error and the updated values should remain the same',
+      () async {
+        // arrange
 
-      final putData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
-      final error = Exception('error');
+        final putData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
+        final error = Exception('error');
 
-      when(client.put(
-        putPath,
-        options: anyNamed("options"),
-        data: putData,
-      )).thenThrow(error);
+        when(
+          client.put(putPath, options: anyNamed("options"), data: putData),
+        ).thenThrow(error);
 
-      // act
-      ParseResponse response = await dietPlansObject.update();
+        // act
+        ParseResponse response = await dietPlansObject.update();
 
-      // assert
-      expect(response.success, isFalse);
+        // assert
+        expect(response.success, isFalse);
 
-      expect(response.result, isNull);
+        expect(response.result, isNull);
 
-      expect(response.count, isZero);
+        expect(response.count, isZero);
 
-      expect(response.results, isNull);
+        expect(response.results, isNull);
 
-      expect(response.error, isNotNull);
+        expect(response.error, isNotNull);
 
-      expect(response.error!.exception, equals(error));
+        expect(response.error!.exception, equals(error));
 
-      expect(response.error!.code, equals(ParseError.otherCause));
+        expect(response.error!.code, equals(ParseError.otherCause));
 
-      // even if the update failed, the updated values should remain the same
-      expect(dietPlansObject.get(keyName), equals(newNameValue));
-      expect(dietPlansObject.get(keyFat), equals(newFatValue));
+        // even if the update failed, the updated values should remain the same
+        expect(dietPlansObject.get(keyName), equals(newNameValue));
+        expect(dietPlansObject.get(keyFat), equals(newFatValue));
 
-      verify(client.put(
-        putPath,
-        options: anyNamed("options"),
-        data: putData,
-      )).called(1);
+        verify(
+          client.put(putPath, options: anyNamed("options"), data: putData),
+        ).called(1);
 
-      verifyNoMoreInteractions(client);
-    });
+        verifyNoMoreInteractions(client);
+      },
+    );
 
-    test(
-        'update() should return error form the server and the'
+    test('update() should return error form the server and the'
         ' updated values should remain the same', () async {
       // arrange
 
       final putData = jsonEncode(dietPlansObject.toJson(forApiRQ: true));
       final errorData = jsonEncode({keyCode: -1, keyError: "someError"});
 
-      when(client.put(
-        putPath,
-        options: anyNamed("options"),
-        data: putData,
-      )).thenAnswer(
+      when(
+        client.put(putPath, options: anyNamed("options"), data: putData),
+      ).thenAnswer(
         (_) async => ParseNetworkResponse(data: errorData, statusCode: -1),
       );
 
@@ -191,11 +169,9 @@ void main() {
       expect(dietPlansObject.get(keyName), equals(newNameValue));
       expect(dietPlansObject.get(keyFat), equals(newFatValue));
 
-      verify(client.put(
-        putPath,
-        options: anyNamed("options"),
-        data: putData,
-      )).called(1);
+      verify(
+        client.put(putPath, options: anyNamed("options"), data: putData),
+      ).called(1);
 
       verifyNoMoreInteractions(client);
     });

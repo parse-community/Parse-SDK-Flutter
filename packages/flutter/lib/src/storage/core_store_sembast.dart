@@ -6,12 +6,15 @@ class CoreStoreSembast implements sdk.CoreStoreSembastImp {
 
   static sdk.CoreStore? _sembastImp;
 
-  static Future<CoreStoreSembast> getInstance(
-      {DatabaseFactory? factory, String? password}) async {
+  static Future<CoreStoreSembast> getInstance({
+    DatabaseFactory? factory,
+    String? password,
+  }) async {
     _sembastImp ??= await sdk.CoreStoreSembastImp.getInstance(
-        await _dbDirectory(),
-        factory: factory,
-        password: password);
+      await _dbDirectory(),
+      factory: factory,
+      password: password,
+    );
     return CoreStoreSembast._();
   }
 

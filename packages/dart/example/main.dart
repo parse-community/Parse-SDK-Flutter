@@ -2,12 +2,15 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 Future<void> main() async {
   // Parse initialize
-  await Parse().initialize("keyApplicationId", "keyParseServerUrl",
-      clientKey: "keyParseClientKey",
-      debug: true,
-      liveQueryUrl: "keyLiveQueryUrl",
-      autoSendSessionId: true,
-      coreStore: CoreStoreMemoryImp());
+  await Parse().initialize(
+    "keyApplicationId",
+    "keyParseServerUrl",
+    clientKey: "keyParseClientKey",
+    debug: true,
+    liveQueryUrl: "keyLiveQueryUrl",
+    autoSendSessionId: true,
+    coreStore: CoreStoreMemoryImp(),
+  );
 
   // Set a ParseObject and save it
   var dietPlan = ParseObject('DietPlan')

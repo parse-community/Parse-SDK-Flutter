@@ -52,22 +52,24 @@ abstract class ParseBase {
 
   /// Returns [DateTime] createdAt
   DateTime? get createdAt {
-    if (get<dynamic>(keyVarCreatedAt) is String) {
-      final String? dateAsString = get<String>(keyVarCreatedAt);
-      return dateAsString != null ? _parseDateFormat.parse(dateAsString) : null;
-    } else {
-      return get<DateTime>(keyVarCreatedAt);
+    final dynamic value = get<dynamic>(keyVarCreatedAt);
+    if (value is DateTime) return value;
+    if (value is String) return _parseDateFormat.parse(value);
+    if (value is Map<String, dynamic> && value['iso'] is String) {
+      return _parseDateFormat.parse(value['iso'] as String);
     }
+    return null;
   }
 
   /// Returns [DateTime] updatedAt
   DateTime? get updatedAt {
-    if (get<dynamic>(keyVarUpdatedAt) is String) {
-      final String? dateAsString = get<String>(keyVarUpdatedAt);
-      return dateAsString != null ? _parseDateFormat.parse(dateAsString) : null;
-    } else {
-      return get<DateTime>(keyVarUpdatedAt);
+    final dynamic value = get<dynamic>(keyVarUpdatedAt);
+    if (value is DateTime) return value;
+    if (value is String) return _parseDateFormat.parse(value);
+    if (value is Map<String, dynamic> && value['iso'] is String) {
+      return _parseDateFormat.parse(value['iso'] as String);
     }
+    return null;
   }
 
   /// Converts object to [String] in JSON format
@@ -140,12 +142,20 @@ abstract class ParseBase {
       } else if (key == keyVarCreatedAt) {
         if (value is String) {
           _getObjectData()[keyVarCreatedAt] = _parseDateFormat.parse(value);
+        } else if (value is Map<String, dynamic> && value['iso'] is String) {
+          _getObjectData()[keyVarCreatedAt] = _parseDateFormat.parse(
+            value['iso'] as String,
+          );
         } else {
           _getObjectData()[keyVarCreatedAt] = value;
         }
       } else if (key == keyVarUpdatedAt) {
         if (value is String) {
           _getObjectData()[keyVarUpdatedAt] = _parseDateFormat.parse(value);
+        } else if (value is Map<String, dynamic> && value['iso'] is String) {
+          _getObjectData()[keyVarUpdatedAt] = _parseDateFormat.parse(
+            value['iso'] as String,
+          );
         } else {
           _getObjectData()[keyVarUpdatedAt] = value;
         }
@@ -270,8 +280,9 @@ abstract class ParseBase {
 
       if (result is _ParseRelation) {
         return (result
-          ..parent = (this as ParseObject)
-          ..key = key) as T?;
+              ..parent = (this as ParseObject)
+              ..key = key)
+            as T?;
       }
 
       return result as T?;
@@ -317,7 +328,7 @@ abstract class ParseBase {
   Map<String, dynamic> toPointer() => encodeObject(parseClassName, objectId!);
 
   /// Set the [ParseACL] governing this object.
-  void setACL<ParseACL>(ParseACL acl) {
+  void setACL<T>(T acl) {
     set(keyVarAcl, acl);
   }
 

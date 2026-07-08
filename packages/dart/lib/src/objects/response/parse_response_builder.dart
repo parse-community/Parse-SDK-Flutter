@@ -9,7 +9,10 @@ part of '../../../parse_server_sdk.dart';
 /// 4. Success with results. Again [ParseResponse()] is returned
 class _ParseResponseBuilder {
   ParseResponse handleResponse<T>(
-      dynamic object, ParseNetworkResponse apiResponse, ParseApiRQ type) {
+    dynamic object,
+    ParseNetworkResponse apiResponse,
+    ParseApiRQ type,
+  ) {
     final ParseResponse parseResponse = ParseResponse();
     final bool returnAsResult = shouldReturnAsABaseResult(type);
     parseResponse.statusCode = apiResponse.statusCode;
@@ -21,10 +24,16 @@ class _ParseResponseBuilder {
       return parseResponse;
     } else if (isSuccessButNoResults(apiResponse)) {
       return buildSuccessResponseWithNoResults(
-          parseResponse, 1, 'Successful request, but no results found');
+        parseResponse,
+        1,
+        'Successful request, but no results found',
+      );
     } else if (returnAsResult) {
       return _handleSuccessWithoutParseObject(
-          parseResponse, object, apiResponse.data);
+        parseResponse,
+        object,
+        apiResponse.data,
+      );
     } else {
       return _handleSuccess<T>(parseResponse, object, apiResponse.data, type);
     }
@@ -32,7 +41,10 @@ class _ParseResponseBuilder {
 
   /// Handles successful response without creating a ParseObject
   ParseResponse _handleSuccessWithoutParseObject(
-      ParseResponse response, dynamic object, String responseBody) {
+    ParseResponse response,
+    dynamic object,
+    String responseBody,
+  ) {
     response.success = true;
 
     if (responseBody == 'OK') {
@@ -135,7 +147,10 @@ class _ParseResponseBuilder {
 
   /// Handles a response with a single result object
   T? _handleSingleResult<T>(
-      T object, Map<String, dynamic> map, bool createNewObject) {
+    T object,
+    Map<String, dynamic> map,
+    bool createNewObject,
+  ) {
     if (createNewObject && object is ParseCloneable) {
       return object.clone(map);
     } else if (object is ParseObject) {

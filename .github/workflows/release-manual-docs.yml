@@ -17,8 +17,15 @@ jobs:
     if: github.event.inputs.tag != ''
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.inputs.tag }}
       - name: Setup dart
@@ -36,9 +43,12 @@ jobs:
         run: dart pub get --directory 'packages/flutter'
       - name: Generate Docs
         run: dart doc ./packages/${{ env.package }}/ -o ./.api_docs/${{ env.package }}/
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3.7.3
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./.api_docs/${{ env.package }}/
-          destination_dir: ${{ env.package }}
+          path: ./.api_docs/${{ env.package }}/
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

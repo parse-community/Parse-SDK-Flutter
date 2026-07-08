@@ -4,15 +4,14 @@ class ParseXFile extends ParseFileBase {
   /// Creates a new file base XFile
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
-  ParseXFile(this.file,
-      {String? name,
-      super.url,
-      super.debug,
-      super.client,
-      super.autoSendSessionId})
-      : super(
-          name: name ?? path.basename(file?.path ?? ''),
-        );
+  ParseXFile(
+    this.file, {
+    String? name,
+    super.url,
+    super.debug,
+    super.client,
+    super.autoSendSessionId,
+  }) : super(name: name ?? path.basename(file?.path ?? ''));
 
   XFile? file;
   CancelToken? _cancelToken;
@@ -79,34 +78,42 @@ class ParseXFile extends ParseFileBase {
       //Creates a Fake Response to return the correct result
       final Map<String, String> response = <String, String>{
         'url': url!,
-        'name': name
+        'name': name,
       };
       return handleResponse<ParseXFile>(
-          this,
-          ParseNetworkResponse(data: json.encode(response), statusCode: 201),
-          ParseApiRQ.upload,
-          _debug,
-          parseClassName);
+        this,
+        ParseNetworkResponse(data: json.encode(response), statusCode: 201),
+        ParseApiRQ.upload,
+        _debug,
+        parseClassName,
+      );
     }
 
     progressCallback ??= _progressCallback;
 
     _cancelToken = CancelToken();
-    Map<String, String> headers;
+    Map<String, String> headers = <String, String>{};
+
+    // Set content-type from XFile.mimeType or detect using lookupMimeType
+    // If neither provides a type, let the server infer from the filename
+    String? contentType;
     if (parseIsWeb) {
-      headers = <String, String>{
-        HttpHeaders.contentTypeHeader: file?.mimeType ??
-            lookupMimeType(url ?? file?.name ?? name,
-                headerBytes: await file?.readAsBytes()) ??
-            'application/octet-stream',
-      };
+      contentType =
+          file?.mimeType ??
+          lookupMimeType(
+            url ?? file?.name ?? name,
+            headerBytes: await file?.readAsBytes(),
+          );
     } else {
-      headers = <String, String>{
-        HttpHeaders.contentTypeHeader: file?.mimeType ??
-            lookupMimeType(file!.path) ??
-            'application/octet-stream',
-        HttpHeaders.contentLengthHeader: '${await file!.length()}',
-      };
+      contentType = file?.mimeType ?? lookupMimeType(file!.path);
+    }
+
+    if (contentType != null) {
+      headers[HttpHeaders.contentTypeHeader] = contentType;
+    }
+
+    if (!parseIsWeb) {
+      headers[HttpHeaders.contentLengthHeader] = '${await file!.length()}';
     }
 
     try {
@@ -114,8 +121,9 @@ class ParseXFile extends ParseFileBase {
 
       Stream<List<int>>? data;
       if (parseIsWeb) {
-        data = Stream<List<int>>.fromIterable(
-            <List<int>>[await file!.readAsBytes()]);
+        data = Stream<List<int>>.fromIterable(<List<int>>[
+          await file!.readAsBytes(),
+        ]);
       } else {
         data = file!.openRead();
       }
@@ -133,7 +141,12 @@ class ParseXFile extends ParseFileBase {
         name = map['name'].toString();
       }
       return handleResponse<ParseXFile>(
-          this, response, ParseApiRQ.upload, _debug, parseClassName);
+        this,
+        response,
+        ParseApiRQ.upload,
+        _debug,
+        parseClassName,
+      );
     } on Exception catch (e) {
       return handleException(e, ParseApiRQ.upload, _debug, parseClassName);
     }

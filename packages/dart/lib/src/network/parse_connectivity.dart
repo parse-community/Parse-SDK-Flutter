@@ -5,11 +5,14 @@ enum ParseConnectivityResult {
   /// WiFi: Device connected via Wi-Fi
   wifi,
 
+  /// Ethernet: Device connected via Ethernet
+  ethernet,
+
   /// Mobile: Device connected to cellular network
   mobile,
 
   /// None: Device not connected to any network
-  none
+  none,
 }
 
 abstract class ParseConnectivityProvider {
