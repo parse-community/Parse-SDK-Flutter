@@ -5,6 +5,7 @@ homepage: https://parseplatform.org
 repository: https://github.com/parse-community/Parse-SDK-Flutter
 issue_tracker: https://github.com/parse-community/Parse-SDK-Flutter/issues
 documentation: https://docs.parseplatform.org/dart/guide
+publish_to: none
 
 funding:
   - https://opencollective.com/parse-server
@@ -39,7 +40,7 @@ dependencies:
   universal_io: ^2.2.2
   xxtea: ^2.1.0
   collection: ^1.18.0
-  cross_file: ^0.3.3+8
+  cross_file: ^0.3.3+8 
 
 dev_dependencies:
   lints: ">=4.0.0 <7.0.0"

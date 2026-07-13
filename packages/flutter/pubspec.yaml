@@ -6,6 +6,7 @@ repository: https://github.com/parse-community/Parse-SDK-Flutter
 issue_tracker: https://github.com/parse-community/Parse-SDK-Flutter/issues
 documentation: https://docs.parseplatform.org/flutter/guide
 
+
 funding:
   - https://opencollective.com/parse-server
   - https://github.com/sponsors/parse-community
@@ -24,11 +25,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
 
   parse_server_sdk: ">=9.5.0 <10.0.0"
   # Uncomment for local testing
   #parse_server_sdk:
   #   path: ../dart
+
+  # parse_server_sdk:
+  #   git:
+  #     url: https://github.com/pastordee/Parse-SDK-Flutter.git 
+  #     path: packages/dart
+  #     ref: pc_server 
 
   # Networking
   connectivity_plus: ^7.0.0
@@ -51,6 +59,11 @@ dev_dependencies:
   connectivity_plus_platform_interface: ^2.0.0
   path_provider_platform_interface: ^2.1.2
   plugin_platform_interface: ^2.1.8
+
+dependency_overrides:
+  parse_server_sdk:
+    path: ../dart
+  
 
 screenshots:
   - description: Parse Platform logo.

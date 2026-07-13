@@ -96,9 +96,18 @@ class CoreStoreSembastImp implements CoreStore {
 
   @override
   Future<List<String>?> getStringList(String key) async {
-    final List<String>? storedItem = await get(key);
-    return storedItem;
+    final value = await get(key);
+    if (value == null) return null;
+    if (value is List<String>) return value;
+    if (value is Iterable) return value.map((e) => e.toString()).toList();
+    return null;
   }
+
+  // @override
+  //   Future<List<String>?> getStringList(String key) async {
+  //     final List<String>? storedItem = await get(key);
+  //     return storedItem;
+  //   }
 
   @override
   Future<void> remove(String key) {
