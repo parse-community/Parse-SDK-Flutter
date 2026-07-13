@@ -69,6 +69,33 @@ abstract class ParseClient {
 
   @Deprecated("Use ParseCoreData() instead.")
   ParseCoreData get data => ParseCoreData();
+
+  /// Returns `options.headers` with `X-Parse-Installation-Id` attached unless
+  /// the caller opted out via `ParseNetworkOptions.sendInstallationId = false`
+  /// or the header is already set. Installation lookup failures fall through
+  /// silently — a network call should not fail because the install ID could
+  /// not be read.
+  @protected
+  Future<Map<String, String>?> buildHeaders(
+    ParseNetworkOptions? options,
+  ) async {
+    if (options?.sendInstallationId == false) return options?.headers;
+    if (options?.headers?[keyHeaderInstallationId] != null) {
+      return options?.headers;
+    }
+    String? installationId;
+    try {
+      installationId =
+          (await ParseInstallation.currentInstallation()).installationId;
+    } catch (_) {
+      return options?.headers;
+    }
+    if (installationId == null) return options?.headers;
+    return <String, String>{
+      ...?options?.headers,
+      keyHeaderInstallationId: installationId,
+    };
+  }
 }
 
 /// Callback to listen the progress for sending/receiving data.
