@@ -662,6 +662,75 @@ void main() {
       expect(listValue, orderedEquals([1, 2]));
     });
 
+    test('Arrays should not be cleared when calling clearUnsavedChanges() '
+        'after receiving response from fetch/query (issue #1038)', () async {
+      // Steps to reproduce from issue #1038:
+      // 1. Query/fetch a user object with arrays from server
+      // 2. Call clearUnsavedChanges() - arrays should NOT become empty
+      // 3. Call getUpdatedUser()/fetch() again
+      // 4. Check that savedArray and estimatedArray both have values (not empty)
+
+      // Step 1: Simulate getting an object from server (e.g., via query or getUpdatedUser)
+      // This is like getting a user from cache or initial fetch
+      dietPlansObject.fromJson({
+        keyArray: [1, 2, 3],
+        "objectId": "Mn1iJTkWTE",
+        "createdAt": "2023-03-05T00:25:31.466Z",
+      });
+
+      // Step 2: Call clearUnsavedChanges() - this should NOT clear the arrays
+      // Before the fix, if savedArray was empty, this would make arrays empty
+      // because onClearUnsaved() does: estimatedArray = savedArray
+      dietPlansObject.clearUnsavedChanges();
+
+      // Verify arrays are NOT empty after clearUnsavedChanges
+      expect(dietPlansObject.get(keyArray), orderedEquals([1, 2, 3]));
+
+      // Step 3: Set up mock for getUpdatedUser()/fetch()
+      final getPath = Uri.parse(
+        '$serverUrl$keyEndPointClasses${dietPlansObject.parseClassName}/${dietPlansObject.objectId}',
+      ).toString();
+
+      const resultsFromServer = {
+        "results": [
+          {
+            "objectId": "Mn1iJTkWTE",
+            keyArray: [1, 2, 3],
+            "createdAt": "2023-03-05T00:25:31.466Z",
+            "updatedAt": "2023-03-05T00:25:31.466Z",
+          },
+        ],
+      };
+
+      when(
+        client.get(
+          getPath,
+          options: anyNamed("options"),
+          onReceiveProgress: anyNamed("onReceiveProgress"),
+        ),
+      ).thenAnswer(
+        (_) async => ParseNetworkResponse(
+          statusCode: 200,
+          data: jsonEncode(resultsFromServer),
+        ),
+      );
+
+      // Fetch the object (simulating getUpdatedUser)
+      // NOTE: fetch() might update dietPlansObject in place OR return a new object
+      await dietPlansObject.fetch();
+
+      // Step 4: Verify the ORIGINAL object still has array values
+      // The issue reported that after fetch, arrays would be cleared
+      final arrayAfterFetch = dietPlansObject.get(keyArray);
+      expect(arrayAfterFetch, orderedEquals([1, 2, 3]));
+
+      // Additional check: call clearUnsavedChanges() on the original object
+      // and verify arrays persist. This is the exact scenario from issue #1038.
+      dietPlansObject.clearUnsavedChanges();
+      final arrayAfterSecondClear = dietPlansObject.get(keyArray);
+      expect(arrayAfterSecondClear, orderedEquals([1, 2, 3]));
+    });
+
     test('The list value and the value for api request should be identical '
         'before and after the save() failed to save the object', () async {
       // arrange
