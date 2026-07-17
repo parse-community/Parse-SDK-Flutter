@@ -1,19 +1,23 @@
 part of '../../parse_server_sdk.dart';
 
-class ParseCloudFunction extends ParseObject {
+class ParseJobs extends ParseObject {
   /// Creates a new cloud function object
   ///
   /// {https://docs.parseplatform.org/cloudcode/guide/}
-  ParseCloudFunction(
+  ParseJobs(
     this.functionName, {
     super.debug,
     super.client,
     super.autoSendSessionId,
   }) : super(functionName) {
-    _path = '/functions/$functionName';
+    _path = '$keyEndPointJobs$functionName';
   }
 
   final String functionName;
+
+  @override
+  // ignore: overridden_fields
+  late String _path;
 
   /// Executes a cloud function
   ///
@@ -32,7 +36,7 @@ class ParseCloudFunction extends ParseObject {
         options: ParseNetworkOptions(headers: headers),
         data: json.encode(_getObjectData()),
       );
-      return handleResponse<ParseCloudFunction>(
+      return handleResponse<ParseJobs>(
         this,
         result,
         ParseApiRQ.execute,

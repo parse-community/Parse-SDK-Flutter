@@ -16,6 +16,8 @@ const String keyEndPointRequestPasswordReset = '/requestPasswordReset';
 const String keyEndPointClasses = '/classes/';
 const String keyEndPointHealth = '/health';
 const String keyEndPointAggregate = '/aggregate/';
+const String keyEndPointFunctions = '/functions/';
+const String keyEndPointJobs = '/jobs/';
 
 // ParseObject variables
 const String keyVarClassName = 'className';

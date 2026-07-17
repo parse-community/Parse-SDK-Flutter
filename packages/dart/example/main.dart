@@ -23,4 +23,14 @@ Future<void> main() async {
     dietPlan = response.results?.first;
     print("Response received successfully");
   }
+
+  final res = await ParseAggregate('DietPlan').execute({
+    r'$match': {'Name': 'Ketogenic'},
+    r'$group': {
+      '_id': r'isHungry',
+      'count': {r'$sum': 1}
+    },
+  });
+
+  print('${res.statusCode}, ${res.results}');
 }

@@ -305,7 +305,7 @@ class LiveQueryClient {
         if (_debug) {
           print('$_printConstLiveQuery: Error when connection client');
         }
-        return Future<void>.value(null);
+        return;
       }
       WebSocketChannel channel = webSocket.createWebSocketChannel();
       _channel = channel;
