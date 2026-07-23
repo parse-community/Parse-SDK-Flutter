@@ -129,7 +129,7 @@ class QueryBuilder<T extends ParseObject> {
     String prefix, {
     bool caseSensitive = false,
   }) {
-    prefix = Uri.encodeComponent(prefix);
+    prefix = _encodeStringElement(prefix);
 
     if (caseSensitive) {
       queries.add(
@@ -155,7 +155,7 @@ class QueryBuilder<T extends ParseObject> {
     String prefix, {
     bool caseSensitive = false,
   }) {
-    prefix = Uri.encodeComponent(prefix);
+    prefix = _encodeStringElement(prefix);
 
     if (caseSensitive) {
       queries.add(
@@ -178,7 +178,7 @@ class QueryBuilder<T extends ParseObject> {
   /// to be equal to the provided [value]
   void whereEqualTo(String column, dynamic value) {
     if (value is String) {
-      value = Uri.encodeComponent(value);
+      value = _encodeStringElement(value);
     }
 
     queries.add(
@@ -237,7 +237,7 @@ class QueryBuilder<T extends ParseObject> {
   /// to be not equal to the provided [value]
   void whereNotEqualTo(String column, dynamic value) {
     if (value is String) {
-      value = Uri.encodeComponent(value);
+      value = _encodeStringElement(value);
     }
 
     queries.add(
@@ -252,7 +252,7 @@ class QueryBuilder<T extends ParseObject> {
   void whereContainedIn(String column, List<dynamic> value) {
     queries.add(
       _buildQueryWithColumnValueAndOperator(
-        MapEntry<String, dynamic>(column, value),
+        MapEntry<String, dynamic>(column, _encodeStringElements(value)),
         '\$in',
       ),
     );
@@ -262,7 +262,7 @@ class QueryBuilder<T extends ParseObject> {
   void whereNotContainedIn(String column, List<dynamic> value) {
     queries.add(
       _buildQueryWithColumnValueAndOperator(
-        MapEntry<String, dynamic>(column, value),
+        MapEntry<String, dynamic>(column, _encodeStringElements(value)),
         '\$nin',
       ),
     );
@@ -312,10 +312,28 @@ class QueryBuilder<T extends ParseObject> {
   void whereArrayContainsAll(String column, List<dynamic> value) {
     queries.add(
       _buildQueryWithColumnValueAndOperator(
-        MapEntry<String, dynamic>(column, value),
+        MapEntry<String, dynamic>(column, _encodeStringElements(value)),
         '\$all',
       ),
     );
+  }
+
+  /// JSON-escapes [value] and then percent-encodes the escaped content. The
+  /// JSON escaping keeps `"`, `\` and newlines valid inside the surrounding
+  /// string literal once the server URL-decodes the query; the percent
+  /// encoding keeps `&`, `=`, `+` and `#` from being chewed up by querystring
+  /// parsing on the way in.
+  String _encodeStringElement(String value) {
+    final String jsonString = jsonEncode(value);
+    return Uri.encodeComponent(jsonString.substring(1, jsonString.length - 1));
+  }
+
+  /// Runs [_encodeStringElement] on each String in [value]; other elements
+  /// are passed through unchanged.
+  List<dynamic> _encodeStringElements(List<dynamic> value) {
+    return value
+        .map<dynamic>((dynamic e) => e is String ? _encodeStringElement(e) : e)
+        .toList();
   }
 
   /// Returns an object where the [String] column has a regEx performed on,
@@ -336,7 +354,7 @@ class QueryBuilder<T extends ParseObject> {
     String substring, {
     bool caseSensitive = false,
   }) {
-    substring = Uri.encodeComponent(substring);
+    substring = _encodeStringElement(substring);
 
     if (caseSensitive) {
       queries.add(
@@ -365,7 +383,7 @@ class QueryBuilder<T extends ParseObject> {
     bool orderByScore = true,
     bool diacriticSensitive = false,
   }) {
-    searchTerm = Uri.encodeComponent(searchTerm);
+    searchTerm = _encodeStringElement(searchTerm);
 
     queries.add(
       MapEntry<String, dynamic>(
