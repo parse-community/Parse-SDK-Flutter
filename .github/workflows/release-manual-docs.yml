@@ -44,11 +44,11 @@ jobs:
       - name: Generate Docs
         run: dart doc ./packages/${{ env.package }}/ -o ./.api_docs/${{ env.package }}/
       - name: Configure Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./.api_docs/${{ env.package }}/
       - name: Deploy to GitHub Pages
         id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
