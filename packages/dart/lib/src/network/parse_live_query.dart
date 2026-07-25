@@ -201,6 +201,11 @@ class LiveQueryClient {
     await _connect(userInitialized: userInitialized);
     await _connectLiveQuery();
   }
+  void _safeAddEvent(LiveQueryClientEvent event) {
+  if (!_clientEventStreamController.isClosed) {
+    _clientEventStreamController.sink.add(event);
+  }
+}
 
   int readyState() {
     parse_web_socket.WebSocket? webSocket = _webSocket;
@@ -210,6 +215,48 @@ class LiveQueryClient {
     return parse_web_socket.WebSocket.connecting;
   }
 
+  /// Removes specific subscriptions from the map by requestId.
+/// Use this instead of clearAllSubscriptions() when other subscriptions
+/// (banners, notifications) must stay alive.
+void removeSubscriptions(List<Subscription> subs) {
+  for (final sub in subs) {
+    sub._enabled = false;
+    _requestSubscription.remove(sub.requestId);
+  }
+}
+
+  /// Removes all subscriptions from the internal map.
+/// Call before disconnect when leaving a live room.
+  
+void clearAllSubscriptions() {
+  _requestSubscription.values.toList().forEach((sub) {
+    sub._enabled = false;
+  });
+  _requestSubscription.clear();
+}
+  /// Fully resets the singleton — clears subscriptions, closes socket,
+/// nulls the instance so the next LiveQueryClient() call starts fresh.
+/// Use userInitialized: false so reconnect still works after reset.
+static Future<void> resetInstance() async {
+  final existing = _instance;
+  _instance = null;      // ← null first so new LiveQuery() calls don't
+  _requestIdCount = 1;   //   reuse the dying instance
+
+  if (existing != null) {
+    existing.clearAllSubscriptions();
+    try {
+      await existing.disconnect(userInitialized: false);
+    } catch (_) {}
+
+    // Wait for any in-flight socket callbacks (onDone etc.) to fire
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    // Close the stream controller last
+    try {
+      await existing._clientEventStreamController.close();
+    } catch (_) {}
+  }
+}
   Future<dynamic> disconnect({bool userInitialized = false}) async {
     parse_web_socket.WebSocket? webSocket = _webSocket;
     if (webSocket != null &&
@@ -233,9 +280,7 @@ class LiveQueryClient {
     });
     _connecting = false;
     if (userInitialized) {
-      _clientEventStreamController.sink.add(
-        LiveQueryClientEvent.userDisconnected,
-      );
+      _safeAddEvent(LiveQueryClientEvent.userDisconnected);
     }
   }
 
@@ -262,21 +307,21 @@ class LiveQueryClient {
   }
 
   void unSubscribe<T extends ParseObject>(Subscription<T> subscription) {
-    //Mount message for Unsubscribe
-    final Map<String, dynamic> unsubscribeMessage = <String, dynamic>{
-      'op': 'unsubscribe',
-      'requestId': subscription.requestId,
-    };
-    WebSocketChannel? channel = _channel;
-    if (channel != null) {
-      if (_debug) {
-        print('$_printConstLiveQuery: UnsubscribeMessage: $unsubscribeMessage');
-      }
-      channel.sink.add(jsonEncode(unsubscribeMessage));
-      subscription._enabled = false;
-      _requestSubscription.remove(subscription.requestId);
+  final Map<String, dynamic> unsubscribeMessage = <String, dynamic>{
+    'op': 'unsubscribe',
+    'requestId': subscription.requestId,
+  };
+  WebSocketChannel? channel = _channel;
+  if (channel != null) {
+    if (_debug) {
+      print('$_printConstLiveQuery: UnsubscribeMessage: $unsubscribeMessage');
     }
+    channel.sink.add(jsonEncode(unsubscribeMessage));
   }
+  // Always remove from map regardless of socket state
+  subscription._enabled = false;
+  _requestSubscription.remove(subscription.requestId);
+}
 
   static int _requestIdCount = 1;
 
@@ -316,9 +361,8 @@ class LiveQueryClient {
           chanelStream?.sink.add(message);
         },
         onDone: () {
-          _clientEventStreamController.sink.add(
-            LiveQueryClientEvent.disconnected,
-          );
+         _safeAddEvent(LiveQueryClientEvent.disconnected);
+
           if (_debug) {
             print('$_printConstLiveQuery: Done');
           }
@@ -344,7 +388,7 @@ class LiveQueryClient {
       );
     } on Exception catch (e) {
       _connecting = false;
-      _clientEventStreamController.sink.add(LiveQueryClientEvent.disconnected);
+      _safeAddEvent(LiveQueryClientEvent.disconnected);
       if (_debug) {
         print('$_printConstLiveQuery: Error: ${e.toString()}');
       }
@@ -444,7 +488,7 @@ class LiveQueryClient {
       _requestSubscription.values.toList().forEach((Subscription subscription) {
         _subscribeLiveQuery(subscription);
       });
-      _clientEventStreamController.sink.add(LiveQueryClientEvent.connected);
+_safeAddEvent(LiveQueryClientEvent.connected);
       return;
     }
     if (actionData.containsKey('requestId')) {
