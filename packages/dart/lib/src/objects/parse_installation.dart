@@ -22,6 +22,7 @@ class ParseInstallation extends ParseObject {
     keyParseVersion,
   ];
   static String? _currentInstallationId;
+  static bool _timeZonesInitialized = false;
 
   //Getters/setters
   Map<String, dynamic> get acl => super.get<Map<String, dynamic>>(
@@ -83,8 +84,26 @@ class ParseInstallation extends ParseObject {
     //Locale
     set<String?>(keyLocaleIdentifier, ParseCoreData().locale);
 
-    //Timezone
-    set<String>(keyTimeZone, _getNameLocalTimeZone());
+    //Timezone — don't overwrite a value the caller already set. The pure-Dart
+    //offset-match here picks the first IANA zone with the local offset, which
+    //is alphabetical (e.g. "America/Anguilla" for UTC-4 instead of
+    //"America/New_York"). Apps that need a real IANA name (via a Flutter
+    //plugin like flutter_timezone, or a Kotlin/Swift channel) should set
+    //`timeZone` on the installation before calling save(); the SDK will only
+    //fill it in when nothing is set.
+    //
+    //First-launch caveat: _createInstallation() runs this method and then
+    //persists the full installation JSON to the local store before any
+    //caller code runs. That means the offset-matched fallback IS written to
+    //disk on first launch. If the app crashes before the caller's
+    //set+save() runs, the next launch reads the fallback from storage, the
+    //gate sees it as "existing", and the SDK won't auto-correct. The
+    //caller's set+save self-heals as soon as it runs. Apps that resolve a
+    //real IANA name should do so early in startup.
+    final String? existingTimeZone = super.get<String>(keyTimeZone);
+    if (existingTimeZone == null || existingTimeZone.isEmpty) {
+      set<String>(keyTimeZone, _getNameLocalTimeZone());
+    }
 
     //App info
     set<String?>(keyAppName, ParseCoreData().appName);
@@ -94,21 +113,62 @@ class ParseInstallation extends ParseObject {
   }
 
   String _getNameLocalTimeZone() {
-    tz.initializeTimeZones();
-    var locations = tz.timeZoneDatabase.locations;
+    // The timezone database is large; initialize it at most once per process.
+    if (!_timeZonesInitialized) {
+      tz.initializeTimeZones();
+      _timeZonesInitialized = true;
+    }
 
-    Duration offset = DateTime.now().timeZoneOffset;
-    String name = "";
+    // Capture once to avoid a DST-transition race between the two reads.
+    final DateTime now = DateTime.now();
 
-    locations.forEach((key, value) {
-      for (var element in value.zones) {
-        if (element.offset == offset) {
-          name = value.name;
-          break;
-        }
+    // Prefer the OS-reported zone name when it's a valid IANA location
+    // (e.g. "America/New_York" on macOS/Linux/iOS/Android). Avoids the
+    // ambiguity of matching by offset, where many zones share an offset.
+    final String systemName = now.timeZoneName;
+    if (tz.timeZoneDatabase.locations.containsKey(systemName)) {
+      return systemName;
+    }
+
+    // Fall back to a location whose *current* zone matches the local
+    // offset, but only if exactly one IANA zone matches. Many zones share
+    // an offset at any instant (e.g. America/Los_Angeles, America/Vancouver,
+    // America/Tijuana), so returning the first match would arbitrarily pick
+    // a wrong location. Returning the OS string instead is non-IANA but at
+    // least not a fabricated guess.
+    //
+    // The previous implementation also scanned every historical zone
+    // (LMT, pre-DST, etc.) and compared a Duration against an int offset,
+    // which on timezone <0.11.0 is always false and produced "".
+    final int localOffsetMs = now.timeZoneOffset.inMilliseconds;
+    String? offsetMatch;
+    for (final location in tz.timeZoneDatabase.locations.values) {
+      if (_zoneOffsetMs(location.currentTimeZone.offset) != localOffsetMs) {
+        continue;
       }
-    });
-    return name;
+      if (offsetMatch != null) {
+        // Ambiguous: multiple zones share this offset. Don't guess.
+        offsetMatch = null;
+        break;
+      }
+      offsetMatch = location.name;
+    }
+    if (offsetMatch != null) {
+      return offsetMatch;
+    }
+
+    // Last resort: return whatever the OS gave us rather than "".
+    // Note: on Windows/Web this may be a non-IANA name (e.g.
+    // "Pacific Standard Time" or "EDT"), but it's still better than "".
+    return systemName;
+  }
+
+  // The `timezone` package returns `TimeZone.offset` as `int` (milliseconds)
+  // on <0.11.0 and as `Duration` on >=0.11.0. Normalize to milliseconds so
+  // the same comparison works across the full supported version range.
+  static int _zoneOffsetMs(dynamic offset) {
+    if (offset is Duration) return offset.inMilliseconds;
+    return offset as int;
   }
 
   @override
