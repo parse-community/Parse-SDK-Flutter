@@ -1,44 +1,57 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
+# OS
 .DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
+Thumbs.db
+*.swp
+*.log
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
+# IDEs
 .idea/
+.vscode/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Node
+node_modules/
+dist/
+build/
+npm-debug.log*
+yarn-error.log*
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Flutter / Dart
 .dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
 .packages
 .pub-cache/
 .pub/
-/build/
+build/
+android/.gradle/
+android/app/src/main/gen/
+android/app/profile/
+android/app/release/
+android/build/
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Flutter/flutter_export_environment.sh
+macos/Flutter/ephemeral/
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
+*.jks
+*.keystore
 
-# Symbolication related
-app.*.symbols
+# PHP / Composer
+vendor/
+.env
 
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+.pytest_cache/
+htmlcov/
+*.egg-info/

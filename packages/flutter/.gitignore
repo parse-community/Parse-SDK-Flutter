@@ -1,0 +1,57 @@
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.log
+
+# IDEs
+.idea/
+.vscode/
+
+# Node
+node_modules/
+dist/
+build/
+npm-debug.log*
+yarn-error.log*
+
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+android/.gradle/
+android/app/src/main/gen/
+android/app/profile/
+android/app/release/
+android/build/
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Flutter/flutter_export_environment.sh
+macos/Flutter/ephemeral/
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
+*.jks
+*.keystore
+
+# PHP / Composer
+vendor/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.env
+.pytest_cache/
+htmlcov/
+*.egg-info/
