@@ -56,8 +56,10 @@ class CoreStoreSembastImp implements CoreStore {
   final StoreRef<String, dynamic> _store;
 
   @override
-  Future<bool> clear() {
-    return _store.drop(_database) as Future<bool>;
+  Future<void> clear() {
+    // `drop` returns Future<void>; the old `as Future<bool>` was an
+    // unconditional CastError, so clearing the Sembast store always threw.
+    return _store.drop(_database);
   }
 
   @override
@@ -96,8 +98,15 @@ class CoreStoreSembastImp implements CoreStore {
 
   @override
   Future<List<String>?> getStringList(String key) async {
-    final List<String>? storedItem = await get(key);
-    return storedItem;
+    final value = await get(key);
+    if (value == null) return null;
+    // Copy, so a caller mutating the result cannot reach into the store.
+    if (value is List<String>) return List<String>.of(value);
+    // Sembast hands back List<dynamic> for anything it decoded from disk, so
+    // the previous `await get(key)` as List<String> threw a CastError on every
+    // list that had survived a restart.
+    if (value is Iterable) return value.map((e) => e.toString()).toList();
+    return null;
   }
 
   @override

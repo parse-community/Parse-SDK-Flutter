@@ -1,6 +1,23 @@
 part of '../../parse_server_sdk.dart';
 
 // ignore_for_file: invalid_use_of_protected_member
+
+/// Reads [key] off [object] as a single sub-item pointer, or null when the
+/// field isn't one.
+///
+/// The live-list include/subscribe machinery derives its watch list from the
+/// query's `include`, which can legitimately name an ARRAY of pointers
+/// (likeUsers, viewUsers, buddies, …) or a relation. That machinery handles
+/// one object at a time, and `get<ParseObject>` ends in an unguarded `as`
+/// which throws `type 'List<dynamic>' is not a subtype of type 'ParseObject?'`
+/// for those fields — an unhandled async error on every list update, which
+/// also silently kills include-loading and sub-item subscriptions for the row.
+/// Skip anything that isn't a single ParseObject rather than crashing.
+ParseObject? _subItemOrNull(ParseObject object, String key) {
+  final dynamic value = object.get<dynamic>(key);
+  return value is ParseObject ? value : null;
+}
+
 class ParseLiveList<T extends ParseObject> {
   ParseLiveList._(
     this._query,
@@ -337,12 +354,14 @@ class ParseLiveList<T extends ParseObject> {
 
     for (String key in paths.keys) {
       if (object.containsKey(key)) {
-        ParseObject? includedObject = object.get<ParseObject>(key);
+        ParseObject? includedObject = _subItemOrNull(object, key);
         if (includedObject != null) {
           //If the object is not fetched
           if (!includedObject.containsKey(keyVarUpdatedAt)) {
             //See if oldObject contains key
-            ParseObject? keyInOld = oldObject?.get<ParseObject>(key);
+            ParseObject? keyInOld = oldObject == null
+                ? null
+                : _subItemOrNull(oldObject, key);
             if (keyInOld != null) {
               //If the object is not fetched || the ids don't match / the pointer changed
               if (!keyInOld.containsKey(keyVarUpdatedAt) ||
@@ -857,7 +876,7 @@ class ParseLiveListElement<T extends ParseObject> {
             _subscribeSubItem(
               object,
               key,
-              object.get<ParseObject>(key.key),
+              _subItemOrNull(object, key.key),
               _updatedSubItems[key],
             ),
           );
@@ -893,7 +912,7 @@ class ParseLiveListElement<T extends ParseObject> {
           _subscribeSubItem(
             subObject,
             key,
-            subObject.get<ParseObject>(key.key),
+            _subItemOrNull(subObject, key.key),
             path[key],
           ),
         );
@@ -926,7 +945,7 @@ class ParseLiveListElement<T extends ParseObject> {
                     _subscribeSubItem(
                       newObject,
                       key,
-                      newObject.get<ParseObject>(key.key),
+                      _subItemOrNull(newObject, key.key),
                       path[key],
                     ),
                   );
@@ -990,7 +1009,7 @@ class ParseLiveListElement<T extends ParseObject> {
   ) async {
     final List<Future<void>> tasks = <Future<void>>[];
     for (PathKey key in path.keys) {
-      ParseObject? subObject = root.get<ParseObject>(key.key);
+      ParseObject? subObject = _subItemOrNull(root, key.key);
       if (subObject != null) {
         if (subObject.containsKey(keyVarUpdatedAt) == true) {
           final QueryBuilder<ParseObject> queryBuilder =
@@ -1071,12 +1090,19 @@ class ParseLiveListElementSnapshot<T extends ParseObject> {
     this.loadedData,
     this.error,
     this.preLoadedData,
+    this.isOptimistic = false,
   });
 
   final T? loadedData;
   final T? preLoadedData;
 
   final ParseError? error;
+
+  /// True when this element is a caller-supplied optimistic (pending) item that
+  /// has not yet been confirmed by the server. Consumers can use this in their
+  /// childBuilder to style the row differently (e.g. dim it or show a spinner)
+  /// until the real object arrives and supersedes it.
+  final bool isOptimistic;
 
   bool get hasData => loadedData != null;
 

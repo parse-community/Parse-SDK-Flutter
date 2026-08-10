@@ -7,12 +7,22 @@ const String _printConstLiveQuery = 'LiveQuery: ';
 class Subscription<T extends ParseObject> {
   Subscription(this.query, this.requestId, {T? copyObject}) {
     _copyObject = copyObject;
+    // Captured up front because _subscribeLiveQuery clears query.limiters to
+    // strip the limits LiveQuery does not accept. That is destructive, so by
+    // the time the subscription is re-sent on reconnect the 'keys' limiter is
+    // gone and the payload would silently omit 'fields' — the server would
+    // then push full objects instead of the selected columns.
+    _keysToReturn = query.limiters['keys']?.split(',');
   }
 
   QueryBuilder<T> query;
   T? _copyObject;
   int requestId;
   bool _enabled = false;
+
+  /// The `keys` limiter as it was when this subscription was created, so every
+  /// subscribe message for it carries the same `fields` list.
+  List<String>? _keysToReturn;
   final List<String> _liveQueryEvent = <String>[
     'create',
     'enter',
@@ -190,6 +200,13 @@ class LiveQueryClient {
   WebSocketChannel? _channel;
   final String _liveQueryURL;
   bool _connecting = false;
+
+  /// Whether the LiveQuery `connect` handshake has been acknowledged by the
+  /// server (a `connected` op was received on the current socket). A raw socket
+  /// being open ([_webSocket] != null) is NOT enough — subscribing before this
+  /// is true yields "Can not find this client" and leaves the subscription
+  /// stuck. Reset to false whenever the socket drops.
+  bool _connected = false;
   late StreamController<LiveQueryClientEvent> _clientEventStreamController;
   late Stream<LiveQueryClientEvent> _clientEventStream;
   StreamController<String>? chanelStream;
@@ -197,7 +214,32 @@ class LiveQueryClient {
 
   final Map<int, Subscription> _requestSubscription = <int, Subscription>{};
 
-  Future<void> reconnect({bool userInitialized = false}) async {
+  /// Coalesces concurrent reconnects onto one in-flight attempt.
+  ///
+  /// `_connect` guards on `_connecting`, but only sets it AFTER `await
+  /// disconnect(...)` — and `disconnect` itself clears it — so two callers can
+  /// both pass the guard while the first is suspended at that await and open
+  /// two sockets. `subscribe` makes this easy to hit, because it starts a
+  /// reconnect without awaiting it, so a burst of subscriptions all reach here
+  /// before any connection exists.
+  Future<void>? _reconnectFuture;
+
+  Future<void> reconnect({bool userInitialized = false}) {
+    final Future<void>? inFlight = _reconnectFuture;
+    if (inFlight != null) {
+      return inFlight;
+    }
+    late final Future<void> attempt;
+    attempt = _reconnect(userInitialized: userInitialized).whenComplete(() {
+      if (identical(_reconnectFuture, attempt)) {
+        _reconnectFuture = null;
+      }
+    });
+    _reconnectFuture = attempt;
+    return attempt;
+  }
+
+  Future<void> _reconnect({bool userInitialized = false}) async {
     await _connect(userInitialized: userInitialized);
     await _connectLiveQuery();
   }
@@ -232,6 +274,7 @@ class LiveQueryClient {
       subscription._enabled = false;
     });
     _connecting = false;
+    _connected = false;
     if (userInitialized) {
       _clientEventStreamController.sink.add(
         LiveQueryClientEvent.userDisconnected,
@@ -243,21 +286,27 @@ class LiveQueryClient {
     QueryBuilder<T> query, {
     T? copyObject,
   }) async {
-    if (_webSocket == null) {
-      await _clientEventStream.any(
-        (LiveQueryClientEvent event) => event == LiveQueryClientEvent.connected,
-      );
-    }
     final int requestId = _requestIdGenerator();
     final Subscription<T> subscription = Subscription<T>(
       query,
       requestId,
       copyObject: copyObject,
     );
+    // Always register the subscription so the `connected` handler can (re)send
+    // it. Only send the subscribe now if the LiveQuery handshake is already
+    // acknowledged — sending before that yields "Can not find this client" and,
+    // because _subscribeLiveQuery marks it _enabled, the connected handler would
+    // then skip it, leaving it permanently unregistered.
     _requestSubscription[requestId] = subscription;
-    //After a client connects to the LiveQuery server,
-    //it can send a subscribe message to subscribe a ParseQuery.
-    _subscribeLiveQuery(subscription);
+    if (_connected) {
+      //After a client connects to the LiveQuery server,
+      //it can send a subscribe message to subscribe a ParseQuery.
+      _subscribeLiveQuery(subscription);
+    } else if (_webSocket == null && !_connecting) {
+      // No live connection yet — open one. The `connected` handler then sends
+      // this (and every other pending) subscription.
+      reconnect();
+    }
     return subscription;
   }
 
@@ -267,14 +316,31 @@ class LiveQueryClient {
       'op': 'unsubscribe',
       'requestId': subscription.requestId,
     };
+    // Drop the LOCAL state FIRST, unconditionally. Telling the server is
+    // best-effort — it only has a socket to hear it on, and a non-null channel
+    // does not prove the sink still accepts writes. Both used to sit inside the
+    // channel guard, so unsubscribing while disconnected (app backgrounded,
+    // socket dropped) was a silent no-op: the entry stayed in
+    // _requestSubscription and was resurrected by the re-subscribe on
+    // reconnect. Callers that cancel-and-resubscribe therefore accumulated a
+    // duplicate per cycle, and every event fired their handler once per
+    // accumulated subscription. Ordering the removal first means a throwing
+    // sink cannot resurrect it either.
+    subscription._enabled = false;
+    _requestSubscription.remove(subscription.requestId);
+
     WebSocketChannel? channel = _channel;
     if (channel != null) {
       if (_debug) {
         print('$_printConstLiveQuery: UnsubscribeMessage: $unsubscribeMessage');
       }
-      channel.sink.add(jsonEncode(unsubscribeMessage));
-      subscription._enabled = false;
-      _requestSubscription.remove(subscription.requestId);
+      try {
+        channel.sink.add(jsonEncode(unsubscribeMessage));
+      } catch (e) {
+        if (_debug) {
+          print('$_printConstLiveQuery: Unsubscribe send failed: $e');
+        }
+      }
     }
   }
 
@@ -305,7 +371,16 @@ class LiveQueryClient {
         if (_debug) {
           print('$_printConstLiveQuery: Error when connection client');
         }
-        return Future<void>.value(null);
+        // Drop the handle for a socket that never opened. `subscribe` only
+        // starts recovery when _webSocket == null, so leaving this assigned
+        // parks every later subscription behind a socket that will never
+        // complete a handshake.
+        _webSocket = null;
+        _connected = false;
+        // Plain `null` rather than a Future: this is an async body, so
+        // returning a Future inside the try block trips
+        // unawaited_return_in_try_block on newer analyzers.
+        return null;
       }
       WebSocketChannel channel = webSocket.createWebSocketChannel();
       _channel = channel;
@@ -316,6 +391,14 @@ class LiveQueryClient {
           chanelStream?.sink.add(message);
         },
         onDone: () {
+          // Clear the handles for THIS socket, so the _webSocket == null check
+          // in subscribe can trigger a fresh connection. Guarded on identity so
+          // a reconnect that already swapped in a new socket is left alone.
+          if (identical(_webSocket, webSocket)) {
+            _webSocket = null;
+            _channel = null;
+          }
+          _connected = false;
           _clientEventStreamController.sink.add(
             LiveQueryClientEvent.disconnected,
           );
@@ -324,6 +407,11 @@ class LiveQueryClient {
           }
         },
         onError: (Object error) {
+          if (identical(_webSocket, webSocket)) {
+            _webSocket = null;
+            _channel = null;
+          }
+          _connected = false;
           _clientEventStreamController.sink.add(
             LiveQueryClientEvent.disconnected,
           );
@@ -399,7 +487,7 @@ class LiveQueryClient {
     }
     subscription._enabled = true;
     final QueryBuilder query = subscription.query;
-    final List<String>? keysToReturn = query.limiters['keys']?.split(',');
+    final List<String>? keysToReturn = subscription._keysToReturn;
     query.limiters.clear(); //Remove limits in LiveQuery
     final String where = query.buildQuery().replaceAll('where=', '');
 
@@ -439,9 +527,14 @@ class LiveQueryClient {
 
     Subscription? subscription;
     if (actionData.containsKey('op') && actionData['op'] == 'connected') {
-      print('Re subscription:$_requestSubscription');
-
+      // The handshake is acknowledged — safe to (re)send subscribes now.
+      _connected = true;
       _requestSubscription.values.toList().forEach((Subscription subscription) {
+        // This is a fresh connection, so the server has no record of any prior
+        // subscribe. Force a re-send by clearing _enabled first — otherwise the
+        // guard in _subscribeLiveQuery skips already-enabled subscriptions and
+        // they never re-register after a (re)connect.
+        subscription._enabled = false;
         _subscribeLiveQuery(subscription);
       });
       _clientEventStreamController.sink.add(LiveQueryClientEvent.connected);

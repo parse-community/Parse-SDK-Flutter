@@ -84,6 +84,8 @@ part 'src/utils/parse_login_helpers.dart';
 part 'src/utils/parse_utils.dart';
 part 'src/utils/valuable.dart';
 
+part 'src/objects/parse_offline_object.dart';
+
 class Parse {
   bool _hasBeenInitialized = false;
 

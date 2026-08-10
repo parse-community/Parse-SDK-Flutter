@@ -405,39 +405,55 @@ class ParseObject extends ParseBase implements ParseCloneable {
     return request;
   }
 
-  bool _canbeSerialized(List<dynamic> aftersaving, {dynamic value}) {
-    if (value != null) {
-      if (value is ParseObject) {
-        if (value is ParseFileBase) {
-          if (!value.saved && !aftersaving.contains(value)) {
-            return false;
-          }
-        } else if (value.objectId == null && !aftersaving.contains(value)) {
+  // Sentinel distinguishing "no value argument" (the entry call, which must
+  // validate this object's whole field graph) from an explicitly-passed `null`
+  // field value. Previously both looked like `value == null`, so a null value
+  // inside the object's data map re-entered the whole-object branch and recursed
+  // into _getObjectData() forever -> Stack Overflow. This surfaced on offline
+  // saveEventually() (submitSaveEventually -> _saveChildren -> here), e.g. an
+  // Installation/analytics save with a null field on a no-network cold launch.
+  static const Object _canbeSerializedUnset = Object();
+
+  bool _canbeSerialized(
+    List<dynamic> aftersaving, {
+    Object? value = _canbeSerializedUnset,
+  }) {
+    if (identical(value, _canbeSerializedUnset)) {
+      // Entry point: validate this object's own field data.
+      return _canbeSerialized(aftersaving, value: _getObjectData());
+    }
+    if (value == null) {
+      // A null field is trivially serializable — nothing to recurse into.
+      return true;
+    }
+    if (value is ParseObject) {
+      if (value is ParseFileBase) {
+        if (!value.saved && !aftersaving.contains(value)) {
           return false;
         }
-      } else if (value is Map) {
-        for (dynamic child in value.values) {
-          if (!_canbeSerialized(aftersaving, value: child)) {
-            return false;
-          }
-        }
-      } else if (value is _Valuable) {
-        if (!_canbeSerialized(aftersaving, value: value.getValue())) {
+      } else if (value.objectId == null && !aftersaving.contains(value)) {
+        return false;
+      }
+    } else if (value is Map) {
+      for (dynamic child in value.values) {
+        if (!_canbeSerialized(aftersaving, value: child)) {
           return false;
-        }
-      } else if (value is _ParseRelation) {
-        if (!_canbeSerialized(aftersaving, value: value.valueForApiRequest())) {
-          return false;
-        }
-      } else if (value is Iterable) {
-        for (dynamic child in value) {
-          if (!_canbeSerialized(aftersaving, value: child)) {
-            return false;
-          }
         }
       }
-    } else if (!_canbeSerialized(aftersaving, value: _getObjectData())) {
-      return false;
+    } else if (value is _Valuable) {
+      if (!_canbeSerialized(aftersaving, value: value.getValue())) {
+        return false;
+      }
+    } else if (value is _ParseRelation) {
+      if (!_canbeSerialized(aftersaving, value: value.valueForApiRequest())) {
+        return false;
+      }
+    } else if (value is Iterable) {
+      for (dynamic child in value) {
+        if (!_canbeSerialized(aftersaving, value: child)) {
+          return false;
+        }
+      }
     }
     // TODO(yulingtianxia): handle ACL
     return true;

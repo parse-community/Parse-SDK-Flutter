@@ -40,7 +40,15 @@ class CoreStoreMemoryImp implements CoreStore {
 
   @override
   Future<List<String>?> getStringList(String key) async {
-    return _data[key];
+    final value = _data[key];
+    if (value == null) return null;
+    // Copy, so a caller mutating the result cannot reach into the store. The
+    // backing map is static, so that mutation would be process-wide.
+    if (value is List<String>) return List<String>.of(value);
+    // A list that round-tripped through JSON comes back as List<dynamic>, so
+    // returning _data[key] directly threw a CastError instead of the list.
+    if (value is Iterable) return value.map((e) => e.toString()).toList();
+    return null;
   }
 
   @override
