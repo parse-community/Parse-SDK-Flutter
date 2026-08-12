@@ -55,10 +55,15 @@ jobs:
         run: dart analyze packages/dart --fatal-infos
       - name: Lint
         run: dart format --output=none --set-exit-if-changed packages/dart
-      - name: Publish dry run
-        run: cd packages/dart && dart pub publish --dry-run
       - name: Run tests
         run: (cd packages/dart && dart test --coverage=coverage)
+      # The dry run fails on a dirty tree, and build_runner above rewrites the
+      # checked-in `*.mocks.dart`. Validate the committed sources instead,
+      # after the tests have used the generated ones.
+      - name: Restore files rewritten by earlier steps
+        run: git checkout -- .
+      - name: Publish dry run
+        run: cd packages/dart && dart pub publish --dry-run
       - name: Convert code coverage
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
@@ -129,10 +134,14 @@ jobs:
         run: flutter analyze packages/flutter --fatal-infos
       - name: Lint
         run: dart format --output=none --set-exit-if-changed packages/flutter
-      - name: Publish dry run
-        run: cd packages/flutter && dart pub publish --dry-run
       - name: Run tests
         run: (cd packages/flutter && flutter test --coverage)
+      # Same as the dart job: `flutter pub get` above rewrites the checked-in
+      # `analysis_options.yaml`, and the dry run fails on a dirty tree.
+      - name: Restore files rewritten by earlier steps
+        run: git checkout -- .
+      - name: Publish dry run
+        run: cd packages/flutter && dart pub publish --dry-run
       - name: Convert code coverage
         # Needs to be adapted to collect the coverage at all platforms if platform specific code is added.
         if: ${{ always() && matrix.os == 'ubuntu-latest' }}
