@@ -9,20 +9,20 @@ void main() {
     await initializeParse();
   });
 
-  group('ParseDioClient Tests', () {
+  group('ParseHTTPClient Tests', () {
     late ParseHTTPClient parseHTTPClient;
 
     setUp(() async {
       parseHTTPClient = ParseHTTPClient();
     });
 
-    test('should return an instance of Dio from dioClient', () {
+    test('should return an instance of http.BaseClient from client getter', () {
       // arrange
-      final dioClient = parseHTTPClient.client;
+      final httpClient = parseHTTPClient.client;
 
       // assert
-      expect(dioClient, isNotNull);
-      expect(dioClient, isA<http.BaseClient>());
+      expect(httpClient, isNotNull);
+      expect(httpClient, isA<http.BaseClient>());
     });
   });
 }

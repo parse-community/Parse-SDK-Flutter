@@ -43,8 +43,15 @@ class ParseUser extends ParseObject implements ParseCloneable {
   static const String keyUsername = 'username';
   static const String keyEmailAddress = 'email';
   static const String path = '$keyEndPointClasses$keyClassUser';
+  static const String _keyAuthAnonymous = 'anonymous';
 
   String? _password;
+
+  /// Marks an instance whose next successful response must be persisted as
+  /// the current user even though it cannot be matched against storage yet
+  /// (e.g. [getCurrentUserFromServer], which starts from an empty user and
+  /// only learns its objectId from the response).
+  bool _persistAsCurrentUser = false;
 
   String? get password => _password;
 
@@ -70,7 +77,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   String? get username => super.get<String>(keyVarUsername);
 
-  set username(String? username) => set<String?>(keyVarUsername, username);
+  set username(String? username) {
+    _stripAnonymity();
+    set<String?>(keyVarUsername, username);
+  }
 
   String? get emailAddress => super.get<String>(keyVarEmail);
 
@@ -114,6 +124,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }) async {
     final ParseUser user = _getEmptyUser();
     user.sessionToken = token;
+    user._persistAsCurrentUser = true;
     return user.getUpdatedUser(debug: debug, client: client);
   }
 
@@ -216,15 +227,11 @@ class ParseUser extends ParseObject implements ParseCloneable {
       final Uri url = getSanitisedUri(_client, path);
       final String body = json.encode(toJson(forApiRQ: true));
       _saveChanges();
-      final String? installationId = await _getInstallationId();
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
         options: ParseNetworkOptions(
-          headers: <String, String>{
-            keyHeaderRevocableSession: '1',
-            if (installationId != null && !doNotSendInstallationID)
-              keyHeaderInstallationId: installationId,
-          },
+          headers: <String, String>{keyHeaderRevocableSession: '1'},
+          sendInstallationId: !doNotSendInstallationID,
         ),
         data: body,
       );
@@ -255,18 +262,14 @@ class ParseUser extends ParseObject implements ParseCloneable {
         keyVarUsername: username!,
         keyVarPassword: password!,
       };
-      final String? installationId = await _getInstallationId();
       final Uri url = getSanitisedUri(_client, keyEndPointLogin);
       _saveChanges();
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
         data: jsonEncode(queryParams),
         options: ParseNetworkOptions(
-          headers: <String, String>{
-            keyHeaderRevocableSession: '1',
-            if (installationId != null && !doNotSendInstallationID)
-              keyHeaderInstallationId: installationId,
-          },
+          headers: <String, String>{keyHeaderRevocableSession: '1'},
+          sendInstallationId: !doNotSendInstallationID,
         ),
       );
 
@@ -282,7 +285,13 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
-  /// Logs in a user anonymously
+  /// Logs in a user anonymously.
+  ///
+  /// To convert the resulting anonymous user into a permanent account,
+  /// set `username` and `password` on the [ParseUser] and call [save].
+  /// The anonymous provider is unlinked server-side and the local
+  /// `authData` is reconciled automatically.
+  ///
   /// Set [doNotSendInstallationID] to 'true' in order to prevent the SDK from sending the installationID to the Server.
   /// This option is especially useful if you are running you application on web and you don't have permission to add 'X-Parse-Installation-Id' as an allowed header on your parse-server.
   Future<ParseResponse> loginAnonymous({
@@ -292,20 +301,16 @@ class ParseUser extends ParseObject implements ParseCloneable {
     try {
       final Uri url = getSanitisedUri(_client, keyEndPointUsers);
       const Uuid uuid = Uuid();
-      final String? installationId = await _getInstallationId();
 
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
         options: ParseNetworkOptions(
-          headers: <String, String>{
-            keyHeaderRevocableSession: '1',
-            if (installationId != null && !doNotSendInstallationID)
-              keyHeaderInstallationId: installationId,
-          },
+          headers: <String, String>{keyHeaderRevocableSession: '1'},
+          sendInstallationId: !doNotSendInstallationID,
         ),
         data: jsonEncode(<String, dynamic>{
           'authData': <String, dynamic>{
-            'anonymous': <String, dynamic>{'id': uuid.v4()},
+            _keyAuthAnonymous: <String, dynamic>{'id': uuid.v4()},
           },
         }),
       );
@@ -356,17 +361,13 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }) async {
     try {
       final Uri url = getSanitisedUri(_client, keyEndPointUsers);
-      final String? installationId = await _getInstallationId();
       final Map<String, dynamic> body = toJson(forApiRQ: true);
       body['authData'] = <String, dynamic>{provider: authData};
       final ParseNetworkResponse response = await _client.post(
         url.toString(),
         options: ParseNetworkOptions(
-          headers: <String, String>{
-            keyHeaderRevocableSession: '1',
-            if (installationId != null && !doNotSendInstallationID)
-              keyHeaderInstallationId: installationId,
-          },
+          headers: <String, String>{keyHeaderRevocableSession: '1'},
+          sendInstallationId: !doNotSendInstallationID,
         ),
         data: jsonEncode(body),
       );
@@ -493,9 +494,21 @@ class ParseUser extends ParseObject implements ParseCloneable {
     if (objectId == null) {
       return await signUp();
     } else {
+      final String? tokenBefore = sessionToken;
       final ParseResponse response = await super.save();
       if (response.success) {
-        await _onResponseSuccess();
+        _cleanUpAuthData();
+        // Adopt the response session token only for the current user — a
+        // detached instance's freshly-minted token must not replace the
+        // global session, or storage and session would belong to two
+        // different accounts. The check + write run under the persistence
+        // gate so no other persistence can interleave between them.
+        await _serializedPersistence(() async {
+          if (await _isCurrentUser()) {
+            _adoptResponseSessionTokenIfChanged(tokenBefore);
+            await _onResponseSuccess();
+          }
+        });
       }
       return response;
     }
@@ -506,16 +519,133 @@ class ParseUser extends ParseObject implements ParseCloneable {
     if (objectId == null) {
       return await signUp();
     } else {
+      final String? tokenBefore = sessionToken;
       final ParseResponse response = await super.update();
       if (response.success) {
-        await _onResponseSuccess();
+        _cleanUpAuthData();
+        // Same ordering as save(): token adoption is gated on the instance
+        // being the stored current user, atomically under the gate.
+        await _serializedPersistence(() async {
+          if (await _isCurrentUser()) {
+            _adoptResponseSessionTokenIfChanged(tokenBefore);
+            await _onResponseSuccess();
+          }
+        });
       }
       return response;
     }
   }
 
+  /// Adopt a new sessionToken from a save/update response. Parse Server
+  /// mints a fresh session when `password` is set on an existing _User
+  /// (revokeSessionOnPasswordReset, current default in 9.x); the prior
+  /// session is destroyed server-side, so the global session must be
+  /// updated or subsequent requests will fail with invalidSessionToken.
+  /// Mirrors iOS PFUser's _mergeFromServerWithResult.
+  void _adoptResponseSessionTokenIfChanged(String? tokenBefore) {
+    final String? tokenAfter = sessionToken;
+    if (tokenAfter == null || tokenAfter.isEmpty) return;
+    if (tokenAfter == tokenBefore) return;
+    ParseCoreData().setSessionId(tokenAfter);
+  }
+
   Future<void> _onResponseSuccess() async {
     await saveInStorage(keyParseStoreUser);
+  }
+
+  /// Serializes every current-user persistence decision with its write.
+  ///
+  /// [_isCurrentUser]'s storage read and [_onResponseSuccess]'s write are
+  /// separated by awaits; without a lock another persistence operation
+  /// (e.g. a login completing concurrently) can interleave between them, and
+  /// a check that passed against the old stored user would overwrite the
+  /// newer one — the same clobber the gate exists to prevent, in a narrower
+  /// window. Chaining every check+write pair on one static future makes each
+  /// pair atomic relative to the others.
+  static Future<void> _persistenceGate = Future<void>.value();
+
+  static Future<void> _serializedPersistence(Future<void> Function() action) {
+    final Future<void> next = _persistenceGate.then((_) => action());
+    // Keep the chain usable after a failed action; the error still reaches
+    // this call's awaiter through `next`.
+    _persistenceGate = next.then((_) {}, onError: (Object _) {});
+    return next;
+  }
+
+  /// Whether this instance is the current user stored in local storage.
+  ///
+  /// Mirrors the JS SDK's `isCurrentAsync()`: reads the user persisted under
+  /// [keyParseStoreUser] and compares its `objectId` with this instance's.
+  /// Without this gate, whichever [ParseUser] instance happens to handle a
+  /// response would overwrite the current-user storage — e.g. a stale
+  /// anonymous instance's fetch resolving after a login would clobber the
+  /// freshly logged-in user on disk.
+  Future<bool> _isCurrentUser() async {
+    if (objectId == null) {
+      return false;
+    }
+    final CoreStore coreStore = ParseCoreData().getStore();
+    final String? userJson = await coreStore.getString(keyParseStoreUser);
+    if (userJson == null) {
+      return false;
+    }
+    try {
+      final dynamic decoded = json.decode(userJson);
+      // A valid-JSON root that is not an object (null, list, string) is as
+      // corrupt as unparseable JSON for our purposes: no current user.
+      if (decoded is! Map<String, dynamic>) {
+        return false;
+      }
+      return decoded[keyVarObjectId] == objectId;
+    } on FormatException {
+      return false;
+    }
+  }
+
+  /// Request types that establish a new current user and therefore always
+  /// persist to local storage, mirroring the JS SDK where only login/signup
+  /// flows call `_handleSaveResult(true)` to make a user current.
+  static bool _establishesCurrentUser(ParseApiRQ type) =>
+      type == ParseApiRQ.login ||
+      type == ParseApiRQ.loginAnonymous ||
+      type == ParseApiRQ.signUp ||
+      type == ParseApiRQ.loginWith;
+
+  void _stripAnonymity() {
+    final Map<String, dynamic>? authData =
+        _objectData[keyVarAuthData] as Map<String, dynamic>?;
+    if (authData == null || !authData.containsKey(_keyAuthAnonymous)) {
+      return;
+    }
+    if (objectId == null) {
+      authData.remove(_keyAuthAnonymous);
+    } else {
+      authData[_keyAuthAnonymous] = null;
+    }
+    if (authData.isEmpty) {
+      _unsavedChanges.remove(keyVarAuthData);
+    } else {
+      _unsavedChanges[keyVarAuthData] = authData;
+    }
+  }
+
+  void _cleanUpAuthData() {
+    final Map<String, dynamic>? authData =
+        _objectData[keyVarAuthData] as Map<String, dynamic>?;
+    if (authData != null) {
+      authData.removeWhere((_, dynamic value) => value == null);
+      if (authData.isEmpty) {
+        _objectData.remove(keyVarAuthData);
+      }
+    }
+    final Map<String, dynamic>? dirty =
+        _unsavedChanges[keyVarAuthData] as Map<String, dynamic>?;
+    if (dirty != null) {
+      dirty.removeWhere((_, dynamic value) => value == null);
+      if (dirty.isEmpty) {
+        _unsavedChanges.remove(keyVarAuthData);
+      }
+    }
   }
 
   /// Removes a user from Parse Server locally and online
@@ -623,17 +753,17 @@ class ParseUser extends ParseObject implements ParseCloneable {
       return parseResponse;
     } else {
       final ParseUser user = parseResponse.result;
-      await user._onResponseSuccess();
+      await _serializedPersistence(() async {
+        if (_establishesCurrentUser(type) ||
+            user._persistAsCurrentUser ||
+            await user._isCurrentUser()) {
+          await user._onResponseSuccess();
+        }
+      });
       return parseResponse;
     }
   }
 
   static ParseUser _getEmptyUser() =>
       ParseCoreData.instance.createParseUser(null, null, null);
-
-  static Future<String?> _getInstallationId() async {
-    final ParseInstallation parseInstallation =
-        await ParseInstallation.currentInstallation();
-    return parseInstallation.installationId;
-  }
 }
