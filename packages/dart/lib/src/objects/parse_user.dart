@@ -43,6 +43,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   static const String keyUsername = 'username';
   static const String keyEmailAddress = 'email';
   static const String path = '$keyEndPointClasses$keyClassUser';
+  static const String _keyAuthAnonymous = 'anonymous';
 
   String? _password;
 
@@ -70,7 +71,10 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   String? get username => super.get<String>(keyVarUsername);
 
-  set username(String? username) => set<String?>(keyVarUsername, username);
+  set username(String? username) {
+    _stripAnonymity();
+    set<String?>(keyVarUsername, username);
+  }
 
   String? get emailAddress => super.get<String>(keyVarEmail);
 
@@ -282,7 +286,13 @@ class ParseUser extends ParseObject implements ParseCloneable {
     }
   }
 
-  /// Logs in a user anonymously
+  /// Logs in a user anonymously.
+  ///
+  /// To convert the resulting anonymous user into a permanent account,
+  /// set `username` and `password` on the [ParseUser] and call [save].
+  /// The anonymous provider is unlinked server-side and the local
+  /// `authData` is reconciled automatically.
+  ///
   /// Set [doNotSendInstallationID] to 'true' in order to prevent the SDK from sending the installationID to the Server.
   /// This option is especially useful if you are running you application on web and you don't have permission to add 'X-Parse-Installation-Id' as an allowed header on your parse-server.
   Future<ParseResponse> loginAnonymous({
@@ -305,7 +315,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
         ),
         data: jsonEncode(<String, dynamic>{
           'authData': <String, dynamic>{
-            'anonymous': <String, dynamic>{'id': uuid.v4()},
+            _keyAuthAnonymous: <String, dynamic>{'id': uuid.v4()},
           },
         }),
       );
@@ -495,6 +505,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     } else {
       final ParseResponse response = await super.save();
       if (response.success) {
+        _cleanUpAuthData();
         await _onResponseSuccess();
       }
       return response;
@@ -508,6 +519,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     } else {
       final ParseResponse response = await super.update();
       if (response.success) {
+        _cleanUpAuthData();
         await _onResponseSuccess();
       }
       return response;
@@ -516,6 +528,43 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   Future<void> _onResponseSuccess() async {
     await saveInStorage(keyParseStoreUser);
+  }
+
+  void _stripAnonymity() {
+    final Map<String, dynamic>? authData =
+        _objectData[keyVarAuthData] as Map<String, dynamic>?;
+    if (authData == null || !authData.containsKey(_keyAuthAnonymous)) {
+      return;
+    }
+    if (objectId == null) {
+      authData.remove(_keyAuthAnonymous);
+    } else {
+      authData[_keyAuthAnonymous] = null;
+    }
+    if (authData.isEmpty) {
+      _unsavedChanges.remove(keyVarAuthData);
+    } else {
+      _unsavedChanges[keyVarAuthData] = authData;
+    }
+  }
+
+  void _cleanUpAuthData() {
+    final Map<String, dynamic>? authData =
+        _objectData[keyVarAuthData] as Map<String, dynamic>?;
+    if (authData != null) {
+      authData.removeWhere((_, dynamic value) => value == null);
+      if (authData.isEmpty) {
+        _objectData.remove(keyVarAuthData);
+      }
+    }
+    final Map<String, dynamic>? dirty =
+        _unsavedChanges[keyVarAuthData] as Map<String, dynamic>?;
+    if (dirty != null) {
+      dirty.removeWhere((_, dynamic value) => value == null);
+      if (dirty.isEmpty) {
+        _unsavedChanges.remove(keyVarAuthData);
+      }
+    }
   }
 
   /// Removes a user from Parse Server locally and online
