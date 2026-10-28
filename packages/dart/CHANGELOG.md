@@ -1,3 +1,10 @@
+# [dart-v9.7.1](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.7.0...dart-9.7.1) (2026-10-28)
+
+
+### Bug Fixes
+
+* Beta CI lanes fail on analyzer findings and on files rewritten by CI itself ([#1166](https://github.com/parse-community/Parse-SDK-Flutter/issues/1166)) ([f1e579a](https://github.com/parse-community/Parse-SDK-Flutter/commit/f1e579ac749084201293be14a128ab3a78e2d7b4))
+
 # [dart-v9.7.0](https://github.com/parse-community/Parse-SDK-Flutter/compare/dart-9.6.1...dart-9.7.0) (2026-03-29)
 
 
