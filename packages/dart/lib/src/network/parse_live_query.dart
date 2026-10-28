@@ -305,7 +305,7 @@ class LiveQueryClient {
         if (_debug) {
           print('$_printConstLiveQuery: Error when connection client');
         }
-        // Plain  rather than a Future: this is an async body, so
+        // Plain `null` rather than a Future: this is an async body, so
         // returning a Future inside the try block trips
         // unawaited_return_in_try_block on newer analyzers.
         return null;
