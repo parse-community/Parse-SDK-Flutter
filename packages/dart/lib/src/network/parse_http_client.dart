@@ -47,12 +47,13 @@ class ParseHTTPClient extends ParseClient {
     ParseNetworkOptions? options,
     ProgressCallback? onReceiveProgress,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       operation: () async {
         try {
           final http.Response response = await _client.get(
             Uri.parse(path),
-            headers: options?.headers,
+            headers: headers,
           );
           return ParseNetworkResponse(
             data: response.body,
@@ -75,12 +76,13 @@ class ParseHTTPClient extends ParseClient {
     ProgressCallback? onReceiveProgress,
     dynamic cancelToken,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       operation: () async {
         try {
           final http.Response response = await _client.get(
             Uri.parse(path),
-            headers: options?.headers,
+            headers: headers,
           );
           return ParseNetworkByteResponse(
             bytes: response.bodyBytes,
@@ -102,6 +104,7 @@ class ParseHTTPClient extends ParseClient {
     String? data,
     ParseNetworkOptions? options,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       isWriteOperation: true,
       operation: () async {
@@ -109,7 +112,7 @@ class ParseHTTPClient extends ParseClient {
           final http.Response response = await _client.put(
             Uri.parse(path),
             body: data,
-            headers: options?.headers,
+            headers: headers,
           );
           return ParseNetworkResponse(
             data: response.body,
@@ -131,6 +134,7 @@ class ParseHTTPClient extends ParseClient {
     String? data,
     ParseNetworkOptions? options,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       isWriteOperation: true,
       operation: () async {
@@ -138,7 +142,7 @@ class ParseHTTPClient extends ParseClient {
           final http.Response response = await _client.post(
             Uri.parse(path),
             body: data,
-            headers: options?.headers,
+            headers: headers,
           );
           return ParseNetworkResponse(
             data: response.body,
@@ -162,6 +166,7 @@ class ParseHTTPClient extends ParseClient {
     ProgressCallback? onSendProgress,
     dynamic cancelToken,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       isWriteOperation: true,
       operation: () async {
@@ -174,7 +179,7 @@ class ParseHTTPClient extends ParseClient {
               (List<int> previous, List<int> element) =>
                   previous..addAll(element),
             ),
-            headers: options?.headers,
+            headers: headers,
           );
           return ParseNetworkResponse(
             data: response.body,
@@ -195,12 +200,13 @@ class ParseHTTPClient extends ParseClient {
     String path, {
     ParseNetworkOptions? options,
   }) async {
+    final Map<String, String>? headers = await buildHeaders(options);
     return executeWithRetry(
       operation: () async {
         try {
           final http.Response response = await _client.delete(
             Uri.parse(path),
-            headers: options?.headers,
+            headers: headers,
           );
           return ParseNetworkResponse(
             data: response.body,
